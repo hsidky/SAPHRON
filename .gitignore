@@ -26,10 +26,3 @@
 *.exe
 *.out
 *.app
-
-#Build directories
-bin/*
-build/*
-
-#Google Test Headers
-gtest/include/*
