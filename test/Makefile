@@ -5,9 +5,6 @@ BUILD_DIR = ../build
 
 SRC_DIR = ../src
 
-# Specify compiler.
-CXX = clang++
-
 # Flags passed to the preprocessor.
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 
@@ -19,10 +16,6 @@ DEPS  = $(BUILD_DIR)/Ising3DModel.o
 
 # All tests produced by this Makefile.
 TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out
-
-# All Google Test headers.
-GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
-				$(GTEST_DIR)/include/gtest/internal/*.h
 
 # Google Test libs to link against.
 GTEST_LIBS = $(GTEST_DIR)/lib/libgtest.a $(GTEST_DIR)/lib/libgtest_main.a
