@@ -10,7 +10,7 @@ class Site
 		double x, y, z;
 
 		// Site unit vectors.
-		double ux, uy, uz;
+		double ux = 0, uy = 0, uz = 0;
 
 		// Site species
 		int species = 0;
@@ -20,7 +20,8 @@ class Site
 		std::vector<int> neighbors;
 
 	public:
-		Site() {};
+		// Initializes a site at given coordinates.
+		Site(double x, double y, double z): x(x), y(y), z(z) {};
 
 		// Gets x coordinate.
 		double GetXCoordinate()

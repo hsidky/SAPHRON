@@ -71,14 +71,7 @@ namespace Models
 	// two body interactions), we only need to evaluate nearest neighbors.
 	double Ising3DModel::EvaluateHamiltonian(int index)
 	{
-		double h = 0;
-		auto si = Sites[index].GetZUnitVector();
-		for(int &nindex : Sites[index].GetNeighbors())
-			// Force only -1 or 1 to prevent drift.
-			h += si * Sites[nindex].GetZUnitVector() < 0 ? -1.0 : 1.0;
-
-		h *= -1 * this->GetInteractionParameter();
-		return h;
+		return this->EvaluateHamiltonian(&Sites[index]);
 	}
 
 	// Evaluates the Ising Hamiltonian for a given site using the formula

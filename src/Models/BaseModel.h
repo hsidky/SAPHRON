@@ -30,7 +30,7 @@ namespace Models
 			// Initializes the base model with a specific number of sites at a
 			// given temperature. The random number generator seed is 1 by default.
 			BaseModel(int size, double T, int seed = 1)
-				: temperature(T), Sites(size), rand(Rand(seed)) {};
+				: temperature(T), Sites(size, Site(0.0, 0.0, 0.0)), rand(Rand(seed)) {};
 
 			// Reseed the random number generator. This resets the random number
 			// generator.
@@ -73,7 +73,7 @@ namespace Models
 			// Add a new "empty" site to the end of the Sites vector.
 			void AddSite()
 			{
-				Sites.push_back(Site());
+				Sites.push_back(Site(0.0, 0.0, 0.0));
 			}
 
 			// Gets the number of sites in the model.
@@ -103,7 +103,10 @@ namespace Models
 			// Evaluate the Hamiltonian for a given site index. The input
 			// argument does not have to be used if the Hamiltonian is
 			// independent of site.
-			virtual double EvaluateHamiltonian(int site) = 0;
+			double EvaluateHamiltonian(int index)
+			{
+				return this->EvaluateHamiltonian(&Sites[index]);
+			};
 
 			// Evaluate the Hamiltonian for a given site pointer. The input
 			// argument does not have to be used if the Hamiltonian is

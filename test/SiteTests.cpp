@@ -4,7 +4,7 @@
 // Test the default constructor initializes everything to zero or empty.
 TEST(Site, DefaultConstructor)
 {
-	Site s;
+	Site s(0, 0, 0);
 
 	auto zeros = std::vector<double> {0.0, 0.0, 0.0};
 
@@ -25,7 +25,7 @@ TEST(Site, DefaultConstructor)
 // Tests the getters and setters of Site.
 TEST(Site, GettersandSetters)
 {
-	Site s;
+	Site s(0, 0, 0);
 
 	double val = 5.0;
 
@@ -41,7 +41,7 @@ TEST(Site, GettersandSetters)
 // Test the neighbors vector for adding and removing neighbors.
 TEST(Site, NeighborsVector)
 {
-	Site s;
+	Site s(0, 0, 0);
 
 	// Neighbor list should be empty by default.
 	ASSERT_TRUE(s.GetNeighbors().size() == 0);

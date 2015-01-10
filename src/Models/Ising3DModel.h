@@ -39,7 +39,6 @@ namespace Models
 			// evaluate nearest neighbors.
 			double EvaluateHamiltonian(Site* site);
 
-
 			// Evaluates the Boltzmann probability of the system transitioning from prevH
 			// to currH via exp(-(currH-prevH)/kb*T).
 			double AcceptanceProbability(double prevH, double currH);
