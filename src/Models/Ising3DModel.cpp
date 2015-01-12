@@ -9,9 +9,8 @@ namespace Models
 	// The sites are initialized on a lattice including positions,
 	// nearest neighbors and spins. The default BaseModel parameters
 	// are used.
-	Ising3DModel::Ising3DModel(int latticeSize, double temperature, int seed) :
-		BaseModel(latticeSize * latticeSize * latticeSize, temperature,
-		          seed), _latticeSize(latticeSize)
+	Ising3DModel::Ising3DModel(int latticeSize, int seed) :
+		BaseModel(latticeSize * latticeSize * latticeSize, seed), _latticeSize(latticeSize)
 	{
 		// Length of lattice side
 		auto n = this->_latticeSize;

@@ -9,14 +9,6 @@ namespace Models
 {
 	class BaseModel
 	{
-		private:
-
-			// "Normalized" Boltzmann constant
-			double _kb = 1.0;
-
-			// Temperature (K) (Sometimes reduced).
-			double _temperature;
-
 		protected:
 
 			// Vector of sites
@@ -29,8 +21,8 @@ namespace Models
 
 			// Initializes the base model with a specific number of sites at a
 			// given temperature. The random number generator seed is 1 by default.
-			BaseModel(int size, double T, int seed = 1)
-				: _temperature(T), Sites(size, Site(0.0, 0.0, 0.0)), rand(Rand(seed)) {};
+			BaseModel(int size, int seed = 1)
+				: Sites(size, Site(0.0, 0.0, 0.0)), rand(Rand(seed)) {};
 
 			// Reseed the random number generator. This resets the random number
 			// generator.
@@ -82,22 +74,11 @@ namespace Models
 				return this->Sites.size();
 			}
 
-			// Gets the "normalized" Boltzmann constant (J/K).
-			double GetBoltzmannConstant()
+			// Draws a random site. This is an alias of SelectRandomSite for Ensemble
+			// classes.
+			virtual Site* DrawSample()
 			{
-				return this->_kb;
-			}
-
-			// Gets the temperature (K).
-			double GetTemperature()
-			{
-				return this->_temperature;
-			}
-
-			// Sets the temperature (K).
-			double SetTemperature(double T)
-			{
-				return this->_temperature = T;
+				return this->SelectRandomSite();
 			}
 
 			// Evaluate the Hamiltonian for a given site index. The input
