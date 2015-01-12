@@ -89,13 +89,4 @@ namespace Models
 		h *= -1 * this->GetInteractionParameter();
 		return h;
 	}
-
-	// Evaluates the Boltzmann probability of the system transitioning from prevH
-	// to currH via exp(-(currH-prevH)/kb*T).
-	double Ising3DModel::AcceptanceProbability(double prevH, double currH)
-	{
-		auto p =
-		        exp(-(currH - prevH) / (this->GetBoltzmannConstant() * this->GetTemperature()));
-		return p > 1 ? 1 : p;
-	}
 }

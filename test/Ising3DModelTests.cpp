@@ -79,22 +79,3 @@ TEST(Ising3DModel, EvaluateInitialHamiltonian)
 	site->SetZUnitVector(-1);
 	ASSERT_EQ(6, m.EvaluateHamiltonian(site));
 }
-
-// Tests the acceptance probability of a move
-TEST(Ising3DModel, AcceptanceProbability)
-{
-	Ising3DModel m(37, 1);
-
-	// Check acceptance probability for many moves on random sites.
-	for(int i = 0; i < m.GetSiteCount(); i++)
-	{
-		auto site = m.SelectRandomSite();
-		double prevH = m.EvaluateHamiltonian(site);
-		site->SetZUnitVector(-1);
-		double currH = m.EvaluateHamiltonian(site);
-
-		auto p = m.AcceptanceProbability(prevH, currH);
-		ASSERT_GE(p, 0);
-		ASSERT_LE(p, 1);
-	}
-}

@@ -112,9 +112,5 @@ namespace Models
 			// argument does not have to be used if the Hamiltonian is
 			// independent of site.
 			virtual double EvaluateHamiltonian(Site* site) = 0;
-
-			// Evaluate the acceptance probability of a Monte Carlo move based
-			// on the previous and current values of the Hamiltonian.
-			virtual double AcceptanceProbability(double prevH, double currH) = 0;
 	};
 }

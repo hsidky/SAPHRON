@@ -19,9 +19,4 @@ class MockBaseModel : public BaseModel
 		{
 			return site->GetZUnitVector();
 		}
-
-		double AcceptanceProbability(double prevH, double currH)
-		{
-			return (currH-prevH);
-		}
 };
