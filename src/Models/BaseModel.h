@@ -12,10 +12,10 @@ namespace Models
 		private:
 
 			// "Normalized" Boltzmann constant
-			double kb = 1.0;
+			double _kb = 1.0;
 
 			// Temperature (K) (Sometimes reduced).
-			double temperature;
+			double _temperature;
 
 		protected:
 
@@ -30,7 +30,7 @@ namespace Models
 			// Initializes the base model with a specific number of sites at a
 			// given temperature. The random number generator seed is 1 by default.
 			BaseModel(int size, double T, int seed = 1)
-				: temperature(T), Sites(size, Site(0.0, 0.0, 0.0)), rand(Rand(seed)) {};
+				: _temperature(T), Sites(size, Site(0.0, 0.0, 0.0)), rand(Rand(seed)) {};
 
 			// Reseed the random number generator. This resets the random number
 			// generator.
@@ -85,19 +85,19 @@ namespace Models
 			// Gets the "normalized" Boltzmann constant (J/K).
 			double GetBoltzmannConstant()
 			{
-				return this->kb;
+				return this->_kb;
 			}
 
 			// Gets the temperature (K).
 			double GetTemperature()
 			{
-				return this->temperature;
+				return this->_temperature;
 			}
 
 			// Sets the temperature (K).
 			double SetTemperature(double T)
 			{
-				return this->temperature = T;
+				return this->_temperature = T;
 			}
 
 			// Evaluate the Hamiltonian for a given site index. The input

@@ -12,11 +12,11 @@ namespace Models
 		private:
 
 			// Size of since lattice dimension.
-			int latticeSize;
+			int _latticeSize;
 
 			// Normalized "J", interaction parameter (J) such that a specified
 			// temperature is reduced with a normalized kb from BaseModel.
-			double interactionParameter = 1.0;
+			double _interactionParameter = 1.0;
 		public:
 
 			// Initializes Ising3D with a given lattice size (the length of a
@@ -46,19 +46,19 @@ namespace Models
 			// Sets the interaction parameter in the Hamiltonian.
 			double SetInteractionParameter(double j)
 			{
-				return this->interactionParameter = j;
+				return this->_interactionParameter = j;
 			};
 
 			// Gets the interaction parameter in the Hamiltonian.
 			double GetInteractionParameter()
 			{
-				return this->interactionParameter;
+				return this->_interactionParameter;
 			};
 
 			// Gets the lattice size (length of a single dimension).
 			int GetLatticeSize()
 			{
-				return this->latticeSize;
+				return this->_latticeSize;
 			}
 	};
 }

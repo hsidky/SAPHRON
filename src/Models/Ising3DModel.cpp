@@ -11,10 +11,10 @@ namespace Models
 	// are used.
 	Ising3DModel::Ising3DModel(int latticeSize, double temperature, int seed) :
 		BaseModel(latticeSize * latticeSize * latticeSize, temperature,
-		          seed), latticeSize(latticeSize)
+		          seed), _latticeSize(latticeSize)
 	{
 		// Length of lattice side
-		auto n = this->latticeSize;
+		auto n = this->_latticeSize;
 
 		// Initialize positional counters
 		double x = 1;
