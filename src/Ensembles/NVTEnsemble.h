@@ -6,10 +6,10 @@
 
 namespace Ensembles
 {
-    // Class for simple NVT ensemble - also known as "canonical" ensemble. This
-    // calls moves off the move queue and uses the Metropolis algorithm for acceptance
-    // probability, A(i->j) = min(1,exp(DE/kB*T)). The template represents the return
-    // type of DrawSample from model, which should typically be Site.
+	// Class for simple NVT ensemble - also known as "canonical" ensemble. This
+	// calls moves off the move queue and uses the Metropolis algorithm for acceptance
+	// probability, A(i->j) = min(1,exp(DE/kB*T)). The template represents the return
+	// type of DrawSample from model, which should typically be Site.
 	template <typename T>
 	class NVTEnsemble : public Ensemble<T>
 	{
@@ -32,8 +32,12 @@ namespace Ensembles
 			// where "n" is the number of sites in a model.
 			void Sweep()
 			{
+				this->RunLoggers();
+
 				for(int i = 0; i < this->model.GetSiteCount(); i++)
 					Iterate();
+
+				this->IncrementSweeps();
 			}
 
 			// Performs one Monte Carlo iteration. This is precicely one random
