@@ -12,7 +12,7 @@ TEST(NVTEnsemble, DefaultConstructor)
     int n = 37;
     Ising3DModel model(n, 1);
     FlipSpinMove move;
-    NVTEnsemble<Site> s(&model);
+    NVTEnsemble<Site> s(model);
 
     // TODO: Complete testing Ensemble
 }

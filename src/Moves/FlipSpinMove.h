@@ -16,9 +16,9 @@ namespace Moves {
     public:
 
         // Perform the flip spin move on a site.
-        void Perform(Site* site)
+        void Perform(Site& site)
         {
-            _site = site;
+            _site = &site;
             _uzBefore = _site->GetZUnitVector();
             _site->SetZUnitVector(-1*_uzBefore);
         }

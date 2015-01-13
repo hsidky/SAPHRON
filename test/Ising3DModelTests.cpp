@@ -77,5 +77,5 @@ TEST(Ising3DModel, EvaluateInitialHamiltonian)
 	// Pick random site. Change spin and re-check Hamiltonian.
 	auto site = m.SelectRandomSite();
 	site->SetZUnitVector(-1);
-	ASSERT_EQ(6, m.EvaluateHamiltonian(site));
+	ASSERT_EQ(6, m.EvaluateHamiltonian(*site));
 }

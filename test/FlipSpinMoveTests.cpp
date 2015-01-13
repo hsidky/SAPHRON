@@ -12,7 +12,7 @@ TEST(FlipSpinMove, DefaultBehavior)
 
     // Set the Z unit vector and test move
     s.SetZUnitVector(-1.0);
-    m.Perform(&s);
+    m.Perform(s);
     ASSERT_EQ(1.0, s.GetZUnitVector());
     m.Undo();
     ASSERT_EQ(-1.0, s.GetZUnitVector());

@@ -58,3 +58,20 @@ TEST(BaseModel, RandomSiteIndex)
 
 	ASSERT_EQ(0, std::count(ci.begin(), ci.end(), 0));
 }
+
+// Test reference to site does not change if we add a site to the sites vector
+TEST(BaseModel, ConstantSiteReference)
+{
+	MockBaseModel b(10, 1);
+
+	auto site = b.SelectRandomSite();
+	// Make unique change to referenced site.
+	site->SetZUnitVector(-3.0);
+
+	// Add a bunch of new sites to model to the point where re-allocation has to happen.
+	for(int i=0;i<5000; i++)
+		b.AddSite();
+
+	ASSERT_EQ(-3.0, site->GetZUnitVector());
+	ASSERT_EQ(5010, b.GetSiteCount());
+}

@@ -86,12 +86,12 @@ namespace Models
 			// independent of site.
 			double EvaluateHamiltonian(int index)
 			{
-				return this->EvaluateHamiltonian(&Sites[index]);
+				return this->EvaluateHamiltonian(Sites[index]);
 			};
 
 			// Evaluate the Hamiltonian for a given site pointer. The input
 			// argument does not have to be used if the Hamiltonian is
 			// independent of site.
-			virtual double EvaluateHamiltonian(Site* site) = 0;
+			virtual double EvaluateHamiltonian(Site& site) = 0;
 	};
 }

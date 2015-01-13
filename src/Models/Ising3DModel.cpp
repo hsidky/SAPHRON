@@ -70,18 +70,18 @@ namespace Models
 	// two body interactions), we only need to evaluate nearest neighbors.
 	double Ising3DModel::EvaluateHamiltonian(int index)
 	{
-		return this->EvaluateHamiltonian(&Sites[index]);
+		return this->EvaluateHamiltonian(Sites[index]);
 	}
 
 	// Evaluates the Ising Hamiltonian for a given site using the formula
 	// H = -J*sum(si*sj). Since outside the "sphere of influence" the interaction
 	// energy doesn't change (i.e. only two body interactions), we only need to
 	// evaluate nearest neighbors.
-	double Ising3DModel::EvaluateHamiltonian(Site* site)
+	double Ising3DModel::EvaluateHamiltonian(Site& site)
 	{
 		double h = 0;
-		auto si = site->GetZUnitVector();
-		for(int &nindex : site->GetNeighbors())
+		auto si = site.GetZUnitVector();
+		for(int &nindex : site.GetNeighbors())
 			// Force only -1 or 1 to prevent drift.
 			h += si * Sites[nindex].GetZUnitVector() < 0 ? -1.0 : 1.0;
 

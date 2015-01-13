@@ -15,8 +15,8 @@ class MockBaseModel : public BaseModel
 			return site;
 		}
 
-		double EvaluateHamiltonian(Site* site)
+		double EvaluateHamiltonian(Site& site)
 		{
-			return site->GetZUnitVector();
+			return site.GetZUnitVector();
 		}
 };

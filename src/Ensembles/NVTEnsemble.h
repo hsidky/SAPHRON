@@ -24,17 +24,17 @@ namespace Ensembles
             {
 
                 // Draw sample and evaluate Hamiltonian
-                auto sample = this->model->DrawSample();
-                double prevH = this->model->EvaluateHamiltonian(sample);
+                auto sample = this->model.DrawSample();
+                double prevH = this->model.EvaluateHamiltonian(*sample);
 
                 // Perform moves
                 for(auto &move : this->moves)
-                    move->Perform(sample);
+                    move->Perform(*sample);
 
                 // Get new Hamiltonian.
-                double currH = this->model->EvaluateHamiltonian(sample);
+                double currH = this->model.EvaluateHamiltonian(*sample);
 
-                if(AcceptanceProbability(prevH, currH) < this->model->GetRandomUniformProbability())
+                if(AcceptanceProbability(prevH, currH) < this->model.GetRandomUniformProbability())
                 {
                     for(auto &move : this->moves)
                       move->Undo();

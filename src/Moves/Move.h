@@ -12,7 +12,7 @@ namespace Moves
             virtual ~Move(){}
 
             // Perform a Monte Carlo move.
-            virtual void Perform(T* type) = 0;
+            virtual void Perform(T& type) = 0;
 
             // Undo a Monte Carlo move.
             virtual void Undo() = 0;

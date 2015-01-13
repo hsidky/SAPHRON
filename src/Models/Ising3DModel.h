@@ -37,7 +37,7 @@ namespace Models
 			// H = -J*sum(si*sj). Since outside the "sphere of influence" the interaction
 			// energy doesn't change (i.e. only two body interactions), we only need to
 			// evaluate nearest neighbors.
-			double EvaluateHamiltonian(Site* site);
+			double EvaluateHamiltonian(Site& site);
 
 			// Sets the interaction parameter in the Hamiltonian.
 			double SetInteractionParameter(double j)

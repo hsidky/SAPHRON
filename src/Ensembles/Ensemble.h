@@ -26,7 +26,7 @@ namespace Ensembles
 
         protected:
           // Pointer to model.
-          BaseModel* model;
+          BaseModel& model;
 
           // Vector of moves to perform on each site.
           std::vector<Move<T>*> moves;
@@ -38,7 +38,7 @@ namespace Ensembles
           }
 
         public:
-            Ensemble (BaseModel* model): model(model) {};
+            Ensemble (BaseModel& model): model(model) {};
 
             // Performs one Monte-Carlo iteration. This is defined
             virtual void Iterate() = 0;
