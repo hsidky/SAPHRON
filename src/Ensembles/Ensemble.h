@@ -24,6 +24,9 @@ namespace Ensembles
             // Number of sweeps performed.
             int _sweeps = 0;
 
+            // Number of iterations performed.
+            int _iterations = 0;
+
         protected:
           // Pointer to model.
           BaseModel& model;
@@ -37,10 +40,21 @@ namespace Ensembles
               return _sweeps += num;
           }
 
+          // Increment the iteration counter.
+          int IncrementIterations(int num = 1)
+          {
+              return _iterations += num;
+          }
+
         public:
             Ensemble (BaseModel& model): model(model) {};
 
-            // Performs one Monte-Carlo iteration. This is defined
+            // Performs one Monte Carlo sweep. This is defined as "n" iterations,
+            // where "n" is the number of sites in a model.
+            virtual void Sweep() = 0;
+
+            // Performs one Monte Carlo iteration. This is precicely one random
+            // draw from the model (one function call to model->DrawSample()).
             virtual void Iterate() = 0;
 
             // Performs Monte Carlo moves on a drawn sample and returns pointer
@@ -65,7 +79,8 @@ namespace Ensembles
                 moves.pop_back();
             }
 
-            // Get number of sweeps per
+            // Get number of sweeps. A sweep is defined as "n" iterations, where
+            // "n" is the number of sites in the model.
             int GetSweepCount()
             {
               return _sweeps;
@@ -75,6 +90,19 @@ namespace Ensembles
             void ResetSweepCount()
             {
                 _sweeps = 0;
+            }
+
+            // Gets the number of iterations. The number of iterations is the
+            // precise number of items ANY site is sampled from the model.
+            int GetIterations()
+            {
+                return _iterations;
+            }
+
+            // Resets the number of iterations.
+            void ResetIterations()
+            {
+              _iterations = 0;
             }
 
             // Defines the acceptance probability based on a difference in energy.

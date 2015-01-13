@@ -7,12 +7,14 @@
 using namespace Ensembles;
 using namespace Models;
 
+// Default constructor test on NVT Ensemble
 TEST(NVTEnsemble, DefaultConstructor)
 {
     int n = 37;
     Ising3DModel model(n, 1);
     FlipSpinMove move;
-    NVTEnsemble<Site> s(model);
-
-    // TODO: Complete testing Ensemble
+    NVTEnsemble<Site> s(model, 2.5);
+    s.AddMove(move);
+    for(int i = 0; i < 100; i++)
+      s.Sweep();
 }

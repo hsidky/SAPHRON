@@ -22,9 +22,23 @@ namespace Ensembles
           double _kb = 1.0;
 
         public:
+            // Initializes NVTEnsemble for a model at a given "reduced" temperature.
             NVTEnsemble(BaseModel& model, double temperature) :
             Ensemble<T>(model), _temperature(temperature) {}
 
+            // Performs one Monte Carlo sweep. This is defined as "n" iterations,
+            // where "n" is the number of sites in a model.
+            void Sweep()
+            {
+                for(int i = 0; i < this->model.GetSiteCount(); i++)
+                {
+
+                    Iterate();
+                }
+            }
+
+            // Performs one Monte Carlo iteration. This is precicely one random
+            // draw from the model (one function call to model->DrawSample()).
             void Iterate()
             {
                 // Draw sample and evaluate Hamiltonian
@@ -44,6 +58,8 @@ namespace Ensembles
                     for(auto &move : this->moves)
                       move->Undo();
                 }
+
+                this->IncrementIterations();
 
             };
 
