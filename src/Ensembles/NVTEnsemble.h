@@ -2,10 +2,14 @@
 
 #include "../Models/BaseModel.h"
 #include "Ensemble.h"
+#include <iostream>
 
 namespace Ensembles
 {
-    // Class for NVT ensembles - also known as "canonical" ensemble.
+    // Class for simple NVT ensemble - also known as "canonical" ensemble. This
+    // calls moves off the move queue and uses the Metropolis algorithm for acceptance
+    // probability, A(i->j) = min(1,exp(DE/kB*T)). The template represents the return
+    // type of DrawSample from model, which should typically be Site.
     template <typename T>
     class NVTEnsemble : public Ensemble<T>
     {
@@ -14,15 +18,15 @@ namespace Ensembles
           // Temperature (K) (Sometimes reduced).
           double _temperature;
 
-          // "Normalized" Boltzmann constant
+          // "Normalized" Boltzmann constant.
           double _kb = 1.0;
 
         public:
-            using Ensemble<T>::Ensemble;
+            NVTEnsemble(BaseModel& model, double temperature) :
+            Ensemble<T>(model), _temperature(temperature) {}
 
             void Iterate()
             {
-
                 // Draw sample and evaluate Hamiltonian
                 auto sample = this->model.DrawSample();
                 double prevH = this->model.EvaluateHamiltonian(*sample);
@@ -34,6 +38,7 @@ namespace Ensembles
                 // Get new Hamiltonian.
                 double currH = this->model.EvaluateHamiltonian(*sample);
 
+                // Check probabilities.
                 if(AcceptanceProbability(prevH, currH) < this->model.GetRandomUniformProbability())
                 {
                     for(auto &move : this->moves)
@@ -47,7 +52,7 @@ namespace Ensembles
             double AcceptanceProbability(double prevH, double currH)
             {
               auto p =
-                    exp(-(currH - prevH) / (this->GetBoltzmannConstant() * this->GetTemperature()));
+                    exp(-(currH - prevH) / (GetBoltzmannConstant() * GetTemperature()));
 
               return p > 1 ? 1 : p;
             }

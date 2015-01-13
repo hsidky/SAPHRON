@@ -75,3 +75,24 @@ TEST(BaseModel, ConstantSiteReference)
 	ASSERT_EQ(-3.0, site->GetZUnitVector());
 	ASSERT_EQ(5010, b.GetSiteCount());
 }
+
+// Test that base model returns a proper reference and not a cloned object.
+TEST(BaseModel, DrawSample)
+{
+	MockBaseModel b(10, 1);
+
+	auto site = b.DrawSample();
+
+	// Make unique change to referenced site.
+	site->SetZUnitVector(-3.0);
+
+	int found = 0;
+	for(int i =0 ; i< b.GetSiteCount(); i++)
+	{
+		auto select = b.SelectSite(i);
+		if(select->GetZUnitVector() == -3.0)
+			found = 1;
+	}
+
+	ASSERT_EQ(1, found);
+}

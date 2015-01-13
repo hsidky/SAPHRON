@@ -54,9 +54,9 @@ namespace Ensembles
             }
 
             // Adds a move to the end of the move queue.
-            void AddMove(Move<T>* move)
+            void AddMove(Move<T>& move)
             {
-                return moves.push_back(move);
+                return moves.push_back(&move);
             }
 
             // Removes a move from the end of the move queue.
