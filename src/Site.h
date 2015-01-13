@@ -21,7 +21,7 @@ class Site
 
 	public:
 		// Initializes a site at given coordinates.
-		Site(double x, double y, double z): x(x), y(y), z(z) {};
+		Site(double x, double y, double z) : x(x), y(y), z(z) {};
 
 		// Gets x coordinate.
 		double GetXCoordinate()
