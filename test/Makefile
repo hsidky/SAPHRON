@@ -12,11 +12,11 @@ CPPFLAGS += -isystem $(GTEST_DIR)/include
 CXXFLAGS += -g -Wall -Wextra -pthread -std=c++11 -O3
 
 # Build dependencies
-DEPS  = $(BUILD_DIR)/Ising3DModel.o
+DEPS  = $(BUILD_DIR)/Lattice3DModel.o
 
 # All tests produced by this Makefile.
 TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \
-				FlipSpinMoveTests.out NVTEnsembleTests.out
+				FlipSpinMoveTests.out NVTEnsembleTests.out CSVLoggerTests.out
 
 # Google Test libs to link against.
 GTEST_LIBS = $(GTEST_DIR)/lib/libgtest.a $(GTEST_DIR)/lib/libgtest_main.a
@@ -25,7 +25,7 @@ GTEST_LIBS = $(GTEST_DIR)/lib/libgtest.a $(GTEST_DIR)/lib/libgtest_main.a
 all : $(DEPS) $(TESTS)
 
 clean :
-	rm -f $(TESTS) $(BUILD_DIR)/*.o
+	rm -f $(TESTS) $(BUILD_DIR)/*.o *.csv
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/Models/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
@@ -39,5 +39,11 @@ $(BUILD_DIR)/%Tests.o: %Tests.cpp
 %Tests.out: $(BUILD_DIR)/%Tests.o $(GTEST_LIBS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $(wildcard $(BUILD_DIR)/$*.o) $^ -o $@
 
-NVTEnsembleTests.out: $(BUILD_DIR)/NVTEnsembleTests.o $(GTEST_LIBS) $(BUILD_DIR)/Ising3DModel.o
+Ising3DModelTests.out: $(BUILD_DIR)/Ising3DModelTests.o $(GTEST_LIBS) $(BUILD_DIR)/Lattice3DModel.o
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+NVTEnsembleTests.out: $(BUILD_DIR)/NVTEnsembleTests.o $(GTEST_LIBS) $(BUILD_DIR)/Lattice3DModel.o
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+CSVLoggerTests.out: $(BUILD_DIR)/CSVLoggerTests.o $(GTEST_LIBS) $(BUILD_DIR)/Lattice3DModel.o
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@

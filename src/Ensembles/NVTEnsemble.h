@@ -31,12 +31,11 @@ namespace Ensembles
 			// where "n" is the number of sites in a model.
 			void Sweep()
 			{
-				this->RunThermalLoggers();
+				this->RunLoggers();
 
 				for(int i = 0; i < this->model.GetSiteCount(); i++)
 					Iterate();
 
-				this->FlushAggregateLoggers();
 				this->IncrementSweeps();
 			}
 
@@ -62,7 +61,6 @@ namespace Ensembles
 					for(auto &move : this->moves)
 						move->Undo();
 
-				this->RunAggregateLoggers(*sample);
 				this->IncrementIterations();
 			};
 

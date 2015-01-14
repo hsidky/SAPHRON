@@ -1,15 +1,15 @@
-#include "Ising3DModel.h"
+#include "Lattice3DModel.h"
 #include <cmath>
 
 namespace Models
 {
-	// Initializes Ising3D with a given lattice size (the length of a
+	// Initializes Lattice3D with a given lattice size (the length of a
 	// dimension) and random number seed. The number of sites is the
 	// cube of the size. So for a lattice size of 3, there are 9 sites.
 	// The sites are initialized on a lattice including positions,
 	// nearest neighbors and spins. The default BaseModel parameters
 	// are used.
-	Ising3DModel::Ising3DModel(int latticeSize, int seed) :
+	Lattice3DModel::Lattice3DModel(int latticeSize, int seed) :
 		BaseModel(latticeSize * latticeSize * latticeSize, seed), _latticeSize(latticeSize)
 	{
 		// Length of lattice side
@@ -62,30 +62,5 @@ namespace Models
 			y += floor(z / n);
 			z += 1.0;
 		}
-	}
-
-	// Evaluates the Ising Hamiltonian for a given site using the formula
-	// H = -J*sum(si*sj) where si is the spin for the site at index. Since outside
-	// the "sphere of influence" the interaction energy doesn't change (i.e. only
-	// two body interactions), we only need to evaluate nearest neighbors.
-	double Ising3DModel::EvaluateHamiltonian(int index)
-	{
-		return this->EvaluateHamiltonian(Sites[index]);
-	}
-
-	// Evaluates the Ising Hamiltonian for a given site using the formula
-	// H = -J*sum(si*sj). Since outside the "sphere of influence" the interaction
-	// energy doesn't change (i.e. only two body interactions), we only need to
-	// evaluate nearest neighbors.
-	double Ising3DModel::EvaluateHamiltonian(Site& site)
-	{
-		double h = 0;
-		auto si = site.GetZUnitVector();
-		for(int &nindex : site.GetNeighbors())
-			// Force only -1 or 1 to prevent drift.
-			h += si * Sites[nindex].GetZUnitVector() < 0 ? -1.0 : 1.0;
-
-		h *= -1 * this->GetInteractionParameter();
-		return h;
 	}
 }
