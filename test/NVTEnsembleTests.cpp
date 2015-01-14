@@ -31,11 +31,11 @@ TEST(NVTEnsemble, IsingModelMagnetization)
 	};
 
 	// Add magnetization to logger.
-	l.AddLoggableProperty(magnetization);
+	l.AddThermalProperty(magnetization);
 	s.AddLogger(l);
 	s.AddMove(move);
 
-	// Iteratte
+	// Iterate
 	for(int i = 0; i < 100; i++)
 		s.Sweep();
 
@@ -44,7 +44,7 @@ TEST(NVTEnsemble, IsingModelMagnetization)
 	// Change temperature
 	s.SetTemperature(5.0);
 
-	// Iteratte
+	// Iterate
 	for(int i = 0; i < 100; i++)
 		s.Sweep();
 

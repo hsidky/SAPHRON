@@ -13,4 +13,10 @@ class MockLogger : public Logger
 			for(auto &prop : this->ThermalProps)
 				prop(model);
 		}
+
+		void FlushRunningAverages(int count)
+		{
+			for(double& avg : this->ThermalAverages)
+				avg /= count;
+		}
 };

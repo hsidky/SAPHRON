@@ -12,7 +12,15 @@ namespace Loggers
 			void LogThermalProperties(BaseModel& model)
 			{
 				for(auto &prop : this->ThermalProps)
-					std::cout << "Magnetization: " << prop(model) << std::endl;
+					prop(model);
+			}
+
+			void FlushRunningAverages(int count)
+			{
+				for(double& avg : this->ThermalAverages)
+				{
+						avg /= count;
+				}
 			}
 	};
 }

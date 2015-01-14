@@ -97,10 +97,25 @@ namespace Ensembles
 			}
 
 			// Executes all loggers in log queue.
-			void RunLoggers()
+			void RunThermalLoggers()
 			{
 				for(auto &logger : _loggers)
 					logger->LogThermalProperties(model);
+			}
+
+			void RunAggregateLoggers(Site& site)
+			{
+					for(auto &logger : _loggers)
+						logger->LogRunningAverages(site);
+			}
+
+			void FlushAggregateLoggers()
+			{
+					for(auto &logger : _loggers)
+					{
+						logger->FlushRunningAverages(this->model.GetSiteCount());
+						logger->ResetRunningAverages();
+					}
 			}
 
 			// Get number of sweeps. A sweep is defined as "n" iterations, where
