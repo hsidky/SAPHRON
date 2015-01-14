@@ -2,7 +2,7 @@
 
 #include "../Rand.h"
 #include "../Site.h"
-#include <math.h>
+#include <cmath>
 #include <vector>
 
 namespace Models

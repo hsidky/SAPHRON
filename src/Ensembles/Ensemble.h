@@ -105,17 +105,17 @@ namespace Ensembles
 
 			void RunAggregateLoggers(Site& site)
 			{
-					for(auto &logger : _loggers)
-						logger->LogRunningAverages(site);
+				for(auto &logger : _loggers)
+					logger->LogRunningAverages(site);
 			}
 
 			void FlushAggregateLoggers()
 			{
-					for(auto &logger : _loggers)
-					{
-						logger->FlushRunningAverages(this->model.GetSiteCount());
-						logger->ResetRunningAverages();
-					}
+				for(auto &logger : _loggers)
+				{
+					logger->FlushRunningAverages(this->model.GetSiteCount());
+					logger->ResetRunningAverages();
+				}
 			}
 
 			// Get number of sweeps. A sweep is defined as "n" iterations, where

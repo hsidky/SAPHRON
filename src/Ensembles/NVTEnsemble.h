@@ -2,7 +2,6 @@
 
 #include "../Models/BaseModel.h"
 #include "Ensemble.h"
-#include <iostream>
 
 namespace Ensembles
 {
@@ -35,9 +34,7 @@ namespace Ensembles
 				this->RunThermalLoggers();
 
 				for(int i = 0; i < this->model.GetSiteCount(); i++)
-				{
 					Iterate();
-				}
 
 				this->FlushAggregateLoggers();
 				this->IncrementSweeps();
