@@ -8,32 +8,32 @@ namespace Loggers
 {
 	class ConsoleLogger : public Logger
 	{
-		public:
-			void LogThermalPropertiesInternal(BaseModel& model)
+		protected:
+			void LogModelPropertiesInternal(BaseModel& model)
 			{
-				int i = this->ThermalProps.size();
-				for(auto &prop : this->ThermalProps)
+				int i = this->ModelProps.size();
+				for(auto &prop : this->ModelProps)
 					std::cout << prop.first << ": "
 					          << prop.second(model)
 					          << ((--i > 0) ? ", " : "\n");
 			}
 
-			void FlushRunningAveragesInternal(int count)
+			void LogSitePropertiesInternal(Site& site, bool end)
 			{
-				for(double& avg : this->RunningAverages)
-					avg /= count;
-
 				// Print thermal averages.
-				int i = 0, m = this->AggregateProps.size();
-				for(auto &prop : this->AggregateProps)
+				int i = 0, m = this->SiteProps.size();
+				for(auto &prop : this->SiteProps)
 				{
 					std::cout << prop.first << ": "
-					          << this->RunningAverages[i]
+					          << prop.second(site)
 					          << ((i < m - 1) ? ", " : "\n");
 					i++;
 				}
+			}
 
-				this->ResetRunningAverages();
+		public:
+			void FlushLog()
+			{
 			}
 	};
 }

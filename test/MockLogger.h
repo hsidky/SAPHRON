@@ -8,18 +8,22 @@ using namespace Loggers;
 
 class MockLogger : public Logger
 {
-	public:
-		MockLogger(int frequency = 1) : Logger(frequency){}
-
-		void LogThermalPropertiesInternal(BaseModel& model)
+	protected:
+		void LogModelPropertiesInternal(BaseModel& model)
 		{
-			for(auto &prop : this->ThermalProps)
+			for(auto &prop : this->ModelProps)
 				prop.second(model);
 		}
 
-		void FlushRunningAveragesInternal(int count)
+		void LogSitePropertiesInternal(Site& site, bool end)
 		{
-			for(double& avg : this->RunningAverages)
-				avg /= count;
+			// Print thermal averages.
+			for(auto &prop : this->SiteProps)
+				prop.second(site);
+		}
+
+	public:
+		void FlushLog()
+		{
 		}
 };

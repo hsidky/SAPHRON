@@ -16,30 +16,24 @@ namespace Loggers
 	{
 		private:
 			// Number of calls to the logger.
-			int _avgcalls, _thermcalls = 0;
+			int _calls = 0;
 
 			// Frequency with which to write logs (every "n" iterations).
 			int _frequency = 1;
 
 		protected:
 
-			// Functions that evaluate aggreate properties. These are called every
-			// iteration. After each sweep, FlushRunningAverages is called to record
-			// the data to logger output.
-			std::map<std::string, std::function<void(Site&, double&)> > AggregateProps;
+			// Vector of site property callbacks.
+			std::map<std::string, std::function<double(Site&)> > SiteProps;
 
-			// Functions that evaluate thermal averaged properties. These are aggregates
-			// that are calculated after each sweep.
-			std::map<std::string, std::function<double(BaseModel&)> > ThermalProps;
+			// Vector of model property callbacks.
+			std::map<std::string, std::function<double(BaseModel&)> > ModelProps;
 
-			// Vector of running averages averages.
-			std::vector<double> RunningAverages;
+			// Actual implmenentation of logging model properties in derived classes.
+			virtual void LogModelPropertiesInternal(BaseModel& model) = 0;
 
-			// Actual implementation of flushing averages in derived classes.
-			virtual void FlushRunningAveragesInternal(int count) = 0;
-
-			// Actual implmenentation of logging thermal properties in derived classes.
-			virtual void LogThermalPropertiesInternal(BaseModel& model) = 0;
+			// Actual implementation of logging site properties in derived classes.
+			virtual void LogSitePropertiesInternal(Site& site, bool end) = 0;
 
 		public:
 
@@ -47,69 +41,55 @@ namespace Loggers
 			// every 'frequency' calls to the logger it will actually log.
 			Logger(int frequency = 1) : _frequency(frequency){}
 
-			// Adds a function to the thermal property logger queue.
-			void AddThermalProperty(std::string key,
-			                        std::function<double(BaseModel&)> prop)
+			// Adds a function the model properties queue.
+			void AddModelProperty(std::string key,
+			                      std::function<double(BaseModel&)> prop)
 			{
-				ThermalProps.insert(
+				ModelProps.insert(
 				        std::pair <std::string,
 				                   std::function<double(BaseModel&)> >
 				                (key, prop));
 			}
 
-			// Add an aggregate property to the queue.
-			void AddAggregateProperty(std::string key,
-			                          std::function<void(Site&, double&)> prop)
+			// Add a site property to the model properties queue.
+			void AddSiteProperty(std::string key,
+			                     std::function<double(Site&)> prop)
 			{
-				AggregateProps.insert(
+				SiteProps.insert(
 				        std::pair <std::string,
-				                   std::function<void(Site&, double&)> >
+				                   std::function<double(Site&)> >
 				                (key, prop));
-
-				// Resize thermal averages vector.
-				RunningAverages.resize(AggregateProps.size());
 			}
 
 			// Run through the thermal properties queue and log functions.
-			void LogThermalProperties(BaseModel& model)
+			void LogProperties(BaseModel& model)
 			{
-				if(_thermcalls++ % _frequency == 0)
-					this->LogThermalPropertiesInternal(model);
-			};
-
-			// Logs a property of a site each iteration (hence "running"). This is
-			// excecuted every iteration after sampling has taken place. "avg" is the
-			// variable containing the running property average. After aggregating a
-			// running average, it must be flushed to be written to the logger.
-			// If a new average is desired, ResetRunningAverages must be called.
-			void LogRunningAverages(Site& site)
-			{
-				int i = 0;
-				for(auto &prop : AggregateProps)
+				if(_calls++ % _frequency == 0)
 				{
-					prop.second(site, RunningAverages[i]);
-					i++;
+					int c = model.GetSiteCount();
+					this->LogModelPropertiesInternal(model);
+					for(int i = 0; i < c; i++)
+						this->LogSitePropertiesInternal(
+						        *model.SelectSite(i), i == c);
+
+					// Fush log
+					this->FlushLog();
 				}
 			};
 
-			// Resets the running averages.
-			void ResetRunningAverages()
-			{
-				for(size_t i = 0; i < RunningAverages.size(); i++)
-					RunningAverages[i] = 0.0;
-			}
-
 			// Flush the running average to the log.
-			void FlushRunningAverages(int count)
+			virtual void FlushLog() = 0;
+
+			// Gets the number of times logger was called.
+			int GetCallCount()
 			{
-				if(_avgcalls++ % _frequency == 0)
-					this->FlushRunningAveragesInternal(count);
-			};
+				return _calls;
+			}
 
 			// Resets the call count.
 			void ResetCallCount()
 			{
-				_avgcalls = _thermcalls = 0;
+				_calls = 0;
 			}
 	};
 }
