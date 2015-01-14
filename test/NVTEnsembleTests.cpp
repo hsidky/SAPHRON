@@ -31,7 +31,7 @@ TEST(NVTEnsemble, IsingModelMagnetization)
 	};
 
 	// Add magnetization to logger.
-	l.AddThermalProperty(magnetization);
+	l.AddThermalProperty("Magnetization", magnetization);
 	s.AddLogger(l);
 	s.AddMove(move);
 
