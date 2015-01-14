@@ -9,7 +9,7 @@ namespace Loggers
 	class ConsoleLogger : public Logger
 	{
 		public:
-			void LogThermalProperties(BaseModel& model)
+			void LogThermalPropertiesInternal(BaseModel& model)
 			{
 				int i = this->ThermalProps.size();
 				for(auto &prop : this->ThermalProps)
@@ -18,9 +18,9 @@ namespace Loggers
 					          << ((--i > 0) ? ", " : "\n");
 			}
 
-			void FlushRunningAverages(int count)
+			void FlushRunningAveragesInternal(int count)
 			{
-				for(double& avg : this->ThermalAverages)
+				for(double& avg : this->RunningAverages)
 					avg /= count;
 
 				// Print thermal averages.
@@ -28,10 +28,12 @@ namespace Loggers
 				for(auto &prop : this->AggregateProps)
 				{
 					std::cout << prop.first << ": "
-					          << this->ThermalAverages[i]
+					          << this->RunningAverages[i]
 					          << ((i < m - 1) ? ", " : "\n");
 					i++;
 				}
+
+				this->ResetRunningAverages();
 			}
 	};
 }

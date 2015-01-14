@@ -9,15 +9,17 @@ using namespace Loggers;
 class MockLogger : public Logger
 {
 	public:
-		void LogThermalProperties(BaseModel& model)
+		MockLogger(int frequency = 1) : Logger(frequency){}
+
+		void LogThermalPropertiesInternal(BaseModel& model)
 		{
 			for(auto &prop : this->ThermalProps)
 				prop.second(model);
 		}
 
-		void FlushRunningAverages(int count)
+		void FlushRunningAveragesInternal(int count)
 		{
-			for(double& avg : this->ThermalAverages)
+			for(double& avg : this->RunningAverages)
 				avg /= count;
 		}
 };
