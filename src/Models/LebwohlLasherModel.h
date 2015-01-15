@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lattice3DModel.h"
+#include <numeric>
 
 namespace Models
 {
@@ -29,13 +30,11 @@ namespace Models
 				// Cos Ɵ is also the dot product between the two vectors
 				for(int &nindex : site.GetNeighbors())
 				{
-					double hij = 0;
 					auto sj = Sites[nindex].GetUnitVectors();
-					for(int i = 0; i < 3; i++)
-						hij += si[i] * sj[i];
-
+					double dot =  std::inner_product(si.begin(), si.end(),
+					                                 sj.begin(), 0.0);
 					// P2 Legendre polynomial
-					h += 0.5 * (3.0 * hij * hij - 1.0);
+					h += 0.5*(3.0*dot*dot - 1.0);
 				}
 
 				return -1 * this->GetInteractionParameter() * h;

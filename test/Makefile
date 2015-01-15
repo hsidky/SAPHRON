@@ -17,7 +17,7 @@ DEPS  = $(BUILD_DIR)/Lattice3DModel.o
 # All tests produced by this Makefile.
 TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \
 	    FlipSpinMoveTests.out NVTEnsembleTests.out CSVLoggerTests.out \
-		LebwohlLasherModelTests.out
+		LebwohlLasherModelTests.out SphereUnitVectorMoveTests.out
 
 
 # Google Test libs to link against.
