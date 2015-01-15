@@ -1,6 +1,5 @@
 #include "../src/Models/Ising3DModel.h"
 #include "gtest/gtest.h"
-#include <iostream>
 
 using namespace Models;
 

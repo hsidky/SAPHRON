@@ -16,7 +16,9 @@ DEPS  = $(BUILD_DIR)/Lattice3DModel.o
 
 # All tests produced by this Makefile.
 TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \
-				FlipSpinMoveTests.out NVTEnsembleTests.out CSVLoggerTests.out
+	    FlipSpinMoveTests.out NVTEnsembleTests.out CSVLoggerTests.out \
+		LebwohlLasherModelTests.out
+
 
 # Google Test libs to link against.
 GTEST_LIBS = $(GTEST_DIR)/lib/libgtest.a $(GTEST_DIR)/lib/libgtest_main.a
@@ -36,14 +38,5 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 $(BUILD_DIR)/%Tests.o: %Tests.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
-%Tests.out: $(BUILD_DIR)/%Tests.o $(GTEST_LIBS)
+%Tests.out: $(BUILD_DIR)/%Tests.o $(GTEST_LIBS) $(BUILD_DIR)/Lattice3DModel.o
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $(wildcard $(BUILD_DIR)/$*.o) $^ -o $@
-
-Ising3DModelTests.out: $(BUILD_DIR)/Ising3DModelTests.o $(GTEST_LIBS) $(BUILD_DIR)/Lattice3DModel.o
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
-
-NVTEnsembleTests.out: $(BUILD_DIR)/NVTEnsembleTests.o $(GTEST_LIBS) $(BUILD_DIR)/Lattice3DModel.o
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
-
-CSVLoggerTests.out: $(BUILD_DIR)/CSVLoggerTests.o $(GTEST_LIBS) $(BUILD_DIR)/Lattice3DModel.o
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
