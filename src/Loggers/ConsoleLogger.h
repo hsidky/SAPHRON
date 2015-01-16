@@ -18,7 +18,7 @@ namespace Loggers
 					          << ((--i > 0) ? ", " : "\n");
 			}
 
-			void LogSitePropertiesInternal(Site& site, bool end)
+			void LogSitePropertiesInternal(Site& site)
 			{
 				// Print thermal averages.
 				int i = 0, m = this->SiteProps.size();
@@ -32,6 +32,10 @@ namespace Loggers
 			}
 
 		public:
+
+			// Use base logger constructor.
+			using Logger::Logger;
+
 			void FlushLog()
 			{
 			}

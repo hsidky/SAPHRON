@@ -22,7 +22,7 @@ namespace Loggers
 					         << ((--i > 0) ? "," : "\n");
 			}
 
-			void LogSitePropertiesInternal(Site& site, bool end)
+			void LogSitePropertiesInternal(Site& site)
 			{
 				_sitefs << this->GetCallCount() << ",";
 

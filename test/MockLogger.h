@@ -15,7 +15,7 @@ class MockLogger : public Logger
 				prop.second(model);
 		}
 
-		void LogSitePropertiesInternal(Site& site, bool end)
+		void LogSitePropertiesInternal(Site& site)
 		{
 			// Print thermal averages.
 			for(auto &prop : this->SiteProps)

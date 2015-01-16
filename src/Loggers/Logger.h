@@ -33,7 +33,7 @@ namespace Loggers
 			virtual void LogModelPropertiesInternal(BaseModel& model) = 0;
 
 			// Actual implementation of logging site properties in derived classes.
-			virtual void LogSitePropertiesInternal(Site& site, bool end) = 0;
+			virtual void LogSitePropertiesInternal(Site& site) = 0;
 
 		public:
 
@@ -70,7 +70,7 @@ namespace Loggers
 					this->LogModelPropertiesInternal(model);
 					for(int i = 0; i < c; i++)
 						this->LogSitePropertiesInternal(
-						        *model.SelectSite(i), i == c);
+						        *model.SelectSite(i));
 
 					// Fush log
 					this->FlushLog();

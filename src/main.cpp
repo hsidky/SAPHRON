@@ -1,7 +1,8 @@
 #include "Ensembles/NVTEnsemble.h"
 #include "Loggers/CSVLogger.h"
-#include "Models/Ising3DModel.h"
-#include "Moves/FlipSpinMove.h"
+#include "Loggers/ConsoleLogger.h"
+#include "Models/LebwohlLasherModel.h"
+#include "Moves/SphereUnitVectorMove.h"
 #include <iostream>
 #include <sstream>
 
@@ -9,14 +10,15 @@ using namespace std;
 
 int main (int argc, char const* argv[])
 {
-	if(argc != 4)
+	if(argc != 6)
 	{
 		cerr << "Program syntax:" << argv[0] <<
-		" lattice-size temperature model-outputfile site-outputfile" << endl;
+		" lattice-size temperature iterations model-outputfile site-outputfile" << endl;
 		return 0;
 	}
 
 	int latticeSize;
+	int iterations;
 	double temperature;
 	string outputModel, outputSites;
 	stringstream ss;
@@ -30,27 +32,48 @@ int main (int argc, char const* argv[])
 	ss.clear();
 	ss.str(argv[2]);
 	if(!(ss >> temperature))
-		cerr << "Invalid temperature. Must be an double." << endl;
+		cerr << "Invalid temperature. Must be a double." << endl;
 
 	ss.clear();
 	ss.str(argv[3]);
-	if(!(ss >> outputModel))
-		cerr << "Invalid output file. Must be an string." << endl;
+	if(!(ss >> iterations))
+		cerr << "Invalid iterations. Must be an integer." << endl;
 
 	ss.clear();
 	ss.str(argv[4]);
+	if(!(ss >> outputModel))
+		cerr << "Invalid output file. Must be a string." << endl;
+
+	ss.clear();
+	ss.str(argv[5]);
 	if(!(ss >> outputSites))
-		cerr << "Invalid output file. Must be an string." << endl;
+		cerr << "Invalid output file. Must be a string." << endl;
 
 	// Initialize model.
-	Models::Ising3DModel model(latticeSize);
-	Moves::FlipSpinMove move;
-	Loggers::CSVLogger logger(outputModel, outputSites);
+	Models::LebwohlLasherModel model(latticeSize);
+	Moves::SphereUnitVectorMove move;
+	Loggers::ConsoleLogger logger(100);
+	Ensembles::NVTEnsemble<Site> ensemble(model, temperature);
 
+	// Energy
+	auto energy = [] (BaseModel& model) {
+		double u = 0;
+		int c = model.GetSiteCount();
+		for(int i = 0; i < c; i++)
+			u += model.EvaluateHamiltonian(i);
+		u /= 2*c;
+		return u;
+	};
 	// Add loggable data
-	// Coordinates
+	logger.AddModelProperty("Energy", energy);
 
-	// Write headers
+	// Add logger and move to ensemble.
+	ensemble.AddLogger(logger);
+	ensemble.AddMove(move);
+
+	// Iterate
+	for(int i = 0; i < iterations; i++)
+		ensemble.Sweep();
 
 	return 0;
 }
