@@ -18,6 +18,9 @@ all : $(OBJECTS) $(TARGET)
 test:
 	@echo $(SOURCES)
 
+install: $(TARGET)
+	install $(BIN_DIR)/$(TARGET) ~/bin
+
 clean :
 	rm -f $(BIN_DIR)/* $(BUILD_DIR)/*.o
 
