@@ -24,10 +24,14 @@ namespace Loggers
 
 			void LogSitePropertiesInternal(Site& site)
 			{
+				int m = this->SiteProps.size();
+				if(m < 1)
+					return;
+					
 				_sitefs << this->GetCallCount() << ",";
 
 				// Write site properties.
-				int i = 0, m = this->SiteProps.size();
+				int i = 0;
 				for(auto &prop : this->SiteProps)
 				{
 					_sitefs << prop.second(site, this->EnsembleProps)

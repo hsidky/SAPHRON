@@ -26,13 +26,14 @@ namespace Models
 			{
 				double h = 0;
 
-				auto si = site.GetUnitVectors();
-				// Cos Ɵ is also the dot product between the two vectors
+				auto& si = site.GetUnitVectors();
 				for(int &nindex : site.GetNeighbors())
 				{
-					auto sj = Sites[nindex].GetUnitVectors();
-					double dot =  std::inner_product(si.begin(), si.end(),
-					                                 sj.begin(), 0.0);
+					auto& sj = Sites[nindex].GetUnitVectors();
+					double dot = 0;
+					for(size_t i = 0; i < sj.size(); i++)
+						dot += si[i]*sj[i];
+
 					// P2 Legendre polynomial
 					h += 0.5*(3.0*dot*dot - 1.0);
 				}

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Rand.h"
 #include "../Site.h"
 #include "Move.h"
 #include <cmath>
@@ -15,23 +16,27 @@ namespace Moves
 		private:
 			Site* _site;
 			std::vector<double> _uBefore;
-			std::mt19937_64 generator;
-			std::uniform_real_distribution<double> distribution;
+			Rand rand;
 
 		public:
-			SphereUnitVectorMove() : distribution(0.0, 1.0){}
+			SphereUnitVectorMove() : _uBefore(3), rand(3){}
 
 			// Selects a new random vector on a sphere.
 			void Perform(Site& site)
 			{
 				_site = &site;
-				_uBefore = _site->GetUnitVectors();
 
+				// Record previous locations.
+				auto& uv = _site->GetUnitVectors();
+				for(int i = 0; i < 3; i++)
+					_uBefore[i] = uv[i];
+
+				// Get new unit vector.
 				double v3 = 0;
 				do
 				{
-					double v1 = distribution(generator);
-					double v2 = distribution(generator);
+					double v1 = rand.doub();
+					double v2 = rand.doub();
 					v1 = 1 - 2 * v1;
 					v2 = 1 - 2 * v2;
 					v3 = v1*v1 + v2*v2;

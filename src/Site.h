@@ -9,8 +9,10 @@ class Site
 		// Site coordinates.
 		double x, y, z;
 
+		std::vector<double> u = {0.0,0.0,0.0};
+
 		// Site unit vectors.
-		double ux = 0, uy = 0, uz = 0;
+		//double ux = 0, uy = 0, uz = 0;
 
 		// Site species
 		int species = 0;
@@ -76,51 +78,51 @@ class Site
 		// Get x unit vector.
 		double GetXUnitVector()
 		{
-			return ux;
+			return u[0];
 		}
 
 		// Sets the x unit vector.
 		double SetXUnitVector(double newux)
 		{
-			return ux = newux;
+			return u[0] = newux;
 		}
 
 		// Get y unit vector.
 		double GetYUnitVector()
 		{
-			return uy;
+			return u[1];
 		}
 
 		// Sets the y unit vector.
 		double SetYUnitVector(double newuy)
 		{
-			return uy = newuy;
+			return u[1] = newuy;
 		}
 
 		// Get z unit vector.
 		double GetZUnitVector()
 		{
-			return uz;
+			return u[2];
 		}
 
 		// Sets the z unit vector.
 		double SetZUnitVector(double newuz)
 		{
-			return uz = newuz;
+			return u[2] = newuz;
 		}
 
 		// Gets the unit vectors
-		std::vector<double> GetUnitVectors()
+		std::vector<double>& GetUnitVectors()
 		{
-			return {ux, uy, uz};
+			return u;
 		}
 
 		// Sets all unit vectors simultaneously.
 		void SetUnitVectors(double newux, double newuy, double newuz)
 		{
-			ux = newux;
-			uy = newuy;
-			uz = newuz;
+			u[0] = newux;
+			u[1] = newuy;
+			u[2] = newuz;
 		}
 
 		// Gets species type.
@@ -136,7 +138,7 @@ class Site
 		}
 
 		// Gets site neighbors.
-		std::vector<int> GetNeighbors()
+		std::vector<int>& GetNeighbors()
 		{
 			return neighbors;
 		}
