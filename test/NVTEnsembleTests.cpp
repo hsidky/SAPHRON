@@ -20,7 +20,7 @@ TEST(NVTEnsemble, IsingModelMagnetization)
 
 	// Lambda function for logger
 	double fm = 0;
-	auto magnetization = [&fm] (BaseModel & model) {
+	auto magnetization = [&fm] (BaseModel & model, EnsembleProperty&) {
 		double m = 0.0;
 		auto c = model.GetSiteCount();
 		for(int i = 0; i < c; i++)

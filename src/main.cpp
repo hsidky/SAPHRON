@@ -1,8 +1,8 @@
 #include "Ensembles/NVTEnsemble.h"
 #include "Loggers/CSVLogger.h"
-#include "Loggers/ConsoleLogger.h"
 #include "Models/LebwohlLasherModel.h"
 #include "Moves/SphereUnitVectorMove.h"
+#include <cmath>
 #include <iostream>
 #include <sstream>
 
@@ -52,11 +52,11 @@ int main (int argc, char const* argv[])
 	// Initialize model.
 	Models::LebwohlLasherModel model(latticeSize);
 	Moves::SphereUnitVectorMove move;
-	Loggers::ConsoleLogger logger(100);
+	Loggers::CSVLogger logger(outputModel, outputSites, 100);
 	Ensembles::NVTEnsemble<Site> ensemble(model, temperature);
 
 	// Energy
-	auto energy = [] (BaseModel& model) {
+	auto energy = [] (BaseModel& model, EnsembleProperty&) {
 		double u = 0;
 		int c = model.GetSiteCount();
 		for(int i = 0; i < c; i++)
@@ -64,12 +64,31 @@ int main (int argc, char const* argv[])
 		u /= 2*c;
 		return u;
 	};
+
+	auto cv = [] (BaseModel& model, EnsembleProperty& eprop) {
+		double u = 0;
+		double u2 = 0;
+		int c = model.GetSiteCount();
+		for(int i = 0; i < c; i++)
+		{
+			auto h = model.EvaluateHamiltonian(i);
+			u += h;
+			u2 += pow(h,2);
+		}
+
+		u2 /= 2*c;
+		u /= 2*c;
+		return (u2-u*u)/(eprop["T"]*eprop["kb"]);
+	};
 	// Add loggable data
 	logger.AddModelProperty("Energy", energy);
+	logger.AddModelProperty("Cv", cv);
 
 	// Add logger and move to ensemble.
 	ensemble.AddLogger(logger);
 	ensemble.AddMove(move);
+
+	logger.WriteHeaders();
 
 	// Iterate
 	for(int i = 0; i < iterations; i++)

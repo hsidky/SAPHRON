@@ -20,7 +20,7 @@ TEST(CSVLogger, CSVFormatting)
 
 	// Lambda function for logger
 	double fm = 0;
-	auto magnetization = [&fm] (BaseModel & model) {
+	auto magnetization = [&fm] (BaseModel & model, EnsembleProperty&) {
 		double m = 0.0;
 		auto c = model.GetSiteCount();
 		for(int i = 0; i < c; i++)
@@ -32,13 +32,17 @@ TEST(CSVLogger, CSVFormatting)
 
 	// Add magnetization to logger.
 	l.AddModelProperty("Magnetization", magnetization);
-	l.AddSiteProperty("Spin", [] (Site & site){ return site.GetZUnitVector();
+	l.AddSiteProperty("Spin",
+	                  [] (Site & site, EnsembleProperty&){ return site.GetZUnitVector();
 			  });
-	l.AddSiteProperty("z-coordinate", [] (Site & site){ return site.GetZCoordinate();
+	l.AddSiteProperty("z-coordinate",
+	                  [] (Site & site, EnsembleProperty&){ return site.GetZCoordinate();
 			  });
-	l.AddSiteProperty("y-coordinate", [] (Site & site){ return site.GetYCoordinate();
+	l.AddSiteProperty("y-coordinate",
+	                  [] (Site& site, EnsembleProperty&){ return site.GetYCoordinate();
 			  });
-	l.AddSiteProperty("x-coordinate", [] (Site & site){ return site.GetXCoordinate();
+	l.AddSiteProperty("x-coordinate",
+	                  [] (Site& site,  EnsembleProperty&){ return site.GetXCoordinate();
 			  });
 
 	s.AddLogger(l);

@@ -18,7 +18,7 @@ namespace Loggers
 				_modelfs << this->GetCallCount() << ",";
 				int i = this->ModelProps.size();
 				for(auto &prop : this->ModelProps)
-					_modelfs << prop.second(model)
+					_modelfs << prop.second(model, this->EnsembleProps)
 					         << ((--i > 0) ? "," : "\n");
 			}
 
@@ -30,7 +30,7 @@ namespace Loggers
 				int i = 0, m = this->SiteProps.size();
 				for(auto &prop : this->SiteProps)
 				{
-					_sitefs << prop.second(site)
+					_sitefs << prop.second(site, this->EnsembleProps)
 					        << ((i < m - 1) ? "," : "\n");
 					i++;
 				}

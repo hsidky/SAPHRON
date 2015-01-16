@@ -20,6 +20,13 @@ namespace Ensembles
 			// "Normalized" Boltzmann constant.
 			double _kb = 1.0;
 
+		protected:
+			void RegisterLoggableProperties(Logger& logger)
+			{
+				logger.AddEnsembleProperty("T", _temperature);
+				logger.AddEnsembleProperty("kb", _kb);
+			}
+
 		public:
 			// Initializes NVTEnsemble for a model at a given "reduced" temperature.
 			NVTEnsemble(BaseModel& model, double temperature) :

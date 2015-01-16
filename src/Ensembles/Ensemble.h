@@ -51,6 +51,9 @@ namespace Ensembles
 				return _iterations += num;
 			}
 
+			// Function registers ensemble properties.
+			virtual void RegisterLoggableProperties(Logger& logger) = 0;
+
 		public:
 			Ensemble (BaseModel& model) : model(model) {};
 
@@ -88,6 +91,7 @@ namespace Ensembles
 			void AddLogger(Logger& logger)
 			{
 				_loggers.push_back(&logger);
+				this->RegisterLoggableProperties(logger);
 			}
 
 			// Remove logger from the end of the logger queue.

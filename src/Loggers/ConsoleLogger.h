@@ -14,7 +14,7 @@ namespace Loggers
 				int i = this->ModelProps.size();
 				for(auto &prop : this->ModelProps)
 					std::cout << prop.first << ": "
-					          << prop.second(model)
+					          << prop.second(model, this->EnsembleProps)
 					          << ((--i > 0) ? ", " : "\n");
 			}
 
@@ -25,7 +25,7 @@ namespace Loggers
 				for(auto &prop : this->SiteProps)
 				{
 					std::cout << prop.first << ": "
-					          << prop.second(site)
+					          << prop.second(site, this->EnsembleProps)
 					          << ((i < m - 1) ? ", " : "\n");
 					i++;
 				}

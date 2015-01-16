@@ -9,6 +9,8 @@
 
 using namespace Models;
 
+typedef std::map<std::string, double> EnsembleProperty;
+
 namespace Loggers
 {
 	// Abstract base class for property loggers.
@@ -24,10 +26,18 @@ namespace Loggers
 		protected:
 
 			// Vector of site property callbacks.
-			std::map<std::string, std::function<double(Site&)> > SiteProps;
+			std::map<std::string,
+			         std::function<double(Site&,
+			                              EnsembleProperty& EnsembleProps)> > SiteProps;
 
 			// Vector of model property callbacks.
-			std::map<std::string, std::function<double(BaseModel&)> > ModelProps;
+			std::map<std::string,
+			         std::function<double(BaseModel&,
+			                              EnsembleProperty& EnsembleProps)> >
+			ModelProps;
+
+			// Vector of ensemble properties.
+			std::map<std::string, double> EnsembleProps;
 
 			// Actual implmenentation of logging model properties in derived classes.
 			virtual void LogModelPropertiesInternal(BaseModel& model) = 0;
@@ -43,28 +53,41 @@ namespace Loggers
 
 			// Adds a function the model properties queue.
 			void AddModelProperty(std::string key,
-			                      std::function<double(BaseModel&)> prop)
+			                      std::function<double(BaseModel&,
+			                                           EnsembleProperty& EnsembleProps)>
+			                      prop)
 			{
 				ModelProps.insert(
 				        std::pair <std::string,
-				                   std::function<double(BaseModel&)> >
+				                   std::function<double(BaseModel&,
+				                                        EnsembleProperty&
+				                                        EnsembleProps)> >
 				                (key, prop));
 			}
 
 			// Add a site property to the model properties queue.
 			void AddSiteProperty(std::string key,
-			                     std::function<double(Site&)> prop)
+			                     std::function<double(Site&, EnsembleProperty&
+			                                          EnsembleProps)> prop)
 			{
 				SiteProps.insert(
 				        std::pair <std::string,
-				                   std::function<double(Site&)> >
+				                   std::function<double(Site&,
+				                                        EnsembleProperty&
+				                                        EnsembleProps)> >
 				                (key, prop));
+			}
+
+			// Adds and updates ensemble properties by key.
+			void AddEnsembleProperty(std::string key, double value)
+			{
+				EnsembleProps.insert(std::pair<std::string, double>(key, value));
 			}
 
 			// Run through the thermal properties queue and log functions.
 			void LogProperties(BaseModel& model)
 			{
-				if(_calls++ % _frequency == 0)
+				if(_calls % _frequency == 0)
 				{
 					int c = model.GetSiteCount();
 					this->LogModelPropertiesInternal(model);
@@ -75,6 +98,7 @@ namespace Loggers
 					// Fush log
 					this->FlushLog();
 				}
+				_calls++;
 			};
 
 			// Flush the running average to the log.

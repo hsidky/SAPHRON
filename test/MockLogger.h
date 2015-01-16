@@ -12,14 +12,18 @@ class MockLogger : public Logger
 		void LogModelPropertiesInternal(BaseModel& model)
 		{
 			for(auto &prop : this->ModelProps)
-				prop.second(model);
+				prop.second(model,  this->EnsembleProps);
 		}
 
 		void LogSitePropertiesInternal(Site& site)
 		{
 			// Print thermal averages.
 			for(auto &prop : this->SiteProps)
-				prop.second(site);
+				prop.second(site, this->EnsembleProps);
+		}
+
+		void RegisterLoggableProperties(Logger&)
+		{
 		}
 
 	public:
