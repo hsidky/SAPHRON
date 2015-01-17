@@ -54,7 +54,7 @@ int main (int argc, char const* argv[])
 	Models::LebwohlLasherModel model(latticeSize);
 	Moves::SphereUnitVectorMove move;
 	//Loggers::CSVLogger logger(outputModel, outputSites, 100);
-	Loggers::ConsoleLogger logger(10);
+	Loggers::ConsoleLogger logger(100);
 	Ensembles::NVTEnsemble<Site> ensemble(model, temperature);
 
 	// Energy
@@ -63,7 +63,7 @@ int main (int argc, char const* argv[])
 		int c = model.GetSiteCount();
 		for(int i = 0; i < c; i++)
 			u += model.EvaluateHamiltonian(i);
-		u /= 2*c;
+		u /= 2.0*c;
 		return u;
 	};
 
@@ -75,12 +75,14 @@ int main (int argc, char const* argv[])
 		{
 			auto h = model.EvaluateHamiltonian(i);
 			u += h;
-			u2 += pow(h,2.0);
+			u2 += h*h;
 		}
-		u2 /= 2.0*c;
+		
+		u2 /= 4.0*c;
 		u /= 2.0*c;
-		return (u2-u*u)/(pow(eprop["T"],2.0)*eprop["kb"]);
+		return (u2-u*u)/(pow(*eprop["T"],2.0)*(*eprop["kb"]));
 	};
+
 	// Add loggable data
 	logger.AddModelProperty("Energy", energy);
 	logger.AddModelProperty("Cv", cv);

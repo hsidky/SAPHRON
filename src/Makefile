@@ -2,6 +2,8 @@ BUILD_DIR = ../build
 
 BIN_DIR = ../bin
 
+CXX = clang++
+
 # Flags passed to the C++ compiler.
 CXXFLAGS += -Wall -Wextra -pthread -std=c++11 -O3
 
@@ -19,7 +21,7 @@ test:
 	@echo $(SOURCES)
 
 install: $(TARGET)
-	install $(BIN_DIR)/$(TARGET) ~/bin
+	install $(BIN_DIR)/$(TARGET) /usr/local/bin
 
 clean :
 	rm -f $(BIN_DIR)/* $(BUILD_DIR)/*.o

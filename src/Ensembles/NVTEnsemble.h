@@ -20,11 +20,14 @@ namespace Ensembles
 			// "Normalized" Boltzmann constant.
 			double _kb = 1.0;
 
+			double _E = 0;
+
 		protected:
 			void RegisterLoggableProperties(Logger& logger)
 			{
 				logger.AddEnsembleProperty("T", _temperature);
 				logger.AddEnsembleProperty("kb", _kb);
+				logger.AddEnsembleProperty("E", _E);
 			}
 
 		public:
@@ -42,6 +45,8 @@ namespace Ensembles
 
 				for(int i = 0; i < this->model.GetSiteCount(); i++)
 					Iterate();
+
+				_E /= 4.0*this->model.GetSiteCount();
 
 				this->IncrementSweeps();
 			}
@@ -65,8 +70,14 @@ namespace Ensembles
 				if(AcceptanceProbability(prevH,
 				                         currH) <
 				   this->model.GetRandomUniformProbability())
+				{
 					for(auto &move : this->moves)
 						move->Undo();
+
+					_E += prevH*prevH;
+				}
+				else
+					_E += currH*currH;
 
 				this->IncrementIterations();
 			};

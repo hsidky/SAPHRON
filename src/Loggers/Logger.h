@@ -9,7 +9,7 @@
 
 using namespace Models;
 
-typedef std::map<std::string, double> EnsembleProperty;
+typedef std::map<std::string, double*> EnsembleProperty;
 
 namespace Loggers
 {
@@ -37,7 +37,7 @@ namespace Loggers
 			ModelProps;
 
 			// Vector of ensemble properties.
-			std::map<std::string, double> EnsembleProps;
+			EnsembleProperty EnsembleProps;
 
 			// Actual implmenentation of logging model properties in derived classes.
 			virtual void LogModelPropertiesInternal(BaseModel& model) = 0;
@@ -79,9 +79,9 @@ namespace Loggers
 			}
 
 			// Adds and updates ensemble properties by key.
-			void AddEnsembleProperty(std::string key, double value)
+			void AddEnsembleProperty(std::string key, double& value)
 			{
-				EnsembleProps.insert(std::pair<std::string, double>(key, value));
+				EnsembleProps.insert(std::pair<std::string, double*>(key, &value));
 			}
 
 			// Run through the thermal properties queue and log functions.
