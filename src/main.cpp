@@ -2,7 +2,9 @@
 #include "Loggers/CSVLogger.h"
 #include "Loggers/ConsoleLogger.h"
 #include "Models/LebwohlLasherModel.h"
+#include "Models/Ising3DModel.h"
 #include "Moves/SphereUnitVectorMove.h"
+#include "Moves/FlipSpinMove.h"
 #include <cmath>
 #include <iostream>
 #include <sstream>
@@ -51,14 +53,14 @@ int main (int argc, char const* argv[])
 		cerr << "Invalid output file. Must be a string." << endl;
 
 	// Initialize model.
-	Models::LebwohlLasherModel model(latticeSize);
-	Moves::SphereUnitVectorMove move;
-	//Loggers::CSVLogger logger(outputModel, outputSites, 100);
-	Loggers::ConsoleLogger logger(100);
+	Models::Ising3DModel model(latticeSize);
+	Moves::FlipSpinMove move;
+	Loggers::CSVLogger logger(outputModel, outputSites, 10);
+	//Loggers::ConsoleLogger logger(10);
 	Ensembles::NVTEnsemble<Site> ensemble(model, temperature);
 
 	// Energy
-	auto energy = [] (BaseModel& model, EnsembleProperty&) {
+	auto energy = [] (BaseModel& model, const EnsembleProperty&) {
 		double u = 0;
 		int c = model.GetSiteCount();
 		for(int i = 0; i < c; i++)
@@ -67,31 +69,17 @@ int main (int argc, char const* argv[])
 		return u;
 	};
 
-	auto cv = [] (BaseModel& model, EnsembleProperty& eprop) {
-		double u = 0;
-		double u2 = 0;
-		int c = model.GetSiteCount();
-		for(int i = 0; i < c; i++)
-		{
-			auto h = model.EvaluateHamiltonian(i);
-			u += h;
-			u2 += h*h;
-		}
-		
-		u2 /= 4.0*c;
-		u /= 2.0*c;
-		return (u2-u*u)/(pow(*eprop["T"],2.0)*(*eprop["kb"]));
-	};
-
 	// Add loggable data
 	logger.AddModelProperty("Energy", energy);
-	logger.AddModelProperty("Cv", cv);
+	//logger.AddModelProperty("Cv", cv);
+
+	// Log site
 
 	// Add logger and move to ensemble.
 	ensemble.AddLogger(logger);
 	ensemble.AddMove(move);
 
-//	logger.WriteHeaders();
+	logger.WriteHeaders();
 
 	// Iterate
 	for(int i = 0; i < iterations; i++)

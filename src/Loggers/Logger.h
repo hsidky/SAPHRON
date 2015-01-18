@@ -9,7 +9,7 @@
 
 using namespace Models;
 
-typedef std::map<std::string, double*> EnsembleProperty;
+typedef std::map<std::string, const double*> EnsembleProperty;
 
 namespace Loggers
 {
@@ -28,12 +28,12 @@ namespace Loggers
 			// Vector of site property callbacks.
 			std::map<std::string,
 			         std::function<double(Site&,
-			                              EnsembleProperty& EnsembleProps)> > SiteProps;
+			                              const EnsembleProperty& EnsembleProps)> > SiteProps;
 
 			// Vector of model property callbacks.
 			std::map<std::string,
 			         std::function<double(BaseModel&,
-			                              EnsembleProperty& EnsembleProps)> >
+			                              const EnsembleProperty& EnsembleProps)> >
 			ModelProps;
 
 			// Vector of ensemble properties.
@@ -54,26 +54,25 @@ namespace Loggers
 			// Adds a function the model properties queue.
 			void AddModelProperty(std::string key,
 			                      std::function<double(BaseModel&,
-			                                           EnsembleProperty& EnsembleProps)>
+			                                           const EnsembleProperty& EnsembleProps)>
 			                      prop)
 			{
 				ModelProps.insert(
 				        std::pair <std::string,
 				                   std::function<double(BaseModel&,
-				                                        EnsembleProperty&
+				                                        const EnsembleProperty&
 				                                        EnsembleProps)> >
 				                (key, prop));
 			}
 
 			// Add a site property to the model properties queue.
 			void AddSiteProperty(std::string key,
-			                     std::function<double(Site&, EnsembleProperty&
-			                                          EnsembleProps)> prop)
+			                     std::function<double(Site&, const EnsembleProperty&
+			                                           EnsembleProps)> prop)
 			{
 				SiteProps.insert(
 				        std::pair <std::string,
-				                   std::function<double(Site&,
-				                                        EnsembleProperty&
+				                   std::function<double(Site&, const EnsembleProperty&
 				                                        EnsembleProps)> >
 				                (key, prop));
 			}
