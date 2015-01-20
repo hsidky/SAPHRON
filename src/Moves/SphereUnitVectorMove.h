@@ -9,7 +9,7 @@
 
 namespace Moves
 {
-	// Class for selecting a random vector on a sphere for a site.
+	// Class for selecting a random unit vector on a sphere for a site.
 	// This follows the implementation in Tildesley[1987].
 	class SphereUnitVectorMove : public Move<Site>
 	{
@@ -21,7 +21,7 @@ namespace Moves
 		public:
 			SphereUnitVectorMove() : _uBefore(3), rand(3){}
 
-			// Selects a new random vector on a sphere.
+			// Selects a new random unit vector on a sphere.
 			void Perform(Site& site)
 			{
 				_site = &site;

@@ -27,7 +27,7 @@ namespace Loggers
 				int m = this->SiteProps.size();
 				if(m < 1)
 					return;
-					
+
 				_sitefs << this->GetCallCount() << ",";
 
 				// Write site properties.
