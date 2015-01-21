@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseModel.h"
+#include <functional>
 
 namespace Models
 {
@@ -16,15 +17,18 @@ namespace Models
 			// Normalized "J", interaction parameter (J) such that a specified
 			// temperature is reduced with a normalized kb from BaseModel.
 			double _interactionParameter = 1.0;
+
+			int _xl, _yl, _zl;
+
 		public:
 
-			// Initializes Lattice3D with a given lattice size (the length of a
-			// dimension) and random number seed. The number of stes is the cube
-			// of the size. So for a lattice size of 3, there are 9 sites.
+			// Initializes Lattice3D with the specified lattice dimensions
+			// and random number seed. The number of sites is the cube
+			// of the size. So for a lattice size of 3x3x3, there are 27 sites.
 			// The sites are initialized on a lattice including
 			// positions, nearest neighbors and spins. The default BaseModel
 			// parameters are used otherwise.
-			Lattice3DModel(int latticeSize, int seed = 1);
+			Lattice3DModel(int xLength, int yLength, int zLength, int seed = 1);
 
 			// Sets the interaction parameter in the Hamiltonian.
 			double SetInteractionParameter(double j)

@@ -13,14 +13,14 @@ using namespace Loggers;
 TEST(CSVLogger, CSVFormatting)
 {
 	int n = 10;
-	Ising3DModel model(n, 1);
+	Ising3DModel model(n, n, n, 1);
 	FlipSpinMove move;
 	CSVLogger l("model.csv", "site.csv");
 	NVTEnsemble<Site> s(model, 4.5);
 
 	// Lambda function for logger
 	double fm = 0;
-	auto magnetization = [&fm] (BaseModel & model, EnsembleProperty&) {
+	auto magnetization = [&fm] (BaseModel & model, const EnsembleProperty &) {
 		double m = 0.0;
 		auto c = model.GetSiteCount();
 		for(int i = 0; i < c; i++)
@@ -33,16 +33,16 @@ TEST(CSVLogger, CSVFormatting)
 	// Add magnetization to logger.
 	l.AddModelProperty("Magnetization", magnetization);
 	l.AddSiteProperty("Spin",
-	                  [] (Site & site, EnsembleProperty&){ return site.GetZUnitVector();
+	                  [] (Site & site, const EnsembleProperty &){ return site.GetZUnitVector();
 			  });
 	l.AddSiteProperty("z-coordinate",
-	                  [] (Site & site, EnsembleProperty&){ return site.GetZCoordinate();
+	                  [] (Site & site, const EnsembleProperty &){ return site.GetZCoordinate();
 			  });
 	l.AddSiteProperty("y-coordinate",
-	                  [] (Site& site, EnsembleProperty&){ return site.GetYCoordinate();
+	                  [] (Site& site, const EnsembleProperty &){ return site.GetYCoordinate();
 			  });
 	l.AddSiteProperty("x-coordinate",
-	                  [] (Site& site,  EnsembleProperty&){ return site.GetXCoordinate();
+	                  [] (Site& site,  const EnsembleProperty &){ return site.GetXCoordinate();
 			  });
 
 	s.AddLogger(l);

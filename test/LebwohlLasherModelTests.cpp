@@ -6,7 +6,7 @@ using namespace Models;
 // Tests the Hamiltonian.
 TEST(LebwohlLasherModel, EvaluateInitialHamiltonian)
 {
-	LebwohlLasherModel m(37, 1);
+	LebwohlLasherModel m(37,37,37, 1);
 
 	// Check initial Hamiltonian values.
 	for(int i = 0; i < m.GetSiteCount(); i++)

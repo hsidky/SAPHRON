@@ -3,18 +3,19 @@
 
 namespace Models
 {
-	// Initializes Lattice3D with a given lattice size (the length of a
-	// dimension) and random number seed. The number of sites is the
-	// cube of the size. So for a lattice size of 3, there are 9 sites.
-	// The sites are initialized on a lattice including positions,
-	// nearest neighbors and spins. The default BaseModel parameters
-	// are used.
-	Lattice3DModel::Lattice3DModel(int latticeSize, int seed) :
-		BaseModel(latticeSize * latticeSize * latticeSize, seed), _latticeSize(latticeSize)
+	// Initializes Lattice3D with the specified lattice dimensions
+	// and random number seed. The number of sites is the cube
+	// of the size. So for a lattice size of 3x3x3, there are 27 sites.
+	// The sites are initialized on a lattice including
+	// positions, nearest neighbors and spins. The default BaseModel
+	// parameters are used otherwise.
+	Lattice3DModel::Lattice3DModel(int xLength,
+	                               int yLength,
+	                               int zLength,
+	                               int seed) :
+		BaseModel(xLength * yLength * zLength, seed),
+		_xl(xLength), _yl(yLength), _zl(zLength)
 	{
-		// Length of lattice side
-		auto n = this->_latticeSize;
-
 		// Initialize positional counters
 		double x = 1;
 		double y = 1;
@@ -22,11 +23,11 @@ namespace Models
 
 		for(int i = 0; i < this->GetSiteCount(); i++)
 		{
-			if(z > n)
+			if(z > _zl)
 				z = 1.0;
-			if(y > n)
+			if(y > _yl)
 				y = 1.0;
-			if(x > n)
+			if(x > _xl)
 				x = 1.0;
 
 			Sites[i].SetCoordinates(x, y, z);
@@ -35,22 +36,22 @@ namespace Models
 			// boundary conditions.
 			std::vector<int> neighbors = {
 				i - 1, i + 1, // z-axis
-				i - n, i + n, // y-axis
-				i - n * n, i + n * n // x-axis
+				i - _zl, i + _zl, // y-axis
+				i - _zl*_yl, i + _zl*_yl // x-axis
 			};
 
 			if(z == 1)
-				neighbors[0] += n;
-			else if(z == n)
-				neighbors[1] -= n;
+				neighbors[0] += _zl;
+			else if(z == _zl)
+				neighbors[1] -= _zl;
 			if(y == 1)
-				neighbors[2] += n * n;
-			else if(y == n)
-				neighbors[3] -= n * n;
+				neighbors[2] += _zl * _yl;
+			else if(y == _yl)
+				neighbors[3] -= _zl * _yl;
 			if(x == 1)
-				neighbors[4] += n * n * n;
-			else if(x == n)
-				neighbors[5] -= n * n * n;
+				neighbors[4] += _zl * _yl * _xl;
+			else if(x == _xl)
+				neighbors[5] -= _zl * _yl * _xl;
 
 			Sites[i].SetNeighbors(neighbors);
 
@@ -58,8 +59,8 @@ namespace Models
 			Sites[i].SetZUnitVector(1.0);
 
 			// Increment counters.
-			x += floor((y + z) / (2.0 * n));
-			y += floor(z / n);
+			x += floor((y + z) / (_zl + _yl));
+			y += floor(z / _zl);
 			z += 1.0;
 		}
 	}

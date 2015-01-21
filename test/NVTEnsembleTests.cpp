@@ -13,14 +13,14 @@ using namespace Loggers;
 TEST(NVTEnsemble, IsingModelMagnetization)
 {
 	int n = 37;
-	Ising3DModel model(n, 1);
+	Ising3DModel model(n, n, n, 1);
 	FlipSpinMove move;
 	MockLogger l;
 	NVTEnsemble<Site> s(model, 1.0);
 
 	// Lambda function for logger
 	double fm = 0;
-	auto magnetization = [&fm] (BaseModel & model, EnsembleProperty&) {
+	auto magnetization = [&fm] (BaseModel & model, const EnsembleProperty &) {
 		double m = 0.0;
 		auto c = model.GetSiteCount();
 		for(int i = 0; i < c; i++)

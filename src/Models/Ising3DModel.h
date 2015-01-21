@@ -11,9 +11,9 @@ namespace Models
 	{
 		public:
 
-			// Initializes Ising model with a given lattice size (the length of a
-			// dimension) and random number seed. The number of stes is the cube
-			// of the size. So for a lattice size of 3, there are 9 sites.
+			// Initializes Ising model with the specified lattice dimensions
+			// and random number seed. The number of stes is the cube
+			// of the dimensions. So for a lattice size of 3x3x3, there are 27 sites.
 			// The sites are initialized on a lattice including
 			// positions, nearest neighbors and spins. The default BaseModel
 			// parameters are used otherwise.
