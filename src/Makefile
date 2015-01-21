@@ -50,4 +50,4 @@ $(TARGET): $(OBJECTS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $(BIN_DIR)/$@
 
 $(TARGET_LIB): $(OBJECTS_LIB)
-	ar -rcs $(LIB_DIR)/$@ $<
+	ar rc $(LIB_DIR)/$@ $<

@@ -3,6 +3,8 @@ GTEST_DIR = ../gtest
 
 BUILD_DIR = ../build
 
+LIB_DIR  = ../lib
+
 SRC_DIR = ../src
 
 # Flags passed to the preprocessor.
@@ -12,7 +14,7 @@ CPPFLAGS += -isystem $(GTEST_DIR)/include
 CXXFLAGS += -g -Wall -Wextra -pthread -std=c++11 -O3
 
 # Build dependencies
-DEPS  = $(BUILD_DIR)/Lattice3DModel.o
+DEPS  = $(LIB_DIR)/LNTMC.a
 
 # All tests produced by this Makefile.
 TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \
@@ -24,19 +26,16 @@ TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \
 GTEST_LIBS = $(GTEST_DIR)/lib/libgtest.a $(GTEST_DIR)/lib/libgtest_main.a
 
 # House-keeping build targets.
-all : $(DEPS) $(TESTS)
+all : pre-build $(TESTS)
+
+pre-build:
+	cd $(SRC_DIR) && $(MAKE)
 
 clean :
 	rm -f $(TESTS) $(BUILD_DIR)/*.o *.csv
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/Models/%.cpp
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
-
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
-
 $(BUILD_DIR)/%Tests.o: %Tests.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
-%Tests.out: $(BUILD_DIR)/%Tests.o $(GTEST_LIBS) $(BUILD_DIR)/Lattice3DModel.o
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $(wildcard $(BUILD_DIR)/$*.o) $^ -o $@
+%Tests.out: $(BUILD_DIR)/%Tests.o $(GTEST_LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ $(DEPS) -o $@
