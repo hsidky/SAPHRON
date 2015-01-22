@@ -1,5 +1,6 @@
 #include "LLCellModel.h"
 #include <algorithm>
+#include <iostream>
 
 namespace Models
 {
@@ -23,6 +24,7 @@ namespace Models
 				_reservedSites.push_back(i);
 				site.SetUnitVectors(vStart[0], vStart[1], vStart[2]);
 			}
+
 			else if(site.GetXCoordinate() == xLength)
 			{
 				_reservedSites.push_back(i);
@@ -39,7 +41,7 @@ namespace Models
 		// since we loop though sites sequentially, the list is sorted.
 		int i = this->GetRandomSiteIndex();
 		if(std::binary_search(_reservedSites.begin(), _reservedSites.end(), i))
-			this->DrawSample();
+			return DrawSample();
 
 		return &Sites[i];
 	}

@@ -30,8 +30,8 @@ namespace Models
 			// excluding anchored sites.
 			virtual Site* DrawSample();
 
-            // Get indices of all reserved sites - that is, sites that are never
-            // drawn during sampling.
+			// Get indices of all reserved sites - that is, sites that are never
+			// drawn during sampling.
 			std::vector<int> GetReservedSites()
 			{
 				return _reservedSites;

@@ -116,6 +116,12 @@ int main(int argc, char const* argv[])
 	for (int i = 0; i < iterations; i++)
 		ensemble.Sweep();
 
+	// Lower temperature
+	ensemble.SetTemperature(0.1);
+
+	for(int i = 0; i < iterations; i++)
+		ensemble.Sweep();
+
 	return 0;
 }
 
