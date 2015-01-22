@@ -1,12 +1,11 @@
 // This example is a demonstration of the Lebwohl-Lasher model in an NVT ensemble
-// and basic usage of the API. It has a very basic command line interface to
-// illustrate a possible use case.
+// confined within a cell with anchoring on the YZ plane (x=0, x=L).
 
 // Include the pertinent header files.
 #include "../src/Ensembles/NVTEnsemble.h"
 #include "../src/Loggers/CSVLogger.h"
 #include "../src/Loggers/ConsoleLogger.h"
-#include "../src/Models/LebwohlLasherModel.h"
+#include "../src/Models/LLCellModel.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
 
 // Includes for parsing using stringstream.
@@ -43,11 +42,12 @@ int main(int argc, char const* argv[])
 	if(parse_input(argv, latticeSize, iterations, temperature, modelFile, sitesFile) != 0)
 		return -1;
 
-	// Initialize the Lebwohl-Lasher lattice model. The constructor takes in one
-	// required argument which is the lattice size - the length of one dimension.
-	// The model initializes the required number of sites in the appropriate locations,
-	// defines the nearest-neighbors and provides an initial spin.
-	Models::LebwohlLasherModel model(latticeSize, latticeSize, latticeSize);
+	// Define the anchored vectors on either end of the cell.
+	std::vector<double> vBegin {0.0, 0.0, 1.0};
+	std::vector<double> vEnd {0.0, 1.0, 0.0};
+
+	// Initialize the Lebwohl-Lasher cell lattice model.
+	Models::LLCellModel model(latticeSize, latticeSize, latticeSize, vBegin, vEnd);
 
 	// Initialize the NVT ensemble. For this particular ensemble, it requires a reference to
 	// the model and the temperature. The template parametr for the ensemble is the type
@@ -59,28 +59,11 @@ int main(int argc, char const* argv[])
 	// vector on a sphere. A "Move" class operates on a site within model in an ensemble.
 	Moves::SphereUnitVectorMove move;
 
-	// Initialize loggers. The loggers are responsible for recording the desired property
-	// data from a simulation. It is possible to have many loggers operate on a single
-	// simulation. In this case, we will record energy to a CSV file every 10 iterations,
-	// and use the console logger to display the energy output every 100.
-
 	// The CSV logger constructor requires that we provide file names for output.
-	Loggers::CSVLogger csvlogger(modelFile, sitesFile, 10);
+	Loggers::CSVLogger csvlogger(modelFile, sitesFile, 1000);
 	Loggers::ConsoleLogger consolelogger(100);
 
-	// There are two types of properties that can be logged: model properties and site properties.
-	// Model properties are provided with a reference to the model object which allows them to
-	// perform calculations at the model level, an example of this would be
-	// total energy. Site properties are associated with individual sites, such as
-	// position, velocity or orientation. "Ensemble properties" are passed by reference to
-	// both types of properties. These are std::maps that are implemented by each Ensemble
-	// and must be checked accordingly.
-
-	// Create a callback to calculate the total energy of the system. Here we use a
-	// Lambda function that we can re-use for both loggers. Since we really are not using
-	// EnsembleProperty, we leave that undeclared. Ensembles would typically track energy
-	// internally, and could potentially be accessed via EnsembleProperty. This example is
-	// for illustrative purposes.
+	// Log total energy.
 	auto energy = [] (BaseModel& model, const EnsembleProperty &) {
 		double u = 0;
 		int c = model.GetSiteCount();
@@ -93,6 +76,32 @@ int main(int argc, char const* argv[])
 	// Attach the callback to both loggers. We should provide a name.
 	csvlogger.AddModelProperty("Energy", energy);
 	consolelogger.AddModelProperty("Energy", energy);
+
+	// For the CSV logger, we want to log the site locations and unit vectors.
+	csvlogger.AddSiteProperty("z",
+	                          [] (Site & site,
+	                              const EnsembleProperty &){ return site.GetZCoordinate();
+				  });
+	csvlogger.AddSiteProperty("y",
+	                          [] (Site& site,
+	                              const EnsembleProperty &){ return site.GetYCoordinate();
+				  });
+	csvlogger.AddSiteProperty("x",
+	                          [] (Site& site,
+	                              const EnsembleProperty &){ return site.GetXCoordinate();
+				  });
+	csvlogger.AddSiteProperty("uz",
+	                          [] (Site & site,
+	                              const EnsembleProperty &){ return site.GetZUnitVector();
+				  });
+	csvlogger.AddSiteProperty("uy",
+	                          [] (Site& site,
+	                              const EnsembleProperty &){ return site.GetYUnitVector();
+				  });
+	csvlogger.AddSiteProperty("ux",
+	                          [] (Site& site,
+	                              const EnsembleProperty &){ return site.GetXUnitVector();
+				  });
 
 	// Finally, we add both the loggers and the move to the ensemble.
 	ensemble.AddLogger(csvlogger);
