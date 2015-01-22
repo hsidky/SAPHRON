@@ -12,7 +12,7 @@ namespace Models
 	{
 		public:
 
-			// Initializes Ising model with a given lattice size (the length of a
+			// Initializes LL model with a given lattice size (the length of a
 			// dimension) and random number seed. The number of stes is the cube
 			// of the size. So for a lattice size of 3, there are 9 sites.
 			// The sites are initialized on a lattice including
