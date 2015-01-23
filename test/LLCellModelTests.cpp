@@ -21,7 +21,7 @@ TEST(LLCellModel, DefaultConstructor)
 	for(int i = 1; i < 10*xl*yl*zl; i++)
 	{
 		auto site = m.DrawSample();
-		ASSERT_NE(1.0, site->GetXCoordinate());
-		ASSERT_NE(xl, site->GetXCoordinate());
+		ASSERT_NE(1.0, site->GetZCoordinate());
+		ASSERT_NE(zl, site->GetZCoordinate());
 	}
 }

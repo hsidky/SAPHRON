@@ -5,8 +5,8 @@
 namespace Models
 {
 	// Initializes a LL model in a cell with the specified dimensions.
-	// vStart and vEnd represent the unit vectors of the sites at the YZ plane
-	// where x = 1 and L respectively. The sites at those planes are
+	// vStart and vEnd represent the unit vectors of the sites at the XY plane
+	// where z = 1 and L respectively. The sites at those planes are
 	// anchored to those specified vectors for the duration of the simulation.
 	LLCellModel::LLCellModel(int xLength, int yLength, int zLength,
 	                         std::vector<double> vStart, std::vector<double> vEnd,
@@ -17,15 +17,15 @@ namespace Models
 		{
 			auto& site = Sites[i];
 
-			// XZ plane where X = 1.
-			if(site.GetXCoordinate() == 1)
+			// XY plane where Z = 1.
+			if(site.GetZCoordinate() == 1)
 			{
 				// Add this site to the reserved sites list.
 				_reservedSites.push_back(i);
 				site.SetUnitVectors(vStart[0], vStart[1], vStart[2]);
 			}
 
-			else if(site.GetXCoordinate() == xLength)
+			else if(site.GetZCoordinate() == zLength)
 			{
 				_reservedSites.push_back(i);
 				site.SetUnitVectors(vEnd[0], vEnd[1], vEnd[2]);

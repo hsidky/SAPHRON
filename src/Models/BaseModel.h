@@ -22,26 +22,19 @@ namespace Models
 			// Initializes the base model with a specific number of sites at a
 			// given temperature. The random number generator seed is 1 by default.
 			BaseModel(int size, int seed = 1)
-				: Sites(size, Site(0.0, 0.0, 0.0)), rand(Rand(seed)) {};
+				: Sites(size, Site(0.0, 0.0, 0.0)), rand(seed) {};
 
 			// Reseed the random number generator. This resets the random number
 			// generator.
 			void ReseedRand(int seed)
 			{
-				this->rand = Rand(seed);
-			}
-
-			// Returns a random probability between 0 and 1 from a uniform
-			// distribution.
-			double GetRandomUniformProbability()
-			{
-				return this->rand.doub();
+				rand.seed(seed);
 			}
 
 			// Selects a random site and returns the position in the vector.
 			int GetRandomSiteIndex()
 			{
-				return rand.int64() % (this->Sites.size());
+				return rand.int32() % (this->Sites.size());
 			}
 
 			// Selects a random site and returns a pointer to the Site object.

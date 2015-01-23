@@ -1,6 +1,8 @@
 #pragma once
 
+#include "../../include/prng_engine.h"
 #include "../Models/BaseModel.h"
+#include "../Rand.h"
 #include "Ensemble.h"
 
 namespace Ensembles
@@ -20,6 +22,9 @@ namespace Ensembles
 			// "Normalized" Boltzmann constant.
 			double _kb = 1.0;
 
+			// Random number generator.
+			Rand rand;
+
 		protected:
 			void RegisterLoggableProperties(Logger& logger)
 			{
@@ -30,7 +35,7 @@ namespace Ensembles
 		public:
 			// Initializes NVTEnsemble for a model at a given "reduced" temperature.
 			NVTEnsemble(BaseModel& model, double temperature) :
-				Ensemble<T>(model), _temperature(temperature)
+				Ensemble<T>(model), _temperature(temperature), rand(3)
 			{
 			}
 
@@ -38,7 +43,6 @@ namespace Ensembles
 			// where "n" is the number of sites in a model.
 			void Sweep()
 			{
-
 				for(int i = 0; i < this->model.GetSiteCount(); i++)
 					Iterate();
 
@@ -62,13 +66,9 @@ namespace Ensembles
 				double currH = this->model.EvaluateHamiltonian(*sample);
 
 				// Check probabilities.
-				if(AcceptanceProbability(prevH,
-				                         currH) <
-				   this->model.GetRandomUniformProbability())
-				{
+				if(AcceptanceProbability(prevH, currH) < rand.doub())
 					for(auto &move : this->moves)
 						move->Undo();
-				}
 
 				this->IncrementIterations();
 			};
@@ -81,7 +81,7 @@ namespace Ensembles
 				        exp(-(currH -
 				              prevH) / (GetBoltzmannConstant() * GetTemperature()));
 
-				return p > 1 ? 1 : p;
+				return p > 1.0 ? 1.0 : p;
 			}
 
 			// Gets the temperature (K).

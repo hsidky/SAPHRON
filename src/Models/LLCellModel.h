@@ -16,8 +16,8 @@ namespace Models
 		public:
 
 			// Initializes a LL model in a cell with the specified dimensions.
-			// vStart and vEnd represent the unit vectors of the sites at the YZ plane
-			// where x = 1 and L respectively. The sites at those planes are
+			// vStart and vEnd represent the unit vectors of the sites at the XY plane
+			// where z = 1 and L respectively. The sites at those planes are
 			// anchored to those specified vectors for the duration of the simulation.
 			LLCellModel(int xLength,
 			            int yLength,
@@ -25,6 +25,8 @@ namespace Models
 			            std::vector<double> vStart,
 			            std::vector<double> vEnd,
 			            int seed = 1);
+
+			using LebwohlLasherModel::EvaluateHamiltonian;
 
 			// Selects a random site and returns a pointer to the Site object
 			// excluding anchored sites.

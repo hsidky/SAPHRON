@@ -43,7 +43,7 @@ int main(int argc, char const* argv[])
 		return -1;
 
 	// Define the anchored vectors on either end of the cell.
-	std::vector<double> vBegin {0.0, 0.0, 1.0};
+	std::vector<double> vBegin {1.0, 0.0, 0.0};
 	std::vector<double> vEnd {0.0, 1.0, 0.0};
 
 	// Initialize the Lebwohl-Lasher cell lattice model.
@@ -61,7 +61,7 @@ int main(int argc, char const* argv[])
 
 	// The CSV logger constructor requires that we provide file names for output.
 	Loggers::CSVLogger csvlogger(modelFile, sitesFile, 1000);
-	Loggers::ConsoleLogger consolelogger(100);
+	Loggers::ConsoleLogger consolelogger(1000);
 
 	// Log total energy.
 	auto energy = [] (BaseModel& model, const EnsembleProperty &) {
@@ -108,18 +108,20 @@ int main(int argc, char const* argv[])
 	ensemble.AddLogger(consolelogger);
 	ensemble.AddMove(move);
 
+	/*
+	   for(int i = 0; i < 3*model.GetSiteCount(); i++)
+	   {
+	    auto* site = model.DrawSample();
+	    move.Perform(*site);
+	   }
+	 */
+
 	// The CSV logger provides us a method that allows us to write headers to
 	// the CSV file if we please.
 	csvlogger.WriteHeaders();
 
 	// Sweep for iterations
 	for (int i = 0; i < iterations; i++)
-		ensemble.Sweep();
-
-	// Lower temperature
-	ensemble.SetTemperature(0.1);
-
-	for(int i = 0; i < iterations; i++)
 		ensemble.Sweep();
 
 	return 0;
