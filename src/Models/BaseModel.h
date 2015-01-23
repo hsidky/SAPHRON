@@ -28,7 +28,7 @@ namespace Models
 			// generator.
 			void ReseedRand(int seed)
 			{
-				rand.seed(seed);
+				this->rand = Rand(seed);
 			}
 
 			// Selects a random site and returns the position in the vector.
