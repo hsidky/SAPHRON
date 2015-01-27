@@ -10,6 +10,7 @@
 using namespace Models;
 
 typedef std::map<std::string, const double*> EnsembleProperty;
+typedef std::map<std::string, const std::vector<double>*> EnsembleVector;
 
 namespace Loggers
 {
@@ -28,13 +29,23 @@ namespace Loggers
 			// Vector of site property callbacks.
 			std::map<std::string,
 			         std::function<double(Site&,
-			                              const EnsembleProperty& EnsembleProps)> > SiteProps;
+			                              const EnsembleProperty&)> >
+			SiteProps;
 
 			// Vector of model property callbacks.
 			std::map<std::string,
 			         std::function<double(BaseModel&,
-			                              const EnsembleProperty& EnsembleProps)> >
+			                              const EnsembleProperty&)> >
 			ModelProps;
+
+			// Vector of vector property callbacks.
+			std::map<std::string,
+			         std::function<std::vector<double>(BaseModel&,
+			                                           const EnsembleVector&)> >
+			VectorProps;
+
+			// Vector of ensemble vector properties.
+			EnsembleVector EnsembleVecs;
 
 			// Vector of ensemble properties.
 			EnsembleProperty EnsembleProps;
@@ -45,6 +56,9 @@ namespace Loggers
 			// Actual implementation of logging site properties in derived classes.
 			virtual void LogSitePropertiesInternal(Site& site) = 0;
 
+			// Actual implementation of logging vector properties in derived classes.
+			virtual void LogVectorPropertiesInternal(BaseModel& model) = 0;
+
 		public:
 
 			// Instantiate a logger class with a frequecny of 'frequency'- that is,
@@ -54,7 +68,8 @@ namespace Loggers
 			// Adds a function the model properties queue.
 			void AddModelProperty(std::string key,
 			                      std::function<double(BaseModel&,
-			                                           const EnsembleProperty& EnsembleProps)>
+			                                           const EnsembleProperty&
+			                                           EnsembleProps)>
 			                      prop)
 			{
 				ModelProps.insert(
@@ -68,13 +83,30 @@ namespace Loggers
 			// Add a site property to the model properties queue.
 			void AddSiteProperty(std::string key,
 			                     std::function<double(Site&, const EnsembleProperty&
-			                                           EnsembleProps)> prop)
+			                                          EnsembleProps)> prop)
 			{
 				SiteProps.insert(
 				        std::pair <std::string,
-				                   std::function<double(Site&, const EnsembleProperty&
+				                   std::function<double(Site&,
+				                                        const EnsembleProperty&
 				                                        EnsembleProps)> >
 				                (key, prop));
+			}
+
+			// Adds a vector property to the vector properties queue.
+			void AddVectorProperty(std::string key,
+			                       std::function<std::vector<double>(BaseModel&,
+			                                                         const
+			                                                         EnsembleVector&)>
+			                       prop)
+			{
+				VectorProps.insert(
+				        std::pair<std::string,
+				                  std::function<std::vector<double>(BaseModel&,
+				                                                    const
+				                                                    EnsembleVector&)> >(
+				                key, prop)
+				        );
 			}
 
 			// Adds and updates ensemble properties by key.
@@ -83,13 +115,22 @@ namespace Loggers
 				EnsembleProps.insert(std::pair<std::string, double*>(key, &value));
 			}
 
-			// Run through the thermal properties queue and log functions.
-			void LogProperties(BaseModel& model)
+			// Adds and updates ensemble vector properties by key.
+			void AddEnsembleVectorProperty(std::string key, std::vector<double>& value)
 			{
-				if(_calls % _frequency == 0)
+				EnsembleVecs.insert(std::pair<std::string,
+				                              std::vector<double>*>(key, &value));
+			}
+
+			// Run through the thermal properties queue and log functions.
+			// If force is set, logger will run regardless of frequency setting.
+			void LogProperties(BaseModel& model, bool force = false)
+			{
+				if(_calls % _frequency == 0 || force)
 				{
 					int c = model.GetSiteCount();
 					this->LogModelPropertiesInternal(model);
+					this->LogVectorPropertiesInternal(model);
 					for(int i = 0; i < c; i++)
 						this->LogSitePropertiesInternal(
 						        *model.SelectSite(i));

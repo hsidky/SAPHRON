@@ -31,6 +31,24 @@ namespace Loggers
 				}
 			}
 
+			void LogVectorPropertiesInternal(BaseModel& model)
+			{
+				int m = this->VectorProps.size();
+				if(m < 1)
+					return;
+
+				std::cout << this->GetCallCount() << ",";
+				int i = this->VectorProps.size();
+				for(auto &prop : this->VectorProps)
+				{
+					auto vals = prop.second(model, this->EnsembleVecs);
+					int j = vals.size();
+					for(auto &val : vals)
+						std::cout << val <<
+						((--i > 0 || --j > 0) ? "," : "\n");
+				}
+			}
+
 		public:
 
 			// Use base logger constructor.

@@ -22,6 +22,12 @@ class MockLogger : public Logger
 				prop.second(site, this->EnsembleProps);
 		}
 
+		void LogVectorPropertiesInternal(BaseModel& model)
+		{
+			for(auto &prop : this->VectorProps)
+				prop.second(model, this->EnsembleVecs);
+		}
+
 		void RegisterLoggableProperties(Logger&)
 		{
 		}
