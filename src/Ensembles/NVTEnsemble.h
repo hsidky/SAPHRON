@@ -27,8 +27,8 @@ namespace Ensembles
 		protected:
 			void RegisterLoggableProperties(Logger& logger)
 			{
-				logger.AddEnsembleProperty("T", _temperature);
-				logger.AddEnsembleProperty("kb", _kb);
+				logger.RegisterEnsembleProperty("T", _temperature);
+				logger.RegisterEnsembleProperty("kb", _kb);
 			}
 
 		public:

@@ -107,9 +107,9 @@ namespace Ensembles
 	template<typename T>
 	void WangLandauEnsemble<T>::RegisterLoggableProperties(Logger& logger)
 	{
-		logger.AddEnsembleProperty("Flatness", _flatness);
-		logger.AddEnsembleProperty("Energy", _energy);
-		logger.AddEnsembleVectorProperty("DOS", *_DOS);
+		logger.RegisterEnsembleProperty("Flatness", _flatness);
+		logger.RegisterEnsembleProperty("Energy", _energy);
+		logger.RegisterEnsembleVectorProperty("DOS", *_DOS);
 	}
 
 	template class WangLandauEnsemble<Site>;
