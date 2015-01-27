@@ -50,10 +50,27 @@ class Histogram
 		{
 			int bin = (int)((datum - _min) / _binWidth);
 			if (bin < 0)
+			{
+				_counts[0]++;
 				_lowerOutlierCount++;
-
+			}
+			else if(bin >= _binCount)
+			{
+				_counts[_binCount-1];
+				_upperOutlierCount++;
+			}
 			else
 				_counts[bin]++;
+
+			return bin;
+		}
+
+		// Get the bin index associated with a data point.
+		int GetBin(double datum)
+		{
+			int bin = (int)((datum - _min) / _binWidth);
+			if(bin >= _binCount || bin < 0)
+				return -1;
 
 			return bin;
 		}
@@ -61,20 +78,27 @@ class Histogram
 		// Gets an associated value from a bin.
 		double GetValue(int bin)
 		{
-			if(bin >= _binCount || bin < 0)
-				return -1;
+			if(bin >= _binCount)
+				bin = _binCount -1;
+			if(bin < 0)
+				bin = 0;
+			//if(bin >= _binCount || bin < 0)
+			//	return bin;
 
 			return _values[bin];
 		}
 
 		// Gets an associated value with the bin in which datum would reside.
-		// Returns back the value of datum if it is out of range.
 		double GetValue(double datum)
 		{
 			int bin = (int)((datum - _min) / _binWidth);
 
-			if (bin < 0 || bin >= _binCount)
-				return datum;
+			if(bin >= _binCount)
+				bin = _binCount -1;
+			if(bin < 0)
+				bin = 0;
+			//if(bin >= _binCount || bin < 0)
+			//	return datum;
 
 			return _values[bin];
 		}
@@ -85,11 +109,18 @@ class Histogram
 			return _values;
 		}
 
+		std::vector<double>* GetValuesPointer()
+		{
+			return &_values;
+		}
+
 		// Update associated values in a bin.
 		void UpdateValue(int bin, double value)
 		{
-			if(bin >= _binCount || bin < 0)
-				return;
+			if(bin >= _binCount)
+				bin = _binCount -1;
+			if(bin < 0)
+				bin = 0;
 
 			_values[bin] = value;
 		}
@@ -97,8 +128,10 @@ class Histogram
 		// Get the number of data points in some bin.
 		int Count(int bin) const
 		{
-			if(bin >= _binCount || bin < 0)
-				return -1;
+			if(bin >= _binCount)
+				bin = _binCount -1;
+			if(bin < 0)
+				bin = 0;
 
 			return _counts[bin];
 		}
