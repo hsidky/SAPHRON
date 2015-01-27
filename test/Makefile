@@ -7,6 +7,8 @@ LIB_DIR  = ../lib
 
 SRC_DIR = ../src
 
+CXX = clang++
+
 # Flags passed to the preprocessor.
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 
@@ -19,7 +21,8 @@ DEPS  = $(LIB_DIR)/LNTMC.a
 # All tests produced by this Makefile.
 TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \
 	    FlipSpinMoveTests.out NVTEnsembleTests.out CSVLoggerTests.out \
-		LebwohlLasherModelTests.out SphereUnitVectorMoveTests.out LLCellModelTests.out
+		LebwohlLasherModelTests.out SphereUnitVectorMoveTests.out LLCellModelTests.out \
+		HistogramTests.out WangLandauEnsembleTests.out
 
 
 # Google Test libs to link against.
