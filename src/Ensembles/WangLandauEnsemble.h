@@ -27,7 +27,11 @@ namespace Ensembles
 			// Histogram
 			Histogram hist;
 
+			// Flatness measure.
 			double _flatness;
+
+			// Densities of state pointer.
+			std::vector<double>* _DOS;
 
 		protected:
 			// Calculates the total energy of the model.

@@ -16,7 +16,15 @@ TEST(WangLandauEnsemble, DefaultBehavior)
 	Models::LebwohlLasherModel model(n, n, n);
 	Moves::SphereUnitVectorMove move;
 	Loggers::ConsoleLogger consolelogger(1000);
-	Ensembles::WangLandauEnsemble<Site> ensemble(model, -1.60, 0.3, 300);
+
+	// Randomize initial positions.
+	for(int i = 0; i < 3*model.GetSiteCount(); i++)
+	{
+		auto* site = model.DrawSample();
+		move.Perform(*site);
+	}
+
+	Ensembles::WangLandauEnsemble<Site> ensemble(model, -2.9, 0.4, 5000);
 
 	// Lambda function for logger
 	auto flatness = [] (BaseModel &, const EnsembleProperty &ep) {

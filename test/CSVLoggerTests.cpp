@@ -15,7 +15,7 @@ TEST(CSVLogger, CSVFormatting)
 	int n = 10;
 	Ising3DModel model(n, n, n, 1);
 	FlipSpinMove move;
-	CSVLogger l("model.csv", "site.csv");
+	CSVLogger l("model.csv", "site.csv", "vec.csv");
 	NVTEnsemble<Site> s(model, 4.5);
 
 	// Lambda function for logger
@@ -44,6 +44,14 @@ TEST(CSVLogger, CSVFormatting)
 	l.AddSiteProperty("x-coordinate",
 	                  [] (Site& site,  const EnsembleProperty &){ return site.GetXCoordinate();
 			  });
+
+	l.AddVectorProperty("Test", [] (BaseModel& model, const EnsembleVector &){
+	                            return std::vector<double>{1.0, 2.0, 3.0};
+			    });
+
+	l.AddVectorProperty("Test2", [] (BaseModel& model, const EnsembleVector &){
+	                            return std::vector<double>{4.0, 5.0, 6.0};
+			    });
 
 	s.AddLogger(l);
 	s.AddMove(move);

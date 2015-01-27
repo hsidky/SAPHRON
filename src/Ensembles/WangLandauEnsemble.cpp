@@ -33,11 +33,12 @@ namespace Ensembles
 				Iterate();
 
 			_flatness = hist.CalculateFlatness();
+			_DOS = hist.GetValuesPointer();
 
 			if(j % 1000 == 0)
 			{
 				for(int i = 0; i < hist.GetBinCount(); i++)
-					std::cout << hist.GetValue(i) << ",";
+					std::cout << hist.Count(i) << ",";
 				std::cout << std::endl;
 			}
 			j++;
@@ -83,6 +84,10 @@ namespace Ensembles
 	template<typename T>
 	double WangLandauEnsemble<T>::AcceptanceProbability(double prevH, double currH)
 	{
+		// Reject a move if it is zero.
+		if(hist.GetBin(currH) == -1)
+			return 0;
+
 		auto p = exp(hist.GetValue(prevH) - hist.GetValue(currH));
 		return p > 1.0 ? 1.0 : p;
 	}
@@ -104,6 +109,7 @@ namespace Ensembles
 	{
 		logger.AddEnsembleProperty("Flatness", _flatness);
 		logger.AddEnsembleProperty("Energy", _energy);
+		logger.AddEnsembleVectorProperty("DOS", *_DOS);
 	}
 
 	template class WangLandauEnsemble<Site>;
