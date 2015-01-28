@@ -41,5 +41,5 @@ TEST(WangLandauEnsemble, DefaultBehavior)
 	ensemble.AddLogger(consolelogger);
 	ensemble.AddMove(move);
 
-	ensemble.Sweep();
+	//ensemble.Sweep();
 }

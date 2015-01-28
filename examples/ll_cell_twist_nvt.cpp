@@ -13,7 +13,7 @@
 #include <sstream>
 
 // Function definition of our basic input parser.
-// // A very basic input parser.
+// A very basic input parser.
 int parse_input(char const* args[], int& latticeSize,
                 int& iterations,
                 double& temperature,
@@ -60,7 +60,8 @@ int main(int argc, char const* argv[])
 	Moves::SphereUnitVectorMove move;
 
 	// The CSV logger constructor requires that we provide file names for output.
-	Loggers::CSVLogger csvlogger(modelFile, sitesFile, 1000);
+	// Note: vector file not used, so we input placeholder.
+	Loggers::CSVLogger csvlogger(modelFile, sitesFile, "vecs.csv", 1000);
 	Loggers::ConsoleLogger consolelogger(1000);
 
 	// Log total energy.
