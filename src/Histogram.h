@@ -163,7 +163,8 @@ class Histogram
 		// Resets the histogram.
 		void ResetHistogram()
 		{
-			std::fill(_counts.begin(), _counts.end(), 0);
+			for(size_t i = 0; i < _counts.size(); i++)
+				_counts[i] = 0;
 		}
 
 		// Calculates the "flatness" of the histogram. That is, the maximum

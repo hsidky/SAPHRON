@@ -17,6 +17,24 @@ namespace Ensembles
 	{
 		// Calculate initial energy.
 		_energy = CalculateTotalEnergy();
+		_DOS = hist.GetValuesPointer();
+	}
+
+	// Runs multiple Wang-Landau simulations, between each subsequent iteration is
+	// a re-normalization step involving resetting of the hisogram and reduction of
+	// the scaling factor.
+	template<typename T>
+	void WangLandauEnsemble<T>::Run(int iterations)
+	{
+		for(int i = 0; i < iterations; i++ )
+		{
+			Sweep();
+
+			// Force logging
+			this->RunLoggers(true);
+			ResetHistogram();
+			ReduceScaleFactor();
+		}
 	}
 
 	// Performs one Monte-Carlo iteration. This is precisely one random draw
@@ -24,24 +42,16 @@ namespace Ensembles
 	template<typename T>
 	void WangLandauEnsemble<T>::Sweep()
 	{
-		int j = 0;
-		while(_flatness < 0.8)
+		_flatness = hist.CalculateFlatness();
+		while(_flatness < GetTargetFlatness())
 		{
 			this->RunLoggers();
 			this->IncrementSweeps();
+
 			for(int i = 0; i < this->model.GetSiteCount(); i++)
 				Iterate();
 
 			_flatness = hist.CalculateFlatness();
-			_DOS = hist.GetValuesPointer();
-
-			if(j % 1000 == 0)
-			{
-				for(int i = 0; i < hist.GetBinCount(); i++)
-					std::cout << hist.Count(i) << ",";
-				std::cout << std::endl;
-			}
-			j++;
 		}
 	}
 
@@ -109,6 +119,7 @@ namespace Ensembles
 	{
 		logger.RegisterEnsembleProperty("Flatness", _flatness);
 		logger.RegisterEnsembleProperty("Energy", _energy);
+		logger.RegisterEnsembleProperty("ScaleFactor", _scaleFactor);
 		logger.RegisterEnsembleVectorProperty("DOS", *_DOS);
 	}
 

@@ -33,6 +33,9 @@ namespace Ensembles
 			// Densities of state pointer.
 			std::vector<double>* _DOS;
 
+			// Flatness threshold.
+			double _targetFlatness = 0.8;
+
 		protected:
 			// Calculates the total energy of the model.
 			double CalculateTotalEnergy();
@@ -44,6 +47,15 @@ namespace Ensembles
 			// be performed according to the specified minimum and maxiumum energies and
 			// the bin count.
 			WangLandauEnsemble(BaseModel& model, double minE, double maxE, int binCount);
+
+			// Runs multiple Wang-Landau simulations, between each subsequent iteration is
+			// a re-normalization step involving resetting of the hisogram and reduction of
+			// the scaling factor.
+			void Run(int iterations);
+
+			// Runs multiple Wang-Landau simulations until a specified tolerance is met.
+			// Between each sweep the histogram is reset and the scaling factor is reduced.
+			void Run(double tolerance);
 
 			// Performs one Wang-Landau iteration. This constitutes sampling phase space
 			// until the density of states histogram is determined to be flat.
@@ -63,6 +75,22 @@ namespace Ensembles
 			double SetScaleFactor(double sf)
 			{
 				return _scaleFactor = sf;
+			}
+
+			double GetTargetFlatness()
+			{
+				return _targetFlatness;
+			}
+
+			double SetTargetFlatness(double f)
+			{
+				return _targetFlatness = f;
+			}
+
+			// Resets the histogram.
+			void ResetHistogram()
+			{
+				hist.ResetHistogram();
 			}
 
 			// Gets the current energy of the system.

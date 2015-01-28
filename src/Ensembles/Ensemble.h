@@ -101,10 +101,10 @@ namespace Ensembles
 			}
 
 			// Runs the loggers.
-			void RunLoggers()
+			void RunLoggers(bool force = false)
 			{
 				for(auto &logger : this->_loggers)
-					logger->LogProperties(this->model);
+					logger->LogProperties(this->model, force);
 			}
 
 			// Get number of sweeps. A sweep is defined as "n" iterations, where
