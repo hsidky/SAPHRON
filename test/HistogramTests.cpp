@@ -22,3 +22,14 @@ TEST(Histogram, DefaultBehavior)
 	// Check flatness
 	ASSERT_EQ(0, h.CalculateFlatness());
 }
+
+// Test histogram properties
+TEST(Histogram, HistProperties)
+{
+	Histogram h(-1.9,-0.5,10000);
+
+	ASSERT_EQ(10000, h.GetBinCount());
+	ASSERT_EQ(-1.9, h.GetMinimum());
+	ASSERT_EQ(-0.5, h.GetMaximum());
+	ASSERT_EQ(-1, h.GetBin(-0.06));
+}

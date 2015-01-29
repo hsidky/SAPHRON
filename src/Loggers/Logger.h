@@ -116,7 +116,8 @@ namespace Loggers
 			}
 
 			// Adds and updates ensemble vector properties by key.
-			void RegisterEnsembleVectorProperty(std::string key, std::vector<double>& value)
+			void RegisterEnsembleVectorProperty(std::string key,
+			                                    std::vector<double>& value)
 			{
 				EnsembleVecs.insert(std::pair<std::string,
 				                              std::vector<double>*>(key, &value));

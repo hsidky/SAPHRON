@@ -17,7 +17,7 @@ class Histogram
 		int _binCount;
 
 		// Min and max values of bins.
-		int _min;
+		double _min, _max;
 
 		// Count of histogram outliers.
 		int _lowerOutlierCount = 0, _upperOutlierCount = 0;
@@ -30,7 +30,7 @@ class Histogram
 
 	public:
 		Histogram(double min, double max, int numberOfBins) :
-			_binCount(numberOfBins), _min(min)
+			_binCount(numberOfBins), _min(min), _max(max)
 		{
 			_binWidth = (max-min)/numberOfBins;
 			_counts.resize(numberOfBins, 0);
@@ -50,15 +50,11 @@ class Histogram
 		{
 			int bin = (int)((datum - _min) / _binWidth);
 			if (bin < 0)
-			{
-				_counts[0]++;
+				//_counts[0]++;
 				_lowerOutlierCount++;
-			}
 			else if(bin >= _binCount)
-			{
-				_counts[_binCount-1];
+				//_counts[_binCount-1];
 				_upperOutlierCount++;
-			}
 			else
 				_counts[bin]++;
 
@@ -160,6 +156,18 @@ class Histogram
 			return _upperOutlierCount;
 		}
 
+		// Gets the minimum histogram value.
+		double GetMinimum()
+		{
+			return _min;
+		}
+
+		// Gets the maximum histogram value.
+		double GetMaximum()
+		{
+			return _max;
+		}
+
 		// Resets the histogram.
 		void ResetHistogram()
 		{
@@ -172,21 +180,18 @@ class Histogram
 		double CalculateFlatness()
 		{
 			double avg = 0;
+			double minVal = 1e10;
 			for(auto& count : _counts)
+			{
+				if(count < minVal)
+					minVal = count;
 				avg += count;
+			}
 			avg /= _binCount;
 
 			if(avg == 0)
 				return 0;
 
-			double dev = 1.0;
-			for(auto& count : _counts)
-			{
-				double id = count/avg;
-				if(id < dev)
-					dev = id;
-			}
-
-			return dev;
+			return minVal/avg;
 		}
 };
