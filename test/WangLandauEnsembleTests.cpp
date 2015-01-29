@@ -24,7 +24,7 @@ TEST(WangLandauEnsemble, DefaultBehavior)
 		move.Perform(*site);
 	}
 
-	Ensembles::WangLandauEnsemble<Site> ensemble(model, -2.9, 0.4, 5000);
+	Ensembles::WangLandauEnsemble<Site> ensemble(model, -1.9, -0.5, 10000);
 
 	// Lambda function for logger
 	auto flatness = [] (BaseModel &, const EnsembleProperty &ep) {
@@ -35,11 +35,21 @@ TEST(WangLandauEnsemble, DefaultBehavior)
 		return *ep.at("Energy");
 	};
 
+	auto lo = [] (BaseModel &, const EnsembleProperty &ep){
+		return *ep.at("LowerOutliers");
+	};
+
+	auto uo = [] (BaseModel &, const EnsembleProperty &ep){
+		return *ep.at("UpperOutliers");
+	};
+
 	// Add magnetization to logger.
 	consolelogger.AddModelProperty("Flatness", flatness);
 	consolelogger.AddModelProperty("Energy", energy);
+	consolelogger.AddModelProperty("LowerOutliers", lo);
+	consolelogger.AddModelProperty("UpperOutliers", uo);
 	ensemble.AddLogger(consolelogger);
 	ensemble.AddMove(move);
 
-	//ensemble.Sweep();
+	ensemble.Sweep();
 }

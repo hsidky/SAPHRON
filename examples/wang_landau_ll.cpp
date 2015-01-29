@@ -83,10 +83,28 @@ int main(int argc, char const* argv[])
 		return *evecs.at("DOS");
 	};
 
+	// Show lower outlier count.
+	auto lo = [] (BaseModel &, const EnsembleProperty &ep){
+		return *ep.at("LowerOutliers");
+	};
+
+	// Show upper outlier count.
+	auto uo = [] (BaseModel &, const EnsembleProperty &ep){
+		return *ep.at("UpperOutliers");
+	};
+
+	// Monitor average energy.
+	auto energy = [] (BaseModel &, const EnsembleProperty &ep){
+		return *ep.at("Energy");
+	};
+
 	// Register callbacks with loggers.
 	csvlogger.AddVectorProperty("DOS", dos);
+	consolelogger.AddModelProperty("Energy", energy);
 	consolelogger.AddModelProperty("Flatness", flatness);
 	consolelogger.AddModelProperty("ScaleFactor", scale);
+	consolelogger.AddModelProperty("LowerOutliers", lo);
+	consolelogger.AddModelProperty("UpperOutliers", uo);
 
 	// Initialize Wang-Landau sampler.
 	Ensembles::WangLandauEnsemble<Site> ensemble(model, minE, maxE, binCount);

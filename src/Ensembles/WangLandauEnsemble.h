@@ -36,6 +36,10 @@ namespace Ensembles
 			// Flatness threshold.
 			double _targetFlatness = 0.8;
 
+			double _lowerOutliers = 0;
+
+			double _upperOutliers = 0;
+
 		protected:
 			// Calculates the total energy of the model.
 			double CalculateTotalEnergy();

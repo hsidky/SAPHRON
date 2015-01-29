@@ -13,7 +13,7 @@ namespace Ensembles
 	                                          double minE,
 	                                          double maxE,
 	                                          int binCount) :
-		Ensemble<T>(model), rand(3), hist(minE, maxE, binCount)
+		Ensemble<T>(model), rand(5), hist(minE, maxE, binCount)
 	{
 		// Calculate initial energy.
 		_energy = CalculateTotalEnergy();
@@ -52,6 +52,8 @@ namespace Ensembles
 				Iterate();
 
 			_flatness = hist.CalculateFlatness();
+			_lowerOutliers = hist.GetLowerOutlierCount();
+			_upperOutliers = hist.GetUpperOutlierCount();
 		}
 	}
 
@@ -94,9 +96,16 @@ namespace Ensembles
 	template<typename T>
 	double WangLandauEnsemble<T>::AcceptanceProbability(double prevH, double currH)
 	{
-		// Reject a move if it is zero.
+		// If we are outside out boundaries, drag the energy into the desired range.
 		if(hist.GetBin(currH) == -1)
+		{
+			if(prevH < hist.GetMinimum() && currH > prevH)
+				return 1;
+			else if(prevH > hist.GetMaximum() && currH < prevH)
+				return 1;
+
 			return 0;
+		}
 
 		auto p = exp(hist.GetValue(prevH) - hist.GetValue(currH));
 		return p > 1.0 ? 1.0 : p;
@@ -121,6 +130,8 @@ namespace Ensembles
 		logger.RegisterEnsembleProperty("Energy", _energy);
 		logger.RegisterEnsembleProperty("ScaleFactor", _scaleFactor);
 		logger.RegisterEnsembleVectorProperty("DOS", *_DOS);
+		logger.RegisterEnsembleProperty("LowerOutliers", _lowerOutliers);
+		logger.RegisterEnsembleProperty("UpperOutliers", _upperOutliers);
 	}
 
 	template class WangLandauEnsemble<Site>;
