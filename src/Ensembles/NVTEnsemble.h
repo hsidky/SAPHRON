@@ -34,7 +34,7 @@ namespace Ensembles
 		public:
 			// Initializes NVTEnsemble for a model at a given "reduced" temperature.
 			NVTEnsemble(BaseModel& model, double temperature) :
-				Ensemble<T>(model), _temperature(temperature), rand(3)
+				Ensemble<T>(model), _temperature(temperature), rand(1)
 			{
 			}
 

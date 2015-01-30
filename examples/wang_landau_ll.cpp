@@ -115,6 +115,7 @@ int main(int argc, char const* argv[])
 	ensemble.AddMove(move);
 
 	// Run WL sampling.
+	ensemble.SetTargetFlatness(0.9);
 	ensemble.Run(iterations);
 }
 

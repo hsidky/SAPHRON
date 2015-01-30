@@ -38,7 +38,7 @@ class Histogram
 		}
 
 		Histogram(double min, double max, double binWidth) :
-			_min(min)
+			_min(min), _max(max)
 		{
 			_binCount = (int) ceil(std::abs(max-min)/binWidth);
 			_counts.resize(_binCount, 0);
@@ -78,9 +78,7 @@ class Histogram
 				bin = _binCount -1;
 			if(bin < 0)
 				bin = 0;
-			//if(bin >= _binCount || bin < 0)
-			//	return bin;
-
+				
 			return _values[bin];
 		}
 

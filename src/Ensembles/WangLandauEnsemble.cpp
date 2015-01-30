@@ -13,14 +13,15 @@ namespace Ensembles
 	                                          double minE,
 	                                          double maxE,
 	                                          int binCount) :
-		Ensemble<T>(model), rand(5), hist(minE, maxE, binCount)
+		Ensemble<T>(model), rand(15),
+		hist(minE*model.GetSiteCount(), maxE*model.GetSiteCount(), binCount)
 	{
 		// Calculate initial energy.
 		_energy = CalculateTotalEnergy();
 		_DOS = hist.GetValuesPointer();
 	}
 
-	// Runs multiple Wang-Landau simulations, between each subsequent iteration is
+	// Runs multiple Wang-Landau sweeps, between each subsequent sweeps is
 	// a re-normalization step involving resetting of the hisogram and reduction of
 	// the scaling factor.
 	template<typename T>
@@ -75,7 +76,7 @@ namespace Ensembles
 		// it to the current energy to get the absolute energy required for
 		// AcceptanceProbability.
 		double currH = this->model.EvaluateHamiltonian(*sample);
-		double newE = _energy + (currH - prevH)/(this->model.GetSiteCount());
+		double newE = _energy + (currH - prevH);
 
 		// Check probability
 		if(AcceptanceProbability(_energy, newE) < rand.doub())
@@ -116,10 +117,9 @@ namespace Ensembles
 	double WangLandauEnsemble<T>::CalculateTotalEnergy()
 	{
 		double u = 0;
-		int c = this->model.GetSiteCount();
-		for(int i = 0; i < c; i++)
+		for(int i = 0; i < this->model.GetSiteCount(); i++)
 			u += this->model.EvaluateHamiltonian(i);
-		u /= 2.0*c;
+		u /= 2.0;
 		return u;
 	}
 

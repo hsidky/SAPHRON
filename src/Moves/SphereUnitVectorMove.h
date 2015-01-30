@@ -18,7 +18,7 @@ namespace Moves
 			Rand rand;
 
 		public:
-			SphereUnitVectorMove(int seed = 3) : _uBefore(3), rand(seed){}
+			SphereUnitVectorMove(int seed = 23) : _uBefore(3), rand(seed){}
 
 			// Selects a new random unit vector on a sphere.
 			void Perform(Site& site)
