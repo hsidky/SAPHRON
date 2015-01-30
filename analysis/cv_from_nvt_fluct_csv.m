@@ -3,8 +3,8 @@
 % Changes: 
 % 2015/01/17 Initial file.
 
-function [cv] = cv_from_nvt_csv(files, rows, col, T, n)
-% CV_FROM_NVT_CSV Calculates the constant-volume heat capacity, Cv, from 
+function [cv] = cv_from_nvt_fluct_csv(files, rows, col, T, n)
+% CV_FROM_NVT_FLUCT_CSV Calculates the constant-volume heat capacity, Cv, from 
 % NVT Ensemble energy data based on stat-mech fluctuation equation. This 
 % routine pulls in data from CSV file(s) and calls the routine cv_from_nvt
 % to perform the actual calculation.
@@ -45,4 +45,4 @@ for i=1:length(files)
     end
 end
 
-cv = cv_from_nvt(U,T,n);
+cv = cv_from_nvt_fluct(U,T,n);

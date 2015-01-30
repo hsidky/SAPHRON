@@ -3,8 +3,8 @@
 % Changes: 
 % 2015/01/17 Initial file.
 
-function [cv] = cv_from_nvt(U, T, n)
-% CV_FROM_NVT - Calculates the constant-volume heat capacity, Cv, from 
+function [cv] = cv_from_nvt_fluct(U, T, n)
+% CV_FROM_NVT_FLUCT - Calculates the constant-volume heat capacity, Cv, from 
 % NVT Ensemble energy data based on stat-mech fluctuation equation.
 %
 % Inputs:
