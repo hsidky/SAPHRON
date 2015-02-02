@@ -114,8 +114,10 @@ int main(int argc, char const* argv[])
 	ensemble.AddLogger(consolelogger);
 	ensemble.AddMove(move);
 
+	csvlogger.WriteHeaders();
+
 	// Run WL sampling.
-	ensemble.SetTargetFlatness(0.9);
+	ensemble.SetTargetFlatness(0.85);
 	ensemble.Run(iterations);
 }
 

@@ -9,10 +9,8 @@ class Site
 		// Site coordinates.
 		double x, y, z;
 
-		std::vector<double> u = {0.0,0.0,0.0};
-
 		// Site unit vectors.
-		//double ux = 0, uy = 0, uz = 0;
+		std::vector<double> u = {0.0,0.0,0.0};
 
 		// Site species
 		int species = 0;

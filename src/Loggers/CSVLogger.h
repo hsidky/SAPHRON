@@ -2,6 +2,7 @@
 
 #include "Logger.h"
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 
 namespace Loggers
@@ -70,6 +71,9 @@ namespace Loggers
 				: Logger(frequency), _modelfs(modelfile),
 				  _sitefs(sitefile), _vecfs(vecfile)
 			{
+				_modelfs << std::setprecision(20);
+				_sitefs << std::setprecision(20);
+				_vecfs << std::setprecision(20);
 			}
 
 			// Write headers to the beginning of the file.
