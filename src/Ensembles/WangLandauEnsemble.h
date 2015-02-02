@@ -33,6 +33,9 @@ namespace Ensembles
 			// Densities of state pointer.
 			std::vector<double>* _DOS;
 
+			// Histogram counts.
+			std::vector<double>* _counts;
+
 			// Flatness threshold.
 			double _targetFlatness = 0.8;
 

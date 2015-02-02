@@ -19,6 +19,7 @@ namespace Ensembles
 		// Calculate initial energy.
 		_energy = CalculateTotalEnergy();
 		_DOS = hist.GetValuesPointer();
+		_counts = hist.GetHistogramPointer();
 	}
 
 	// Runs multiple Wang-Landau sweeps, between each subsequent sweeps is
@@ -130,6 +131,7 @@ namespace Ensembles
 		logger.RegisterEnsembleProperty("Energy", _energy);
 		logger.RegisterEnsembleProperty("ScaleFactor", _scaleFactor);
 		logger.RegisterEnsembleVectorProperty("DOS", *_DOS);
+		logger.RegisterEnsembleVectorProperty("Histogram", *_counts);
 		logger.RegisterEnsembleProperty("LowerOutliers", _lowerOutliers);
 		logger.RegisterEnsembleProperty("UpperOutliers", _upperOutliers);
 	}

@@ -23,7 +23,7 @@ class Histogram
 		int _lowerOutlierCount = 0, _upperOutlierCount = 0;
 
 		// Histogram counts.
-		std::vector<int> _counts;
+		std::vector<double> _counts;
 
 		// Histogram values.
 		std::vector<double> _values;
@@ -78,7 +78,7 @@ class Histogram
 				bin = _binCount -1;
 			if(bin < 0)
 				bin = 0;
-				
+
 			return _values[bin];
 		}
 
@@ -106,6 +106,16 @@ class Histogram
 		std::vector<double>* GetValuesPointer()
 		{
 			return &_values;
+		}
+
+		std::vector<double> GetHistogram()
+		{
+			return _counts;
+		}
+
+		std::vector<double>* GetHistogramPointer()
+		{
+			return &_counts;
 		}
 
 		// Update associated values in a bin.
