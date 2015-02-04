@@ -27,36 +27,10 @@ namespace Models
 			// parameters are used otherwise.
 			Lattice3DModel(int xLength, int yLength, int zLength, int seed = 1);
 
-			// Sets the interaction parameter between two species.
-			double SetInteractionParameter(double e, int i, int j)
-			{
-				int n = _interactionParameter.size();
-
-				// Sort max,min.
-				int ni = (i > j) ? i : j;
-				int nj = (i < j) ? i : j;
-
-				// Calculate position.
-				int p = ni + ((2*n - nj)*(nj-1)/2) -1;
-
-				// Insert new location
-				if(ni > n || nj > n)
-					_interactionParameter.insert(
-					        _interactionParameter.begin() + p, e);
-
-				return this->_interactionParameter[p] = e;
-			};
-
 			// Gets the interaction parameter for species i and j.
-			double GetInteractionParameter(int i = 1, int j = 1)
-			{
-				int n = _interactionParameter.size();
+			double GetInteractionParameter(int i = 1, int j = 1);
 
-				// Sort max,min.
-				int ni = (i > j) ? i : j;
-				int nj = (i < j) ? i : j;
-
-				return this->_interactionParameter[ni + ((2*n - nj)*(nj-1)/2) -1];
-			};
+			// Sets the interaction parameter between two species.
+			double SetInteractionParameter(double e, int i, int j);
 	};
 }

@@ -1,15 +1,20 @@
 #pragma once
 
 #include "Lattice3DModel.h"
+#include <iostream>
 #include <numeric>
 
 namespace Models
 {
 	// 3D Lebwohl-Lasher (LL) model. It is a system of uniaxial particles placed
 	// at the sites of a cubic lattice that interact through a nearest-neighbor
-	// pair potential of H = -J*P2(cos(Ɵ)).
+	// pair potential of H = Ʃ(γij + εij*P2(cosθij)).
 	class LebwohlLasherModel : public Lattice3DModel
 	{
+		private:
+			// Isotropic mixing parameter γij.
+			std::vector<double> _isotropicJ = {0.0};
+
 		public:
 
 			// Initializes LL model with a given lattice size (the length of a
@@ -22,23 +27,19 @@ namespace Models
 
 			using Lattice3DModel::EvaluateHamiltonian;
 
-			double EvaluateHamiltonian(Site& site)
-			{
-				double h = 0;
+			// Configure a Lebwohl-Lasher mixture with a certian number of species and
+			// targtet mole fractions. The species will be randomly distributed throughout
+			// the lattice and the specified mole fractions will only be met approximately
+			// since it may not be possible to get a perfect match.
+			void ConfigureMixture(int speciesCount, std::vector<double> moleFractions);
 
-				auto& si = site.GetUnitVectors();
-				for(int &nindex : site.GetNeighbors())
-				{
-					auto& sj = Sites[nindex].GetUnitVectors();
-					double dot = 0;
-					for(size_t i = 0; i < sj.size(); i++)
-						dot += si[i]*sj[i];
+			// Evaluate the LL Hamiltonian H = Ʃ(γij + εij*P2(cosθij)).
+			double EvaluateHamiltonian(Site& site);
 
-					// P2 Legendre polynomial
-					h += 0.5*(3.0*dot*dot - 1.0);
-				}
+			// Gets the isotropic interaction parameter, γij, between two species.
+			double GetIsotropicParameter(int i = 1, int j = 1);
 
-				return -1 * this->GetInteractionParameter() * h;
-			}
+			// Sets the isotropic interaction parameter, γij, between two species.
+			double SetIsotropicParameter(double e, int i, int j);
 	};
 }

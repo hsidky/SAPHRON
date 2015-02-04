@@ -13,7 +13,7 @@ class Site
 		std::vector<double> u = {0.0,0.0,0.0};
 
 		// Site species
-		int species = 0;
+		int species = 1;
 
 		// Neighboring sites. In a vector/array of sites, this holds the indices
 		// of the sites that are considered neighbors.

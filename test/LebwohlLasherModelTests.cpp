@@ -41,3 +41,37 @@ TEST(LebwohlLasherModel, InteractionParameters)
 	// Set something way out there.
 	//ASSERT_EQ(5.5, m.SetInteractionParameter(5.5, 3, 5));
 }
+
+// Test the mixture setup.
+TEST(LebwohlLasherModel, MixtureSetup)
+{
+	LebwohlLasherModel m(37, 37, 37, 1);
+
+	// Check initial compositions
+	double x  = 0;
+	for(int i = 0; i < m.GetSiteCount(); i++)
+	{
+		auto* site = m.SelectSite(i);
+		if(site->GetSpecies() == 1)
+			x += 1.0;
+	}
+
+	ASSERT_DOUBLE_EQ(1.0, x/m.GetSiteCount());
+
+	std::vector<double> target {0.5, 0.4, 0.1};
+	// Set target mole fractions for species
+	m.ConfigureMixture(3, target);
+
+	// Check final compositions.
+	std::vector<double> actual {0.0, 0.0, 0.0};
+	int n = m.GetSiteCount();
+	for(int i = 0; i < n; i++)
+	{
+		auto* site = m.SelectSite(i);
+		actual[site->GetSpecies()-1]++;
+	}
+
+	ASSERT_NEAR(target[0], actual[0]/n, 1e-3);
+	ASSERT_NEAR(target[1], actual[1]/n, 1e-3);
+	ASSERT_NEAR(target[2], actual[2]/n, 1e-3);
+}

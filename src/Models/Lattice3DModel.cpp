@@ -64,4 +64,36 @@ namespace Models
 			z += 1.0;
 		}
 	}
+
+	// Gets the interaction parameter for species i and j.
+	double Lattice3DModel::GetInteractionParameter(int i, int j)
+	{
+		int n = _interactionParameter.size();
+
+		// Sort max,min.
+		int ni = (i > j) ? i : j;
+		int nj = (i < j) ? i : j;
+
+		return this->_interactionParameter[ni + ((2*n - nj)*(nj-1)/2) -1];
+	}
+
+	// Sets the interaction parameter for species i and j.
+	double Lattice3DModel::SetInteractionParameter(double e, int i, int j)
+	{
+		int n = _interactionParameter.size();
+
+		// Sort max,min.
+		int ni = (i > j) ? i : j;
+		int nj = (i < j) ? i : j;
+
+		// Calculate position.
+		int p = ni + ((2*n - nj)*(nj-1)/2) -1;
+
+		// Insert new location
+		if(ni > n || nj > n)
+			_interactionParameter.insert(
+			        _interactionParameter.begin() + p, e);
+
+		return this->_interactionParameter[p] = e;
+	}
 }
