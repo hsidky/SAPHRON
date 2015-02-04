@@ -13,50 +13,9 @@ namespace Ensembles
 	                                          double minE,
 	                                          double maxE,
 	                                          int binCount) :
-		Ensemble<T>(model), rand(15),
-		hist(minE*model.GetSiteCount(), maxE*model.GetSiteCount(), binCount)
+		DensityOfStatesEnsemble<T>(model, minE*model.GetSiteCount(),
+		                           maxE*model.GetSiteCount(), binCount)
 	{
-		// Calculate initial energy.
-		_energy = CalculateTotalEnergy();
-		_DOS = hist.GetValuesPointer();
-		_counts = hist.GetHistogramPointer();
-	}
-
-	// Runs multiple Wang-Landau sweeps, between each subsequent sweeps is
-	// a re-normalization step involving resetting of the hisogram and reduction of
-	// the scaling factor.
-	template<typename T>
-	void WangLandauEnsemble<T>::Run(int iterations)
-	{
-		for(int i = 0; i < iterations; i++ )
-		{
-			Sweep();
-
-			// Force logging
-			this->RunLoggers(true);
-			ResetHistogram();
-			ReduceScaleFactor();
-		}
-	}
-
-	// Performs one Monte-Carlo iteration. This is precisely one random draw
-	// from the model (one function call to model->DrawSample()).
-	template<typename T>
-	void WangLandauEnsemble<T>::Sweep()
-	{
-		_flatness = hist.CalculateFlatness();
-		while(_flatness < GetTargetFlatness())
-		{
-			this->RunLoggers();
-			this->IncrementSweeps();
-
-			for(int i = 0; i < this->model.GetSiteCount(); i++)
-				Iterate();
-
-			_flatness = hist.CalculateFlatness();
-			_lowerOutliers = hist.GetLowerOutlierCount();
-			_upperOutliers = hist.GetUpperOutlierCount();
-		}
 	}
 
 	// Performs one Monte-Carlo iteration. This is precisely one random draw
@@ -77,18 +36,18 @@ namespace Ensembles
 		// it to the current energy to get the absolute energy required for
 		// AcceptanceProbability.
 		double currH = this->model.EvaluateHamiltonian(*sample);
-		double newE = _energy + (currH - prevH);
+		double newE = this->_energy + (currH - prevH);
 
 		// Check probability
-		if(AcceptanceProbability(_energy, newE) < rand.doub())
+		if(AcceptanceProbability(this->_energy, newE) < this->rand.doub())
 			for(auto &move : this->moves)
 				move->Undo();
 		else // Accepted
-			_energy = newE;
+			this->_energy = newE;
 
 		// Update bins and energy regardless (log DOS).
-		auto bin = hist.Record(_energy);
-		hist.UpdateValue(bin, hist.GetValue(bin)+log(GetScaleFactor()));
+		auto bin = this->hist.Record(this->_energy);
+		this->hist.UpdateValue(bin, this->hist.GetValue(bin)+log(this->GetScaleFactor()));
 	}
 
 	// Wang-Landau acceptance probability based on density of states.
@@ -99,41 +58,18 @@ namespace Ensembles
 	double WangLandauEnsemble<T>::AcceptanceProbability(double prevH, double currH)
 	{
 		// If we are outside out boundaries, drag the energy into the desired range.
-		if(hist.GetBin(currH) == -1)
+		if(this->hist.GetBin(currH) == -1)
 		{
-			if(prevH < hist.GetMinimum() && currH > prevH)
+			if(prevH < this->hist.GetMinimum() && currH > prevH)
 				return 1;
-			else if(prevH > hist.GetMaximum() && currH < prevH)
+			else if(prevH > this->hist.GetMaximum() && currH < prevH)
 				return 1;
 
 			return 0;
 		}
 
-		auto p = exp(hist.GetValue(prevH) - hist.GetValue(currH));
+		auto p = exp(this->hist.GetValue(prevH) - this->hist.GetValue(currH));
 		return p > 1.0 ? 1.0 : p;
-	}
-
-	// Calculates the total energy for the model.
-	template<typename T>
-	double WangLandauEnsemble<T>::CalculateTotalEnergy()
-	{
-		double u = 0;
-		for(int i = 0; i < this->model.GetSiteCount(); i++)
-			u += this->model.EvaluateHamiltonian(i);
-		u /= 2.0;
-		return u;
-	}
-
-	template<typename T>
-	void WangLandauEnsemble<T>::RegisterLoggableProperties(Logger& logger)
-	{
-		logger.RegisterEnsembleProperty("Flatness", _flatness);
-		logger.RegisterEnsembleProperty("Energy", _energy);
-		logger.RegisterEnsembleProperty("ScaleFactor", _scaleFactor);
-		logger.RegisterEnsembleVectorProperty("DOS", *_DOS);
-		logger.RegisterEnsembleVectorProperty("Histogram", *_counts);
-		logger.RegisterEnsembleProperty("LowerOutliers", _lowerOutliers);
-		logger.RegisterEnsembleProperty("UpperOutliers", _upperOutliers);
 	}
 
 	template class WangLandauEnsemble<Site>;
