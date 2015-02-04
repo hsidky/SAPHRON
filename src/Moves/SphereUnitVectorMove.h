@@ -9,7 +9,6 @@
 namespace Moves
 {
 	// Class for selecting a random unit vector on a sphere for a site.
-	// This follows the implementation in Tildesley[1987].
 	class SphereUnitVectorMove : public Move<Site>
 	{
 		private:

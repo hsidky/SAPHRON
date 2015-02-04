@@ -22,7 +22,7 @@ DEPS  = $(LIB_DIR)/LNTMC.a
 TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \
 	    FlipSpinMoveTests.out NVTEnsembleTests.out CSVLoggerTests.out \
 		LebwohlLasherModelTests.out SphereUnitVectorMoveTests.out LLCellModelTests.out \
-		HistogramTests.out WangLandauEnsembleTests.out
+		HistogramTests.out WangLandauEnsembleTests.out SpeciesSwapMoveTests.out
 
 
 # Google Test libs to link against.
