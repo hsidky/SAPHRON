@@ -35,16 +35,4 @@ TEST(Histogram, HistProperties)
 	ASSERT_EQ(min, h.GetMinimum());
 	ASSERT_EQ(max, h.GetMaximum());
 	ASSERT_EQ(-1, h.GetBin(-0.06));
-
-	// Fill up histogram evenly and check.
-	for(int i = 0; i < 100000; i++)
-	{
-		double val = min+i*(max-min)/100000;
-		h.Record(val);
-	}
-
-	//for(int i = 0; i < h.GetBinCount(); i++)
-	//	std::cout <<  i << ":" << h.Count(i) << ", ";
-
-	ASSERT_EQ(1,h.CalculateFlatness());
 }

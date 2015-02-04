@@ -11,12 +11,9 @@ namespace Models
 	{
 		private:
 
-			// Size of since lattice dimension.
-			int _latticeSize;
-
-			// Normalized "J", interaction parameter (J) such that a specified
-			// temperature is reduced with a normalized kb from BaseModel.
-			double _interactionParameter = 1.0;
+			// Interaction potential stored as a lower packed triangular matrix.
+			// Ex. e11, e12, e13, e22, e23, e33.
+			std::vector<double> _interactionParameter { 1.0 };
 
 			int _xl, _yl, _zl;
 
@@ -30,22 +27,36 @@ namespace Models
 			// parameters are used otherwise.
 			Lattice3DModel(int xLength, int yLength, int zLength, int seed = 1);
 
-			// Sets the interaction parameter in the Hamiltonian.
-			double SetInteractionParameter(double j)
+			// Sets the interaction parameter between two species.
+			double SetInteractionParameter(double e, int i, int j)
 			{
-				return this->_interactionParameter = j;
+				int n = _interactionParameter.size();
+
+				// Sort max,min.
+				int ni = (i > j) ? i : j;
+				int nj = (i < j) ? i : j;
+
+				// Calculate position.
+				int p = ni + ((2*n - nj)*(nj-1)/2) -1;
+
+				// Insert new location
+				if(ni > n || nj > n)
+					_interactionParameter.insert(
+					        _interactionParameter.begin() + p, e);
+
+				return this->_interactionParameter[p] = e;
 			};
 
-			// Gets the interaction parameter in the Hamiltonian.
-			double GetInteractionParameter()
+			// Gets the interaction parameter for species i and j.
+			double GetInteractionParameter(int i = 1, int j = 1)
 			{
-				return this->_interactionParameter;
-			};
+				int n = _interactionParameter.size();
 
-			// Gets the lattice size (length of a single dimension).
-			int GetLatticeSize()
-			{
-				return this->_latticeSize;
-			}
+				// Sort max,min.
+				int ni = (i > j) ? i : j;
+				int nj = (i < j) ? i : j;
+
+				return this->_interactionParameter[ni + ((2*n - nj)*(nj-1)/2) -1];
+			};
 	};
 }
