@@ -19,7 +19,6 @@ namespace Ensembles
 	{
 		logger.RegisterEnsembleProperty("Flatness", _flatness);
 		logger.RegisterEnsembleProperty("Energy", _energy);
-		logger.RegisterEnsembleProperty("Parameter",_param);
 		logger.RegisterEnsembleProperty("ScaleFactor", _scaleFactor);
 		logger.RegisterEnsembleVectorProperty("DOS", *_DOS);
 		logger.RegisterEnsembleVectorProperty("Histogram", *_counts);

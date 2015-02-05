@@ -56,18 +56,18 @@ namespace Models
 			}
 	}
 
-	// Evaluate the LL Hamiltonian H = Ʃ(γij + εij*P2(cosθij)).
+	// Evaluate the LL Hamiltonian H = -Ʃ(γij + εij*P2(cosθij)).
 	double LebwohlLasherModel::EvaluateHamiltonian(Site& site)
 	{
 		{
 			double h = 0;
 
 			auto& si = site.GetUnitVectors();
-			double alpha = site.GetSpecies();
+			int alpha = site.GetSpecies();
 			for(int &nindex : site.GetNeighbors())
 			{
 				auto& sj = Sites[nindex].GetUnitVectors();
-				double beta = Sites[nindex].GetSpecies();
+				int beta = Sites[nindex].GetSpecies();
 
 				// Dot product
 				double dot = 0;
@@ -80,7 +80,7 @@ namespace Models
 				     *0.5*(3.0*dot*dot - 1.0);
 			}
 
-			return -1 * this->GetInteractionParameter() * h;
+			return -1 * h;
 		}
 	}
 

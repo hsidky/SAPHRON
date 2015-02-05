@@ -36,7 +36,22 @@ TEST(LebwohlLasherModel, InteractionParameters)
 	// Add new parameter
 	ASSERT_EQ(3.1, m.SetInteractionParameter(3.1, 1, 2));
 	ASSERT_EQ(3.1, m.GetInteractionParameter(1,2));
+	ASSERT_EQ(3.1, m.GetInteractionParameter(2,1));
 	ASSERT_EQ(2.0, m.GetInteractionParameter(1,1));
+
+	// Check default interaction parameter.
+	ASSERT_EQ(0.0, m.GetIsotropicParameter());
+
+	// Change default parameter
+	ASSERT_EQ(2.0, m.SetIsotropicParameter(2.0, 1, 1));
+
+	// Add new parameter
+	ASSERT_EQ(3.1, m.SetIsotropicParameter(3.1, 1, 2));
+	ASSERT_EQ(7.7, m.SetIsotropicParameter(7.7, 2, 2));
+	ASSERT_EQ(3.1, m.GetIsotropicParameter(1,2));
+	ASSERT_EQ(3.1, m.GetIsotropicParameter(2,1));
+	ASSERT_EQ(2.0, m.GetIsotropicParameter(1,1));
+	ASSERT_EQ(7.7, m.GetIsotropicParameter(2,2));
 
 	// Set something way out there.
 	//ASSERT_EQ(5.5, m.SetInteractionParameter(5.5, 3, 5));

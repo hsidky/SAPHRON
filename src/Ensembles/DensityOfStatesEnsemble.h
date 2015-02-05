@@ -25,9 +25,6 @@ namespace Ensembles
 			// Histogram counts.
 			std::vector<double>* _counts;
 
-			// Current order parameter of the model.
-			double _param;
-
 			// Flatness measure.
 			double _flatness;
 

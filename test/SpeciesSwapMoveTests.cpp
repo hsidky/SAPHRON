@@ -4,7 +4,7 @@
 using namespace Moves;
 
 // Test the default behavior of the species swap move.
-TEST(SpeciesSwapMove, DefaultBehavor)
+TEST(SpeciesSwapMove, DefaultBehavior)
 {
 	Site s(0, 0, 0);
 	SpeciesSwapMove m(3);

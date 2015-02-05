@@ -57,7 +57,7 @@ namespace Ensembles
 	template<typename T>
 	double WangLandauEnsemble<T>::AcceptanceProbability(double prevH, double currH)
 	{
-		// If we are outside out boundaries, drag the energy into the desired range.
+		// If we are outside boundaries, drag the energy into the desired range.
 		if(this->hist.GetBin(currH) == -1)
 		{
 			if(prevH < this->hist.GetMinimum() && currH > prevH)
