@@ -8,6 +8,9 @@ namespace Moves
 	template<typename T>
 	class Move
 	{
+		private:
+			bool _forceAccept = false;
+
 		public:
 			virtual ~Move(){}
 
@@ -16,5 +19,19 @@ namespace Moves
 
 			// Undo a Monte Carlo move.
 			virtual void Undo() = 0;
+
+			// Specify if a move is to be accepted unconditionally.
+			// It is the responsibility of the derived classes to enforce
+			// this on Undo().
+			bool SetForceAccept(bool force)
+			{
+				return _forceAccept = force;
+			}
+
+			// Detemrine if a move is to be accepted unconditionally.
+			bool ForceAccept()
+			{
+				return _forceAccept;
+			}
 	};
 }

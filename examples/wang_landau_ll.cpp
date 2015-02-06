@@ -53,10 +53,7 @@ int main(int argc, char const* argv[])
 	Moves::SphereUnitVectorMove move;
 
 	// Since all descendants of Lattice3D model by default initialize all spins up, we
-	// need to randomize the initial positions of the sites (spins). This is critical
-	// since the Wang-Landau ensemble rejects moves that occur outside the desired
-	// energy binning range. Since our range of interest does not include this configuration,
-	// we would be stuck unless we perform this step.
+	// need to randomize the initial positions of the sites (spins).
 	for(int i = 0; i < 3*model.GetSiteCount(); i++)
 	{
 		auto* site = model.DrawSample();

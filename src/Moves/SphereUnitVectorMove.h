@@ -37,7 +37,8 @@ namespace Moves
 			// Undo the move on a site.
 			void Undo()
 			{
-				_site->SetUnitVectors(_uBefore[0], _uBefore[1], _uBefore[2]);
+				if(!this->ForceAccept())
+					_site->SetUnitVectors(_uBefore[0], _uBefore[1], _uBefore[2]);
 			}
 	};
 }

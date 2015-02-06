@@ -56,6 +56,10 @@ int main(int argc, char const* argv[])
 	Moves::SphereUnitVectorMove move1;
 	Moves::SpeciesSwapMove move2(2);
 
+	// Since we are trying to determine our free energy in N, we need to unconditionally
+	// accept any move in the canonical space (N,V,T).
+	move1.SetForceAccept(true);
+
 	// Since all descendants of Lattice3D model by default initialize all spins up, we
 	// need to randomize the initial positions of the sites (spins).
 	for(int i = 0; i < 3*model.GetSiteCount(); i++)

@@ -31,10 +31,9 @@ namespace Ensembles
 		for(auto &move : this->moves)
 			move->Perform(*sample);
 
-		// Get new hamiltonian. Since the Hamiltonian for a site is really the
-		// change in energy of the system (in an isolated sense), we can just add
-		// it to the current energy to get the absolute energy required for
-		// AcceptanceProbability.
+
+			// Get new hamiltonian. We can just add it to the current energy to
+			// get the absolute energy required for AcceptanceProbability.
 		double currH = this->model.EvaluateHamiltonian(*sample);
 		double newE = this->_energy + (currH - prevH);
 
