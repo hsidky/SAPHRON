@@ -59,29 +59,27 @@ namespace Models
 	// Evaluate the LL Hamiltonian H = -Ʃ(γij + εij*P2(cosθij)).
 	double LebwohlLasherModel::EvaluateHamiltonian(Site& site)
 	{
+		double h = 0;
+
+		auto& si = site.GetUnitVectors();
+		int alpha = site.GetSpecies();
+		for(int &nindex : site.GetNeighbors())
 		{
-			double h = 0;
+			auto& sj = Sites[nindex].GetUnitVectors();
+			int beta = Sites[nindex].GetSpecies();
 
-			auto& si = site.GetUnitVectors();
-			int alpha = site.GetSpecies();
-			for(int &nindex : site.GetNeighbors())
-			{
-				auto& sj = Sites[nindex].GetUnitVectors();
-				int beta = Sites[nindex].GetSpecies();
+			// Dot product
+			double dot = 0;
+			for(size_t i = 0; i < sj.size(); i++)
+				dot += si[i]*sj[i];
 
-				// Dot product
-				double dot = 0;
-				for(size_t i = 0; i < sj.size(); i++)
-					dot += si[i]*sj[i];
-
-				// P2 Legendre polynomial
-				h += this->GetIsotropicParameter(alpha, beta)
-				     + this->GetInteractionParameter(alpha,beta)
-				     *0.5*(3.0*dot*dot - 1.0);
-			}
-
-			return -1 * h;
+			// P2 Legendre polynomial
+			h += this->GetIsotropicParameter(alpha, beta)
+			     + this->GetInteractionParameter(alpha,beta)
+			     *0.5*(3.0*dot*dot - 1.0);
 		}
+
+		return -1 * h;
 	}
 
 	// Gets the isotropic interaction parameter, γij, between two species.

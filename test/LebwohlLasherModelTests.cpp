@@ -53,6 +53,33 @@ TEST(LebwohlLasherModel, InteractionParameters)
 	ASSERT_EQ(2.0, m.GetIsotropicParameter(1,1));
 	ASSERT_EQ(7.7, m.GetIsotropicParameter(2,2));
 
+	// More cases
+	double gaa = 1.0;
+	double gbb = 1.0;
+	double ebb = 1.0;
+	double eaa = 0.4;
+
+	// Anisotropic interactions.
+	ASSERT_EQ(eaa, m.SetInteractionParameter(eaa, 1, 1));
+	ASSERT_EQ(sqrt(eaa*ebb), m.SetInteractionParameter(sqrt(eaa*ebb), 1, 2));
+	ASSERT_EQ(ebb, m.SetInteractionParameter(ebb, 2, 2));
+
+	// Isotropic interactions.
+	ASSERT_EQ(gaa, m.SetIsotropicParameter(gaa, 1, 1));
+	ASSERT_EQ(sqrt(gaa*gbb), m.SetIsotropicParameter(sqrt(gaa*gbb), 1, 2));
+	ASSERT_EQ(gbb, m.SetIsotropicParameter(gbb, 2, 2));
+
+	// Recheck
+	ASSERT_EQ(eaa, m.GetInteractionParameter(1,1));
+	ASSERT_EQ(sqrt(eaa*ebb), m.GetInteractionParameter(1,2));
+	ASSERT_EQ(sqrt(eaa*ebb), m.GetInteractionParameter(2,1));
+	ASSERT_EQ(ebb, m.GetInteractionParameter(2,2));
+
+	ASSERT_EQ(gaa, m.GetIsotropicParameter(1,1));
+	ASSERT_EQ(sqrt(gaa*gbb), m.GetIsotropicParameter(1,2));
+	ASSERT_EQ(sqrt(gaa*gbb), m.GetIsotropicParameter(2,1));
+	ASSERT_EQ(gbb, m.GetIsotropicParameter(2,2));
+
 	// Set something way out there.
 	//ASSERT_EQ(5.5, m.SetInteractionParameter(5.5, 3, 5));
 }
