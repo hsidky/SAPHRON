@@ -1,7 +1,7 @@
 SAPHRON
 ==============
 
-`SAPHRON` (Statistical Applied PHsics through Random On-the-fly Numerization) is an open-source light-weight C++11 based Monte Carlo physics library. Its designed to be easy to use - providing a clean, extendable API with usage examples. Unlike most other packages, `SAPHRON` is not a standalone application. However, it is very simple to create usable applications, and many examples are provided. The library is currently in early develpoment, and as a result it currently lacks many basic features (namely off-lattice models). In addition to the C++ library, a number of helper MATLAB scripts are included to assist with data analysis.
+`SAPHRON` (**S**tatistical **A**pplied **PH**ysics through **R**andom **O**n-the-fly **N**umerization) is an open-source light-weight C++11 based Monte Carlo physics library. Its designed to be easy to use - providing a clean, extendable API with usage examples. Unlike most other packages, `SAPHRON` is not a standalone application. However, it is very simple to create usable applications, and many examples are provided. The library is currently in early develpoment, and as a result it currently lacks many basic features (namely off-lattice models). In addition to the C++ library, a number of helper MATLAB scripts are included to assist with data analysis.
 
 <a id="features"></a>
 ## Features
