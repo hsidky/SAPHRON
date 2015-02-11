@@ -30,26 +30,13 @@ namespace Ensembles
 		int prevS = sample->GetSpecies();
 		double prevH = this->model.EvaluateHamiltonian(*sample);
 
-		// Perform moves that are unconditionally accepted.
-		for(auto &move : this->moves)
-			if(move->ForceAccept())
-				move->Perform(*sample);
-
-		// Update energy
-		double currH = this->model.EvaluateHamiltonian(*sample);
-		this->_energy += (currH - prevH);
-
-		// Current H becomes previous H.
-		prevH  = currH;
-
-		// Perform moves that have some acceptance probability.
-		for(auto &move : this->moves)
-			if(!move->ForceAccept())
-				move->Perform(*sample);
+		// Select a move randomly.
+		int moven = this->rand.int32() % this->moves.size();
+		this->moves[moven]->Perform(*sample);
 
 		// Get new hamiltonian. We can just add it to the current energy to
 		// get the absolute energy required for AcceptanceProbability.
-		currH = this->model.EvaluateHamiltonian(*sample);
+		double currH = this->model.EvaluateHamiltonian(*sample);
 		int currS = sample->GetSpecies();
 
 		// Calculate new energy and species count.
@@ -61,10 +48,9 @@ namespace Ensembles
 		else
 			_newn1count = _n1count;
 
-		// Check probability (forced moves will not undo)
+		// Check probability.
 		if(AcceptanceProbability(this->_energy, newE) < this->rand.doub())
-			for(auto &move : this->moves)
-				move->Undo();
+			this->moves[moven]->Undo();
 		else // Accepted
 		{
 			this->_energy = newE;
