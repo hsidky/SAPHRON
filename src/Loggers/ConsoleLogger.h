@@ -56,6 +56,8 @@ namespace Loggers
 
 			void FlushLog()
 			{
+				//std::cout.flush();
+				//std::cout.rdbuf()->pubsync();
 			}
 	};
 }

@@ -18,8 +18,8 @@ TEST(Site, DefaultConstructor)
 	// Neighbor list should be empty.
 	ASSERT_TRUE(s.GetNeighbors().size() == 0);
 
-	// Species type is zero.
-	ASSERT_EQ(0, s.GetSpecies());
+	// Species type is one.
+	ASSERT_EQ(1, s.GetSpecies());
 }
 
 // Tests the getters and setters of Site.

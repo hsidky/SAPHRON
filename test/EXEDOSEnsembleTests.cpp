@@ -64,7 +64,7 @@ TEST(EXEDOSEnsemble, DefaultBehavior)
 	consolelogger.AddModelProperty("LowerOutliers", lo);
 	consolelogger.AddModelProperty("UpperOutliers", uo);
 	consolelogger.AddVectorProperty("DOS", dos);
-	ensemble.AddLogger(consolelogger);
+	//ensemble.AddLogger(consolelogger);
 
 	ensemble.AddMove(move);
 	ensemble.AddMove(move2);

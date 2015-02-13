@@ -1,9 +1,11 @@
 #pragma once
 
 #include "Logger.h"
+#include <ext/stdio_filebuf.h>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <unistd.h>
 
 namespace Loggers
 {
@@ -103,6 +105,9 @@ namespace Loggers
 
 			void FlushLog()
 			{
+				//_modelfs.flush();
+				//_sitefs.flush();
+				//_vecfs.flush();
 			}
 
 			~CSVLogger()
