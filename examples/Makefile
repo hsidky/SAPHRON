@@ -8,7 +8,7 @@ SRC_DIR = ../src
 CXXFLAGS += -Wall -Wextra -pthread -std=c++11 -O3
 
 # Build dependencies
-DEPS  = $(LIB_DIR)/LNTMC.a
+DEPS  = $(LIB_DIR)/SAPHRON.a
 
 # All tests produced by this Makefile.
 EXAMPLES = lebwohl_lasher_nvt.out ll_cell_twist_nvt.out wang_landau_ll.out \

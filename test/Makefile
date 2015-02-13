@@ -16,7 +16,7 @@ CPPFLAGS += -isystem $(GTEST_DIR)/include
 CXXFLAGS += -g -Wall -Wextra -pthread -std=c++11 -O3
 
 # Build dependencies
-DEPS  = $(LIB_DIR)/LNTMC.a
+DEPS  = $(LIB_DIR)/SAPHRON.a
 
 # All tests produced by this Makefile.
 TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \

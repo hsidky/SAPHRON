@@ -16,8 +16,8 @@ OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES:.cpp=.o)))
 OBJECTS_LIB = $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_LIB:.cpp=.o)))
 
 # Target application name
-TARGET = LNTMC
-TARGET_LIB = LNTMC.a
+TARGET = SAPHRON
+TARGET_LIB = SAPHRON.a
 
 # House-keeping build targets.
 all : $(OBJECTS)  $(OBJECTS_LIB) $(TARGET) $(TARGET_LIB)
