@@ -68,16 +68,18 @@ namespace Models
 	// Gets the interaction parameter for species i and j.
 	double Lattice3DModel::GetInteractionParameter(int i, int j)
 	{
-		int n = _interactionParameter.size();
-
 		// Sort max,min.
 		int ni = (i > j) ? i : j;
 		int nj = (i < j) ? i : j;
 
-		return this->_interactionParameter[ni + ((2*n - nj)*(nj-1)/2) -1];
+		return this->_interactionParameter[ni + ((2*_iN - nj)*(nj-1)/2) -1];
 	}
 
-	// Sets the interaction parameter for species i and j.
+	// Sets the interaction parameter for species i and j. If a value of of
+	// i or j is greater than the existing largest interaction parameter "N", then
+	// memory is allocated for all values in between "N" and max(i,j). So for example
+	// if N = 2 (a11 a12 a22) and i = 3, then the new set of interaction parameters
+	// are (a11 a12 a13 a22 a23 a33).
 	double Lattice3DModel::SetInteractionParameter(double e, int i, int j)
 	{
 		int n = _interactionParameter.size();
@@ -86,13 +88,31 @@ namespace Models
 		int ni = (i > j) ? i : j;
 		int nj = (i < j) ? i : j;
 
-		// Calculate position.
-		int p = ni + ((2*n - nj)*(nj-1)/2) -1;
+		// Resize vector if needed.
+		int nnew = ni*(ni+1)/2;
+		if(nnew > n)
+		{
+			// Store old vars.
+			auto oldV = _interactionParameter;
+			int oldN = _iN;
 
-		// Insert new location
-		if(ni > n || nj > n)
-			_interactionParameter.insert(
-			        _interactionParameter.begin() + p, e);
+			// Resize and update column length.
+			_interactionParameter.resize(nnew);
+			_iN = ni;
+
+			// Update all of the previous entries
+			for(int k = 1; k <= oldN; k++)
+				for(int l = 1; l <= oldN; l++)
+				{
+					int nk = (k > l) ? k : l;
+					int nl = (k < l) ? k : l;
+					int p = nk + ((2*oldN - nl)*(nl-1)/2) -1;
+					SetInteractionParameter(oldV[p], nk, nl);
+				}
+		}
+
+		// Calculate position.
+		int p = ni + ((2*_iN - nj)*(nj-1)/2) -1;
 
 		return this->_interactionParameter[p] = e;
 	}

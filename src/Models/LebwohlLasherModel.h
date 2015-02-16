@@ -15,6 +15,9 @@ namespace Models
 			// Isotropic mixing parameter γij.
 			std::vector<double> _isotropicJ = {0.0};
 
+			// Column size of the (ghost) isotropic interaction parameter matrix.
+			int _isoN = 1;
+
 		public:
 
 			// Initializes LL model with a given lattice size (the length of a
@@ -40,6 +43,10 @@ namespace Models
 			double GetIsotropicParameter(int i = 1, int j = 1);
 
 			// Sets the isotropic interaction parameter, γij, between two species.
+			// If a value of of i or j is greater than the existing largest interaction
+			// parameter "N", then memory is allocated for all values in between "N" and
+			// max(i,j). So for example if N = 2 (a11 a12 a22) and i = 3, then the new
+			// set of interaction parameters are (a11 a12 a13 a22 a23 a33).
 			double SetIsotropicParameter(double e, int i, int j);
 	};
 }

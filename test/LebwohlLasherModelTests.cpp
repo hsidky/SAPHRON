@@ -84,6 +84,70 @@ TEST(LebwohlLasherModel, InteractionParameters)
 	//ASSERT_EQ(5.5, m.SetInteractionParameter(5.5, 3, 5));
 }
 
+// Tests the reallocation of interaction parameter vector.
+TEST(LebwohlLasherModel, InteractionAlloc)
+{
+	LebwohlLasherModel m(37,37,37, 1);
+
+	double a11 = 1.0;
+	double a22 = 3.1;
+	double a33 = 5.5;
+
+	// Check default interaction parameter.
+	ASSERT_EQ(1.0, m.GetInteractionParameter());
+
+	// Set the interaction parameter.
+	// Change default parameter
+	ASSERT_EQ(a11, m.SetInteractionParameter(a11, 1, 1));
+
+	// Add new parameter
+	ASSERT_EQ(sqrt(a11*a22), m.SetInteractionParameter(sqrt(a11*a22), 1, 2));
+	ASSERT_EQ(sqrt(a11*a22), m.GetInteractionParameter(1,2));
+	ASSERT_EQ(sqrt(a11*a22), m.GetInteractionParameter(2,1));
+	ASSERT_EQ(a11, m.GetInteractionParameter(1,1));
+	ASSERT_EQ(a22, m.SetInteractionParameter(a22, 2, 2));
+
+	// If we add 3,3 interation, it will re-allocate. We need to check that the
+	// previous interactions haven't changed.
+	ASSERT_EQ(a33, m.SetInteractionParameter(a33, 3, 3));
+	ASSERT_EQ(a11, m.GetInteractionParameter(1,1));
+	ASSERT_EQ(sqrt(a11*a22), m.GetInteractionParameter(1,2));
+	ASSERT_EQ(a22, m.GetInteractionParameter(2,2));
+	ASSERT_EQ(0, m.GetInteractionParameter(2,3)); // We haven't set this yet.
+}
+
+// Tests the reallocation of isotropic interaction parameter vector.
+TEST(LebwohlLasherModel, IsotropicAlloc)
+{
+	LebwohlLasherModel m(37,37,37, 1);
+
+	double a11 = 1.0;
+	double a22 = 3.1;
+	double a33 = 5.5;
+
+	// Check default interaction parameter.
+	ASSERT_EQ(0.0, m.GetIsotropicParameter());
+
+	// Set the interaction parameter.
+	// Change default parameter
+	ASSERT_EQ(a11, m.SetIsotropicParameter(a11, 1, 1));
+
+	// Add new parameter
+	ASSERT_EQ(sqrt(a11*a22), m.SetIsotropicParameter(sqrt(a11*a22), 1, 2));
+	ASSERT_EQ(sqrt(a11*a22), m.GetIsotropicParameter(1,2));
+	ASSERT_EQ(sqrt(a11*a22), m.GetIsotropicParameter(2,1));
+	ASSERT_EQ(a11, m.GetIsotropicParameter(1,1));
+	ASSERT_EQ(a22, m.SetIsotropicParameter(a22, 2, 2));
+
+	// If we add 3,3 interation, it will re-allocate. We need to check that the
+	// previous interactions haven't changed.
+	ASSERT_EQ(a33, m.SetIsotropicParameter(a33, 3, 3));
+	ASSERT_EQ(a11, m.GetIsotropicParameter(1,1));
+	ASSERT_EQ(sqrt(a11*a22), m.GetIsotropicParameter(1,2));
+	ASSERT_EQ(a22, m.GetIsotropicParameter(2,2));
+	ASSERT_EQ(0, m.GetIsotropicParameter(2,3)); // We haven't set this yet.
+}
+
 // Test the mixture setup.
 TEST(LebwohlLasherModel, MixtureSetup)
 {
