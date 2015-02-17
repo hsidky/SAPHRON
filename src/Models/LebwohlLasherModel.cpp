@@ -70,13 +70,13 @@ namespace Models
 
 			// Dot product
 			double dot = 0;
-			for(size_t i = 0; i < sj.size(); i++)
+			for(size_t i = 0; i < 3; i++)
 				dot += si[i]*sj[i];
 
 			// P2 Legendre polynomial
 			h += this->GetIsotropicParameter(alpha, beta)
 			     + this->GetInteractionParameter(alpha,beta)
-			     *0.5*(3.0*dot*dot - 1.0);
+			     *(1.5*dot*dot - 0.5);
 		}
 
 		return -1 * h;

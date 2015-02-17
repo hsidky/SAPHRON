@@ -10,7 +10,7 @@ CXXFLAGS += -Wall -Wextra -pthread -std=c++11
 DEBUG ?= 0
 
 ifeq ($(DEBUG), 1)
-	CXXFLAGS += -g3
+	CXXFLAGS += -g3 -O3
 else
 	CXXFLAGS += -O3
 endif
@@ -20,7 +20,7 @@ DEPS  = $(LIB_DIR)/SAPHRON.a
 
 # All tests produced by this Makefile.
 EXAMPLES = lebwohl_lasher_nvt.out ll_cell_twist_nvt.out wang_landau_ll.out \
-		   ll_binary_mix_exedos.out
+		   ll_binary_mix_exedos.out ll_binary_mix_exedos_extended.out
 
 # House-keeping build targets.
 all : pre-build $(EXAMPLES)

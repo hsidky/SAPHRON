@@ -4,15 +4,13 @@ BIN_DIR = ../bin
 
 LIB_DIR = ../lib
 
-CXX = clang++
-
 # Flags passed to the C++ compiler.
 CXXFLAGS += -Wall -Wextra -pthread -std=c++11
 
 DEBUG ?= 0
 
 ifeq ($(DEBUG), 1)
-	CXXFLAGS += -g3
+	CXXFLAGS += -g3 -O3
 else
 	CXXFLAGS += -O3
 endif

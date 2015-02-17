@@ -59,7 +59,7 @@ namespace Ensembles
 
 		// Update bins and energy regardless (log DOS).
 		auto bin = this->hist.Record(this->_n1count);
-		this->hist.UpdateValue(bin, this->hist.GetValue(bin)+log(this->GetScaleFactor()));
+		this->hist.UpdateValue(bin, this->hist.GetValue(bin)+this->GetScaleFactor());
 	}
 
 	// Calculates the total number of a specified species in the model.

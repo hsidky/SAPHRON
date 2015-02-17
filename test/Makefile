@@ -7,8 +7,6 @@ LIB_DIR  = ../lib
 
 SRC_DIR = ../src
 
-CXX = clang++
-
 # Flags passed to the preprocessor.
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 

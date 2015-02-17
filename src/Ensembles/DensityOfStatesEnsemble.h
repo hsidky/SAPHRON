@@ -34,8 +34,8 @@ namespace Ensembles
 			// Upper outliers.
 			double _upperOutliers = 0;
 
-			// Scaling factor for density of states.
-			double _scaleFactor = exp(1);
+			// Log of scaling factor for density of states.
+			double _scaleFactor = 1;
 
 		protected:
 			// Random number generator.
@@ -120,10 +120,11 @@ namespace Ensembles
 				hist.ResetHistogram();
 			}
 
-			// Reduces the scaling factor by a specified multiple.
-			double ReduceScaleFactor(double multiple = 1, double power = 0.5)
+			// Reduces the scaling factor order by a specified multiple.
+			double ReduceScaleFactor(double order = 0.5)
 			{
-				return _scaleFactor = multiple*pow(_scaleFactor, power);
+				// We store log of scale factor. So we simply multiply.
+				return _scaleFactor = _scaleFactor*order;
 			}
 
 			// Acceptance probability based on density of states.

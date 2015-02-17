@@ -1,4 +1,5 @@
 #include "Lattice3DModel.h"
+#include <algorithm>
 #include <cmath>
 
 namespace Models
@@ -69,10 +70,10 @@ namespace Models
 	double Lattice3DModel::GetInteractionParameter(int i, int j)
 	{
 		// Sort max,min.
-		int ni = (i > j) ? i : j;
-		int nj = (i < j) ? i : j;
+		if(i > j)
+			std::swap(i, j);
 
-		return this->_interactionParameter[ni + ((2*_iN - nj)*(nj-1)/2) -1];
+		return this->_interactionParameter[i + ((2*_iN - j)*(j-1)/2) -1];
 	}
 
 	// Sets the interaction parameter for species i and j. If a value of of
