@@ -97,6 +97,11 @@ namespace Ensembles
 			// Remove logger from the end of the logger queue.
 			void RemoveLogger()
 			{
+				auto logger = _loggers.back();
+
+				logger->ClearEnsembleProperties();
+				logger->ClearEnsembleVectorProperties();
+
 				_loggers.pop_back();
 			}
 

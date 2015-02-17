@@ -4,6 +4,7 @@
 #include "../Site.h"
 #include <functional>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -112,7 +113,22 @@ namespace Loggers
 			// Adds and updates ensemble properties by key.
 			void RegisterEnsembleProperty(std::string key, double& value)
 			{
-				EnsembleProps.insert(std::pair<std::string, double*>(key, &value));
+				EnsembleProps.insert(
+				        std::pair<std::string, double*>
+				                (key, &value)
+				        );
+			}
+
+			// Unregisters an ensemble property.
+			void UnregisterEnsembleProperty(std::string key)
+			{
+				EnsembleProps.erase(key);
+			}
+
+			// Clears ensemble properties.
+			void ClearEnsembleProperties()
+			{
+				EnsembleProps.clear();
 			}
 
 			// Adds and updates ensemble vector properties by key.
@@ -121,6 +137,18 @@ namespace Loggers
 			{
 				EnsembleVecs.insert(std::pair<std::string,
 				                              std::vector<double>*>(key, &value));
+			}
+
+			// Unregisters an ensemble vector property.
+			void UnregisterEnsembleVectorProperty(std::string key)
+			{
+				EnsembleVecs.erase(key);
+			}
+
+			// Clears ensemble properties.
+			void ClearEnsembleVectorProperties()
+			{
+				EnsembleVecs.clear();
 			}
 
 			// Run through the thermal properties queue and log functions.
