@@ -99,7 +99,7 @@ namespace Ensembles
 	}
 
 	template<typename T>
-	void EXEDOSEnsemble<T>::RegisterLoggableProperties(Logger &logger)
+	void EXEDOSEnsemble<T>::RegisterLoggableProperties(DataLogger &logger)
 	{
 		// Call parent.
 		DensityOfStatesEnsemble<T>::RegisterLoggableProperties(logger);

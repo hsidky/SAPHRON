@@ -25,7 +25,7 @@ namespace Ensembles
 			Rand rand;
 
 		protected:
-			void RegisterLoggableProperties(Logger& logger)
+			void RegisterLoggableProperties(DataLogger& logger)
 			{
 				logger.RegisterEnsembleProperty("T", _temperature);
 				logger.RegisterEnsembleProperty("kb", _kb);

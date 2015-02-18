@@ -13,10 +13,10 @@ using namespace Models;
 typedef std::map<std::string, const double*> EnsembleProperty;
 typedef std::map<std::string, const std::vector<double>*> EnsembleVector;
 
-namespace Loggers
+namespace DataLoggers
 {
 	// Abstract base class for property loggers.
-	class Logger
+	class DataLogger
 	{
 		private:
 			// Number of calls to the logger.
@@ -64,7 +64,7 @@ namespace Loggers
 
 			// Instantiate a logger class with a frequecny of 'frequency'- that is,
 			// every 'frequency' calls to the logger it will actually log.
-			Logger(int frequency = 1) : _frequency(frequency){}
+			DataLogger(int frequency = 1) : _frequency(frequency){}
 
 			// Adds a function the model properties queue.
 			void AddModelProperty(std::string key,

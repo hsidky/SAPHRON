@@ -3,8 +3,8 @@
 
 // Include the pertinent header files.
 #include "../src/Ensembles/NVTEnsemble.h"
-#include "../src/Loggers/CSVLogger.h"
-#include "../src/Loggers/ConsoleLogger.h"
+#include "../src/DataLoggers/CSVDataLogger.h"
+#include "../src/DataLoggers/ConsoleDataLogger.h"
 #include "../src/Models/LLCellModel.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
 
@@ -61,8 +61,8 @@ int main(int argc, char const* argv[])
 
 	// The CSV logger constructor requires that we provide file names for output.
 	// Note: vector file not used, so we input placeholder.
-	Loggers::CSVLogger csvlogger(modelFile, sitesFile, "vecs.csv", 1000);
-	Loggers::ConsoleLogger consolelogger(1000);
+	DataLoggers::CSVDataLogger csvlogger(modelFile, sitesFile, "vecs.csv", 1000);
+	DataLoggers::ConsoleDataLogger consolelogger(1000);
 
 	// Log total energy.
 	auto energy = [] (BaseModel& model, const EnsembleProperty &) {

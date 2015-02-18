@@ -86,10 +86,10 @@ namespace Models
 	double LebwohlLasherModel::GetIsotropicParameter(int i, int j)
 	{
 		// Sort max,min.
-		int ni = (i > j) ? i : j;
-		int nj = (i < j) ? i : j;
+		if(i < j)
+			std::swap(i, j);
 
-		return this->_isotropicJ[ni + ((2*_isoN - nj)*(nj-1)/2) -1];
+		return this->_isotropicJ[i + ((2*_isoN - j)*(j-1)/2) -1];
 	}
 
 	// Sets the isotropic interaction parameter, γij, between two species.

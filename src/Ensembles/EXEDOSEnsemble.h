@@ -22,7 +22,7 @@ namespace Ensembles
 			int CalculateSpeciesCount(int species = 1);
 
 			// Registers loggable properties with loggers.
-			void RegisterLoggableProperties(Logger& logger);
+			void RegisterLoggableProperties(DataLogger& logger);
 
 		public:
 

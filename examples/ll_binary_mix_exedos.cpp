@@ -3,8 +3,8 @@
 
 // Include header files
 #include "../src/Ensembles/EXEDOSEnsemble.h"
-#include "../src/Loggers/CSVLogger.h"
-#include "../src/Loggers/ConsoleLogger.h"
+#include "../src/DataLoggers/CSVDataLogger.h"
+#include "../src/DataLoggers/ConsoleDataLogger.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SpeciesSwapMove.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
@@ -86,8 +86,8 @@ int main(int argc, char const* argv[])
 
 	// Initialize CSV logger and console logger for output. We want to log our
 	// density of states to a CSV file, and just monitor flatness in the console.
-	Loggers::CSVLogger csvlogger(modelFile, sitesFile, vecsFile, 5000);
-	Loggers::ConsoleLogger consolelogger(1000);
+	DataLoggers::CSVDataLogger csvlogger(modelFile, sitesFile, vecsFile, 5000);
+	DataLoggers::ConsoleDataLogger consolelogger(1000);
 
 	// Monitor flatness
 	auto flatness = [] (BaseModel&, const EnsembleProperty &eprops) {

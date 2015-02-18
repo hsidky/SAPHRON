@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../src/Loggers/Logger.h"
+#include "../src/DataLoggers/DataLogger.h"
 #include "../src/Models/BaseModel.h"
 #include <iostream>
 
-using namespace Loggers;
+using namespace DataLoggers;
 
-class MockLogger : public Logger
+class MockDataLogger : public DataLogger
 {
 	protected:
 		void LogModelPropertiesInternal(BaseModel& model)
@@ -28,7 +28,7 @@ class MockLogger : public Logger
 				prop.second(model, this->EnsembleVecs);
 		}
 
-		void RegisterLoggableProperties(Logger&)
+		void RegisterLoggableProperties(DataLogger&)
 		{
 		}
 

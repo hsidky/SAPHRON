@@ -15,7 +15,7 @@ namespace Ensembles
 
 	// Registers loggable properties with logger.
 	template<typename T>
-	void DensityOfStatesEnsemble<T>::RegisterLoggableProperties(Logger& logger)
+	void DensityOfStatesEnsemble<T>::RegisterLoggableProperties(DataLogger& logger)
 	{
 		logger.RegisterEnsembleProperty("Flatness", _flatness);
 		logger.RegisterEnsembleProperty("Energy", _energy);

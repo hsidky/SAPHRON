@@ -1,5 +1,5 @@
 #include "../src/Ensembles/NVTEnsemble.h"
-#include "../src/Loggers/CSVLogger.h"
+#include "../src/DataLoggers/CSVDataLogger.h"
 #include "../src/Models/Ising3DModel.h"
 #include "../src/Moves/FlipSpinMove.h"
 #include "../src/Site.h"
@@ -7,7 +7,7 @@
 
 using namespace Ensembles;
 using namespace Models;
-using namespace Loggers;
+using namespace DataLoggers;
 
 // Expected magnetization for the NVT Ensemble on the 3D Ising model at various temperatures.
 TEST(CSVLogger, CSVFormatting)
@@ -15,7 +15,7 @@ TEST(CSVLogger, CSVFormatting)
 	int n = 10;
 	Ising3DModel model(n, n, n, 1);
 	FlipSpinMove move;
-	CSVLogger l("model.csv", "site.csv", "vec.csv");
+	CSVDataLogger l("model.csv", "site.csv", "vec.csv");
 	NVTEnsemble<Site> s(model, 4.5);
 
 	// Lambda function for logger

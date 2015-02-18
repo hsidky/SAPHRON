@@ -4,8 +4,8 @@
 
 // Include the pertinent header files.
 #include "../src/Ensembles/NVTEnsemble.h"
-#include "../src/Loggers/CSVLogger.h"
-#include "../src/Loggers/ConsoleLogger.h"
+#include "../src/DataLoggers/CSVDataLogger.h"
+#include "../src/DataLoggers/ConsoleDataLogger.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
 
@@ -65,8 +65,8 @@ int main(int argc, char const* argv[])
 	// and use the console logger to display the energy output every 100.
 
 	// The CSV logger constructor requires that we provide file names for output.
-	Loggers::CSVLogger csvlogger(modelFile, sitesFile, "vecs.csv", 10);
-	Loggers::ConsoleLogger consolelogger(100);
+	DataLoggers::CSVDataLogger csvlogger(modelFile, sitesFile, "vecs.csv", 10);
+	DataLoggers::ConsoleDataLogger consolelogger(100);
 
 	// There are two types of properties that can be logged: model properties and site properties.
 	// Model properties are provided with a reference to the model object which allows them to

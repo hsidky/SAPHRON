@@ -70,7 +70,7 @@ namespace Models
 	double Lattice3DModel::GetInteractionParameter(int i, int j)
 	{
 		// Sort max,min.
-		if(i > j)
+		if(i < j)
 			std::swap(i, j);
 
 		return this->_interactionParameter[i + ((2*_iN - j)*(j-1)/2) -1];

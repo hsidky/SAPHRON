@@ -1,5 +1,5 @@
 #include "../src/Ensembles/EXEDOSEnsemble.h"
-#include "../src/Loggers/ConsoleLogger.h"
+#include "../src/DataLoggers/ConsoleDataLogger.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SpeciesSwapMove.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
@@ -8,7 +8,7 @@
 
 using namespace Ensembles;
 using namespace Models;
-using namespace Loggers;
+using namespace DataLoggers;
 
 // Testing default EXEDOS Ensemble behavior.
 TEST(EXEDOSEnsemble, DefaultBehavior)
@@ -17,7 +17,7 @@ TEST(EXEDOSEnsemble, DefaultBehavior)
 	Models::LebwohlLasherModel model(n, n, n);
 	Moves::SphereUnitVectorMove move;
 	Moves::SpeciesSwapMove move2(2);
-	Loggers::ConsoleLogger consolelogger(1000);
+	DataLoggers::ConsoleDataLogger consolelogger(1000);
 
 	// Randomize initial positions.a
 	for(int i = 0; i < 3*model.GetSiteCount(); i++)

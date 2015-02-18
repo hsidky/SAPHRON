@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Histogram.h"
-#include "../Loggers/Logger.h"
+#include "../DataLoggers/DataLogger.h"
 #include "../Models/BaseModel.h"
 #include "../Rand.h"
 #include "Ensemble.h"
@@ -51,7 +51,7 @@ namespace Ensembles
 			double CalculateTotalEnergy();
 
 			// Registers loggable properties with logger.
-			void RegisterLoggableProperties(Logger& logger);
+			void RegisterLoggableProperties(DataLogger& logger);
 
 		public:
 

@@ -6,7 +6,7 @@
 
 using namespace Ensembles;
 using namespace Models;
-using namespace Loggers;
+using namespace DataLoggers;
 
 // Testing default WL Ensemble behavior.
 TEST(WangLandauEnsemble, DefaultBehavior)

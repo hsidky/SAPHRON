@@ -1,12 +1,12 @@
 #pragma once
 
 #include "../Models/BaseModel.h"
-#include "Logger.h"
+#include "DataLogger.h"
 #include <iostream>
 
-namespace Loggers
+namespace DataLoggers
 {
-	class ConsoleLogger : public Logger
+	class ConsoleDataLogger : public DataLogger
 	{
 		protected:
 			void LogModelPropertiesInternal(BaseModel& model)
@@ -52,7 +52,7 @@ namespace Loggers
 		public:
 
 			// Use base logger constructor.
-			using Logger::Logger;
+			using DataLogger::DataLogger;
 
 			void FlushLog()
 			{

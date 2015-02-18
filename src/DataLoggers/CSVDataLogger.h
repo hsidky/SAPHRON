@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Logger.h"
+#include "DataLogger.h"
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 
-namespace Loggers
+namespace DataLoggers
 {
-	class CSVLogger : public Logger
+	class CSVDataLogger : public DataLogger
 	{
 		private:
 			std::ofstream _modelfs;
@@ -64,11 +64,11 @@ namespace Loggers
 			}
 
 		public:
-			CSVLogger(std::string modelfile,
-			          std::string sitefile,
-			          std::string vecfile,
-			          int frequency = 1)
-				: Logger(frequency), _modelfs(modelfile),
+			CSVDataLogger(std::string modelfile,
+			              std::string sitefile,
+			              std::string vecfile,
+			              int frequency = 1)
+				: DataLogger(frequency), _modelfs(modelfile),
 				  _sitefs(sitefile), _vecfs(vecfile)
 			{
 				_modelfs << std::setprecision(20);
@@ -108,7 +108,7 @@ namespace Loggers
 				//_vecfs.flush();
 			}
 
-			~CSVLogger()
+			~CSVDataLogger()
 			{
 				_modelfs.close();
 				_sitefs.close();

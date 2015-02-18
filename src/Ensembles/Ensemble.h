@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../Loggers/Logger.h"
+#include "../DataLoggers/DataLogger.h"
 #include "../Models/BaseModel.h"
 #include "../Moves/Move.h"
 #include <vector>
 
 using namespace Models;
 using namespace Moves;
-using namespace Loggers;
+using namespace DataLoggers;
 
 namespace Ensembles
 {
@@ -30,7 +30,7 @@ namespace Ensembles
 			int _iterations = 0;
 
 			// Vector of loggers to run.
-			std::vector<Logger*> _loggers;
+			std::vector<DataLogger*> _loggers;
 
 		protected:
 			// Pointer to model.
@@ -52,7 +52,7 @@ namespace Ensembles
 			}
 
 			// Function registers ensemble properties.
-			virtual void RegisterLoggableProperties(Logger& logger) = 0;
+			virtual void RegisterLoggableProperties(DataLogger& logger) = 0;
 
 		public:
 			Ensemble (BaseModel& model) : model(model) {};
@@ -88,7 +88,7 @@ namespace Ensembles
 			}
 
 			// Adds a logger to the logger queue.
-			void AddLogger(Logger& logger)
+			void AddLogger(DataLogger& logger)
 			{
 				_loggers.push_back(&logger);
 				this->RegisterLoggableProperties(logger);
