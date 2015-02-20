@@ -5,6 +5,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -26,6 +27,9 @@ namespace DataLoggers
 			int _frequency = 1;
 
 		protected:
+
+			// Mutex for write locking.
+			std::mutex mtx;
 
 			// Vector of site property callbacks.
 			std::map<std::string,
@@ -157,6 +161,7 @@ namespace DataLoggers
 			{
 				if(_calls % _frequency == 0 || force)
 				{
+					mtx.lock();
 					int c = model.GetSiteCount();
 					this->LogModelPropertiesInternal(model);
 					this->LogVectorPropertiesInternal(model);
@@ -166,6 +171,7 @@ namespace DataLoggers
 
 					// Fush log
 					this->FlushLog();
+					mtx.unlock();
 				}
 				_calls++;
 			};

@@ -1,5 +1,5 @@
-#include "../src/Ensembles/NVTEnsemble.h"
 #include "../src/DataLoggers/CSVDataLogger.h"
+#include "../src/Ensembles/NVTEnsemble.h"
 #include "../src/Models/Ising3DModel.h"
 #include "../src/Moves/FlipSpinMove.h"
 #include "../src/Site.h"

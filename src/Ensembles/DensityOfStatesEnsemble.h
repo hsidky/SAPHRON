@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Histogram.h"
 #include "../DataLoggers/DataLogger.h"
+#include "../Histogram.h"
 #include "../Models/BaseModel.h"
 #include "../Rand.h"
 #include "Ensemble.h"
