@@ -128,7 +128,7 @@ int main(int argc, char const* argv[])
 	consolelogger.AddModelProperty("UpperOutliers", uo);
 
 	// Initialize Wang-Landau sampler.
-	Ensembles::EXEDOSEnsemble<Site> ensemble(model, temperature, minX, maxX, binCount);
+	Ensembles::EXEDOSEnsemble<Site> ensemble(model, minX, maxX, binCount, temperature);
 
 	// Register loggers and moves with the ensemble.
 	ensemble.AddLogger(csvlogger);

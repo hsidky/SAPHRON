@@ -1,5 +1,5 @@
-#include "../src/Ensembles/EXEDOSEnsemble.h"
 #include "../src/DataLoggers/ConsoleDataLogger.h"
+#include "../src/Ensembles/EXEDOSEnsemble.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SpeciesSwapMove.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
@@ -35,7 +35,7 @@ TEST(EXEDOSEnsemble, DefaultBehavior)
 	model.SetIsotropicParameter(0, 1, 2);
 	model.SetIsotropicParameter(0, 2, 2);
 
-	Ensembles::EXEDOSEnsemble<Site> ensemble(model, 1.0, 0.1, 0.5, 400);
+	Ensembles::EXEDOSEnsemble<Site> ensemble(model, 0.1, 0.5, 400, 1.0);
 	ensemble.SetTargetFlatness(0.8);
 
 	// Lambda function for logger

@@ -32,10 +32,10 @@ namespace Ensembles
 			// the there is a discrete number of lattice sites, a bincount larger than the
 			// difference between the site counts will result in a histogram that never flattens.
 			EXEDOSEnsemble(BaseModel& model,
-			               double temperature,
 			               double minN1,
 			               double maxN1,
-			               int binCount);
+			               int binCount,
+			               double temperature);
 
 			// Performs one Monte-Carlo iteration. This is precisely one random draw
 			// from the model (one function call to model->DrawSample()).

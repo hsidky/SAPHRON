@@ -8,10 +8,11 @@ namespace Ensembles
 	// the there is a discrete number of lattice sites, a bincount larger than the
 	// difference between the site counts will result in a histogram that never flattens.
 	template<typename T>
-	EXEDOSEnsemble<T>::EXEDOSEnsemble(BaseModel& model, double temperature,
+	EXEDOSEnsemble<T>::EXEDOSEnsemble(BaseModel& model,
 	                                  double minN1,
 	                                  double maxN1,
-	                                  int binCount) :
+	                                  int binCount,
+	                                  double temperature) :
 		DensityOfStatesEnsemble<T>(model, round(minN1*model.GetSiteCount()),
 		                           round(maxN1*model.GetSiteCount()), binCount),
 		_temperature(temperature)
