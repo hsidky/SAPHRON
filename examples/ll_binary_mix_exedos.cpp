@@ -2,9 +2,9 @@
 // of a Lebwhol-Lasher binary mixture
 
 // Include header files
-#include "../src/Ensembles/EXEDOSEnsemble.h"
 #include "../src/DataLoggers/CSVDataLogger.h"
 #include "../src/DataLoggers/ConsoleDataLogger.h"
+#include "../src/Ensembles/EXEDOSEnsemble.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SpeciesSwapMove.h"
 #include "../src/Moves/SphereUnitVectorMove.h"

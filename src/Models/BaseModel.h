@@ -23,7 +23,7 @@ namespace Models
 			// given temperature. The random number generator seed is 1 by default.
 			BaseModel(int size, int seed = 1)
 				: Sites(size, Site(0.0, 0.0, 0.0)), rand(seed){};
-
+			
 			// Reseed the random number generator. This resets the random number
 			// generator.
 			void ReseedRand(int seed)

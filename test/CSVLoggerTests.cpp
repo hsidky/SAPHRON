@@ -45,11 +45,11 @@ TEST(CSVLogger, CSVFormatting)
 	                  [] (Site& site,  const EnsembleProperty &){ return site.GetXCoordinate();
 			  });
 
-	l.AddVectorProperty("Test", [] (BaseModel& model, const EnsembleVector &){
+	l.AddVectorProperty("Test", [] (BaseModel&, const EnsembleVector){
 	                            return std::vector<double>{1.0, 2.0, 3.0};
 			    });
 
-	l.AddVectorProperty("Test2", [] (BaseModel& model, const EnsembleVector &){
+	l.AddVectorProperty("Test2", [] (BaseModel&, const EnsembleVector){
 	                            return std::vector<double>{4.0, 5.0, 6.0};
 			    });
 

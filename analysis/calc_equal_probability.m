@@ -16,7 +16,7 @@ function bopt = calc_equal_probability(fxn, xrng, brng)
 %        satisfied.
 
 fobj = @(b) objective_function(fxn,b,xrng);
-bopt = fminbnd(fobj, brng(1), brng(2));
+bopt = fminbnd(fobj, brng(1), brng(2), optimset('TolX', 1e-7));
 
 function r = objective_function(f, b, xrng)
 x = linspace(xrng(1),xrng(2),1000)';
