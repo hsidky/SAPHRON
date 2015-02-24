@@ -16,6 +16,30 @@ TEST(BaseModel, DefaultConstructor)
 	ASSERT_EQ(num, b.GetSiteCount());
 }
 
+// Test BaseModel cloning.
+TEST(BaseModel, Cloning)
+{
+	int n = 1000;
+	// create regular mock model.
+	MockBaseModel m1(n, 1);
+
+	// Check sites
+	ASSERT_EQ(n, m1.GetSiteCount());
+
+	// Clone object cast into baseclass.
+	BaseModel* m2 = m1.Clone();
+
+	// Check test prop
+	ASSERT_EQ(n, m2->GetSiteCount());
+
+	// Add a site to m2 and check m1 & m2 for consistency.
+	m2->AddSite();
+	ASSERT_EQ(n+1, m2->GetSiteCount());
+	ASSERT_EQ(n, m1.GetSiteCount());
+
+	delete m2;
+}
+
 // Test random site index range is correct and sampling probability is as expected.
 TEST(BaseModel, RandomSiteIndex)
 {
