@@ -38,5 +38,11 @@ namespace Models
 			{
 				return _reservedSites;
 			}
+
+			// Clone model.
+			virtual BaseModel* Clone() const
+			{
+				return new LLCellModel(static_cast<const LLCellModel&>(*this));
+			}
 	};
 }

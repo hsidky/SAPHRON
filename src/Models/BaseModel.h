@@ -23,7 +23,7 @@ namespace Models
 			// given temperature. The random number generator seed is 1 by default.
 			BaseModel(int size, int seed = 1)
 				: Sites(size, Site(0.0, 0.0, 0.0)), rand(seed){};
-			
+
 			// Reseed the random number generator. This resets the random number
 			// generator.
 			void ReseedRand(int seed)
@@ -86,5 +86,8 @@ namespace Models
 			// argument does not have to be used if the Hamiltonian is
 			// independent of site.
 			virtual double EvaluateHamiltonian(Site& site) = 0;
+
+			// Clone Model.
+			virtual BaseModel* Clone() const = 0;
 	};
 }

@@ -48,5 +48,12 @@ namespace Models
 			// max(i,j). So for example if N = 2 (a11 a12 a22) and i = 3, then the new
 			// set of interaction parameters are (a11 a12 a13 a22 a23 a33).
 			double SetIsotropicParameter(double e, int i, int j);
+
+			// Clone model.
+			virtual BaseModel* Clone() const
+			{
+				return new LebwohlLasherModel(static_cast<const LebwohlLasherModel&>(
+				                                      *this));
+			}
 	};
 }

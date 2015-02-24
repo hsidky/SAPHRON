@@ -19,4 +19,10 @@ class MockBaseModel : public BaseModel
 		{
 			return site.GetZUnitVector();
 		}
+
+		// Clone model.
+		virtual BaseModel* Clone() const
+		{
+			return new MockBaseModel(static_cast<const MockBaseModel&>(*this));
+		}
 };

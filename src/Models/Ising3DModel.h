@@ -35,5 +35,11 @@ namespace Models
 				h *= -1 * this->GetInteractionParameter();
 				return h;
 			}
+
+			// Clone model.
+			virtual BaseModel* Clone() const
+			{
+				return new Ising3DModel(static_cast<const Ising3DModel&>(*this));
+			}
 	};
 }
