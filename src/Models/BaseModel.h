@@ -89,5 +89,8 @@ namespace Models
 
 			// Clone Model.
 			virtual BaseModel* Clone() const = 0;
+
+			// Destructor.
+			virtual ~BaseModel(){}
 	};
 }
