@@ -9,6 +9,8 @@
 
 namespace Ensembles
 {
+	typedef std::pair<double, double> Interval;
+
 	// Abstract class for density of states based sampling using flat histogram
 	// method.
 	template<typename T>
@@ -37,6 +39,9 @@ namespace Ensembles
 			// Log of scaling factor for density of states.
 			double _scaleFactor = 1;
 
+			// Parameter histogram interval.
+			Interval _interval;
+
 		protected:
 			// Random number generator.
 			Rand rand;
@@ -64,6 +69,8 @@ namespace Ensembles
 			                        int binCount) :
 				Ensemble<T>(model), rand(15), hist(minP, maxP, binCount)
 			{
+				_interval = Interval(minP, maxP);
+
 				_counts = hist.GetHistogramPointer();
 				_DOS = hist.GetValuesPointer();
 
@@ -118,6 +125,12 @@ namespace Ensembles
 			void ResetHistogram()
 			{
 				hist.ResetHistogram();
+			}
+
+			// Gets the interval over which the DOS is computed.
+			Interval GetParameterInterval()
+			{
+				return _interval;
 			}
 
 			// Reduces the scaling factor order by a specified multiple.
