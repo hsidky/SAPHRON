@@ -33,5 +33,8 @@ namespace Moves
 			{
 				return _forceAccept;
 			}
+
+			// Clone Move.
+			virtual Move* Clone() const = 0;
 	};
 }

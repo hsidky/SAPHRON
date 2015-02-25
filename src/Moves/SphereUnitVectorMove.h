@@ -56,5 +56,13 @@ namespace Moves
 				if(!this->ForceAccept())
 					_site->SetUnitVectors(_uBefore[0], _uBefore[1], _uBefore[2]);
 			}
+
+			// Clone move.
+			virtual Move* Clone() const
+			{
+				return new SphereUnitVectorMove(
+				               static_cast<const SphereUnitVectorMove&>(*this)
+				               );
+			}
 	};
 }

@@ -38,5 +38,13 @@ namespace Moves
 			{
 				_site->SetSpecies(_prevSpecies);
 			}
+
+			// Clone move.
+			virtual Move* Clone() const
+			{
+				return new SpeciesSwapMove(
+				               static_cast<const SpeciesSwapMove&>(*this)
+				               );
+			}
 	};
 }

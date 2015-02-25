@@ -29,5 +29,11 @@ namespace Moves
 			{
 				_site->SetZUnitVector(_uzBefore);
 			}
+
+			// Clone move.
+			virtual Move* Clone() const
+			{
+				return new FlipSpinMove(static_cast<const FlipSpinMove&>(*this));
+			}
 	};
 }
