@@ -5,6 +5,7 @@
 #include "../Models/BaseModel.h"
 #include "../Rand.h"
 #include "Ensemble.h"
+#include <iomanip>
 #include <vector>
 
 namespace Ensembles
@@ -42,6 +43,9 @@ namespace Ensembles
 			// Parameter histogram interval.
 			Interval _interval;
 
+			// Unique identifier of walker number.
+			double _walker;
+
 		protected:
 			// Random number generator.
 			Rand rand;
@@ -76,18 +80,23 @@ namespace Ensembles
 
 				// Calculate initial energy.
 				_energy = CalculateTotalEnergy();
+
+				std::cout << "Density of States Ensemble Initialized." << std::endl;
+				std::cout << "Interval: " << std::setw(10) << std::left << minP;
+				std::cout << std::setw(10) << std::right << maxP << std::endl <<
+				std::endl;
 			};
 
 			// Runs multiple DOS simulations, between each subsequent iteration is
 			// a re-normalization step involving resetting of the hisogram and reduction of
 			// the scaling factor.
-			void Run(int iterations);
+			virtual void Run(int iterations);
 
 			// Performs one DOS iteration. This constitutes sampling phase space
 			// until the density of states histogram is determined to be flat.
 			// Performs one Monte-Carlo iteration. This is precisely one random draw
 			// from the model (one function call to model->DrawSample()).
-			void Sweep();
+			virtual void Sweep();
 
 			// Performs one Monte-Carlo iteration. This is precisely one random draw
 			// from the model (one function call to model->DrawSample()).
@@ -106,17 +115,17 @@ namespace Ensembles
 			}
 
 			// Sets the density of states scaling factor.
-			double SetScaleFactor(double sf)
+			virtual double SetScaleFactor(double sf)
 			{
 				return _scaleFactor = sf;
 			}
 
-			double GetTargetFlatness()
+			virtual double GetTargetFlatness()
 			{
 				return _targetFlatness;
 			}
 
-			double SetTargetFlatness(double f)
+			virtual double SetTargetFlatness(double f)
 			{
 				return _targetFlatness = f;
 			}
@@ -138,6 +147,18 @@ namespace Ensembles
 			{
 				// We store log of scale factor. So we simply multiply.
 				return _scaleFactor = _scaleFactor*order;
+			}
+
+			// Gets the walker ID.
+			int GetWalkerID()
+			{
+				return _walker;
+			}
+
+			// Sets the walker ID.
+			int SetWalkerID(int id)
+			{
+				return _walker = id;
 			}
 
 			// Acceptance probability based on density of states.

@@ -20,6 +20,7 @@ namespace Ensembles
 		logger.RegisterEnsembleProperty("Flatness", _flatness);
 		logger.RegisterEnsembleProperty("Energy", _energy);
 		logger.RegisterEnsembleProperty("ScaleFactor", _scaleFactor);
+		logger.RegisterEnsembleProperty("Walker", _walker);
 		logger.RegisterEnsembleVectorProperty("DOS", *_DOS);
 		logger.RegisterEnsembleVectorProperty("Histogram", *_counts);
 		logger.RegisterEnsembleProperty("LowerOutliers",
