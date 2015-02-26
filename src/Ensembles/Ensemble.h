@@ -1,13 +1,11 @@
 #pragma once
 
-#include "../DataLoggers/DataLogger.h"
 #include "../Models/BaseModel.h"
 #include "../Moves/Move.h"
 #include <vector>
 
 using namespace Models;
 using namespace Moves;
-using namespace DataLoggers;
 
 namespace Ensembles
 {
@@ -29,9 +27,6 @@ namespace Ensembles
 			// Number of iterations performed.
 			int _iterations = 0;
 
-			// Vector of loggers to run.
-			std::vector<DataLogger*> _loggers;
-
 		protected:
 			// Pointer to model.
 			BaseModel & model;
@@ -50,9 +45,6 @@ namespace Ensembles
 			{
 				return _iterations += num;
 			}
-
-			// Function registers ensemble properties.
-			virtual void RegisterLoggableProperties(DataLogger& logger) = 0;
 
 		public:
 			Ensemble (BaseModel& model) : model(model) {};
@@ -85,31 +77,6 @@ namespace Ensembles
 			void RemoveMove()
 			{
 				moves.pop_back();
-			}
-
-			// Adds a logger to the logger queue.
-			virtual void AddLogger(DataLogger& logger)
-			{
-				_loggers.push_back(&logger);
-				this->RegisterLoggableProperties(logger);
-			}
-
-			// Remove logger from the end of the logger queue.
-			void RemoveLogger()
-			{
-				auto logger = _loggers.back();
-
-				logger->ClearEnsembleProperties();
-				logger->ClearEnsembleVectorProperties();
-
-				_loggers.pop_back();
-			}
-
-			// Runs the loggers.
-			virtual void RunLoggers(bool force = false)
-			{
-				for(auto &logger : this->_loggers)
-					logger->LogProperties(this->model, force);
 			}
 
 			// Get number of sweeps. A sweep is defined as "n" iterations, where

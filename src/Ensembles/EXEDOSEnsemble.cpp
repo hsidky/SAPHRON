@@ -99,13 +99,5 @@ namespace Ensembles
 		return p > 1.0 ? 1.0 : p;
 	}
 
-	template<typename T>
-	void EXEDOSEnsemble<T>::RegisterLoggableProperties(DataLogger &logger)
-	{
-		// Call parent.
-		DensityOfStatesEnsemble<T>::RegisterLoggableProperties(logger);
-		logger.RegisterEnsembleProperty("SpeciesCount", _n1count);
-	}
-
 	template class EXEDOSEnsemble<Site>;
 }

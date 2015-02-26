@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../DataLoggers/DataLogger.h"
 #include "../Histogram.h"
 #include "../Models/BaseModel.h"
 #include "../Rand.h"
@@ -58,9 +57,6 @@ namespace Ensembles
 
 			// Calculates the total energy of the model.
 			double CalculateTotalEnergy();
-
-			// Registers loggable properties with logger.
-			void RegisterLoggableProperties(DataLogger& logger);
 
 		public:
 

@@ -21,9 +21,6 @@ namespace Ensembles
 			// Calculates the total number of a specified species.
 			int CalculateSpeciesCount(int species = 1);
 
-			// Registers loggable properties with loggers.
-			void RegisterLoggableProperties(DataLogger& logger);
-
 		public:
 
 			// Initializes a EXEDOS sampler for a specified model at a given temperature (kbT).

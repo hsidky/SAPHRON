@@ -13,22 +13,6 @@ namespace Ensembles
 		return u;
 	}
 
-	// Registers loggable properties with logger.
-	template<typename T>
-	void DensityOfStatesEnsemble<T>::RegisterLoggableProperties(DataLogger& logger)
-	{
-		logger.RegisterEnsembleProperty("Flatness", _flatness);
-		logger.RegisterEnsembleProperty("Energy", _energy);
-		logger.RegisterEnsembleProperty("ScaleFactor", _scaleFactor);
-		logger.RegisterEnsembleProperty("Walker", _walker);
-		logger.RegisterEnsembleVectorProperty("DOS", *_DOS);
-		logger.RegisterEnsembleVectorProperty("Histogram", *_counts);
-		logger.RegisterEnsembleProperty("LowerOutliers",
-		                                _lowerOutliers);
-		logger.RegisterEnsembleProperty("UpperOutliers",
-		                                _upperOutliers);
-	}
-
 	// Runs multiple DOS simulations, between each subsequent iteration is
 	// a re-normalization step involving resetting of the hisogram and reduction of
 	// the scaling factor.
@@ -40,7 +24,6 @@ namespace Ensembles
 			Sweep();
 
 			// Force logging
-			this->RunLoggers(true);
 			this->ResetHistogram();
 			this->ReduceScaleFactor();
 		}
@@ -56,7 +39,6 @@ namespace Ensembles
 		_flatness = hist.CalculateFlatness();
 		while(_flatness < GetTargetFlatness())
 		{
-			this->RunLoggers();
 			this->IncrementSweeps();
 
 			for(int i = 0; i < this->model.GetSiteCount(); i++)

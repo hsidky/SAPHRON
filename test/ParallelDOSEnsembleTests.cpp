@@ -1,4 +1,3 @@
-#include "../src/DataLoggers/ConsoleDataLogger.h"
 #include "../src/Ensembles/ParallelDOSEnsemble.h"
 #include "../src/Ensembles/WangLandauEnsemble.h"
 #include "../src/Models/LebwohlLasherModel.h"
@@ -56,22 +55,10 @@ TEST(ParalellDOSEnsemble, ParallelBehavior)
 	int n = 10;
 	Models::LebwohlLasherModel model(n, n, n);
 	Moves::SphereUnitVectorMove move;
-	DataLoggers::ConsoleDataLogger console(1000);
 
 	ParallelDOSEnsemble<Site, WangLandauEnsemble<Site> >
 	ensemble(model, -1.9, -0.5, 10000, 5, 0.5);
 
 	ensemble.SetWalkerID(5);
-
-	console.AddModelProperty("Walker", [] (BaseModel &, const EnsembleProperty &ep){
-	                                 return *ep.at("Walker");
-				 });
-
-	console.AddModelProperty("Energy", [] (BaseModel &, const EnsembleProperty &ep){
-	                                 return *ep.at("Energy");
-				 });
-
-	ensemble.AddLogger(console);
-
 	ensemble.Sweep();
 }

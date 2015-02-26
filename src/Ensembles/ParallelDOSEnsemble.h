@@ -90,22 +90,6 @@ namespace Ensembles
 				}
 			}
 
-			// Adds a logger to the logger queue for all parallel ensembles.
-			void AddLogger(DataLogger& logger) override
-			{
-				//Ensemble<T>::AddLogger(logger);
-
-				for(int i = 0; i < _walkers; i++)
-					_objects[i]->AddLogger(logger);
-			}
-
-			// Runs the loggers.
-			void RunLoggers(bool force = false) override
-			{
-				for(int i = 0; i < _walkers; i++)
-					_objects[i]->RunLoggers(force);
-			}
-
 			double SetScaleFactor(double sf) override
 			{
 				for(int i = 0; i < _walkers; i++)

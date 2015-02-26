@@ -24,13 +24,6 @@ namespace Ensembles
 			// Random number generator.
 			Rand rand;
 
-		protected:
-			void RegisterLoggableProperties(DataLogger& logger)
-			{
-				logger.RegisterEnsembleProperty("T", _temperature);
-				logger.RegisterEnsembleProperty("kb", _kb);
-			}
-
 		public:
 			// Initializes NVTEnsemble for a model at a given "reduced" temperature.
 			NVTEnsemble(BaseModel& model, double temperature) :
@@ -45,7 +38,6 @@ namespace Ensembles
 				for(int i = 0; i < this->model.GetSiteCount(); i++)
 					Iterate();
 
-				this->RunLoggers();
 				this->IncrementSweeps();
 			}
 
