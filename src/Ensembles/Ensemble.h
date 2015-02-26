@@ -2,10 +2,12 @@
 
 #include "../Models/BaseModel.h"
 #include "../Moves/Move.h"
+#include "../Simulation/SimObservable.h"
 #include <vector>
 
 using namespace Models;
 using namespace Moves;
+using namespace Simulation;
 
 namespace Ensembles
 {
@@ -17,7 +19,7 @@ namespace Ensembles
 	// performed on the site, after which the probability of acceptance
 	// is calculated and the move is either accepted or rejected.
 	template <typename T>
-	class Ensemble
+	class Ensemble : public SimObservable
 	{
 		private:
 
