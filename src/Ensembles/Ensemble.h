@@ -76,7 +76,7 @@ namespace Ensembles
 			}
 
 			// Adds a move to the end of the move queue.
-			void AddMove(Move<T>& move)
+			virtual void AddMove(Move<T>& move)
 			{
 				return moves.push_back(&move);
 			}
@@ -88,7 +88,7 @@ namespace Ensembles
 			}
 
 			// Adds a logger to the logger queue.
-			void AddLogger(DataLogger& logger)
+			virtual void AddLogger(DataLogger& logger)
 			{
 				_loggers.push_back(&logger);
 				this->RegisterLoggableProperties(logger);
@@ -106,7 +106,7 @@ namespace Ensembles
 			}
 
 			// Runs the loggers.
-			void RunLoggers(bool force = false)
+			virtual void RunLoggers(bool force = false)
 			{
 				for(auto &logger : this->_loggers)
 					logger->LogProperties(this->model, force);
