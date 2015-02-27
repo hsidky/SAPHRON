@@ -4,6 +4,9 @@
 #include "../Rand.h"
 #include "Ensemble.h"
 
+using namespace Simulation;
+using namespace Visitors;
+
 namespace Ensembles
 {
 	// Class for simple NVT ensemble - also known as "canonical" ensemble. This
@@ -38,6 +41,7 @@ namespace Ensembles
 				for(int i = 0; i < this->model.GetSiteCount(); i++)
 					Iterate();
 
+				this->NotifyObservers();
 				this->IncrementSweeps();
 			}
 
@@ -91,6 +95,11 @@ namespace Ensembles
 			double GetBoltzmannConstant()
 			{
 				return this->_kb;
+			}
+
+			virtual void AcceptVisitor(class Visitor& v)
+			{
+				v.Visit(this);
 			}
 	};
 }

@@ -13,7 +13,7 @@ namespace Models
 	{
 		private:
 			// Isotropic mixing parameter γij.
-			std::vector<double> _isotropicJ = {0.0};
+			std::vector<double> _isotropicJ = { std::vector<double> {0.0} };
 
 			// Column size of the (ghost) isotropic interaction parameter matrix.
 			int _isoN = 1;
@@ -26,7 +26,12 @@ namespace Models
 			// The sites are initialized on a lattice including
 			// positions, nearest neighbors and spins. The default BaseModel
 			// parameters are used otherwise.
+			#ifdef _MSC_VER
+			LebwohlLasherModel(int xLength, int yLength, int zLength, int seed = 1) 
+				: Lattice3DModel(xLength, yLength, zLength, seed ){};
+			#else
 			using Lattice3DModel::Lattice3DModel;
+			#endif
 
 			using Lattice3DModel::EvaluateHamiltonian;
 

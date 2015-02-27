@@ -10,7 +10,7 @@ class Site
 		double x, y, z;
 
 		// Site unit vectors.
-		std::vector<double> u = {0.0,0.0,0.0};
+		std::vector<double> u = { std::vector<double>{0.0, 0.0, 0.0} };
 
 		// Site species
 		int species = 1;
