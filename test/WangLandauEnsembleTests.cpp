@@ -21,8 +21,8 @@ TEST(WangLandauEnsemble, DefaultBehavior)
 		move.Perform(*site);
 	}
 
-	Ensembles::WangLandauEnsemble<Site> ensemble(model, -1.9, -0.5, 10000);
-	ensemble.SetTargetFlatness(0.5);
-	ensemble.AddMove(move);
-	ensemble.Sweep();
+	//Ensembles::WangLandauEnsemble<Site> ensemble(model, -1.9, -0.5, 10000);
+	//ensemble.SetTargetFlatness(0.5);
+	//ensemble.AddMove(move);
+	//ensemble.Sweep();
 }

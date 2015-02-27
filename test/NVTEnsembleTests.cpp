@@ -2,20 +2,24 @@
 #include "../src/Models/Ising3DModel.h"
 #include "../src/Moves/FlipSpinMove.h"
 #include "../src/Site.h"
+#include "../src/Visitors/ConsoleVisitor.h"
 #include "gtest/gtest.h"
 
 using namespace Ensembles;
 using namespace Models;
+using namespace Visitors;
 
 // Expected magnetization for the NVT Ensemble on the 3D Ising model at various temperatures.
 TEST(NVTEnsemble, IsingModelMagnetization)
 {
-	int n = 37;
+	int n = 10;
 	Ising3DModel model(n, n, n, 1);
 	FlipSpinMove move;
 	NVTEnsemble<Site> s(model, 1.0);
+	ConsoleVisitor c(100);
 
 	s.AddMove(move);
+	s.AddObserver(&c);
 
 	// Iterate
 	for(int i = 0; i < 100; i++)

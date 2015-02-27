@@ -25,5 +25,8 @@ namespace Simulation
 
 			// Notify registered observers of a change.
 			void NotifyObservers();
+
+			// Get the iteration count.
+			virtual int GetSimIteration() = 0;
 	};
 }

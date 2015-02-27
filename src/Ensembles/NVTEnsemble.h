@@ -97,6 +97,7 @@ namespace Ensembles
 				return this->_kb;
 			}
 
+			// Accept visitor to class.
 			virtual void AcceptVisitor(class Visitor& v)
 			{
 				v.Visit(this);

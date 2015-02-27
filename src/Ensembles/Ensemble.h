@@ -107,6 +107,12 @@ namespace Ensembles
 				_iterations = 0;
 			}
 
+			// Get simulation iterations which correspond to sweeps.
+			virtual int GetSimIteration()
+			{
+				return _sweeps;
+			}
+
 			// Defines the acceptance probability based on a difference in energy.
 			virtual double AcceptanceProbability(double prevH, double currH) = 0;
 	};
