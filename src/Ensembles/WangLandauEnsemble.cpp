@@ -46,6 +46,7 @@ namespace Ensembles
 		// Update bins and energy regardless (log DOS).
 		auto bin = this->hist.Record(this->_energy);
 		this->hist.UpdateValue(bin, this->hist.GetValue(bin)+this->GetScaleFactor());
+		this->IncrementIterations();
 	}
 
 	// Wang-Landau acceptance probability based on density of states.
