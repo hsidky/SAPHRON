@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #include "../Simulation/SimObserver.h"
 
@@ -8,8 +8,10 @@ namespace Visitors
 {
 	class ConsoleVisitor : public SimObserver
 	{
-		virtual void Visit(Ensembles::NVTEnsemble<Site>* e) override;
-
-		virtual void Update(SimEvent& ev) override;
+		public:
+			virtual void Update(SimEvent& ev) override;
+			virtual void Visit(Ensembles::NVTEnsemble<Site>* e) override;
+			virtual void Visit(Models::BaseModel* m) override;
+			virtual void Visit(Site* s) override;
 	};
 }

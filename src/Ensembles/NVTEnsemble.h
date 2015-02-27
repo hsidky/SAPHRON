@@ -100,6 +100,7 @@ namespace Ensembles
 			virtual void AcceptVisitor(class Visitor& v)
 			{
 				v.Visit(this);
+				this->model.AcceptVisitor(v);
 			}
 	};
 }

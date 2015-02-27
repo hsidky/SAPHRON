@@ -1,9 +1,10 @@
 #pragma once
 
+#include "Visitors/Visitable.h"
 #include <array>
 #include <vector>
 
-class Site
+class Site : public Visitors::Visitable
 {
 	private:
 		// Site coordinates.
@@ -157,5 +158,11 @@ class Site
 		std::vector<int> SetNeighbors(std::vector<int> newNeighbors)
 		{
 			return neighbors = newNeighbors;
+		}
+
+		// Accept visitor.
+		virtual void AcceptVisitor(class Visitors::Visitor &v)
+		{
+			v.Visit(this);
 		}
 };

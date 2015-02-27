@@ -19,6 +19,9 @@ namespace Simulation
 	{
 		SimEvent event(this);
 		for(auto& observer : _observers)
+		{
 			observer->Update(event);
+			this->AcceptVisitor(*observer);
+		}
 	}
 }

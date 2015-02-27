@@ -2,12 +2,13 @@
 
 #include "../Rand.h"
 #include "../Site.h"
+#include "../Visitors/Visitable.h"
 #include <cmath>
 #include <vector>
 
 namespace Models
 {
-	class BaseModel
+	class BaseModel : public Visitors::Visitable
 	{
 		protected:
 
@@ -86,6 +87,14 @@ namespace Models
 			// argument does not have to be used if the Hamiltonian is
 			// independent of site.
 			virtual double EvaluateHamiltonian(Site& site) = 0;
+
+			// Accept visitor.
+			virtual void AcceptVisitor(class Visitors::Visitor &v)
+			{
+				v.Visit(this);
+				for(auto &site : Sites)
+					site.AcceptVisitor(v);
+			}
 
 			// Clone Model.
 			virtual BaseModel* Clone() const = 0;
