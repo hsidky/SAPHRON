@@ -4,6 +4,10 @@
 *.o
 *.obj
 
+# VS2013 Files
+*.opensdf
+*.sdf
+
 # Precompiled Headers
 *.gch
 *.pch
