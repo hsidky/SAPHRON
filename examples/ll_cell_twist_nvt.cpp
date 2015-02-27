@@ -52,78 +52,19 @@ int main(int argc, char const* argv[])
 	// Initialize the NVT ensemble. For this particular ensemble, it requires a reference to
 	// the model and the temperature. The template parametr for the ensemble is the type
 	// returned by the DrawSample method of the model - in this case it is a site.
-	Ensembles::NVTEnsemble<Site> ensemble(model, temperature);
+	//Ensembles::NVTEnsemble<Site> ensemble(model, temperature);
 
 	// Initialize the moves. These are the different Monte-Carlo moves we would like
 	// to perform on the model above. In this case, we want to pick a random unit
 	// vector on a sphere. A "Move" class operates on a site within model in an ensemble.
 	Moves::SphereUnitVectorMove move;
 
-	// The CSV logger constructor requires that we provide file names for output.
-	// Note: vector file not used, so we input placeholder.
-	DataLoggers::CSVDataLogger csvlogger(modelFile, sitesFile, "vecs.csv", 1000);
-	DataLoggers::ConsoleDataLogger consolelogger(1000);
 
-	// Log total energy.
-	auto energy = [] (BaseModel& model, const EnsembleProperty &) {
-		double u = 0;
-		int c = model.GetSiteCount();
-		for(int i = 0; i < c; i++)
-			u += model.EvaluateHamiltonian(i);
-		u /= 2.0*c;
-		return u;
-	};
-
-	// Attach the callback to both loggers. We should provide a name.
-	csvlogger.AddModelProperty("Energy", energy);
-	consolelogger.AddModelProperty("Energy", energy);
-
-	// For the CSV logger, we want to log the site locations and unit vectors.
-	csvlogger.AddSiteProperty("z",
-	                          [] (Site & site,
-	                              const EnsembleProperty &){ return site.GetZCoordinate();
-				  });
-	csvlogger.AddSiteProperty("y",
-	                          [] (Site& site,
-	                              const EnsembleProperty &){ return site.GetYCoordinate();
-				  });
-	csvlogger.AddSiteProperty("x",
-	                          [] (Site& site,
-	                              const EnsembleProperty &){ return site.GetXCoordinate();
-				  });
-	csvlogger.AddSiteProperty("uz",
-	                          [] (Site & site,
-	                              const EnsembleProperty &){ return site.GetZUnitVector();
-				  });
-	csvlogger.AddSiteProperty("uy",
-	                          [] (Site& site,
-	                              const EnsembleProperty &){ return site.GetYUnitVector();
-				  });
-	csvlogger.AddSiteProperty("ux",
-	                          [] (Site& site,
-	                              const EnsembleProperty &){ return site.GetXUnitVector();
-				  });
-
-	// Finally, we add both the loggers and the move to the ensemble.
-	ensemble.AddLogger(csvlogger);
-	ensemble.AddLogger(consolelogger);
-	ensemble.AddMove(move);
-
-	/*
-	   for(int i = 0; i < 3*model.GetSiteCount(); i++)
-	   {
-	    auto* site = model.DrawSample();
-	    move.Perform(*site);
-	   }
-	 */
-
-	// The CSV logger provides us a method that allows us to write headers to
-	// the CSV file if we please.
-	csvlogger.WriteHeaders();
+	//ensemble.AddMove(move);
 
 	// Sweep for iterations
-	for (int i = 0; i < iterations; i++)
-		ensemble.Sweep();
+	//for (int i = 0; i < iterations; i++)
+	//	ensemble.Sweep();
 
 	return 0;
 }

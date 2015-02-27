@@ -84,63 +84,16 @@ int main(int argc, char const* argv[])
 	model.SetIsotropicParameter(sqrt(gaa*gbb), 1, 2);
 	model.SetIsotropicParameter(gbb, 2, 2);
 
-	// Initialize CSV logger and console logger for output. We want to log our
-	// density of states to a CSV file, and just monitor flatness in the console.
-	DataLoggers::CSVDataLogger csvlogger(modelFile, sitesFile, vecsFile, 5000);
-	DataLoggers::ConsoleDataLogger consolelogger(1000);
-
-	// Monitor flatness
-	auto flatness = [] (BaseModel&, const EnsembleProperty &eprops) {
-		return *eprops.at("Flatness");
-	};
-
-	// Monitor scale factor
-	auto scale = [] (BaseModel&, const EnsembleProperty &eprops) {
-		return *eprops.at("ScaleFactor");
-	};
-
-	// Log density of states.
-	auto dos = [] (BaseModel&, const EnsembleVector &evecs) {
-		return *evecs.at("DOS");
-	};
-
-	// Show lower outlier count.
-	auto lo = [] (BaseModel &, const EnsembleProperty &ep){
-		return *ep.at("LowerOutliers");
-	};
-
-	// Show upper outlier count.
-	auto uo = [] (BaseModel &, const EnsembleProperty &ep){
-		return *ep.at("UpperOutliers");
-	};
-
-	// Monitor average energy.
-	auto n1count = [] (BaseModel &, const EnsembleProperty &ep){
-		return *ep.at("SpeciesCount");
-	};
-
-	// Register callbacks with loggers.
-	csvlogger.AddVectorProperty("DOS", dos);
-	consolelogger.AddModelProperty("SpeciesCount", n1count);
-	consolelogger.AddModelProperty("Flatness", flatness);
-	consolelogger.AddModelProperty("ScaleFactor", scale);
-	consolelogger.AddModelProperty("LowerOutliers", lo);
-	consolelogger.AddModelProperty("UpperOutliers", uo);
-
 	// Initialize Wang-Landau sampler.
-	Ensembles::EXEDOSEnsemble<Site> ensemble(model, minX, maxX, binCount, temperature);
+	//Ensembles::EXEDOSEnsemble<Site> ensemble(model, minX, maxX, binCount, temperature);
 
 	// Register loggers and moves with the ensemble.
-	ensemble.AddLogger(csvlogger);
-	ensemble.AddLogger(consolelogger);
-	ensemble.AddMove(move1);
-	ensemble.AddMove(move2);
-
-	csvlogger.WriteHeaders();
-
+	//ensemble.AddMove(move1);
+	//ensemble.AddMove(move2);
+	
 	// Run WL sampling.
-	ensemble.SetTargetFlatness(0.85);
-	ensemble.Run(iterations);
+	//ensemble.SetTargetFlatness(0.85);
+	//ensemble.Run(iterations);
 }
 
 // A very basic input parser.

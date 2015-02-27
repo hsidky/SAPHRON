@@ -3,8 +3,6 @@
 
 // Include header files
 #include "../src/Ensembles/WangLandauEnsemble.h"
-#include "../src/DataLoggers/CSVDataLogger.h"
-#include "../src/DataLoggers/ConsoleDataLogger.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
 
@@ -60,62 +58,14 @@ int main(int argc, char const* argv[])
 		move.Perform(*site);
 	}
 
-	// Initialize CSV logger and console logger for output. We want to log our
-	// density of states to a CSV file, and just monitor flatness in the console.
-	DataLoggers::CSVDataLogger csvlogger(modelFile, sitesFile, vecsFile, 5000);
-	DataLoggers::ConsoleDataLogger consolelogger(1000);
-
-	// Monitor flatness
-	auto flatness = [] (BaseModel&, const EnsembleProperty &eprops) {
-		return *eprops.at("Flatness");
-	};
-
-	// Monitor scale factor
-	auto scale = [] (BaseModel&, const EnsembleProperty &eprops) {
-		return *eprops.at("ScaleFactor");
-	};
-
-	// Log density of states.
-	auto dos = [] (BaseModel&, const EnsembleVector &evecs) {
-		return *evecs.at("DOS");
-	};
-
-	// Show lower outlier count.
-	auto lo = [] (BaseModel &, const EnsembleProperty &ep){
-		return *ep.at("LowerOutliers");
-	};
-
-	// Show upper outlier count.
-	auto uo = [] (BaseModel &, const EnsembleProperty &ep){
-		return *ep.at("UpperOutliers");
-	};
-
-	// Monitor average energy.
-	auto energy = [] (BaseModel &, const EnsembleProperty &ep){
-		return *ep.at("Energy");
-	};
-
-	// Register callbacks with loggers.
-	csvlogger.AddVectorProperty("DOS", dos);
-	consolelogger.AddModelProperty("Energy", energy);
-	consolelogger.AddModelProperty("Flatness", flatness);
-	consolelogger.AddModelProperty("ScaleFactor", scale);
-	consolelogger.AddModelProperty("LowerOutliers", lo);
-	consolelogger.AddModelProperty("UpperOutliers", uo);
-
 	// Initialize Wang-Landau sampler.
-	Ensembles::WangLandauEnsemble<Site> ensemble(model, minE, maxE, binCount);
+	//Ensembles::WangLandauEnsemble<Site> ensemble(model, minE, maxE, binCount);
 
-	// Register loggers and moves with the ensemble.
-	ensemble.AddLogger(csvlogger);
-	ensemble.AddLogger(consolelogger);
-	ensemble.AddMove(move);
-
-	csvlogger.WriteHeaders();
+	//ensemble.AddMove(move);
 
 	// Run WL sampling.
-	ensemble.SetTargetFlatness(0.85);
-	ensemble.Run(iterations);
+	//ensemble.SetTargetFlatness(0.85);
+	//ensemble.Run(iterations);
 }
 
 // A very basic input parser.
