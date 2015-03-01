@@ -4,7 +4,7 @@
 // Include header files
 #include "../src/DataLoggers/CSVDataLogger.h"
 #include "../src/DataLoggers/ConsoleDataLogger.h"
-#include "../src/Ensembles/EXEDOSEnsemble.h"
+#include "../src/Ensembles/SemiGrandDOSEnsemble.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SpeciesSwapMove.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
@@ -85,7 +85,7 @@ int main(int argc, char const* argv[])
 	model.SetIsotropicParameter(gbb, 2, 2);
 
 	// Initialize Wang-Landau sampler.
-	//Ensembles::EXEDOSEnsemble<Site> ensemble(model, minX, maxX, binCount, temperature);
+	//Ensembles::SemiGrandDOSEnsemble<Site> ensemble(model, minX, maxX, binCount, temperature);
 
 	// Register loggers and moves with the ensemble.
 	//ensemble.AddMove(move1);

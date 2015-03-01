@@ -21,13 +21,13 @@
     <ClCompile Include="src\ensembles\DensityOfStatesEnsemble.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ensembles\EXEDOSEnsemble.cpp">
+    <ClCompile Include="src\ensembles\SemiGrandDOSEnsemble.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ensembles\ParallelDOSEnsemble.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ensembles\WangLandauDOS.cpp">
+    <ClCompile Include="src\ensembles\WangLandauDOSEnsemble.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\models\Lattice3DModel.cpp">
@@ -83,7 +83,7 @@
     <ClInclude Include="src\ensembles\Ensemble.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ensembles\EXEDOSEnsemble.h">
+    <ClInclude Include="src\ensembles\SemiGrandDOSEnsemble.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ensembles\NVTEnsemble.h">
@@ -92,7 +92,7 @@
     <ClInclude Include="src\ensembles\ParallelDOSEnsemble.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ensembles\WangLandauDOS.h">
+    <ClInclude Include="src\ensembles\WangLandauDOSEnsemble.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\models\BaseModel.h">

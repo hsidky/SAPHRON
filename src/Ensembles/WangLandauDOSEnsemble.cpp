@@ -1,4 +1,4 @@
-#include "WangLandauDOS.h"
+#include "WangLandauDOSEnsemble.h"
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -9,7 +9,7 @@ namespace Ensembles
 	// be performed according to the specified minimum and maxiumum energies and
 	// the bin count.
 	template<typename T>
-	WangLandauDOS<T>::WangLandauDOS(BaseModel& model,
+	WangLandauDOSEnsemble<T>::WangLandauDOSEnsemble(BaseModel& model,
 	                                double minE,
 	                                double maxE,
 	                                int binCount) :
@@ -21,7 +21,7 @@ namespace Ensembles
 	// Performs one Monte-Carlo iteration. This is precisely one random draw
 	// from the model (one function call to model->DrawSample()).
 	template<typename T>
-	void WangLandauDOS<T>::Iterate()
+	void WangLandauDOSEnsemble<T>::Iterate()
 	{
 		// Draw sample and evaluate Hamiltonian.
 		auto sample = this->model.DrawSample();
@@ -54,7 +54,7 @@ namespace Ensembles
 	// individual energy (of a site). The probability is calculated as exp(log(gprev)-log(gcurr))
 	// where log(g) is the associates DOS from the histogram.
 	template<typename T>
-	double WangLandauDOS<T>::AcceptanceProbability(double prevH, double currH)
+	double WangLandauDOSEnsemble<T>::AcceptanceProbability(double prevH, double currH)
 	{
 		// If we are outside boundaries, drag the energy into the desired range.
 		if(this->hist.GetBin(currH) == -1)
@@ -71,5 +71,5 @@ namespace Ensembles
 		return p > 1.0 ? 1.0 : p;
 	}
 
-	template class WangLandauDOS<Site>;
+	template class WangLandauDOSEnsemble<Site>;
 }

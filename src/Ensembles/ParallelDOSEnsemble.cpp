@@ -1,6 +1,6 @@
-#include "EXEDOSEnsemble.h"
+#include "SemiGrandDOSEnsemble.h"
 #include "ParallelDOSEnsemble.h"
-#include "WangLandauDOS.h"
+#include "WangLandauDOSEnsemble.h"
 #include <armadillo>
 
 namespace Ensembles
@@ -112,6 +112,6 @@ namespace Ensembles
 			it.get();
 	}
 
-	template class ParallelDOSEnsemble<Site, WangLandauDOS<Site> >;
-	template class ParallelDOSEnsemble<Site, EXEDOSEnsemble<Site> >;
+	template class ParallelDOSEnsemble<Site, WangLandauDOSEnsemble<Site> >;
+	template class ParallelDOSEnsemble<Site, SemiGrandDOSEnsemble<Site> >;
 }

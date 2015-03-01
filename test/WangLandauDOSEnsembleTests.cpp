@@ -1,4 +1,4 @@
-#include "../src/Ensembles/WangLandauDOS.h"
+#include "../src/Ensembles/WangLandauDOSEnsemble.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
 #include "../src/Site.h"
@@ -8,7 +8,7 @@ using namespace Ensembles;
 using namespace Models;
 
 // Testing default WL Ensemble behavior.
-TEST(WangLandauDOS, DefaultBehavior)
+TEST(WangLandauDOSEnsemble, DefaultBehavior)
 {
 	int n = 10;
 	Models::LebwohlLasherModel model(n, n, n);
@@ -21,7 +21,7 @@ TEST(WangLandauDOS, DefaultBehavior)
 		move.Perform(*site);
 	}
 
-	//Ensembles::WangLandauDOS<Site> ensemble(model, -1.9, -0.5, 10000);
+	//Ensembles::WangLandauDOSEnsemble<Site> ensemble(model, -1.9, -0.5, 10000);
 	//ensemble.SetTargetFlatness(0.5);
 	//ensemble.AddMove(move);
 	//ensemble.Sweep();

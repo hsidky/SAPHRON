@@ -20,8 +20,8 @@ DEPS  = $(LIB_DIR)/SAPHRON.a
 TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \
 	    FlipSpinMoveTests.out NVTEnsembleTests.out \
 		LebwohlLasherModelTests.out SphereUnitVectorMoveTests.out LLCellModelTests.out \
-		HistogramTests.out WangLandauDOSTests.out SpeciesSwapMoveTests.out \
-		EXEDOSEnsembleTests.out ParallelDOSEnsembleTests.out SimFlagsTests.out
+		HistogramTests.out WangLandauDOSEnsembleTests.out SpeciesSwapMoveTests.out \
+		SemiGrandDOSEnsembleTests.out ParallelDOSEnsembleTests.out SimFlagsTests.out
 
 
 # Google Test libs to link against.

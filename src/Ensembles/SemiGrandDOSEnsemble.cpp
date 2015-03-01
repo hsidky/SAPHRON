@@ -1,18 +1,18 @@
-#include "EXEDOSEnsemble.h"
+#include "SemiGrandDOSEnsemble.h"
 
 namespace Ensembles
 {
-	// Initializes a EXEDOS sampler for a specified model at a given temperature (kbT).
+	// Initializes a Semi-grand DOS sampler for a specified model at a given temperature (kbT).
 	// The binning will be performed according to the specified minimum
 	// and maxiumum mole fractions of species 1 in the system. Note that since
 	// the there is a discrete number of lattice sites, a bincount larger than the
 	// difference between the site counts will result in a histogram that never flattens.
 	template<typename T>
-	EXEDOSEnsemble<T>::EXEDOSEnsemble(BaseModel& model,
-	                                  double minN1,
-	                                  double maxN1,
-	                                  int binCount,
-	                                  double temperature) :
+	SemiGrandDOSEnsemble<T>::SemiGrandDOSEnsemble(BaseModel& model,
+	                                              double minN1,
+	                                              double maxN1,
+	                                              int binCount,
+	                                              double temperature) :
 		DensityOfStatesEnsemble<T>(model, round(minN1*model.GetSiteCount()),
 		                           round(maxN1*model.GetSiteCount()), binCount),
 		_temperature(temperature)
@@ -23,7 +23,7 @@ namespace Ensembles
 	// Performs one Monte-Carlo iteration. This is precisely one random draw
 	// from the model (one function call to model->DrawSample()).
 	template<typename T>
-	void EXEDOSEnsemble<T>::Iterate()
+	void SemiGrandDOSEnsemble<T>::Iterate()
 	{
 		// Draw sample and evaluate Hamiltonian.
 		auto sample = this->model.DrawSample();
@@ -66,7 +66,7 @@ namespace Ensembles
 
 	// Calculates the total number of a specified species in the model.
 	template<typename T>
-	int EXEDOSEnsemble<T>::CalculateSpeciesCount(int species)
+	int SemiGrandDOSEnsemble<T>::CalculateSpeciesCount(int species)
 	{
 		int counter = 0;
 		for(int i = 0; i < this->model.GetSiteCount(); i++)
@@ -80,7 +80,7 @@ namespace Ensembles
 	}
 
 	template<typename T>
-	double EXEDOSEnsemble<T>::AcceptanceProbability(double prevH, double currH)
+	double SemiGrandDOSEnsemble<T>::AcceptanceProbability(double prevH, double currH)
 	{
 		// If we are outside the boundaries, drag the n1 count into desired range.
 		if(this->hist.GetBin(_newn1count) == -1)
@@ -100,5 +100,5 @@ namespace Ensembles
 		return p > 1.0 ? 1.0 : p;
 	}
 
-	template class EXEDOSEnsemble<Site>;
+	template class SemiGrandDOSEnsemble<Site>;
 }

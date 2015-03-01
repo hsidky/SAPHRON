@@ -7,7 +7,7 @@ namespace Ensembles
 	class NVTEnsemble;
 
 	template <class T>
-	class WangLandauDOS;
+	class WangLandauDOSEnsemble;
 }
 
 namespace Models
@@ -24,7 +24,7 @@ namespace Visitors
 	{
 		public:
 			virtual void Visit(Histogram* h) = 0;
-			virtual void Visit(Ensembles::WangLandauDOS<Site>* e) = 0;
+			virtual void Visit(Ensembles::WangLandauDOSEnsemble<Site>* e) = 0;
 			virtual void Visit(Ensembles::NVTEnsemble<Site>* e) = 0;
 			virtual void Visit(Models::BaseModel* m) = 0;
 			virtual void Visit(Site* s) = 0;

@@ -4,9 +4,9 @@
 
 namespace Ensembles
 {
-	// Class for Extended Ensemble Density-of-States (EXEDOS) sampling.
+	// Class for Semi-grand Density-of-States (DOS) sampling.
 	template<typename T>
-	class EXEDOSEnsemble : public DensityOfStatesEnsemble<T>
+	class SemiGrandDOSEnsemble : public DensityOfStatesEnsemble<T>
 	{
 		private:
 
@@ -23,22 +23,22 @@ namespace Ensembles
 
 		public:
 
-			// Initializes a EXEDOS sampler for a specified model at a given temperature (kbT).
+			// Initializes a Semi-grand DOS sampler for a specified model at a given temperature (kbT).
 			// The binning will be performed according to the specified minimum
 			// and maxiumum mole fractions of species 1 in the system. Note that since
 			// the there is a discrete number of lattice sites, a bincount larger than the
 			// difference between the site counts will result in a histogram that never flattens.
-			EXEDOSEnsemble(BaseModel& model,
-			               double minN1,
-			               double maxN1,
-			               int binCount,
-			               double temperature);
+			SemiGrandDOSEnsemble(BaseModel& model,
+			                     double minN1,
+			                     double maxN1,
+			                     int binCount,
+			                     double temperature);
 
 			// Performs one Monte-Carlo iteration. This is precisely one random draw
 			// from the model (one function call to model->DrawSample()).
 			void Iterate();
 
-			// EXEDOS acceptance probability.
+			// Semi-grand acceptance probability.
 			double AcceptanceProbability(double prevH, double currH);
 
 			// Gets the temperature (K).
