@@ -18,7 +18,7 @@ DEPS  = $(LIB_DIR)/SAPHRON.a
 
 # All tests produced by this Makefile.
 TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \
-	    FlipSpinMoveTests.out NVTEnsembleTests.out CSVLoggerTests.out \
+	    FlipSpinMoveTests.out NVTEnsembleTests.out \
 		LebwohlLasherModelTests.out SphereUnitVectorMoveTests.out LLCellModelTests.out \
 		HistogramTests.out WangLandauEnsembleTests.out SpeciesSwapMoveTests.out \
 		EXEDOSEnsembleTests.out ParallelDOSEnsembleTests.out SimFlagsTests.out
