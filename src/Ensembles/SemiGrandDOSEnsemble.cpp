@@ -83,7 +83,7 @@ namespace Ensembles
 	double SemiGrandDOSEnsemble<T>::AcceptanceProbability(double prevH, double currH)
 	{
 		// If we are outside the boundaries, drag the n1 count into desired range.
-		if(this->hist.GetBin(_newn1count) == -1)
+		if(this->hist.GetBin((double)_newn1count) == -1)
 		{
 			if(_n1count < this->hist.GetMinimum() && _newn1count > _n1count)
 				return 1;
@@ -96,7 +96,7 @@ namespace Ensembles
 		auto p =
 		        exp(-(currH-
 		              prevH)/this->GetTemperature() +
-		            (this->hist.GetValue(_n1count) - this->hist.GetValue(_newn1count)));
+		            (this->hist.GetValue((double)_n1count) - this->hist.GetValue((double)_newn1count)));
 		return p > 1.0 ? 1.0 : p;
 	}
 

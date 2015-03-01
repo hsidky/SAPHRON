@@ -14,7 +14,7 @@ namespace Ensembles
 			double _temperature;
 
 			// Number of species 1 sites.
-			double _n1count = 0, _newn1count;
+			int _n1count = 0, _newn1count;
 
 		protected:
 
@@ -51,6 +51,20 @@ namespace Ensembles
 			double SetTemperature(double temperature)
 			{
 				return this->_temperature = temperature;
+			}
+
+			// Accept visitor to class.
+			virtual void AcceptVisitor(class Visitor& v)
+			{
+				v.Visit(this);
+				this->model.AcceptVisitor(v);
+				this->hist.AcceptVisitor(v);
+			}
+
+			// Gets the mixture composition (absolute number of each species).
+			std::vector<int> GetComposition()
+			{
+				return {_n1count, this->model.GetSiteCount() - _n1count};
 			}
 	};
 }

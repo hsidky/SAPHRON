@@ -1,4 +1,5 @@
 #include "../Ensembles/NVTEnsemble.h"
+#include "../Ensembles/SemiGrandDOSEnsemble.h"
 #include "../Ensembles/WangLandauDOSEnsemble.h"
 #include "../Histogram.h"
 #include "ConsoleVisitor.h"
@@ -17,6 +18,27 @@ namespace Visitors
 			cout << "Iteration: " << this->GetIteration() << " ";
 		if (this->Flags.energy)
 			cout << "Energy: " << e->GetEnergy() / e->GetModelSiteCount() << " ";
+
+		// Get all DOS properties.
+		VisitInternal(static_cast<DensityOfStatesEnsemble<Site>*>(e));
+
+		cout << endl;
+	}
+
+	void ConsoleVisitor::VisitInternal(SemiGrandDOSEnsemble<Site>* e)
+	{
+		if (this->Flags.iterations)
+			cout << "Iteration: " << this->GetIteration() << " ";
+		if (this->Flags.energy)
+			cout << "Energy: " << e->GetEnergy() / e->GetModelSiteCount() << " ";
+		if(this->Flags.temperature)
+			cout << "Temperature: " << e->GetTemperature() << " ";
+		if(this->Flags.composition)
+		{
+			auto comp = e->GetComposition();
+			cout << "Composition : ";
+			std::copy(comp.begin(), comp.end(), std::ostream_iterator<int>(std::cout, " "));
+		}
 
 		// Get all DOS properties.
 		VisitInternal(static_cast<DensityOfStatesEnsemble<Site>*>(e));
