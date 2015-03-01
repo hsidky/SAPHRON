@@ -8,6 +8,8 @@
 *.opensdf
 *.sdf
 *.suo
+*.psess
+*.vspx
 
 # Precompiled Headers
 *.gch
