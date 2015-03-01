@@ -2,7 +2,7 @@
 // of the Lebwohl-Lasher model.
 
 // Include header files
-#include "../src/Ensembles/WangLandauEnsemble.h"
+#include "../src/Ensembles/WangLandauDOS.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
 
@@ -59,7 +59,7 @@ int main(int argc, char const* argv[])
 	}
 
 	// Initialize Wang-Landau sampler.
-	//Ensembles::WangLandauEnsemble<Site> ensemble(model, minE, maxE, binCount);
+	//Ensembles::WangLandauDOS<Site> ensemble(model, minE, maxE, binCount);
 
 	//ensemble.AddMove(move);
 

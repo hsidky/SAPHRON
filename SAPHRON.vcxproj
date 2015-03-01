@@ -145,7 +145,7 @@
     <ClCompile Include="src\ensembles\EXEDOSEnsemble.cpp" />
     <ClCompile Include="src\Ensembles\NVTEnsemble.cpp" />
     <ClCompile Include="src\ensembles\ParallelDOSEnsemble.cpp" />
-    <ClCompile Include="src\ensembles\WangLandauEnsemble.cpp" />
+    <ClCompile Include="src\ensembles\WangLandauDOS.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\models\Lattice3DModel.cpp" />
     <ClCompile Include="src\models\LebwohlLasherModel.cpp" />
@@ -165,7 +165,7 @@
     <ClInclude Include="src\ensembles\EXEDOSEnsemble.h" />
     <ClInclude Include="src\ensembles\NVTEnsemble.h" />
     <ClInclude Include="src\ensembles\ParallelDOSEnsemble.h" />
-    <ClInclude Include="src\ensembles\WangLandauEnsemble.h" />
+    <ClInclude Include="src\ensembles\WangLandauDOS.h" />
     <ClInclude Include="src\Histogram.h" />
     <ClInclude Include="src\models\BaseModel.h" />
     <ClInclude Include="src\models\Ising3DModel.h" />

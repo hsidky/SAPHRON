@@ -27,7 +27,7 @@
     <ClCompile Include="src\ensembles\ParallelDOSEnsemble.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ensembles\WangLandauEnsemble.cpp">
+    <ClCompile Include="src\ensembles\WangLandauDOS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\models\Lattice3DModel.cpp">
@@ -92,7 +92,7 @@
     <ClInclude Include="src\ensembles\ParallelDOSEnsemble.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ensembles\WangLandauEnsemble.h">
+    <ClInclude Include="src\ensembles\WangLandauDOS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\models\BaseModel.h">

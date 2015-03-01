@@ -1,5 +1,5 @@
 #include "../Ensembles/NVTEnsemble.h"
-#include "../Ensembles/WangLandauEnsemble.h"
+#include "../Ensembles/WangLandauDOS.h"
 #include "../Histogram.h"
 #include "ConsoleVisitor.h"
 #include <algorithm>
@@ -11,7 +11,7 @@ using namespace Simulation;
 
 namespace Visitors
 {
-	void ConsoleVisitor::VisitInternal(WangLandauEnsemble<Site>* e)
+	void ConsoleVisitor::VisitInternal(WangLandauDOS<Site>* e)
 	{
 		if (this->Flags.iterations)
 			cout << "Iteration: " << this->GetIteration() << " ";

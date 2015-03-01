@@ -2,7 +2,6 @@
 #include "../src/Models/Ising3DModel.h"
 #include "../src/Moves/FlipSpinMove.h"
 #include "../src/Site.h"
-#include "../src/Visitors/ConsoleVisitor.h"
 #include "gtest/gtest.h"
 
 using namespace Ensembles;
@@ -17,23 +16,16 @@ TEST(NVTEnsemble, IsingModelMagnetization)
 	FlipSpinMove move;
 	NVTEnsemble<Site> s(model, 1.0);
 
-	SimFlags flags;
-
-	flags.temperature = 1;
-	flags.iterations = 1;
-	flags.energy = 1;
-	flags.site_coordinates = 1;
-	ConsoleVisitor c(flags, 100);
-
 	s.AddMove(move);
-	s.AddObserver(&c);
-
 	// Iterate
 	for(int i = 0; i < 100; i++)
 		s.Sweep();
 
+	ASSERT_EQ(1.0, s.GetTemperature());
+
 	// Change temperature
 	s.SetTemperature(5.0);
+	ASSERT_EQ(5.0, s.GetTemperature());
 
 	// Iterate
 	for(int i = 0; i < 100; i++)

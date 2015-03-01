@@ -1,5 +1,5 @@
 #include "../src/Ensembles/ParallelDOSEnsemble.h"
-#include "../src/Ensembles/WangLandauEnsemble.h"
+#include "../src/Ensembles/WangLandauDOS.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
 #include "gtest/gtest.h"
@@ -12,7 +12,7 @@ TEST(ParallelDOSEnsemble, DefaultConstructor)
 	int n = 10;
 	Models::LebwohlLasherModel model(n, n, n);
 	/*
-	   ParallelDOSEnsemble<Site, WangLandauEnsemble<Site> >
+	   ParallelDOSEnsemble<Site, WangLandauDOS<Site> >
 	   ensemble(model, -1.9, -0.5, 10000, 5, 0.5);
 
 	   // Check intervals
@@ -58,7 +58,7 @@ TEST(ParalellDOSEnsemble, ParallelBehavior)
 	   Models::LebwohlLasherModel model(n, n, n);
 	   Moves::SphereUnitVectorMove move;
 
-	   ParallelDOSEnsemble<Site, WangLandauEnsemble<Site> >
+	   ParallelDOSEnsemble<Site, WangLandauDOS<Site> >
 	   ensemble(model, -1.9, -0.5, 10000, 5, 0.5);
 
 	   ensemble.SetWalkerID(5);
