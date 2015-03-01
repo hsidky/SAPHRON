@@ -143,6 +143,7 @@
     <ClCompile Include="src\models\LebwohlLasherModel.cpp" />
     <ClCompile Include="src\models\LLCellModel.cpp" />
     <ClCompile Include="src\simulation\SimObservable.cpp" />
+    <ClCompile Include="src\Simulation\SimObserver.cpp" />
     <ClCompile Include="src\Visitors\ConsoleVisitor.cpp" />
   </ItemGroup>
   <ItemGroup>

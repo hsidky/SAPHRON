@@ -36,14 +36,22 @@ namespace Simulation
 	{
 		private:
 			SimObservable* _observable;
+			bool _forceObserve = false;
 
 		public:
-			SimEvent(SimObservable* observable) : _observable(observable){}
+			SimEvent(SimObservable* observable, bool forceObserve = false) 
+				: _observable(observable), _forceObserve(forceObserve){}
 
 			// Get Sim Observable.
 			SimObservable* GetObservable()
 			{
 				return _observable;
+			}
+
+			// Tell the observer that they should observe this event.
+			bool ForceObserve()
+			{
+				return _forceObserve;
 			}
 	};
 }

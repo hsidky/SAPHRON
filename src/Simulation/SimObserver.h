@@ -13,8 +13,12 @@ namespace Simulation
 		private:
 			unsigned int _frequency = 1;
 			int _iteration = 0;
+			bool _forceObserve = false;
 
 		protected:
+
+			const SimFlags Flags;
+
 			// Get iteration count.
 			int GetIteration()
 			{
@@ -41,15 +45,39 @@ namespace Simulation
 
 			bool IsObservableIteration()
 			{
-				return _iteration % _frequency == 0;
+				return (_iteration % _frequency == 0 || _forceObserve);
 			}
+			
+			virtual void VisitInternal(Ensembles::NVTEnsemble<Site>* e) = 0;
+			virtual void VisitInternal(Models::BaseModel* m) = 0;
+			virtual void VisitInternal(Site* s) = 0;
 
 		public:
 
 			// Initialize a SimObserver class with a specified observation frequency.
-			SimObserver(unsigned int frequency = 1) : _frequency(frequency){}
+			SimObserver(SimFlags flags, unsigned int frequency = 1) 
+				: Flags(flags), _frequency(frequency){}
 
 			// Update observer when simulation has changed.
-			virtual void Update(SimEvent& ev) = 0;
+			void Update(SimEvent& e);
+
+			void Visit(Ensembles::NVTEnsemble<Site>* e) override
+			{
+				if (IsObservableIteration())
+					VisitInternal(e);
+
+			};
+
+			void Visit(Models::BaseModel* m) override
+			{
+				if (IsObservableIteration())
+					VisitInternal(m);
+			};
+
+			void Visit(Site* s) override
+			{
+				if (IsObservableIteration())
+					VisitInternal(s);
+			};
 	};
 }

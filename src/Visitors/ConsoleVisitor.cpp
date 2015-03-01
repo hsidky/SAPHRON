@@ -1,5 +1,7 @@
 #include "../Ensembles/NVTEnsemble.h"
 #include "ConsoleVisitor.h"
+#include <algorithm> 
+#include <iterator>
 
 using namespace Ensembles;
 using namespace std;
@@ -7,25 +9,37 @@ using namespace Simulation;
 
 namespace Visitors
 {
-	void ConsoleVisitor::Update(SimEvent& e)
+	void ConsoleVisitor::VisitInternal(NVTEnsemble<Site>* e)
 	{
-		this->SetIteration(e.GetObservable()->GetSimIteration());
+		if (this->Flags.iterations)
+			cout << "Iteration: " << this->GetIteration() << " "; 
+		if (this->Flags.temperature)
+			cout << "Temperature: " << e->GetTemperature() << " ";
+		
+		cout << endl;
 	}
 
-	void ConsoleVisitor::Visit(NVTEnsemble<Site>* e)
-	{
-		if(this->IsObservableIteration())
-		cout << "Temperature: " << e->GetTemperature() << ", Iterations: " <<
-		e->GetSweepCount() << endl;
-	}
-
-	void ConsoleVisitor::Visit(Models::BaseModel*)
+	void ConsoleVisitor::VisitInternal(Models::BaseModel*)
 	{
 	}
 
-	void ConsoleVisitor::Visit(Site* s)
+	void ConsoleVisitor::VisitInternal(Site* s)
 	{
-		//std::cout << "Coordinates: "  << s->GetXCoordinate() << " " <<
-		//s->GetYCoordinate() << " " << s->GetZCoordinate() << endl;
+		if (this->Flags.site_coordinates)
+			cout << "Coordinates: "  << s->GetXCoordinate() << " " <<
+			s->GetYCoordinate() << " " << s->GetZCoordinate() << " ";
+		if (this->Flags.site_unit_vectors)
+			cout << "Unit Vectors: " << s->GetXUnitVector() << " " <<
+			s->GetYUnitVector() << " " << s->GetZUnitVector() << " ";
+		if (this->Flags.site_species)
+			cout << "Species: " << s->GetSpecies() << " ";
+		if (this->Flags.site_neighbors)
+		{
+			auto& neighbors = s->GetNeighbors();
+			cout << "Neighbors: ";
+			std::copy(neighbors.begin(), neighbors.end(), std::ostream_iterator<int>(std::cout, " "));
+		}
+
+		cout << endl;
 	}
 }
