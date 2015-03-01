@@ -13,7 +13,7 @@ namespace Models
 
 			// Interaction potential stored as a lower packed triangular matrix.
 			// Ex. e11, e12, e13, e22, e23, e33.
-			std::vector<double> _interactionParameter { 1.0 };
+			std::vector<double> _interactionParameter{ std::vector<double>{1.0} };
 
 			// Column size of the (ghost) interaction parameter matrix.
 			int _iN = 1;

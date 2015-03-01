@@ -136,6 +136,7 @@
   <ItemGroup>
     <ClCompile Include="src\ensembles\DensityOfStatesEnsemble.cpp" />
     <ClCompile Include="src\ensembles\EXEDOSEnsemble.cpp" />
+    <ClCompile Include="src\Ensembles\NVTEnsemble.cpp" />
     <ClCompile Include="src\ensembles\ParallelDOSEnsemble.cpp" />
     <ClCompile Include="src\ensembles\WangLandauEnsemble.cpp" />
     <ClCompile Include="src\main.cpp" />

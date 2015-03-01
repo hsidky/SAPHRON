@@ -13,9 +13,10 @@ namespace Visitors
 	{
 		if (this->Flags.iterations)
 			cout << "Iteration: " << this->GetIteration() << " "; 
+		if (this->Flags.energy)
+			cout << "Energy: " << e->GetEnergy()/e->GetModelSiteCount() << " ";
 		if (this->Flags.temperature)
 			cout << "Temperature: " << e->GetTemperature() << " ";
-		
 		cout << endl;
 	}
 
@@ -40,6 +41,10 @@ namespace Visitors
 			std::copy(neighbors.begin(), neighbors.end(), std::ostream_iterator<int>(std::cout, " "));
 		}
 
-		cout << endl;
+		if (this->Flags.site_coordinates | 
+			this->Flags.site_neighbors | 
+			this->Flags.site_species | 
+			this->Flags.site_unit_vectors)
+			cout << endl;
 	}
 }

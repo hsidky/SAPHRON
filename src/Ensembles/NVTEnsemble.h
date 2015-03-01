@@ -21,6 +21,9 @@ namespace Ensembles
 			// Temperature (K) (Sometimes reduced).
 			double _temperature;
 
+			// Energy of system.
+			double _energy = 0.0;
+
 			// "Normalized" Boltzmann constant.
 			double _kb = 1.0;
 
@@ -29,55 +32,19 @@ namespace Ensembles
 
 		public:
 			// Initializes NVTEnsemble for a model at a given "reduced" temperature.
-			NVTEnsemble(BaseModel& model, double temperature) :
-				Ensemble<T>(model), _temperature(temperature), rand(1)
-			{
-			}
+			NVTEnsemble(BaseModel& model, double temperature);
 
 			// Performs one Monte Carlo sweep. This is defined as "n" iterations,
 			// where "n" is the number of sites in a model.
-			void Sweep()
-			{
-				for(int i = 0; i < this->model.GetSiteCount(); i++)
-					Iterate();
-
-				this->NotifyObservers();
-				this->IncrementSweeps();
-			}
+			void Sweep();
 
 			// Performs one Monte Carlo iteration. This is precicely one random
 			// draw from the model (one function call to model->DrawSample()).
-			void Iterate()
-			{
-				// Draw sample and evaluate Hamiltonian
-				auto sample = this->model.DrawSample();
-				double prevH = this->model.EvaluateHamiltonian(*sample);
-
-				// Perform moves
-				for(auto &move : this->moves)
-					move->Perform(*sample);
-
-				// Get new Hamiltonian.
-				double currH = this->model.EvaluateHamiltonian(*sample);
-
-				// Check probabilities.
-				if(AcceptanceProbability(prevH, currH) < rand.doub())
-					for(auto &move : this->moves)
-						move->Undo();
-
-				this->IncrementIterations();
-			};
+			void Iterate();
 
 			// Metropolis acceptance probability of the system transitioning from prevH
 			// to currH via exp(-(currH-prevH)/kb*T).
-			double AcceptanceProbability(double prevH, double currH)
-			{
-				auto p =
-				        exp(-(currH -
-				              prevH) / (GetBoltzmannConstant() * GetTemperature()));
-
-				return p > 1.0 ? 1.0 : p;
-			}
+			double AcceptanceProbability(double prevH, double currH);
 
 			// Gets the temperature (K).
 			double GetTemperature()
@@ -89,6 +56,12 @@ namespace Ensembles
 			double SetTemperature(double temperature)
 			{
 				return this->_temperature = temperature;
+			}
+
+			// Get the system energy.
+			double GetEnergy()
+			{
+				return this->_energy;
 			}
 
 			// Gets the "normalized" Boltzmann constant (J/K).

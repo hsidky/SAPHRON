@@ -107,6 +107,12 @@ namespace Ensembles
 				_iterations = 0;
 			}
 
+			// Get the number of sites in a model.
+			int GetModelSiteCount()
+			{
+				return model.GetSiteCount();
+			}
+
 			// Get simulation iterations which correspond to sweeps.
 			virtual int GetSimIteration()
 			{

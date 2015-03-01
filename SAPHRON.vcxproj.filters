@@ -48,6 +48,9 @@
     <ClCompile Include="src\Simulation\SimObserver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ensembles\NVTEnsemble.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\prng_engine.h">
