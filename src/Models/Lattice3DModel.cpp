@@ -83,7 +83,7 @@ namespace Models
 	// are (a11 a12 a13 a22 a23 a33).
 	double Lattice3DModel::SetInteractionParameter(double e, int i, int j)
 	{
-		int n = _interactionParameter.size();
+		int n = (int)_interactionParameter.size();
 
 		// Sort max,min.
 		int ni = (i > j) ? i : j;

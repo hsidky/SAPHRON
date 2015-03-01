@@ -21,12 +21,6 @@ namespace Ensembles
 			// Flatness threshold.
 			double _targetFlatness = 0.8;
 
-			// Densities of state pointer.
-			std::vector<double>* _DOS;
-
-			// Histogram counts.
-			std::vector<double>* _counts;
-
 			// Flatness measure.
 			double _flatness;
 
@@ -43,7 +37,7 @@ namespace Ensembles
 			Interval _interval;
 
 			// Unique identifier of walker number.
-			double _walker;
+			int _walker;
 
 		protected:
 			// Random number generator.
@@ -70,10 +64,7 @@ namespace Ensembles
 				Ensemble<T>(model), rand(15), hist(minP, maxP, binCount)
 			{
 				_interval = Interval(minP, maxP);
-
-				_counts = hist.GetHistogramPointer();
-				_DOS = hist.GetValuesPointer();
-
+				
 				// Calculate initial energy.
 				_energy = CalculateTotalEnergy();
 

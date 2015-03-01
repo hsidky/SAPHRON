@@ -23,7 +23,7 @@ class Histogram
 		int _lowerOutlierCount = 0, _upperOutlierCount = 0;
 
 		// Histogram counts.
-		std::vector<double> _counts;
+		std::vector<int> _counts;
 
 		// Histogram values.
 		std::vector<double> _values;
@@ -108,12 +108,12 @@ class Histogram
 			return &_values;
 		}
 
-		std::vector<double> GetHistogram()
+		std::vector<int> GetHistogram()
 		{
 			return _counts;
 		}
 
-		std::vector<double>* GetHistogramPointer()
+		std::vector<int>* GetHistogramPointer()
 		{
 			return &_counts;
 		}
@@ -143,7 +143,7 @@ class Histogram
 		// Gets the number of bins in the histogram.
 		int GetBinCount()
 		{
-			return _counts.size();
+			return (int)_counts.size();
 		}
 
 		// Gets the width of a bin.

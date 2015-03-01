@@ -99,7 +99,7 @@ namespace Models
 	// set of interaction parameters are (a11 a12 a13 a22 a23 a33).
 	double LebwohlLasherModel::SetIsotropicParameter(double e, int i, int j)
 	{
-		int n = _isotropicJ.size();
+		int n = (int)_isotropicJ.size();
 
 		// Sort max,min.
 		int ni = (i > j) ? i : j;

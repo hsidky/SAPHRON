@@ -65,7 +65,7 @@ namespace Models
 			// Gets the number of sites in the model.
 			int GetSiteCount()
 			{
-				return this->Sites.size();
+				return (int)this->Sites.size();
 			}
 
 			// Draws a random site. This is an alias of SelectRandomSite for Ensemble
