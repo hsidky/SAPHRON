@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Visitors/Visitable.h"
 #include <algorithm>
 #include <cmath>
 #include <vector>
@@ -7,7 +8,7 @@
 // A Histogram class. Along with the traditional histogram and binning, this class
 // provides "value" storage, which can be used to store custom data associated with
 // each entry in a bin.
-class Histogram
+class Histogram : public Visitors::Visitable
 {
 	private:
 		// Width of bins.
@@ -201,5 +202,11 @@ class Histogram
 				return 0;
 
 			return minVal/avg;
+		}
+
+		// Accept visitor.
+		virtual void AcceptVisitor(class Visitors::Visitor &v)
+		{
+			v.Visit(this);
 		}
 };

@@ -16,7 +16,14 @@ TEST(NVTEnsemble, IsingModelMagnetization)
 	Ising3DModel model(n, n, n, 1);
 	FlipSpinMove move;
 	NVTEnsemble<Site> s(model, 1.0);
-	ConsoleVisitor c(100);
+
+	SimFlags flags;
+
+	flags.temperature = 1;
+	flags.iterations = 1;
+	flags.energy = 1;
+	flags.site_coordinates = 1;
+	ConsoleVisitor c(flags, 100);
 
 	s.AddMove(move);
 	s.AddObserver(&c);

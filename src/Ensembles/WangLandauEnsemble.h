@@ -28,6 +28,7 @@ namespace Ensembles
 			{
 				v.Visit(this);
 				this->model.AcceptVisitor(v);
+				this->hist.AcceptVisitor(v);
 			}
 	};
 }

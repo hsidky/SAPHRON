@@ -33,9 +33,6 @@ namespace Ensembles
 			// Unique identifier of walker number.
 			int _walker;
 
-			// Number of bins.
-			int _binCount;
-
 		protected:
 			// Random number generator.
 			Rand rand;
@@ -58,10 +55,10 @@ namespace Ensembles
 			                        double minP,
 			                        double maxP,
 			                        int binCount) :
-				Ensemble<T>(model), rand(15), hist(minP, maxP, binCount), _binCount(binCount)
+				Ensemble<T>(model), rand(15), hist(minP, maxP, binCount)
 			{
 				_interval = Interval(minP, maxP);
-				
+
 				// Calculate initial energy.
 				_energy = CalculateTotalEnergy();
 
@@ -138,12 +135,6 @@ namespace Ensembles
 			std::vector<double>* GetDensityOfStates()
 			{
 				return hist.GetValuesPointer();
-			}
-
-			// Get number of bins.
-			int GetBinCount()
-			{
-				return _binCount;
 			}
 
 			// Resets the histogram.

@@ -45,19 +45,20 @@ namespace Simulation
 
 			bool IsObservableIteration()
 			{
-				return (_iteration % _frequency == 0 || _forceObserve);
+				return _iteration % _frequency == 0 || _forceObserve;
 			}
-			
+
 			virtual void VisitInternal(Ensembles::WangLandauEnsemble<Site>* e) = 0;
 			virtual void VisitInternal(Ensembles::NVTEnsemble<Site>* e) = 0;
 			virtual void VisitInternal(Models::BaseModel* m) = 0;
 			virtual void VisitInternal(Site* s) = 0;
+			virtual void VisitInternal(Histogram* h) = 0;
 
 		public:
 
 			// Initialize a SimObserver class with a specified observation frequency.
-			SimObserver(SimFlags flags, unsigned int frequency = 1) 
-				: Flags(flags), _frequency(frequency){}
+			SimObserver(SimFlags flags, unsigned int frequency = 1)
+				: _frequency(frequency), Flags(flags){}
 
 			// Update observer when simulation has changed.
 			void Update(SimEvent& e);
@@ -72,7 +73,6 @@ namespace Simulation
 			{
 				if (IsObservableIteration())
 					VisitInternal(e);
-
 			};
 
 			void Visit(Models::BaseModel* m) override
@@ -86,5 +86,11 @@ namespace Simulation
 				if (IsObservableIteration())
 					VisitInternal(s);
 			};
+
+			void Visit(Histogram* h) override
+			{
+				if(IsObservableIteration())
+					VisitInternal(h);
+			}
 	};
 }

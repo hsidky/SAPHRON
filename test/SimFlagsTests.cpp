@@ -6,12 +6,12 @@ using namespace Simulation;
 TEST(SimFlags, DefaultBehavior)
 {
 	SimFlags flags;
-	ASSERT_EQ(0, flags.mask);
+	ASSERT_EQ(0, flags.ensemble);
 	ASSERT_EQ(0, flags.temperature);
 	flags.temperature = true;
 	ASSERT_EQ(1, flags.temperature);
-	ASSERT_EQ(1, flags.mask);
-	flags.mask = 0;
+	ASSERT_EQ(1, flags.ensemble);
+	flags.ensemble = 0;
 	ASSERT_EQ(0, flags.temperature);
 
 	flags.pressure = 1;
@@ -19,4 +19,10 @@ TEST(SimFlags, DefaultBehavior)
 
 	ASSERT_EQ(1, flags.pressure);
 	ASSERT_EQ(1, flags.composition);
+
+	// Try subflags
+	ASSERT_EQ(0, flags.histogram);
+	flags.hist_values = true;
+	ASSERT_EQ(1, flags.histogram);
+	ASSERT_EQ(1, flags.hist_values);
 }
