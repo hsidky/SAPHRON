@@ -39,14 +39,13 @@ namespace Ensembles
 		_flatness = hist.CalculateFlatness();
 		while(_flatness < GetTargetFlatness())
 		{
+			this->NotifyObservers();
 			this->IncrementSweeps();
 
 			for(int i = 0; i < this->model.GetSiteCount(); i++)
 				Iterate();
 
 			_flatness = hist.CalculateFlatness();
-			_lowerOutliers = hist.GetLowerOutlierCount();
-			_upperOutliers = hist.GetUpperOutlierCount();
 		}
 	}
 

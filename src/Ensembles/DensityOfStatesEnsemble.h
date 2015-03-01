@@ -24,12 +24,6 @@ namespace Ensembles
 			// Flatness measure.
 			double _flatness;
 
-			// Lower outliers.
-			double _lowerOutliers = 0;
-
-			// Upper outliers.
-			double _upperOutliers = 0;
-
 			// Log of scaling factor for density of states.
 			double _scaleFactor = 1;
 
@@ -38,6 +32,9 @@ namespace Ensembles
 
 			// Unique identifier of walker number.
 			int _walker;
+
+			// Number of bins.
+			int _binCount;
 
 		protected:
 			// Random number generator.
@@ -61,7 +58,7 @@ namespace Ensembles
 			                        double minP,
 			                        double maxP,
 			                        int binCount) :
-				Ensemble<T>(model), rand(15), hist(minP, maxP, binCount)
+				Ensemble<T>(model), rand(15), hist(minP, maxP, binCount), _binCount(binCount)
 			{
 				_interval = Interval(minP, maxP);
 				
@@ -107,14 +104,46 @@ namespace Ensembles
 				return _scaleFactor = sf;
 			}
 
+			// Gets current flatness.
+			double GetFlatness()
+			{
+				return _flatness;
+			}
+
+			// Get Target flatness.
 			virtual double GetTargetFlatness()
 			{
 				return _targetFlatness;
 			}
 
+			// Set target flatness.
 			virtual double SetTargetFlatness(double f)
 			{
 				return _targetFlatness = f;
+			}
+
+			// Get Lower outlier count.
+			int GetLowerOutlierCount()
+			{
+				return hist.GetLowerOutlierCount();
+			}
+
+			// Get upper outlier count.
+			int GetUpperOutlierCount()
+			{
+				return hist.GetUpperOutlierCount();
+			};
+
+			// Get density of states vector (pointer).
+			std::vector<double>* GetDensityOfStates()
+			{
+				return hist.GetValuesPointer();
+			}
+
+			// Get number of bins.
+			int GetBinCount()
+			{
+				return _binCount;
 			}
 
 			// Resets the histogram.

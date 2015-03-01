@@ -19,8 +19,14 @@ namespace Simulation
 					unsigned int iterations : 1;
 					unsigned int sweeps : 1;
 					unsigned int dos : 1;
-					unsigned int histogram : 1;
-					unsigned int walkers : 1;
+					unsigned int dos_histogram : 1;
+					unsigned int dos_bin_count : 1;
+					unsigned int dos_walker : 1;
+					unsigned int dos_flatness : 1;
+					unsigned int dos_scale_factor : 1;
+					unsigned int dos_interval : 1;
+					unsigned int dos_lower_outliers : 1;
+					unsigned int dos_upper_outliers : 1;
 					unsigned int model_interaction_parameter : 1;
 					unsigned int model_isotropic_parameter : 1;
 					unsigned int site_coordinates : 1;

@@ -22,5 +22,12 @@ namespace Ensembles
 			// Note that the "H" passed in here is the total energy of the system, rather than
 			// individual energy (of a site).
 			double AcceptanceProbability(double prevH, double currH);
+
+			// Accept visitor to class.
+			virtual void AcceptVisitor(class Visitor& v)
+			{
+				v.Visit(this);
+				this->model.AcceptVisitor(v);
+			}
 	};
 }

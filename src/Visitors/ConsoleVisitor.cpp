@@ -1,4 +1,5 @@
 #include "../Ensembles/NVTEnsemble.h"
+#include "../Ensembles/WangLandauEnsemble.h"
 #include "ConsoleVisitor.h"
 #include <algorithm> 
 #include <iterator>
@@ -9,6 +10,24 @@ using namespace Simulation;
 
 namespace Visitors
 {
+	void ConsoleVisitor::VisitInternal(WangLandauEnsemble<Site>* e)
+	{
+		if (this->Flags.iterations)
+			cout << "Iteration: " << this->GetIteration() << " ";
+		if (this->Flags.dos_flatness)
+			cout << "Flatness: " << e->GetFlatness() << " ";
+		if (this->Flags.energy)
+			cout << "Energy: " << e->GetEnergy() / e->GetModelSiteCount() << " ";
+		if (this->Flags.dos)
+		{
+			cout << "DOS: ";
+			auto* dos = e->GetDensityOfStates();
+			std::copy(dos->begin(), dos->end(), std::ostream_iterator<double>(std::cout, " "));
+		}
+
+		cout << endl;
+	}
+
 	void ConsoleVisitor::VisitInternal(NVTEnsemble<Site>* e)
 	{
 		if (this->Flags.iterations)
