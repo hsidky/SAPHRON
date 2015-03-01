@@ -49,6 +49,7 @@ namespace Simulation
 			}
 
 			virtual void VisitInternal(Ensembles::WangLandauDOSEnsemble<Site>* e) = 0;
+			virtual void VisitInternal(Ensembles::DensityOfStatesEnsemble<Site>* e) = 0;
 			virtual void VisitInternal(Ensembles::NVTEnsemble<Site>* e) = 0;
 			virtual void VisitInternal(Models::BaseModel* m) = 0;
 			virtual void VisitInternal(Site* s) = 0;
@@ -64,6 +65,12 @@ namespace Simulation
 			void Update(SimEvent& e);
 
 			void Visit(Ensembles::WangLandauDOSEnsemble<Site>* e) override
+			{
+				if (IsObservableIteration())
+					VisitInternal(e);
+			}
+
+			void Visit(Ensembles::DensityOfStatesEnsemble<Site>* e) override
 			{
 				if (IsObservableIteration())
 					VisitInternal(e);

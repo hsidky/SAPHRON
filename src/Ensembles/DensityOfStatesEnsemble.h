@@ -31,7 +31,7 @@ namespace Ensembles
 			Interval _interval;
 
 			// Unique identifier of walker number.
-			int _walker;
+			int _walker = 0;
 
 		protected:
 			// Random number generator.

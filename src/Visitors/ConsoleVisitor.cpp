@@ -17,30 +17,37 @@ namespace Visitors
 			cout << "Iteration: " << this->GetIteration() << " ";
 		if (this->Flags.energy)
 			cout << "Energy: " << e->GetEnergy() / e->GetModelSiteCount() << " ";
-		if(this->Flags.dos)
-		{
-			if (this->Flags.dos_flatness)
-				cout << "Flatness: " << e->GetFlatness() << " ";
-			if (this->Flags.dos_walker)
-				cout << "Walker ID: " << e->GetWalkerID() << " ";
-			if(this->Flags.dos_scale_factor)
-				cout << "Scale factor: " << e->GetScaleFactor() << " ";
-			if(this->Flags.dos_interval)
-			{
-				auto interval = e->GetParameterInterval();
-				cout << "Interval: " << interval.first << " " << interval.second <<
-				" ";
-			}
-			if (this->Flags.dos_values)
-			{
-				cout << "DOS: ";
-				auto* dos = e->GetDensityOfStates();
-				std::copy(dos->begin(), dos->end(),
-				          std::ostream_iterator<double>(std::cout, " "));
-			}
-		}
+
+		// Get all DOS properties.
+		VisitInternal(static_cast<DensityOfStatesEnsemble<Site>*>(e));
 
 		cout << endl;
+	}
+
+	void ConsoleVisitor::VisitInternal(DensityOfStatesEnsemble<Site>* e)
+	{
+		if(!this->Flags.dos)
+			return;
+
+		if (this->Flags.dos_flatness)
+			cout << "Flatness: " << e->GetFlatness() << " ";
+		if (this->Flags.dos_walker)
+			cout << "Walker ID: " << e->GetWalkerID() << " ";
+		if(this->Flags.dos_scale_factor)
+			cout << "Scale factor: " << e->GetScaleFactor() << " ";
+		if(this->Flags.dos_interval)
+		{
+			auto interval = e->GetParameterInterval();
+			cout << "Interval: " << interval.first << " " << interval.second <<
+			" ";
+		}
+		if (this->Flags.dos_values)
+		{
+			cout << "DOS: ";
+			auto* dos = e->GetDensityOfStates();
+			std::copy(dos->begin(), dos->end(),
+			          std::ostream_iterator<double>(std::cout, " "));
+		}
 	}
 
 	void ConsoleVisitor::VisitInternal(NVTEnsemble<Site>* e)
@@ -76,6 +83,8 @@ namespace Visitors
 			cout << "Lower outliers: " << h->GetLowerOutlierCount() << " ";
 		if(this->Flags.hist_upper_outliers)
 			cout << "Upper outliers: " << h->GetUpperOutlierCount() << " ";
+
+		cout << endl;
 	}
 
 	void ConsoleVisitor::VisitInternal(Site* s)

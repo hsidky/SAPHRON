@@ -10,9 +10,9 @@ namespace Ensembles
 	// the bin count.
 	template<typename T>
 	WangLandauDOSEnsemble<T>::WangLandauDOSEnsemble(BaseModel& model,
-	                                double minE,
-	                                double maxE,
-	                                int binCount) :
+	                                                double minE,
+	                                                double maxE,
+	                                                int binCount) :
 		DensityOfStatesEnsemble<T>(model, minE*model.GetSiteCount(),
 		                           maxE*model.GetSiteCount(), binCount)
 	{
