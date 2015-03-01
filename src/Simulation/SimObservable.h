@@ -18,10 +18,10 @@ namespace Simulation
 		public:
 
 			// Add simulation observer.
-			void AddObserver(SimObserver* observer);
+			virtual void AddObserver(SimObserver* observer);
 
 			// Remove simulation observer.
-			void RemoveObserver(SimObserver* observer);
+			virtual void RemoveObserver(SimObserver* observer);
 
 			// Notify registered observers of a change.
 			void NotifyObservers();

@@ -2,6 +2,7 @@
 #include "../src/Ensembles/WangLandauDOSEnsemble.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
+#include "../src/Visitors/ConsoleVisitor.h"
 #include "gtest/gtest.h"
 
 using namespace Ensembles;
@@ -11,57 +12,65 @@ TEST(ParallelDOSEnsemble, DefaultConstructor)
 {
 	int n = 10;
 	Models::LebwohlLasherModel model(n, n, n);
-	/*
-	   ParallelDOSEnsemble<Site, WangLandauDOSEnsemble<Site> >
-	   ensemble(model, -1.9, -0.5, 10000, 5, 0.5);
 
-	   // Check intervals
-	   std::vector<Interval> intervals {
-	    {-1.9,                -1.4333333333333333},
-	    {-5.0/3.0,            -1.2},
-	    {-1.4333333333333333, -0.9666666666666666},
-	    {-1.20,               -0.7333333333333333},
-	    {-0.9666666666666666, -0.50}
-	   };
+	ParallelDOSEnsemble<Site, WangLandauDOSEnsemble<Site> >
+	ensemble(model, -1.9, -0.5, 10000, 5, 0.5);
 
-	   // Validate intervals.
-	   double nt = pow(n,3);
-	   for(int i = 0; i < (int)intervals.size(); i++)
-	   {
-	    auto ci = ensemble.GetWalkerInterval(i+1);
-	    ASSERT_DOUBLE_EQ(intervals[i].first*nt, ci.first);
-	    ASSERT_DOUBLE_EQ(intervals[i].second*nt, ci.second);
-	   }
+	// Check intervals
+	std::vector<Interval> intervals {
+		{-1.9,                -1.4333333333333333},
+		{-5.0/3.0,            -1.2},
+		{-1.4333333333333333, -0.9666666666666666},
+		{-1.20,               -0.7333333333333333},
+		{-0.9666666666666666, -0.50}
+	};
 
-	   // Validate intervals in each model.
-	   for(int i = 0; i < (int)intervals.size(); i++)
-	   {
-	    auto intv = ensemble.GetEnsemble(i+1)->GetParameterInterval();
-	    ASSERT_DOUBLE_EQ(intervals[i].first*nt, intv.first);
-	    ASSERT_DOUBLE_EQ(intervals[i].second*nt, intv.second);
-	   }
+	// Validate intervals.
+	double nt = pow(n,3);
+	for(int i = 0; i < (int)intervals.size(); i++)
+	{
+		auto ci = ensemble.GetWalkerInterval(i+1);
+		ASSERT_DOUBLE_EQ(intervals[i].first*nt, ci.first);
+		ASSERT_DOUBLE_EQ(intervals[i].second*nt, ci.second);
+	}
 
-	   // Validate walker IDs.
-	   for(int i = 0; i < (int)intervals.size(); i++)
-	   {
-	    auto e = ensemble.GetEnsemble(i+1);
-	    ASSERT_EQ(i, e->GetWalkerID());
-	   }
-	 */
+	// Validate intervals in each model.
+	for(int i = 0; i < (int)intervals.size(); i++)
+	{
+		auto intv = ensemble.GetEnsemble(i+1)->GetParameterInterval();
+		ASSERT_DOUBLE_EQ(intervals[i].first*nt, intv.first);
+		ASSERT_DOUBLE_EQ(intervals[i].second*nt, intv.second);
+	}
+
+	// Validate walker IDs.
+	for(int i = 0; i < (int)intervals.size(); i++)
+	{
+		auto e = ensemble.GetEnsemble(i+1);
+		ASSERT_EQ(i, e->GetWalkerID());
+	}
 }
 
 // Test parallel behavior.
 TEST(ParalellDOSEnsemble, ParallelBehavior)
 {
-	/*
-	   int n = 10;
-	   Models::LebwohlLasherModel model(n, n, n);
-	   Moves::SphereUnitVectorMove move;
+	int n = 10;
+	Models::LebwohlLasherModel model(n, n, n);
+	Moves::SphereUnitVectorMove move;
 
-	   ParallelDOSEnsemble<Site, WangLandauDOSEnsemble<Site> >
-	   ensemble(model, -1.9, -0.5, 10000, 5, 0.5);
+	SimFlags flags;
+	flags.iterations = 1;
+	flags.dos_walker = 1;
+	flags.dos_flatness = 1;
+	flags.dos_interval = 1;
+	flags.dos_scale_factor = 1;
 
-	   ensemble.SetWalkerID(5);
-	   ensemble.Sweep();
-	 */
+	Visitors::ConsoleVisitor console(flags, 1000);
+
+	ParallelDOSEnsemble<Site, WangLandauDOSEnsemble<Site> >
+	ensemble(model, -1.9, -0.5, 10000, 4, 0.5);
+
+	ensemble.AddMove(move);
+	ensemble.AddObserver(&console);
+	ensemble.SetWalkerID(5);
+	ensemble.Sweep();
 }

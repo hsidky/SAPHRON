@@ -1,5 +1,5 @@
-#include "SemiGrandDOSEnsemble.h"
 #include "ParallelDOSEnsemble.h"
+#include "SemiGrandDOSEnsemble.h"
 #include "WangLandauDOSEnsemble.h"
 #include <armadillo>
 

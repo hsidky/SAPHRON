@@ -75,9 +75,11 @@ namespace Ensembles
 
 			void Iterate() override;
 
-			double AcceptanceProbability(double prevH, double currH) override
+			double AcceptanceProbability(double, double) override
 			{
-				return -1;
+				std::cerr << "ParalellDOSEnsemble does not have AcceptanceProbability defined." <<
+				std::endl;
+				exit(-1);
 			}
 
 			// Adds a move to the end of the move queue for all parallel ensembles.
@@ -88,6 +90,8 @@ namespace Ensembles
 					_cMoves.emplace_back(move.Clone());
 					_objects[i]->AddMove(*_cMoves.back().get());
 				}
+
+				DensityOfStatesEnsemble<T>::AddMove(move);
 			}
 
 			double SetScaleFactor(double sf) override
@@ -125,6 +129,24 @@ namespace Ensembles
 			{
 				assert(n > 0 && (unsigned int) n <= _intervals.size());
 				return _models[n-1];
+			}
+
+			void AcceptVisitor(class Visitor&) override
+			{
+				std::cerr << "ParalellDOSEnsemble cannot accept visitors" << std::endl;
+				exit(-1);
+			}
+
+			void AddObserver(SimObserver* observer)
+			{
+				for(int i = 0; i < _walkers; i++)
+					_objects[i]->AddObserver(observer);
+			}
+
+			void RemoveObserver(SimObserver* observer)
+			{
+				for(int i = 0; i < _walkers; i++)
+					_objects[i]->RemoveObserver(observer);
 			}
 	};
 }

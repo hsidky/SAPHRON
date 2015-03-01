@@ -2,6 +2,7 @@
 
 #include "../Visitors/Visitor.h"
 #include "SimEvent.h"
+#include <mutex>
 
 using namespace Visitors;
 
@@ -14,6 +15,7 @@ namespace Simulation
 			unsigned int _frequency = 1;
 			int _iteration = 0;
 			bool _forceObserve = false;
+			std::mutex _mutex;
 
 		protected:
 
@@ -67,26 +69,34 @@ namespace Simulation
 
 			void Visit(Ensembles::WangLandauDOSEnsemble<Site>* e) override
 			{
+				_mutex.lock();
 				if (IsObservableIteration())
 					VisitInternal(e);
+				_mutex.unlock();
 			}
 
 			void Visit(Ensembles::SemiGrandDOSEnsemble<Site>* e) override
 			{
+				_mutex.lock();
 				if (IsObservableIteration())
 					VisitInternal(e);
+				_mutex.unlock();
 			}
 
 			void Visit(Ensembles::DensityOfStatesEnsemble<Site>* e) override
 			{
+				_mutex.lock();
 				if (IsObservableIteration())
 					VisitInternal(e);
+				_mutex.unlock();
 			}
 
 			void Visit(Ensembles::NVTEnsemble<Site>* e) override
 			{
+				_mutex.lock();
 				if (IsObservableIteration())
 					VisitInternal(e);
+				_mutex.unlock();
 			};
 
 			void Visit(Models::BaseModel* m) override
