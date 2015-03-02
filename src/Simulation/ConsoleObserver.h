@@ -2,14 +2,12 @@
 
 #include "../Simulation/SimObserver.h"
 
-using namespace Simulation;
-
-namespace Visitors
+namespace Simulation
 {
-	class ConsoleVisitor : public SimObserver
+	class ConsoleObserver : public SimObserver
 	{
 		public:
-			ConsoleVisitor(SimFlags flags, unsigned int frequency = 1)
+			ConsoleObserver(SimFlags flags, unsigned int frequency = 1)
 				: SimObserver(flags, frequency){}
 
 			virtual void VisitInternal(Ensembles::DensityOfStatesEnsemble<Site>* e) override;

@@ -7,20 +7,16 @@ namespace Simulation
 	class SimFlags
 	{
 		public:
-			SimFlags() : ensemble(0), dos(0), histogram(0), site(0) {}
+			SimFlags() : ensemble(0), dos(0), model(0), histogram(0), site(0) {}
 			union
 			{
 				struct
 				{
+					unsigned int iterations : 1;
+					unsigned int energy : 1;
 					unsigned int temperature : 1;
 					unsigned int pressure : 1;
-					unsigned int energy : 1;
 					unsigned int composition : 1;
-					unsigned int iterations : 1;
-					unsigned int sweeps : 1;
-
-					unsigned int model_interaction_parameter : 1;
-					unsigned int model_isotropic_parameter : 1;
 				};
 
 				unsigned int ensemble;
@@ -31,8 +27,8 @@ namespace Simulation
 				struct
 				{
 					unsigned int dos_walker : 1;
-					unsigned int dos_flatness : 1;
 					unsigned int dos_scale_factor : 1;
+					unsigned int dos_flatness : 1;
 					unsigned int dos_interval : 1;
 					unsigned int dos_values : 1;
 				};
@@ -43,10 +39,21 @@ namespace Simulation
 			{
 				struct
 				{
-					unsigned int hist_values : 1;
+					unsigned int model_interaction_parameter : 1;
+					unsigned int model_isotropic_parameter : 1;
+				};
+
+				unsigned int model;
+			};
+
+			union
+			{
+				struct
+				{
 					unsigned int hist_bin_count : 1;
 					unsigned int hist_lower_outliers : 1;
 					unsigned int hist_upper_outliers : 1;
+					unsigned int hist_values : 1;
 				};
 				unsigned int histogram;
 			};

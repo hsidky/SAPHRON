@@ -2,8 +2,8 @@
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SpeciesSwapMove.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
+#include "../src/Simulation/ConsoleObserver.h"
 #include "../src/Site.h"
-#include "../src/Visitors/ConsoleVisitor.h"
 #include "gtest/gtest.h"
 
 using namespace Ensembles;
@@ -35,7 +35,7 @@ TEST(SemiGrandDOSEnsemble, DefaultBehavior)
 	flags.hist_upper_outliers = 1;
 	flags.composition = 1;
 
-	Visitors::ConsoleVisitor console(flags, 1000);
+	Simulation::ConsoleObserver console(flags, 1000);
 
 	// Random mole fractions
 	model.ConfigureMixture(2, {0.5, 0.5});

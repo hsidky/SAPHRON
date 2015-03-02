@@ -2,7 +2,7 @@
 #include "../Ensembles/SemiGrandDOSEnsemble.h"
 #include "../Ensembles/WangLandauDOSEnsemble.h"
 #include "../Histogram.h"
-#include "ConsoleVisitor.h"
+#include "ConsoleObserver.h"
 #include <algorithm>
 #include <iterator>
 
@@ -10,14 +10,14 @@ using namespace Ensembles;
 using namespace std;
 using namespace Simulation;
 
-namespace Visitors
+namespace Simulation
 {
-	void ConsoleVisitor::VisitInternal(WangLandauDOSEnsemble<Site>* e)
+	void ConsoleObserver::VisitInternal(WangLandauDOSEnsemble<Site>* e)
 	{
 		if (this->Flags.iterations)
 			cout << "Iteration: " << this->GetIteration() << " ";
 		if (this->Flags.energy)
-			cout << "Energy: " << e->GetEnergy() / e->GetModelSiteCount() << " ";
+			cout << "Energy: " << e->GetEnergy() << " ";
 
 		// Get all DOS properties.
 		VisitInternal(static_cast<DensityOfStatesEnsemble<Site>*>(e));
@@ -25,12 +25,12 @@ namespace Visitors
 		cout << endl;
 	}
 
-	void ConsoleVisitor::VisitInternal(SemiGrandDOSEnsemble<Site>* e)
+	void ConsoleObserver::VisitInternal(SemiGrandDOSEnsemble<Site>* e)
 	{
 		if (this->Flags.iterations)
 			cout << "Iteration: " << this->GetIteration() << " ";
 		if (this->Flags.energy)
-			cout << "Energy: " << e->GetEnergy() / e->GetModelSiteCount() << " ";
+			cout << "Energy: " << e->GetEnergy() << " ";
 		if(this->Flags.temperature)
 			cout << "Temperature: " << e->GetTemperature() << " ";
 		if(this->Flags.composition)
@@ -46,17 +46,17 @@ namespace Visitors
 		cout << endl;
 	}
 
-	void ConsoleVisitor::VisitInternal(DensityOfStatesEnsemble<Site>* e)
+	void ConsoleObserver::VisitInternal(DensityOfStatesEnsemble<Site>* e)
 	{
 		if(!this->Flags.dos)
 			return;
 
-		if (this->Flags.dos_flatness)
-			cout << "Flatness: " << e->GetFlatness() << " ";
 		if (this->Flags.dos_walker)
 			cout << "Walker ID: " << e->GetWalkerID() << " ";
 		if(this->Flags.dos_scale_factor)
 			cout << "Scale factor: " << e->GetScaleFactor() << " ";
+		if (this->Flags.dos_flatness)
+			cout << "Flatness: " << e->GetFlatness() << " ";
 		if(this->Flags.dos_interval)
 		{
 			auto interval = e->GetParameterInterval();
@@ -72,22 +72,22 @@ namespace Visitors
 		}
 	}
 
-	void ConsoleVisitor::VisitInternal(NVTEnsemble<Site>* e)
+	void ConsoleObserver::VisitInternal(NVTEnsemble<Site>* e)
 	{
 		if (this->Flags.iterations)
 			cout << "Iteration: " << this->GetIteration() << " ";
 		if (this->Flags.energy)
-			cout << "Energy: " << e->GetEnergy()/e->GetModelSiteCount() << " ";
+			cout << "Energy: " << e->GetEnergy() << " ";
 		if (this->Flags.temperature)
 			cout << "Temperature: " << e->GetTemperature() << " ";
 		cout << endl;
 	}
 
-	void ConsoleVisitor::VisitInternal(Models::BaseModel*)
+	void ConsoleObserver::VisitInternal(Models::BaseModel*)
 	{
 	}
 
-	void ConsoleVisitor::VisitInternal(Histogram* h)
+	void ConsoleObserver::VisitInternal(Histogram* h)
 	{
 		if(!this->Flags.histogram)
 			return;
@@ -109,7 +109,7 @@ namespace Visitors
 		cout << endl;
 	}
 
-	void ConsoleVisitor::VisitInternal(Site* s)
+	void ConsoleObserver::VisitInternal(Site* s)
 	{
 		if(!this->Flags.site)
 			return;

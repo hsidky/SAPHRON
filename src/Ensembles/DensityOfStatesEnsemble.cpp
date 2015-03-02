@@ -23,7 +23,6 @@ namespace Ensembles
 		{
 			Sweep();
 
-			// Force logging
 			this->ResetHistogram();
 			this->ReduceScaleFactor();
 		}
@@ -39,7 +38,7 @@ namespace Ensembles
 		_flatness = hist.CalculateFlatness();
 		while(_flatness < GetTargetFlatness())
 		{
-			this->NotifyObservers();
+			this->NotifyObservers(SimEvent(this));
 			this->IncrementSweeps();
 
 			for(int i = 0; i < this->model.GetSiteCount(); i++)
@@ -47,6 +46,9 @@ namespace Ensembles
 
 			_flatness = hist.CalculateFlatness();
 		}
+
+		// Force logging
+		this->NotifyObservers(SimEvent(this, true));
 	}
 
 	template class DensityOfStatesEnsemble<Site>;

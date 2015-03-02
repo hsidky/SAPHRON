@@ -24,7 +24,7 @@ namespace Simulation
 			virtual void RemoveObserver(SimObserver* observer);
 
 			// Notify registered observers of a change.
-			void NotifyObservers();
+			void NotifyObservers(SimEvent event);
 
 			// Get the iteration count.
 			virtual int GetSimIteration() = 0;

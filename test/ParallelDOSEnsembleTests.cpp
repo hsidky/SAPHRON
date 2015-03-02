@@ -2,7 +2,7 @@
 #include "../src/Ensembles/WangLandauDOSEnsemble.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
-#include "../src/Visitors/ConsoleVisitor.h"
+#include "../src/Simulation/ConsoleObserver.h"
 #include "gtest/gtest.h"
 
 using namespace Ensembles;
@@ -64,7 +64,7 @@ TEST(ParalellDOSEnsemble, ParallelBehavior)
 	flags.dos_interval = 1;
 	flags.dos_scale_factor = 1;
 
-	Visitors::ConsoleVisitor console(flags, 1000);
+	Simulation::ConsoleObserver console(flags, 1000);
 
 	ParallelDOSEnsemble<Site, WangLandauDOSEnsemble<Site> >
 	ensemble(model, -1.9, -0.5, 10000, 4, 0.5);

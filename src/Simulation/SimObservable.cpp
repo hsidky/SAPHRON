@@ -15,9 +15,8 @@ namespace Simulation
 	}
 
 	// Notify all observers of a simulation event.
-	void SimObservable::NotifyObservers()
+	void SimObservable::NotifyObservers(SimEvent event)
 	{
-		SimEvent event(this);
 		for(auto& observer : _observers)
 		{
 			observer->Update(event);

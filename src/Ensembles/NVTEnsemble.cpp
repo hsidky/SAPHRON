@@ -7,10 +7,10 @@ namespace Ensembles
 	NVTEnsemble<T>::NVTEnsemble(BaseModel& model, double temperature)
 		: Ensemble<T>(model), _temperature(temperature), rand(1)
 	{
-			_energy = 0.0;
-			for (int i = 0; i < this->model.GetSiteCount(); i++)
-				_energy += this->model.EvaluateHamiltonian(i);
-			_energy /= 2.0;
+		_energy = 0.0;
+		for (int i = 0; i < this->model.GetSiteCount(); i++)
+			_energy += this->model.EvaluateHamiltonian(i);
+		_energy /= 2.0;
 	}
 
 	// Performs one Monte Carlo sweep. This is defined as "n" iterations,
@@ -21,7 +21,7 @@ namespace Ensembles
 		for (int i = 0; i < this->model.GetSiteCount(); i++)
 			Iterate();
 
-		this->NotifyObservers();
+		this->NotifyObservers(SimEvent(this));
 		this->IncrementSweeps();
 	}
 
@@ -44,8 +44,8 @@ namespace Ensembles
 
 		// Check probabilities.
 		if (AcceptanceProbability(this->_energy, newE) < rand.doub())
-		for (auto &move : this->moves)
-			move->Undo();
+			for (auto &move : this->moves)
+				move->Undo();
 		else
 			this->_energy = newE;
 
@@ -58,8 +58,8 @@ namespace Ensembles
 	double NVTEnsemble<T>::AcceptanceProbability(double prevH, double currH)
 	{
 		auto p =
-			exp(-(currH -
-			prevH) / (GetBoltzmannConstant() * GetTemperature()));
+		        exp(-(currH -
+		              prevH) / (GetBoltzmannConstant() * GetTemperature()));
 
 		return p > 1.0 ? 1.0 : p;
 	}
