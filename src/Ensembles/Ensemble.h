@@ -29,6 +29,12 @@ namespace Ensembles
 			// Number of iterations performed.
 			int _iterations = 0;
 
+			// Next ID counter for unique instance ID.
+			static int _nextID;
+
+			// Current instance ID.
+			int _ID;
+
 		protected:
 			// Pointer to model.
 			BaseModel & model;
@@ -49,7 +55,7 @@ namespace Ensembles
 			}
 
 		public:
-			Ensemble (BaseModel& model) : model(model) {};
+			Ensemble (BaseModel& model) : model(model) { _ID = ++_nextID; };
 
 			// Performs one Monte Carlo sweep. This is defined as "n" iterations,
 			// where "n" is the number of sites in a model.
@@ -119,7 +125,21 @@ namespace Ensembles
 				return _sweeps;
 			}
 
+			// Gets the Observable ID.
+			int GetObservableID()
+			{
+				return _ID;
+			}
+
+			// Gets the instance ID of the ensemble.
+			int GetInstanceID()
+			{
+				return _ID;
+			}
+
 			// Defines the acceptance probability based on a difference in energy.
 			virtual double AcceptanceProbability(double prevH, double currH) = 0;
 	};
+
+	template<class T> int Ensemble<T>::_nextID = 0;
 }

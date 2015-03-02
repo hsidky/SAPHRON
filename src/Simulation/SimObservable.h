@@ -28,5 +28,8 @@ namespace Simulation
 
 			// Get the iteration count.
 			virtual int GetSimIteration() = 0;
+
+			// Get an identifier of the observable.
+			virtual int GetObservableID() = 0;
 	};
 }

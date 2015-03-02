@@ -14,6 +14,7 @@ namespace Simulation
 		private:
 			unsigned int _frequency = 1;
 			int _iteration = 0;
+			int _identifier = 0;
 			bool _forceObserve = false;
 			std::mutex _mutex;
 
@@ -31,6 +32,12 @@ namespace Simulation
 			int SetIteration(int i)
 			{
 				return _iteration = i;
+			}
+
+			// Gets the observable ID.
+			int GetObservableID()
+			{
+				return _identifier;
 			}
 
 			// Get logging frequency.
@@ -64,39 +71,43 @@ namespace Simulation
 			SimObserver(SimFlags flags, unsigned int frequency = 1)
 				: _frequency(frequency), Flags(flags){}
 
+			// Lock Observer.
+			void LockObserver()
+			{
+				_mutex.lock();
+			}
+
+			// Unlock observer.
+			void UnlockObserver()
+			{
+				_mutex.unlock();
+			}
+
 			// Update observer when simulation has changed.
 			void Update(SimEvent& e);
 
 			void Visit(Ensembles::WangLandauDOSEnsemble<Site>* e) override
 			{
-				_mutex.lock();
 				if (IsObservableIteration())
 					VisitInternal(e);
-				_mutex.unlock();
 			}
 
 			void Visit(Ensembles::SemiGrandDOSEnsemble<Site>* e) override
 			{
-				_mutex.lock();
 				if (IsObservableIteration())
 					VisitInternal(e);
-				_mutex.unlock();
 			}
 
 			void Visit(Ensembles::DensityOfStatesEnsemble<Site>* e) override
 			{
-				_mutex.lock();
 				if (IsObservableIteration())
 					VisitInternal(e);
-				_mutex.unlock();
 			}
 
 			void Visit(Ensembles::NVTEnsemble<Site>* e) override
 			{
-				_mutex.lock();
 				if (IsObservableIteration())
 					VisitInternal(e);
-				_mutex.unlock();
 			};
 
 			void Visit(Models::BaseModel* m) override

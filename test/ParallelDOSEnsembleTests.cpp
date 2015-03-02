@@ -2,7 +2,6 @@
 #include "../src/Ensembles/WangLandauDOSEnsemble.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
-#include "../src/Simulation/ConsoleObserver.h"
 #include "gtest/gtest.h"
 
 using namespace Ensembles;
@@ -51,26 +50,15 @@ TEST(ParallelDOSEnsemble, DefaultConstructor)
 }
 
 // Test parallel behavior.
-TEST(ParalellDOSEnsemble, ParallelBehavior)
+TEST(ParallelDOSEnsemble, ParallelBehavior)
 {
 	int n = 10;
 	Models::LebwohlLasherModel model(n, n, n);
 	Moves::SphereUnitVectorMove move;
 
-	SimFlags flags;
-	flags.iterations = 1;
-	flags.dos_walker = 1;
-	flags.dos_flatness = 1;
-	flags.dos_interval = 1;
-	flags.dos_scale_factor = 1;
-
-	Simulation::ConsoleObserver console(flags, 1000);
-
 	ParallelDOSEnsemble<Site, WangLandauDOSEnsemble<Site> >
-	ensemble(model, -1.9, -0.5, 10000, 4, 0.5);
+	ensemble(model, -1.9, -0.5, 2000, 4, 0.5);
 
 	ensemble.AddMove(move);
-	ensemble.AddObserver(&console);
-	ensemble.SetWalkerID(5);
 	ensemble.Sweep();
 }

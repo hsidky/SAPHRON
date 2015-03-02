@@ -12,6 +12,7 @@ namespace Simulation
 			{
 				struct
 				{
+					unsigned int identifier : 1;
 					unsigned int iterations : 1;
 					unsigned int energy : 1;
 					unsigned int temperature : 1;

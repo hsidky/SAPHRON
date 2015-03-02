@@ -14,6 +14,8 @@ namespace Simulation
 {
 	void CSVObserver::VisitInternal(NVTEnsemble<Site>* e)
 	{
+		if (this->Flags.identifier)
+			*_ensemblefs << this->GetObservableID() << ",";
 		if (this->Flags.iterations)
 			*_ensemblefs << this->GetIteration() << ",";
 		if (this->Flags.energy)
@@ -25,6 +27,8 @@ namespace Simulation
 
 	void CSVObserver::VisitInternal(WangLandauDOSEnsemble<Site>* e)
 	{
+		if (this->Flags.identifier)
+			*_ensemblefs << this->GetObservableID() << ",";
 		if (this->Flags.iterations)
 			*_ensemblefs << this->GetIteration() << ",";
 		if (this->Flags.energy)
@@ -38,6 +42,8 @@ namespace Simulation
 
 	void CSVObserver::VisitInternal(SemiGrandDOSEnsemble<Site>* e)
 	{
+		if (this->Flags.identifier)
+			*_ensemblefs << this->GetObservableID() << ",";
 		if (this->Flags.iterations)
 			*_ensemblefs << this->GetIteration() << ",";
 		if (this->Flags.energy)
@@ -61,6 +67,8 @@ namespace Simulation
 		if(!this->Flags.dos)
 			return;
 
+		if (this->Flags.identifier)
+			*_dosfs << this->GetObservableID() << ",";
 		if(this->Flags.iterations)
 			*_dosfs << this->GetIteration() << ",";
 		if (this->Flags.dos_walker)
@@ -92,6 +100,8 @@ namespace Simulation
 		if(!this->Flags.histogram)
 			return;
 
+		if (this->Flags.identifier)
+			*_histfs << this->GetObservableID() << ",";
 		if(this->Flags.iterations)
 			*_histfs << this->GetIteration() << ",";
 		if(this->Flags.hist_bin_count)
@@ -116,6 +126,8 @@ namespace Simulation
 		if(!this->Flags.site)
 			return;
 
+		if (this->Flags.identifier)
+			*_sitefs << this->GetObservableID() << ",";
 		if(this->Flags.iterations)
 			*_sitefs << this->GetIteration() << ",";
 		if (this->Flags.site_coordinates)

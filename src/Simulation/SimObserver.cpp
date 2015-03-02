@@ -7,5 +7,6 @@ namespace Simulation
 	{
 		this->SetIteration(e.GetObservable()->GetSimIteration());
 		_forceObserve = e.ForceObserve();
+		_identifier = e.GetObservable()->GetObservableID();
 	};
 }

@@ -19,8 +19,10 @@ namespace Simulation
 	{
 		for(auto& observer : _observers)
 		{
+			observer->LockObserver();
 			observer->Update(event);
 			this->AcceptVisitor(*observer);
+			observer->UnlockObserver();
 		}
 	}
 }

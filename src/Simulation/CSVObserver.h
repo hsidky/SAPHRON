@@ -30,6 +30,8 @@ namespace Simulation
 					        );
 					_ensemblefs->precision(20);
 
+					if (this->Flags.identifier)
+						*_ensemblefs << "Identifier,";
 					if (this->Flags.iterations)
 						*_ensemblefs << "Iterations,";
 					if (this->Flags.energy)
@@ -51,6 +53,8 @@ namespace Simulation
 					        );
 					_dosfs->precision(20);
 
+					if (this->Flags.identifier)
+						*_dosfs << "Identifier,";
 					if(this->Flags.iterations)
 						*_dosfs << "Iterations,";
 					if(this->Flags.dos_walker)
@@ -82,6 +86,8 @@ namespace Simulation
 					        );
 					_histfs->precision(20);
 
+					if (this->Flags.identifier)
+						*_histfs << "Identifier,";
 					if (this->Flags.iterations)
 						*_histfs << "Iterations,";
 					if(this->Flags.hist_bin_count)
@@ -103,6 +109,8 @@ namespace Simulation
 					        );
 					_sitefs->precision(20);
 
+					if (this->Flags.identifier)
+						*_sitefs << "Identifier,";
 					if (this->Flags.iterations)
 						*_sitefs << "Iterations,";
 					if(this->Flags.site_coordinates)
