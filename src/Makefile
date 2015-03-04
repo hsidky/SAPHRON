@@ -5,7 +5,7 @@ BIN_DIR = ../bin
 LIB_DIR = ../lib
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -static -Wall -Wextra -pthread -std=c++11
+CXXFLAGS += -Wall -Wextra -std=c++11 -include ../include/gcc-preinclude.h
 
 DEBUG ?= 0
 
@@ -25,7 +25,7 @@ OBJECTS_LIB = $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_LIB:.cpp=.o)))
 TARGET = SAPHRON
 TARGET_LIB = SAPHRON.a
 
-LINKER_DEPS = -llapack -lblas -larpack -lgfortran -lquadmath
+LINKER_DEPS = -llapack -lblas -lgfortran -lquadmath
 
 # House-keeping build targets.
 all : $(OBJECTS)  $(OBJECTS_LIB) $(TARGET) $(TARGET_LIB)
@@ -55,7 +55,7 @@ $(BUILD_DIR)/%.o: Visitors/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 $(TARGET): $(OBJECTS) $(DEPS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $(BIN_DIR)/$@ $(LINKER_DEPS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $(BIN_DIR)/$@ $(LINKER_DEPS)
 
 $(TARGET_LIB): $(OBJECTS_LIB)
 	ar rc $(LIB_DIR)/$@ $(OBJECTS_LIB)

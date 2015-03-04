@@ -11,7 +11,7 @@ SRC_DIR = ../src
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -g -Wall -Wextra -pthread -std=c++11 -O3
+CXXFLAGS += -g -Wall -Wextra -pthread -std=c++11 -O3 -include ../include/gcc-preinclude.h
 
 # Build dependencies
 DEPS  = $(LIB_DIR)/SAPHRON.a
@@ -27,7 +27,7 @@ TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \
 # Google Test libs to link against.
 GTEST_LIBS = $(GTEST_DIR)/lib/libgtest.a $(GTEST_DIR)/lib/libgtest_main.a
 
-LINKER_DEPS = -llapack -larpack -lblas -lgfortran -lquadmath
+LINKER_DEPS = -llapack -lblas -lgfortran -lquadmath
 
 
 # House-keeping build targets.

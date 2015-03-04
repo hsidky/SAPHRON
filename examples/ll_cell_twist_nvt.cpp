@@ -57,7 +57,6 @@ int main(int argc, char const* argv[])
 	// vector on a sphere. A "Move" class operates on a site within model in an ensemble.
 	Moves::SphereUnitVectorMove move;
 
-
 	//ensemble.AddMove(move);
 
 	// Sweep for iterations

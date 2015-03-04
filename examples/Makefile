@@ -5,9 +5,9 @@ LIB_DIR  = ../lib
 SRC_DIR = ../src
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -Wall -Wextra -pthread -std=c++11
+CXXFLAGS += -Wall -Wextra -pthread -std=c++11 -include ../include/gcc-preinclude.h
 
-LINKER_DEPS = -llapack -lblas -larpack -lgfortran -lquadmath
+LINKER_DEPS = -llapack -lblas -lgfortran -lquadmath
 
 DEBUG ?= 0
 
