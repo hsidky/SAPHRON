@@ -1,13 +1,14 @@
-// This example is a demonstration of Expanded Density of States sampling (EXEDOS)
+// This example is a demonstration of Semi-grand Density of States Sampling
 // of a Lebwhol-Lasher binary mixture
 
 // Include header files
-#include "../src/DataLoggers/CSVDataLogger.h"
-#include "../src/DataLoggers/ConsoleDataLogger.h"
+#include "../src/Ensembles/ParallelDOSEnsemble.h"
 #include "../src/Ensembles/SemiGrandDOSEnsemble.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SpeciesSwapMove.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
+#include "../src/Simulation/CSVObserver.h"
+#include "../src/Simulation/ConsoleObserver.h"
 
 // Include for parsing using stringstream
 #include <iostream>
@@ -21,9 +22,7 @@ int parse_input(char const* args[], int& latticeSize,
                 double& minX,
                 double& maxX,
                 int& binCount,
-                std::string& modelFile,
-                std::string& SitesFile,
-                std::string& vecsFile
+                std::string& prefix
                 );
 
 // The main program expects a user to input the lattice size, number of EXEDOS
@@ -33,19 +32,17 @@ int main(int argc, char const* argv[])
 {
 	int latticeSize, iterations, binCount;
 	double minX, maxX, temperature;
-	std::string modelFile, sitesFile, vecsFile;
+	std::string prefix;
 
-	if(argc != 10)
+	if(argc != 8)
 	{
 		std::cerr << "Program syntax:" << argv[0] <<
-		" lattice-size temperature iterations min-X max-X bin-count model-outputfile site-outputfile DOS-outputfile"
+		" lattice-size temperature iterations min-X max-X bin-count output-file-prefix"
 		          << std::endl;
 		return 0;
 	}
 
-	if(parse_input(argv, latticeSize, temperature, iterations, minX, maxX, binCount, modelFile,
-	               sitesFile,
-	               vecsFile) != 0)
+	if(parse_input(argv, latticeSize, temperature, iterations, minX, maxX, binCount, prefix) != 0)
 		return -1;
 
 	// Initialize the Lebwohl-Lasher model.
@@ -84,16 +81,37 @@ int main(int argc, char const* argv[])
 	model.SetIsotropicParameter(sqrt(gaa*gbb), 1, 2);
 	model.SetIsotropicParameter(gbb, 2, 2);
 
-	// Initialize Wang-Landau sampler.
-	//Ensembles::SemiGrandDOSEnsemble<Site> ensemble(model, minX, maxX, binCount, temperature);
+	// Add CSV logger and setup parameters we want to record.
+	Simulation::SimFlags flags;
+	flags.identifier = 1;
+	flags.iterations = 1;
+	flags.composition = 1;
+	flags.dos_flatness = 1;
+	flags.dos_values = 1;
+	flags.dos_scale_factor = 1;
+	flags.dos_interval = 1;
+	Simulation::CSVObserver csvobserver(prefix,flags,10000);
+
+	Simulation::SimFlags flags2;
+	flags2.identifier = 1;
+	flags2.iterations = 1;
+	flags2.composition = 1;
+	flags2.dos_flatness = 1;
+	flags2.dos_scale_factor = 1;
+	Simulation::ConsoleObserver consoleobserver(flags2,1000);
+
+	Ensembles::ParallelDOSEnsemble<Site, Ensembles::SemiGrandDOSEnsemble<Site> >
+	ensemble(model, minX, maxX, binCount, 8, 0.5, temperature);
 
 	// Register loggers and moves with the ensemble.
-	//ensemble.AddMove(move1);
-	//ensemble.AddMove(move2);
-	
-	// Run WL sampling.
-	//ensemble.SetTargetFlatness(0.85);
-	//ensemble.Run(iterations);
+	ensemble.AddMove(move1);
+	ensemble.AddMove(move2);
+	ensemble.AddObserver(&csvobserver);
+	ensemble.AddObserver(&consoleobserver);
+
+	//Run sampling.
+	ensemble.SetTargetFlatness(0.85);
+	ensemble.Run(iterations);
 }
 
 // A very basic input parser.
@@ -103,9 +121,7 @@ int parse_input(char const* args[], int& latticeSize,
                 double& minE,
                 double& maxE,
                 int& binCount,
-                std::string& modelFile,
-                std::string& SitesFile,
-                std::string& vecsFile
+                std::string& prefix
                 )
 {
 	std::stringstream ss;
@@ -161,23 +177,7 @@ int parse_input(char const* args[], int& latticeSize,
 
 	ss.clear();
 	ss.str(args[7]);
-	if(!(ss >> modelFile))
-	{
-		std::cerr << "Invalid output file. Must be a string." << std::endl;
-		return -1;
-	}
-
-	ss.clear();
-	ss.str(args[8]);
-	if(!(ss >> SitesFile))
-	{
-		std::cerr << "Invalid output file. Must be a string." << std::endl;
-		return -1;
-	}
-
-	ss.clear();
-	ss.str(args[9]);
-	if(!(ss >> vecsFile))
+	if(!(ss >> prefix))
 	{
 		std::cerr << "Invalid output file. Must be a string." << std::endl;
 		return -1;

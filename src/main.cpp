@@ -1,6 +1,4 @@
 #include "Ensembles/NVTEnsemble.h"
-#include "DataLoggers/CSVDataLogger.h"
-#include "DataLoggers/ConsoleDataLogger.h"
 #include "Models/Ising3DModel.h"
 #include "Models/LebwohlLasherModel.h"
 #include "Moves/FlipSpinMove.h"

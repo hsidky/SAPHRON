@@ -1,4 +1,5 @@
 #include "LebwohlLasherModel.h"
+#include <iomanip>
 
 namespace Models
 {
@@ -130,6 +131,10 @@ namespace Models
 
 		// Calculate position.
 		int p = ni + ((2*_isoN - nj)*(nj-1)/2) -1;
+
+		std::cout << "Isotropic interaction parameter set\n"
+		          << "Species: " << i << " & " << j << std::fixed << std::setprecision(5)
+		          << "  Value: " << e << "\n" << std::endl;
 
 		return this->_isotropicJ[p] = e;
 	}

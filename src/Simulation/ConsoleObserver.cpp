@@ -12,8 +12,23 @@ using namespace Simulation;
 
 namespace Simulation
 {
+	void ConsoleObserver::VisitInternal(NVTEnsemble<Site>* e)
+	{
+		if(this->Flags.identifier)
+			cout << "Identifier: " << this->GetObservableID() << " ";
+		if (this->Flags.iterations)
+			cout << "Iteration: " << this->GetIteration() << " ";
+		if (this->Flags.energy)
+			cout << "Energy: " << e->GetEnergy() << " ";
+		if (this->Flags.temperature)
+			cout << "Temperature: " << e->GetTemperature() << " ";
+		cout << endl;
+	}
+
 	void ConsoleObserver::VisitInternal(WangLandauDOSEnsemble<Site>* e)
 	{
+		if(this->Flags.identifier)
+			cout << "Identifier: " << this->GetObservableID() << " ";
 		if (this->Flags.iterations)
 			cout << "Iteration: " << this->GetIteration() << " ";
 		if (this->Flags.energy)
@@ -27,6 +42,8 @@ namespace Simulation
 
 	void ConsoleObserver::VisitInternal(SemiGrandDOSEnsemble<Site>* e)
 	{
+		if(this->Flags.identifier)
+			cout << "Identifier: " << this->GetObservableID() << " ";
 		if (this->Flags.iterations)
 			cout << "Iteration: " << this->GetIteration() << " ";
 		if (this->Flags.energy)
@@ -70,17 +87,6 @@ namespace Simulation
 			std::copy(dos->begin(), dos->end(),
 			          std::ostream_iterator<double>(std::cout, " "));
 		}
-	}
-
-	void ConsoleObserver::VisitInternal(NVTEnsemble<Site>* e)
-	{
-		if (this->Flags.iterations)
-			cout << "Iteration: " << this->GetIteration() << " ";
-		if (this->Flags.energy)
-			cout << "Energy: " << e->GetEnergy() << " ";
-		if (this->Flags.temperature)
-			cout << "Temperature: " << e->GetTemperature() << " ";
-		cout << endl;
 	}
 
 	void ConsoleObserver::VisitInternal(Models::BaseModel*)

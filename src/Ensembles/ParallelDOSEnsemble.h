@@ -44,7 +44,7 @@ namespace Ensembles
 			                    int binCount,
 			                    int walkers,
 			                    double overlap,
-			                    Args && ... args)
+			                    Args ... args)
 				: DensityOfStatesEnsemble<T>(model, minP, maxP, binCount),
 				  _walkers(walkers)
 			{

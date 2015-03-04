@@ -7,6 +7,8 @@ SRC_DIR = ../src
 # Flags passed to the C++ compiler.
 CXXFLAGS += -Wall -Wextra -pthread -std=c++11
 
+LINKER_DEPS = -llapack -lblas -larpack -lgfortran -lquadmath
+
 DEBUG ?= 0
 
 ifeq ($(DEBUG), 1)
@@ -35,4 +37,4 @@ $(BUILD_DIR)/%.o: %.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 %.out: $(BUILD_DIR)/%.o
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ $(DEPS) -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ $(DEPS) -o $@ $(LINKER_DEPS)

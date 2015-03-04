@@ -3,8 +3,6 @@
 
 // Include the pertinent header files.
 #include "../src/Ensembles/NVTEnsemble.h"
-#include "../src/DataLoggers/CSVDataLogger.h"
-#include "../src/DataLoggers/ConsoleDataLogger.h"
 #include "../src/Models/LLCellModel.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
 
