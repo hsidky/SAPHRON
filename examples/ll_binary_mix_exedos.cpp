@@ -64,10 +64,6 @@ int main(int argc, char const* argv[])
 		move1.Perform(*site);
 	}
 
-	// Configure our mixture to initialize in between our min and max mole fractions.
-	double avgX = (minX+maxX)/2.0;
-	model.ConfigureMixture(2, {avgX, 1-avgX});
-
 	// Define interaction parameters
 	double gaa = 1.0;
 	double gbb = 1.0;

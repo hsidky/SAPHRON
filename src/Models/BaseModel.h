@@ -96,6 +96,59 @@ namespace Models
 					site.AcceptVisitor(v);
 			}
 
+			// Configure a mixture with a certian number of species and
+			// targtet mole fractions. The species will be randomly distributed throughout
+			// the lattice and the specified mole fractions will only be met approximately
+			// since it may not be possible to get a perfect match.
+			virtual void ConfigureMixture(int speciesCount, std::vector<double> moleFractions)
+			{
+				if(moleFractions.size() != (unsigned int) speciesCount)
+				{
+					std::cerr <<
+					"The number of specified mole fractions must equal the number of species."
+					          <<
+					std::endl;
+
+					return;
+				}
+
+				// Normalize
+				double norm = 0;
+				for(int i = 0; i < speciesCount; i++)
+					norm += moleFractions[i];
+
+				for(int i = 0; i < speciesCount; i++)
+					moleFractions[i] /= norm;
+
+				// Initialize counts and specify species 1 as all.
+				std::vector<double> counts(speciesCount, 0.0);
+				int n = this->GetSiteCount();
+				for(int i = 0; i < n; i++)
+				{
+					auto* site = this->SelectSite(i);
+					counts[site->GetSpecies()-1]++;
+				}
+
+				// Loop through a few times to make sure we sample all points.
+				for(int k = 0; k < 3; k++)
+					for(int i = 0; i < n; i++)
+					{
+						auto* site = this->SelectRandomSite();
+						int curr = site->GetSpecies();
+
+						if(counts[curr-1]/n > moleFractions[curr-1])
+							for(int j = 1; j <= speciesCount; j++)
+								if(j != curr && counts[j-1]/n <
+								   moleFractions[j-1])
+								{
+									counts[curr-1]--;
+									site->SetSpecies(j);
+									counts[j-1]++;
+									break;
+								}
+					}
+			}
+
 			// Clone Model.
 			virtual BaseModel* Clone() const = 0;
 

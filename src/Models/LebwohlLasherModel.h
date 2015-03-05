@@ -2,7 +2,6 @@
 
 #include "Lattice3DModel.h"
 #include <iostream>
-#include <numeric>
 
 namespace Models
 {
@@ -26,20 +25,14 @@ namespace Models
 			// The sites are initialized on a lattice including
 			// positions, nearest neighbors and spins. The default BaseModel
 			// parameters are used otherwise.
-			#ifdef _MSC_VER
-			LebwohlLasherModel(int xLength, int yLength, int zLength, int seed = 1) 
+#ifdef _MSC_VER
+			LebwohlLasherModel(int xLength, int yLength, int zLength, int seed = 1)
 				: Lattice3DModel(xLength, yLength, zLength, seed ){};
-			#else
+#else
 			using Lattice3DModel::Lattice3DModel;
-			#endif
+#endif
 
 			using Lattice3DModel::EvaluateHamiltonian;
-
-			// Configure a Lebwohl-Lasher mixture with a certian number of species and
-			// targtet mole fractions. The species will be randomly distributed throughout
-			// the lattice and the specified mole fractions will only be met approximately
-			// since it may not be possible to get a perfect match.
-			void ConfigureMixture(int speciesCount, std::vector<double> moleFractions);
 
 			// Evaluate the LL Hamiltonian H = Ʃ(γij + εij*P2(cosθij)).
 			double EvaluateHamiltonian(Site& site);

@@ -25,6 +25,10 @@ namespace Ensembles
 			exit(-1);
 		}
 
+		// Configure mixture
+		double avgN1 = (minN1+maxN1)/2.0;
+		model.ConfigureMixture(2, {avgN1, 1-avgN1});
+
 		_n1count = CalculateSpeciesCount(1);
 	}
 
