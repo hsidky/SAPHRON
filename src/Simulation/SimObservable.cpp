@@ -18,11 +18,12 @@ namespace Simulation
 	void SimObservable::NotifyObservers(SimEvent event)
 	{
 		for(auto& observer : _observers)
-		{
-			observer->LockObserver();
-			observer->Update(event);
-			this->AcceptVisitor(*observer);
-			observer->UnlockObserver();
-		}
+			if(observer->IsObservableEvent(event))
+			{
+				observer->LockObserver();
+				observer->Update(event);
+				this->AcceptVisitor(*observer);
+				observer->UnlockObserver();
+			}
 	}
 }

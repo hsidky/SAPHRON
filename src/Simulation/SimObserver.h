@@ -83,6 +83,9 @@ namespace Simulation
 				_mutex.unlock();
 			}
 
+			// Determines if an observer is interested in observing a particular event.
+			bool IsObservableEvent(SimEvent& e);
+
 			// Update observer when simulation has changed.
 			void Update(SimEvent& e);
 

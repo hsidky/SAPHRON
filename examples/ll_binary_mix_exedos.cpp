@@ -13,6 +13,7 @@
 // Include for parsing using stringstream
 #include <iostream>
 #include <sstream>
+#include <thread>
 
 // Function definition of our basic input parser.
 // A very basic input parser.
@@ -101,7 +102,7 @@ int main(int argc, char const* argv[])
 	Simulation::ConsoleObserver consoleobserver(flags2,1000);
 
 	Ensembles::ParallelDOSEnsemble<Site, Ensembles::SemiGrandDOSEnsemble<Site> >
-	ensemble(model, minX, maxX, binCount, 8, 0.5, temperature);
+	ensemble(model, minX, maxX, binCount, std::thread::hardware_concurrency(), 0.5, temperature);
 
 	// Register loggers and moves with the ensemble.
 	ensemble.AddMove(move1);
