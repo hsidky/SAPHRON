@@ -15,6 +15,8 @@
 #include <sstream>
 #include <thread>
 
+using namespace Ensembles;
+
 // Function definition of our basic input parser.
 // A very basic input parser.
 int parse_input(char const* args[], int& latticeSize,
@@ -86,7 +88,6 @@ int main(int argc, char const* argv[])
 	Simulation::SimFlags flags;
 	flags.identifier = 1;
 	flags.iterations = 1;
-	flags.composition = 1;
 	flags.dos_flatness = 1;
 	flags.dos_values = 1;
 	flags.dos_scale_factor = 1;
@@ -96,13 +97,30 @@ int main(int argc, char const* argv[])
 	Simulation::SimFlags flags2;
 	flags2.identifier = 1;
 	flags2.iterations = 1;
-	flags2.composition = 1;
 	flags2.dos_flatness = 1;
 	flags2.dos_scale_factor = 1;
+	flags2.hist_bin_count = 1;
+	flags2.hist_lower_outliers = 1;
+	flags2.hist_upper_outliers = 1;
+	flags2.dos_interval = 1;
 	Simulation::ConsoleObserver consoleobserver(flags2,1000);
 
-	Ensembles::ParallelDOSEnsemble<Site, Ensembles::SemiGrandDOSEnsemble<Site> >
-	ensemble(model, minX, maxX, binCount, std::thread::hardware_concurrency(), 0.5, temperature);
+	// Get number of threads.
+	int n = std::thread::hardware_concurrency();
+
+	// Calculate bin count based on interval calculation.
+	auto intervals =
+	        ParallelDOSEnsemble<Site, SemiGrandDOSEnsemble<Site> >::CalculateIntervals(minX,
+	                                                                                   maxX,
+	                                                                                   n,
+	                                                                                   0.5);
+	if(binCount == 0)
+		binCount =
+		        floor(model.GetSiteCount()*
+		              intervals[0].second - model.GetSiteCount()*intervals[0].first);
+
+	ParallelDOSEnsemble<Site, SemiGrandDOSEnsemble<Site> >
+	ensemble(model, minX, maxX, binCount, n, 0.5, temperature);
 
 	// Register loggers and moves with the ensemble.
 	ensemble.AddMove(move1);

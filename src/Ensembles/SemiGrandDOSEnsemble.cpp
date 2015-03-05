@@ -17,6 +17,14 @@ namespace Ensembles
 		                           round(maxN1*model.GetSiteCount()), binCount),
 		_temperature(temperature)
 	{
+		auto intv = this->GetParameterInterval();
+		if(binCount > (intv.second - intv.first))
+		{
+			std::cerr << "ERROR: Bin count (" << binCount << ") cannot exceed interval (" << intv.first
+			          << ", " << intv.second << ")." << std::endl;
+			exit(-1);
+		}
+
 		_n1count = CalculateSpeciesCount(1);
 	}
 

@@ -123,9 +123,9 @@ class Histogram : public Visitors::Visitable
 		void UpdateValue(int bin, double value)
 		{
 			if(bin >= _binCount)
-				bin = _binCount -1;
+				return;
 			if(bin < 0)
-				bin = 0;
+				return;
 
 			_values[bin] = value;
 		}

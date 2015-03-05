@@ -77,7 +77,8 @@ namespace Ensembles
 
 			double AcceptanceProbability(double, double) override
 			{
-				std::cerr << "ParalellDOSEnsemble does not have AcceptanceProbability defined." <<
+				std::cerr <<
+				"ERROR: ParalellDOSEnsemble does not have AcceptanceProbability defined." <<
 				std::endl;
 				exit(-1);
 			}
@@ -148,5 +149,10 @@ namespace Ensembles
 				for(int i = 0; i < _walkers; i++)
 					_objects[i]->RemoveObserver(observer);
 			}
+
+			static std::vector<Interval> CalculateIntervals(double minP,
+			                                                double maxP,
+			                                                int walkers,
+			                                                double overlap);
 	};
 }

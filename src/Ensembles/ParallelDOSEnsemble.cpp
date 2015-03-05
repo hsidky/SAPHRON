@@ -6,6 +6,41 @@
 namespace Ensembles
 {
 	template<typename T, typename DOSEnsemble>
+	std::vector<Interval> ParallelDOSEnsemble<T,DOSEnsemble>::CalculateIntervals(double minP,
+	                                                                             double maxP,
+	                                                                             int walkers,
+	                                                                             double overlap)
+	{
+		std::vector<Interval> intervals;
+
+		using namespace arma;
+
+		// Solve for the appropriate windows.
+		int n = 2*walkers;
+		mat A(n, n, fill::zeros);
+		vec b(n);
+
+		A(0,0) = 1;
+		A(n-1,n-1) = 1;
+		b(0) = minP;
+		b(n-1) = maxP;
+
+		for(int i = 1; i < n-1; i++)
+		{
+			A(i,i-1) = (i % 2) ? overlap : -1;
+			A(i,i) = 1 - overlap;
+			A(i,i+1) = (i % 2) ? -1 : overlap;
+		}
+
+		vec x = solve(A,b);
+
+		for(int i = 0; i < n-1; i += 2)
+			intervals.emplace_back(x(i), x(i+1));
+
+		return intervals;
+	}
+
+	template<typename T, typename DOSEnsemble>
 	void ParallelDOSEnsemble<T,DOSEnsemble>::ConfigureWalkers(double minP,
 	                                                          double maxP,
 	                                                          int walkers,
@@ -38,29 +73,9 @@ namespace Ensembles
 		// Initialize threadpool.
 		_pool = std::unique_ptr<ThreadPool>(new ThreadPool(walkers));
 
-		using namespace arma;
+		std::cout << "Parallel DOS: " <<  walkers << " walkers have been initialized\n" << std::endl;
 
-		// Solve for the appropriate windows.
-		int n = 2*walkers;
-		mat A(n, n, fill::zeros);
-		vec b(n);
-
-		A(0,0) = 1;
-		A(n-1,n-1) = 1;
-		b(0) = minP;
-		b(n-1) = maxP;
-
-		for(int i = 1; i < n-1; i++)
-		{
-			A(i,i-1) = (i % 2) ? overlap : -1;
-			A(i,i) = 1 - overlap;
-			A(i,i+1) = (i % 2) ? -1 : overlap;
-		}
-
-		vec x = solve(A,b);
-
-		for(int i = 0; i < n-1; i += 2)
-			_intervals.emplace_back(x(i), x(i+1));
+		_intervals = ParallelDOSEnsemble<T,DOSEnsemble>::CalculateIntervals(minP, maxP, walkers, overlap);
 	}
 
 	template<typename T, typename DOSEnsemble>

@@ -36,3 +36,17 @@ TEST(Histogram, HistProperties)
 	ASSERT_EQ(max, h.GetMaximum());
 	ASSERT_EQ(-1, h.GetBin(-0.06));
 }
+
+// Simple interval testing.
+TEST(Histogram, TestIntervals)
+{
+	double min = 6010.0;
+	double max = 8413;
+	int n = 2404;
+	Histogram h(min,max,n);
+
+	ASSERT_EQ(n, h.GetBinCount());
+	ASSERT_EQ(min, h.GetMinimum());
+	ASSERT_EQ(max, h.GetMaximum());
+	ASSERT_EQ(1,h.GetBinWidth());
+}

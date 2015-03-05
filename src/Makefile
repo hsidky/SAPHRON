@@ -5,7 +5,7 @@ BIN_DIR = ../bin
 LIB_DIR = ../lib
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -Wall -Wextra -std=c++11 -include ../include/gcc-preinclude.h
+CXXFLAGS += -Wall -Wextra -pthread -std=c++11 -include ../include/gcc-preinclude.h
 
 DEBUG ?= 0
 
@@ -55,7 +55,7 @@ $(BUILD_DIR)/%.o: Visitors/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 $(TARGET): $(OBJECTS) $(DEPS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $(BIN_DIR)/$@ $(LINKER_DEPS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $(BIN_DIR)/$@ $(LINKER_DEPS)
 
 $(TARGET_LIB): $(OBJECTS_LIB)
 	ar rc $(LIB_DIR)/$@ $(OBJECTS_LIB)

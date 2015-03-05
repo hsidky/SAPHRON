@@ -63,8 +63,8 @@ namespace Ensembles
 				_energy = CalculateTotalEnergy();
 
 				std::cout << "Density of States Ensemble Initialized." << std::endl;
-				std::cout << "Interval: " << std::setw(10) << std::left << minP;
-				std::cout << std::setw(10) << std::right << maxP << std::endl <<
+				std::cout << "Interval: " << std::setw(13) << std::left << minP;
+				std::cout << std::setw(13) << std::right << maxP << std::endl <<
 				std::endl;
 			};
 
