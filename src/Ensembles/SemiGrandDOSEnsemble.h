@@ -34,6 +34,17 @@ namespace Ensembles
 			                     int binCount,
 			                     double temperature);
 
+			// Initializes a Semi-grand DOS sampler for a specified model at a given temperature (kbT).
+			// The binning will be performed according to the specified minimum
+			// and maxiumum mole fractions of species 1 in the system. Note that since
+			// the there is a discrete number of lattice sites, a bin width smaller than 1 will result in
+			// a histogram that never flattens.
+			SemiGrandDOSEnsemble(BaseModel& model,
+			                     double minN1,
+			                     double maxN1,
+			                     double binWidth,
+			                     double temperature);
+
 			// Performs one Monte-Carlo iteration. This is precisely one random draw
 			// from the model (one function call to model->DrawSample()).
 			void Iterate();

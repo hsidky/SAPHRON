@@ -39,7 +39,7 @@ class Histogram : public Visitors::Visitable
 		}
 
 		Histogram(double min, double max, double binWidth) :
-			_min(min), _max(max)
+			_binWidth(binWidth), _min(min), _max(max)
 		{
 			_binCount = (int) ceil(std::abs(max-min)/binWidth);
 			_counts.resize(_binCount, 0);

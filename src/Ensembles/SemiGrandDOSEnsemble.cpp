@@ -32,6 +32,34 @@ namespace Ensembles
 		_n1count = CalculateSpeciesCount(1);
 	}
 
+	// Initializes a Semi-grand DOS sampler for a specified model at a given temperature (kbT).
+	// The binning will be performed according to the specified minimum
+	// and maxiumum mole fractions of species 1 in the system. Note that since
+	// the there is a discrete number of lattice sites, a bin width smaller than 1 will result in
+	// a histogram that never flattens.
+	template<typename T>
+	SemiGrandDOSEnsemble<T>::SemiGrandDOSEnsemble(BaseModel& model,
+	                                              double minN1,
+	                                              double maxN1,
+	                                              double binWidth,
+	                                              double temperature) :
+		DensityOfStatesEnsemble<T>(model, round(minN1*model.GetSiteCount()),
+		                           round(maxN1*model.GetSiteCount()), binWidth),
+		_temperature(temperature)
+	{
+		if(binWidth < 1)
+		{
+			std::cerr << "ERROR: Bin width cannot be smaller than 1." << std::endl;
+			exit(-1);
+		}
+
+		// Configure mixture
+		double avgN1 = (minN1+maxN1)/2.0;
+		model.ConfigureMixture(2, {avgN1, 1-avgN1});
+
+		_n1count = CalculateSpeciesCount(1);
+	}
+
 	// Performs one Monte-Carlo iteration. This is precisely one random draw
 	// from the model (one function call to model->DrawSample()).
 	template<typename T>

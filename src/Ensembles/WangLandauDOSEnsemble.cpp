@@ -18,6 +18,19 @@ namespace Ensembles
 	{
 	}
 
+	// Initializes a Wang-Landau sampler for a specified model. The binning will
+	// be performed according to the specified minimum and maxiumum energies and
+	// the bin width.
+	template<typename T>
+	WangLandauDOSEnsemble<T>::WangLandauDOSEnsemble(BaseModel& model,
+	                                                double minE,
+	                                                double maxE,
+	                                                double binWidth) :
+		DensityOfStatesEnsemble<T>(model, minE*model.GetSiteCount(),
+		                           maxE*model.GetSiteCount(), binWidth)
+	{
+	}
+
 	// Performs one Monte-Carlo iteration. This is precisely one random draw
 	// from the model (one function call to model->DrawSample()).
 	template<typename T>

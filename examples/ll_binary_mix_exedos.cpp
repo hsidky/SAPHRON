@@ -24,7 +24,7 @@ int parse_input(char const* args[], int& latticeSize,
                 int& iterations,
                 double& minX,
                 double& maxX,
-                int& binCount,
+                double& binWidth,
                 std::string& prefix
                 );
 
@@ -33,19 +33,19 @@ int parse_input(char const* args[], int& latticeSize,
 // histogram and model, sites and vector file outputs.
 int main(int argc, char const* argv[])
 {
-	int latticeSize, iterations, binCount;
-	double minX, maxX, temperature;
+	int latticeSize, iterations;
+	double minX, maxX, temperature, binWidth;
 	std::string prefix;
 
 	if(argc != 8)
 	{
 		std::cerr << "Program syntax:" << argv[0] <<
-		" lattice-size temperature iterations min-X max-X bin-count output-file-prefix"
+		" lattice-size temperature iterations min-X max-X bin-width output-file-prefix"
 		          << std::endl;
 		return 0;
 	}
 
-	if(parse_input(argv, latticeSize, temperature, iterations, minX, maxX, binCount, prefix) != 0)
+	if(parse_input(argv, latticeSize, temperature, iterations, minX, maxX, binWidth, prefix) != 0)
 		return -1;
 
 	// Initialize the Lebwohl-Lasher model.
@@ -88,6 +88,8 @@ int main(int argc, char const* argv[])
 	flags.dos_values = 1;
 	flags.dos_scale_factor = 1;
 	flags.dos_interval = 1;
+	flags.hist_values = 1;
+	flags.hist_bin_count = 1;
 	Simulation::CSVObserver csvobserver(prefix,flags,10000);
 
 	Simulation::SimFlags flags2;
@@ -104,19 +106,8 @@ int main(int argc, char const* argv[])
 	// Get number of threads.
 	int n = std::thread::hardware_concurrency();
 
-	// Calculate bin count based on interval calculation.
-	auto intervals =
-	        ParallelDOSEnsemble<Site, SemiGrandDOSEnsemble<Site> >::CalculateIntervals(minX,
-	                                                                                   maxX,
-	                                                                                   n,
-	                                                                                   0.5);
-	if(binCount == 0)
-		binCount =
-		        floor(model.GetSiteCount()*
-		              intervals[0].second - model.GetSiteCount()*intervals[0].first);
-
 	ParallelDOSEnsemble<Site, SemiGrandDOSEnsemble<Site> >
-	ensemble(model, minX, maxX, binCount, n, 0.5, temperature);
+	ensemble(model, minX, maxX, binWidth, n, 0.5, temperature);
 
 	// Register loggers and moves with the ensemble.
 	ensemble.AddMove(move1);
@@ -135,7 +126,7 @@ int parse_input(char const* args[], int& latticeSize,
                 int& iterations,
                 double& minE,
                 double& maxE,
-                int& binCount,
+                double& binWidth,
                 std::string& prefix
                 )
 {
@@ -184,9 +175,9 @@ int parse_input(char const* args[], int& latticeSize,
 
 	ss.clear();
 	ss.str(args[6]);
-	if(!(ss >> binCount))
+	if(!(ss >> binWidth))
 	{
-		std::cerr << "Invalid bin count. Must be an integer." << std::endl;
+		std::cerr << "Invalid bin width. Must be an double." << std::endl;
 		return -1;
 	}
 

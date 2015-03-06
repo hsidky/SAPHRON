@@ -14,6 +14,11 @@ namespace Ensembles
 			// the bin count.
 			WangLandauDOSEnsemble(BaseModel& model, double minE, double maxE, int binCount);
 
+			// Initializes a Wang-Landau sampler for a specified model. The binning will
+			// be performed according to the specified minimum and maxiumum energies and
+			// the bin width.
+			WangLandauDOSEnsemble(BaseModel& model, double minE, double maxE, double binWidth);
+
 			// Performs one Monte-Carlo iteration. This is precisely one random draw
 			// from the model (one function call to model->DrawSample()).
 			void Iterate();

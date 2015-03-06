@@ -69,6 +69,38 @@ namespace Ensembles
 					_intervals[i] = _objects[i]->GetParameterInterval();
 			};
 
+			template<typename ... Args>
+			ParallelDOSEnsemble(BaseModel& model,
+			                    double minP,
+			                    double maxP,
+			                    double binWidth,
+			                    int walkers,
+			                    double overlap,
+			                    Args ... args)
+				: DensityOfStatesEnsemble<T>(model, minP, maxP, binWidth),
+				  _walkers(walkers)
+			{
+				ConfigureWalkers(minP, maxP, walkers, overlap);
+
+				// Duplicate model.
+				for(int i = 0; i < walkers; i++ )
+					_models.emplace_back(model.Clone());
+
+				for(int i = 0; i < walkers; i++)
+				{
+					_objects.emplace_back(new DOSEnsemble(*_models[i].get(),
+					                                      _intervals[i].first,
+					                                      _intervals[i].second,
+					                                      binWidth,
+					                                      args ...));
+					_objects.back()->SetWalkerID(i);
+				}
+
+				// Update intervals based on DOS ensemble.
+				for(int i = 0; i < walkers; i++)
+					_intervals[i] = _objects[i]->GetParameterInterval();
+			};
+
 			void Run(int iterations) override;
 
 			void Sweep() override;

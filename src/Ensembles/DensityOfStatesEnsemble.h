@@ -33,6 +33,21 @@ namespace Ensembles
 			// Unique identifier of walker number.
 			int _walker = 0;
 
+			void Initialize(double minP, double maxP)
+			{
+				_interval = Interval(minP, maxP);
+
+				// Calculate initial energy.
+				_energy = CalculateTotalEnergy();
+
+				std::cout << "Density of States Ensemble Initialized." << std::endl;
+				std::cout << "Interval: " << std::setw(13) << std::left << minP;
+				std::cout << std::setw(13) << std::right << maxP << std::endl;
+				std::cout << "Bin width: " << std::left << std::setw(10) << hist.GetBinWidth();
+				std::cout << " Bin count: " << std::right << std::setw(7) << hist.GetBinCount();
+				std::cout << std::endl << std::endl;
+			}
+
 		protected:
 			// Random number generator.
 			Rand rand;
@@ -54,19 +69,20 @@ namespace Ensembles
 			DensityOfStatesEnsemble(BaseModel& model,
 			                        double minP,
 			                        double maxP,
-			                        int binCount) :
-				Ensemble<T>(model), rand(15), hist(minP, maxP, binCount)
+			                        int binCount, int seed = 15) :
+				Ensemble<T>(model), rand(seed), hist(minP, maxP, binCount)
 			{
-				_interval = Interval(minP, maxP);
+				Initialize(minP, maxP);
+			}
 
-				// Calculate initial energy.
-				_energy = CalculateTotalEnergy();
-
-				std::cout << "Density of States Ensemble Initialized." << std::endl;
-				std::cout << "Interval: " << std::setw(13) << std::left << minP;
-				std::cout << std::setw(13) << std::right << maxP << std::endl <<
-				std::endl;
-			};
+			DensityOfStatesEnsemble(BaseModel& model,
+			                        double minP,
+			                        double maxP,
+			                        double binWidth, int seed = 15) :
+				Ensemble<T>(model), rand(seed), hist(minP, maxP, binWidth)
+			{
+				Initialize(minP, maxP);
+			}
 
 			// Runs multiple DOS simulations, between each subsequent iteration is
 			// a re-normalization step involving resetting of the hisogram and reduction of
