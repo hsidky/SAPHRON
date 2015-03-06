@@ -1,6 +1,7 @@
 #include "Lattice3DModel.h"
 #include <algorithm>
 #include <cmath>
+#include <iomanip>
 
 namespace Models
 {
@@ -114,6 +115,10 @@ namespace Models
 
 		// Calculate position.
 		int p = ni + ((2*_iN - nj)*(nj-1)/2) -1;
+
+		std::cout << "Interaction parameter set\n"
+		          << "Species: " << i << " & " << j << std::fixed << std::setprecision(5)
+		          << "  Value: " << e << "\n" << std::endl;
 
 		return this->_interactionParameter[p] = e;
 	}
