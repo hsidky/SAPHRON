@@ -96,12 +96,18 @@ int main(int argc, char const* argv[])
 	flags2.identifier = 1;
 	flags2.iterations = 1;
 	flags2.composition = 1;
+	flags2.energy = 1;
 	flags2.dos_flatness = 1;
+	flags2.dos_walker = 1;
+	flags2.dos_interval = 1;
 	flags2.dos_scale_factor = 1;
+	flags2.hist_bin_count = 1;
+	flags2.hist_lower_outliers = 1;
+	flags2.hist_upper_outliers = 1;
 	Simulation::ConsoleObserver consoleobserver(flags2, 1000);
 
 	Ensembles::ParallelDOSEnsemble<Site, Ensembles::SemiGrandDOSEnsemble<Site> >
-		ensemble(model, minX, maxX, binCount, 6, 0.5, temperature);
+		ensemble(model, minX, maxX, binCount, 4, 0.5, temperature);
 
 	// Register loggers and moves with the ensemble.
 	ensemble.AddMove(move1);
