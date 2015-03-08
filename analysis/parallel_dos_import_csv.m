@@ -25,7 +25,7 @@ coldos = find(strcmpi('DOS', headers) == 1); % DOS begin.
 colbcnt = find(strcmpi('bin count', headers) == 1); % Bin count.
 
 % Import data 
-A = csvread('output.dos.csv', 1);
+A = csvread(sprintf('%s.dos.csv',fileprefix), 1);
 
 % Clean up last column if need be. 
 if(length(find(A(:,end) == 0)) == size(A,1))
@@ -41,7 +41,7 @@ if(isempty(colbcnt))
     histheaders = textread(sprintf('%s.hist.csv',fileprefix), '%s', 1, 'delimiter', '\n');
     histheaders = strsplit(histheaders{1}, ',');
     colbcnt = find(strcmpi('bin count', histheaders) == 1);
-    B = csvread('output.hist.csv', 1);
+    B = csvread(sprintf('%s.hist.csv',fileprefix), 1);
     for i=1:length(windows)
         j = find(B(:,colid) == windows(i),1,'last');
         bincount(i) = B(j,colbcnt);
