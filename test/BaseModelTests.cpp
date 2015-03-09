@@ -85,3 +85,18 @@ TEST(BaseModel, DrawSample)
 
 	ASSERT_EQ(1, found);
 }
+
+// Test site locations.
+TEST(BaseModel, SiteLocations)
+{
+	MockBaseModel b(20, 1);
+
+	for (size_t i = 0; i < b.GetSiteCount(); i++)
+		ASSERT_EQ(i, b.SelectSite(i)->GetLocation());
+
+	// Add a site. Re-check.
+	b.AddSite();
+
+	for (size_t i = 0; i < b.GetSiteCount(); i++)
+		ASSERT_EQ(i, b.SelectSite(i)->GetLocation());
+}

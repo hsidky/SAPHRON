@@ -4,8 +4,9 @@
 #include "../Histogram.h"
 #include "ConsoleObserver.h"
 #include <algorithm>
-#include <iterator>
 #include <iomanip>
+#include <iostream>
+#include <iterator>
 
 using namespace Ensembles;
 using namespace std;
@@ -88,7 +89,8 @@ namespace Simulation
 		if(this->Flags.composition)
 		{
 			auto comp = e->GetComposition();
-			std::copy(comp.begin(), comp.end(), std::ostream_iterator<int>(std::cout << setw(20/comp.size()), " "));
+			std::copy(comp.begin(), comp.end(),
+			          std::ostream_iterator<int>(std::cout << setw(20/comp.size()), " "));
 		}
 		cout << endl;
 
@@ -113,18 +115,19 @@ namespace Simulation
 			cout << setw(20) << left << "Interval";
 		cout << endl;
 		// No DOS values output to console. That would be insane!
-		
+
 		cout << setw(20) << "";
 		if (this->Flags.dos_walker)
 			cout << setw(20) << left << e->GetWalkerID();
 		if(this->Flags.dos_scale_factor)
 			cout << setw(20) << left << setprecision(5) << scientific << e->GetScaleFactor();
 		if (this->Flags.dos_flatness)
-			cout << setw(20) << left << fixed << setprecision(10) << e->GetFlatness();
+			cout << setw(20) << left << fixed << setprecision(3) << e->GetFlatness();
 		if(this->Flags.dos_interval)
 		{
 			auto interval = e->GetParameterInterval();
-			cout << setw(10) << defaultfloat << setprecision(7) << left << interval.first << " " << interval.second;
+			cout << setw(10) << fixed << setprecision(7) << left << interval.first << " " <<
+			interval.second;
 		}
 		cout << endl;
 	}

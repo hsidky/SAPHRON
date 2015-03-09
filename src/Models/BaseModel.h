@@ -18,12 +18,23 @@ namespace Models
 			// Random number generator.
 			Rand rand;
 
+			// Resets site locations.
+			void ResetSiteLocations()
+			{
+				// Set locations of sites.
+				for (size_t i = 0; i < Sites.size(); i++)
+					Sites[i].SetLocation(i);
+			}
+
 		public:
 
 			// Initializes the base model with a specific number of sites at a
 			// given temperature. The random number generator seed is 1 by default.
 			BaseModel(int size, int seed = 1)
-				: Sites(size, Site(0.0, 0.0, 0.0)), rand(seed){};
+				: Sites(size, Site(0.0, 0.0, 0.0, 0)), rand(seed)
+			{
+				ResetSiteLocations();
+			}
 
 			// Reseed the random number generator. This resets the random number
 			// generator.
@@ -51,7 +62,7 @@ namespace Models
 			}
 
 			// Selects the site at index and returns a const pointer to the Site object.
-			const Site* const SelectSite(int index) const
+			const Site* SelectSite(int index) const
 			{
 				return &Sites[index];
 			}
@@ -60,12 +71,13 @@ namespace Models
 			void AppendSite(Site newSite)
 			{
 				Sites.push_back(newSite);
+				Sites.back().SetLocation(Sites.size()-1);
 			}
 
 			// Add a new "empty" site to the end of the Sites vector.
 			void AddSite()
 			{
-				Sites.push_back(Site(0.0, 0.0, 0.0));
+				Sites.push_back(Site(0.0, 0.0, 0.0, Sites.size()));
 			}
 
 			// Gets the number of sites in the model.

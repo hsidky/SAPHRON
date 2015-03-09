@@ -16,13 +16,28 @@ class Site : public Visitors::Visitable
 		// Site species
 		int species = 1;
 
+		// Location in container.
+		unsigned int _location;
+
 		// Neighboring sites. In a vector/array of sites, this holds the indices
 		// of the sites that are considered neighbors.
 		std::vector<int> neighbors;
 
 	public:
-		// Initializes a site at given coordinates.
-		Site(double x, double y, double z) : x(x), y(y), z(z) {};
+		// Initializes a site at given coordinates and location in a container.
+		Site(double x, double y, double z, unsigned int location)
+			: x(x), y(y), z(z), _location(location) {};
+
+		// Gets the location of site in a container.
+		unsigned int GetLocation() const
+		{
+			return _location;
+		}
+
+		unsigned int SetLocation(unsigned int location)
+		{
+			return _location = location;
+		}
 
 		// Gets x coordinate.
 		double GetXCoordinate()
