@@ -149,5 +149,11 @@
     <ClInclude Include="src\Simulation\CSVObserver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Properties\Property.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Properties\GlobalDirector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

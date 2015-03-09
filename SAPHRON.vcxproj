@@ -177,6 +177,8 @@
     <ClInclude Include="src\moves\Move.h" />
     <ClInclude Include="src\moves\SpeciesSwapMove.h" />
     <ClInclude Include="src\moves\SphereUnitVectorMove.h" />
+    <ClInclude Include="src\Properties\GlobalDirector.h" />
+    <ClInclude Include="src\Properties\Property.h" />
     <ClInclude Include="src\Rand.h" />
     <ClInclude Include="src\Simulation\CSVObserver.h" />
     <ClInclude Include="src\simulation\SimEvent.h" />

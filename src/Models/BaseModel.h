@@ -50,6 +50,12 @@ namespace Models
 				return &Sites[index];
 			}
 
+			// Selects the site at index and returns a const pointer to the Site object.
+			const Site* const SelectSite(int index) const
+			{
+				return &Sites[index];
+			}
+
 			// Appends an existing site (shallow copy) to the end of Sites vector.
 			void AppendSite(Site newSite)
 			{
@@ -63,7 +69,7 @@ namespace Models
 			}
 
 			// Gets the number of sites in the model.
-			int GetSiteCount()
+			int GetSiteCount() const
 			{
 				return (int)this->Sites.size();
 			}

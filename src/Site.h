@@ -110,8 +110,14 @@ class Site : public Visitors::Visitable
 			return u[2] = newuz;
 		}
 
-		// Gets the unit vectors
+		// Gets the unit vectors.
 		std::vector<double>& GetUnitVectors()
+		{
+			return u;
+		}
+
+		// Gets the unit vectors (copy).
+		const std::vector<double>& GetUnitVectors() const
 		{
 			return u;
 		}
