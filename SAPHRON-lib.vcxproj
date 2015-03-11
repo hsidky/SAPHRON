@@ -11,19 +11,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E7E5CE4C-F19E-4216-AD81-3293375F1F9F}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{7A387E60-1ED3-4787-9BB2-2D9B88648FB5}</ProjectGuid>
+    <RootNamespace>SAPHRONlib</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -36,75 +39,67 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)$(Platform)\lib\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\lib\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)$(Platform)\lib\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\lib\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>_CONSOLE</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo-4.650.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>blas_win64_MT.lib;lapack_win64_MT.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>extern;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo-4.650.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo-4.650.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
       <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo-4.650.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>extern;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>blas_win64_MT.lib;lapack_win64_MT.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ensembles\DensityOfStatesEnsemble.cpp" />
-    <ClCompile Include="src\ensembles\SemiGrandDOSEnsemble.cpp" />
     <ClCompile Include="src\Ensembles\NVTEnsemble.cpp" />
     <ClCompile Include="src\ensembles\ParallelDOSEnsemble.cpp" />
+    <ClCompile Include="src\ensembles\SemiGrandDOSEnsemble.cpp" />
     <ClCompile Include="src\ensembles\WangLandauDOSEnsemble.cpp" />
-    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\models\Lattice3DModel.cpp" />
     <ClCompile Include="src\models\LebwohlLasherModel.cpp" />
     <ClCompile Include="src\models\LLCellModel.cpp" />
+    <ClCompile Include="src\Simulation\ConsoleObserver.cpp" />
     <ClCompile Include="src\Simulation\CSVObserver.cpp" />
     <ClCompile Include="src\simulation\SimObservable.cpp" />
     <ClCompile Include="src\Simulation\SimObserver.cpp" />
-    <ClCompile Include="src\Simulation\ConsoleObserver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\prng_engine.h" />
     <ClInclude Include="include\ThreadPool.h" />
-    <ClInclude Include="src\dataloggers\ConsoleDataLogger.h" />
-    <ClInclude Include="src\dataloggers\CSVDataLogger.h" />
-    <ClInclude Include="src\dataloggers\DataLogger.h" />
     <ClInclude Include="src\ensembles\DensityOfStatesEnsemble.h" />
     <ClInclude Include="src\ensembles\Ensemble.h" />
-    <ClInclude Include="src\ensembles\SemiGrandDOSEnsemble.h" />
     <ClInclude Include="src\ensembles\NVTEnsemble.h" />
     <ClInclude Include="src\ensembles\ParallelDOSEnsemble.h" />
+    <ClInclude Include="src\ensembles\SemiGrandDOSEnsemble.h" />
     <ClInclude Include="src\ensembles\WangLandauDOSEnsemble.h" />
     <ClInclude Include="src\Histogram.h" />
     <ClInclude Include="src\models\BaseModel.h" />
@@ -119,13 +114,12 @@
     <ClInclude Include="src\Properties\GlobalDirector.h" />
     <ClInclude Include="src\Properties\Property.h" />
     <ClInclude Include="src\Rand.h" />
+    <ClInclude Include="src\Simulation\ConsoleObserver.h" />
     <ClInclude Include="src\Simulation\CSVObserver.h" />
     <ClInclude Include="src\simulation\SimEvent.h" />
     <ClInclude Include="src\simulation\SimObservable.h" />
     <ClInclude Include="src\simulation\SimObserver.h" />
-    <ClInclude Include="src\simulation\SimVisitor.h" />
     <ClInclude Include="src\Site.h" />
-    <ClInclude Include="src\Simulation\ConsoleObserver.h" />
     <ClInclude Include="src\visitors\Visitable.h" />
     <ClInclude Include="src\visitors\Visitor.h" />
   </ItemGroup>

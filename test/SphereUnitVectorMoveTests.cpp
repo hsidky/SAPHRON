@@ -9,7 +9,7 @@ using namespace Moves;
 // Test SphereUnitVectorMove default behavior
 TEST(SphereUnitVectorMove, DefaultBehavior)
 {
-	Site s(0, 0, 0);
+	Site s(0, 0, 0, 0);
 	SphereUnitVectorMove m;
 
 	// Get random unit vector and check that its norm is 1.
@@ -37,7 +37,7 @@ TEST(SphereUnitVectorMove, DefaultBehavior)
 // Test if force acceptance works.
 TEST(SphereUnitVectorMove, ForceAccept)
 {
-	Site s(0, 0, 0);
+	Site s(0, 0, 0, 0);
 	SphereUnitVectorMove m;
 
 	m.SetForceAccept(true);

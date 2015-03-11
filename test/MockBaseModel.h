@@ -7,9 +7,11 @@ using namespace Models;
 class MockBaseModel : public BaseModel
 {
 	public:
-
+#ifdef _MSC_VER
+		MockBaseModel(int size, int seed = 1) : BaseModel(size, seed){}
+#else
 		using BaseModel::BaseModel;
-
+#endif
 		double EvaluateHamiltonian(int site)
 		{
 			return site;

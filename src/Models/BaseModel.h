@@ -22,7 +22,7 @@ namespace Models
 			void ResetSiteLocations()
 			{
 				// Set locations of sites.
-				for (size_t i = 0; i < Sites.size(); i++)
+				for (unsigned int i = 0; i < Sites.size(); i++)
 					Sites[i].SetLocation(i);
 			}
 
@@ -71,13 +71,13 @@ namespace Models
 			void AppendSite(Site newSite)
 			{
 				Sites.push_back(newSite);
-				Sites.back().SetLocation(Sites.size()-1);
+				Sites.back().SetLocation((unsigned int)Sites.size()-1);
 			}
 
 			// Add a new "empty" site to the end of the Sites vector.
 			void AddSite()
 			{
-				Sites.push_back(Site(0.0, 0.0, 0.0, Sites.size()));
+				Sites.push_back(Site(0.0, 0.0, 0.0, (unsigned int)Sites.size()));
 			}
 
 			// Gets the number of sites in the model.

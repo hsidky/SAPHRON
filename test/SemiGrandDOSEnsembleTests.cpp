@@ -51,5 +51,4 @@ TEST(SemiGrandDOSEnsemble, DefaultBehavior)
 	ensemble.AddObserver(&console);
 	ensemble.AddMove(move);
 	ensemble.AddMove(move2);
-	ensemble.Sweep();
 }

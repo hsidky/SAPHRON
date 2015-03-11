@@ -7,7 +7,7 @@ using namespace Moves;
 // Test FlipSpinMove default behavior.
 TEST(FlipSpinMove, DefaultBehavior)
 {
-    Site s(0, 0, 0);
+    Site s(0, 0, 0, 0);
     FlipSpinMove m;
 
     // Set the Z unit vector and test move
@@ -21,8 +21,8 @@ TEST(FlipSpinMove, DefaultBehavior)
 // Test reusability of move on different sites.
 TEST(FlipSpinMove, ChangeSiteReusability)
 {
-  Site s1(0, 0, 0);
-  Site s2(0, 0, 0);
+  Site s1(0, 0, 0, 0);
+  Site s2(0, 0, 0, 0);
   FlipSpinMove m;
 
   // Set the Z unit vector and test move
@@ -41,7 +41,7 @@ TEST(FlipSpinMove, ChangeSiteReusability)
 
 TEST(FlipSpinMove, PassPointerByReference)
 {
-  Site s(0, 0, 0);
+  Site s(0, 0, 0, 0);
   FlipSpinMove m;
 
   Site* sp = &s;

@@ -13,7 +13,7 @@ TEST(ParallelDOSEnsemble, DefaultConstructor)
 	Models::LebwohlLasherModel model(n, n, n);
 
 	ParallelDOSEnsemble<Site, WangLandauDOSEnsemble<Site> >
-	ensemble(model, -1.9, -0.5, 10000, 5, 0.5);
+	ensemble(model, -1.9, -0.5, (int) 10000, 5, 0.5);
 
 	// Check intervals
 	std::vector<Interval> intervals {
@@ -60,5 +60,4 @@ TEST(ParallelDOSEnsemble, ParallelBehavior)
 	ensemble(model, -1.9, -0.5, 2000, 4, 0.5);
 
 	ensemble.AddMove(move);
-	ensemble.Sweep();
 }

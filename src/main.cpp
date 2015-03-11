@@ -9,6 +9,7 @@
 #include "Moves/SphereUnitVectorMove.h"
 #include "Simulation/CSVObserver.h"
 #include "Simulation/ConsoleObserver.h"
+#include "Properties/GlobalDirector.h"
 
 // Include for parsing using stringstream
 #include <iostream>

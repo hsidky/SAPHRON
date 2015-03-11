@@ -6,7 +6,7 @@ using namespace Moves;
 // Test the default behavior of the species swap move.
 TEST(SpeciesSwapMove, DefaultBehavior)
 {
-	Site s(0, 0, 0);
+	Site s(0, 0, 0, 0);
 	SpeciesSwapMove m(3);
 
 	ASSERT_EQ(1, s.GetSpecies());

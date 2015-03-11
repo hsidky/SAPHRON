@@ -17,7 +17,8 @@ namespace Models
 			// The sites are initialized on a lattice including
 			// positions, nearest neighbors and spins. The default BaseModel
 			// parameters are used otherwise.
-			using Lattice3DModel::Lattice3DModel;
+			Ising3DModel(int xLength, int yLength, int zLength, int seed = 1)
+				: Lattice3DModel(xLength, yLength, zLength, seed){}
 
 			using Lattice3DModel::EvaluateHamiltonian;
 			// Evaluates the Ising Hamiltonian for a given site using the formula
