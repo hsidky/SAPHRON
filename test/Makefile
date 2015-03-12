@@ -21,7 +21,8 @@ TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \
 	    FlipSpinMoveTests.out NVTEnsembleTests.out \
 		LebwohlLasherModelTests.out SphereUnitVectorMoveTests.out LLCellModelTests.out \
 		HistogramTests.out WangLandauDOSEnsembleTests.out SpeciesSwapMoveTests.out \
-		SemiGrandDOSEnsembleTests.out ParallelDOSEnsembleTests.out SimFlagsTests.out
+		SemiGrandDOSEnsembleTests.out ParallelDOSEnsembleTests.out SimFlagsTests.out \
+		NewSiteTests.out NewLebwohlLasherFFTests.out NewSimpleLatticeWorldTests.out
 
 
 # Google Test libs to link against.
