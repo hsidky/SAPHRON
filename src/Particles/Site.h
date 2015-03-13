@@ -41,16 +41,10 @@ namespace SAPHRON
 				_director = director;
 			}
 
-			// Evaluates the Hamiltonian of the site.
-			virtual double EvaluateHamiltonian() override
-			{
-				return 1.0;
-			}
-
 			// Get descendants of the site (none).
-			virtual std::vector<Particle*> GetDescendants()
+			virtual std::vector<Particle*> GetChildren()
 			{
-				return {this};
+				return {};
 			}
 
 			virtual Particle* Clone() const override

@@ -64,11 +64,8 @@ namespace SAPHRON
 				_neighbors.emplace_back(neighbor);
 			}
 
-			// Evaluates the Hamiltonian of the particle.
-			virtual double EvaluateHamiltonian() = 0;
-
 			// Gets all descendants of a particle.
-			virtual std::vector<Particle*> GetDescendants() = 0;
+			virtual std::vector<Particle*> GetChildren() = 0;
 
 			// Clone particle.
 			virtual Particle* Clone() const = 0;

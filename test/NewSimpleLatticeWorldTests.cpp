@@ -15,7 +15,7 @@ TEST(SimpleLatticeWorld, DefaultConstructor)
 
 	world.ConfigureParticles({&site1, &site2, &site3}, {1.0/3.0, 1.0/3.0, 1.0/3.0});
 
-  ASSERT_EQ(27000, world.GetParticleCount());
+	ASSERT_EQ(27000, world.GetParticleCount());
 
 	std::map<std::string, int> counts {{"E1", 0}, {"E2", 0}, {"E3", 0}};
 	for(int i = 0; i < world.GetParticleCount(); i++)
