@@ -14,7 +14,7 @@ namespace SAPHRON
 	{
 		private:
 			int _xlength, _ylength, _zlength;
-
+			std::vector<ParticlePtr> _particles;
 			Rand _rand;
 
 		public:
@@ -48,7 +48,7 @@ namespace SAPHRON
 				// Initialize counts.
 				std::vector<int> counts(cnt);
 				for(int i = 0; i < cnt-1; i++)
-					counts[i] = round(fracs[i]*GetLatticeSize());
+					counts[i] = (int)std::round(fracs[i]*GetLatticeSize());
 
 				counts[cnt-1] = GetLatticeSize();
 				for(int i = 0; i < cnt-1; i++)
@@ -84,9 +84,21 @@ namespace SAPHRON
 			}
 
 			// Draw a random particle from the world.
-			virtual ParticlePtr DrawRandomParticle() override
+			virtual Particle* DrawRandomParticle() override
 			{
-				return _particles[_rand.int32() % this->_particles.size()];
+				return _particles[_rand.int32() % this->_particles.size()].get();
+			}
+
+			// Get number of high level particles in the world.
+			virtual int GetParticleCount() override
+			{
+				return (int)_particles.size();
+			}
+
+			// Get a particle by index.
+			virtual Particle* GetParticle(int location) override
+			{
+				return _particles[location].get();
 			}
 
 			int GetLatticeSize()

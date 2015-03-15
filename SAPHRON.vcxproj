@@ -48,7 +48,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo-4.650.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo-4.650.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
@@ -64,7 +64,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo-4.650.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo-4.650.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -102,6 +102,7 @@
     <ClInclude Include="src\dataloggers\DataLogger.h" />
     <ClInclude Include="src\ensembles\DensityOfStatesEnsemble.h" />
     <ClInclude Include="src\ensembles\Ensemble.h" />
+    <ClInclude Include="src\Ensembles\NewNVTEnsemble.h" />
     <ClInclude Include="src\ensembles\SemiGrandDOSEnsemble.h" />
     <ClInclude Include="src\ensembles\NVTEnsemble.h" />
     <ClInclude Include="src\ensembles\ParallelDOSEnsemble.h" />
@@ -114,6 +115,7 @@
     <ClInclude Include="src\models\LLCellModel.h" />
     <ClInclude Include="src\moves\FlipSpinMove.h" />
     <ClInclude Include="src\moves\Move.h" />
+    <ClInclude Include="src\Moves\MoveManager.h" />
     <ClInclude Include="src\moves\SpeciesSwapMove.h" />
     <ClInclude Include="src\moves\SphereUnitVectorMove.h" />
     <ClInclude Include="src\Properties\GlobalDirector.h" />

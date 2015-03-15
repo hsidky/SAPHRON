@@ -13,30 +13,48 @@ namespace SAPHRON
 	class Ensemble
 	{
 		private:
+			
+			// Boltzmann constant.
+			double _kb = 1.0;
 
-			// Reference to world.
-			World& _world;
+			// Iteration counter.
+			int _iterations = 0;
 
-			// Reference to force field manager.
-			ForceFieldManager& _ffmanager;
+		protected:
 
-			// Vector of moves.
-			std::vector<Move*> moves;
-
-		public:
-			Ensemble(World& world, ForceFieldManager& ffmanager) :
-				_world(world), _ffmanager(ffmanager){}
-
-			// Add a move to the move queue.
-			void PushMove(Move& move)
+			// Increment iterations.
+			inline void IncrementIterations()
 			{
-				moves.push_back(&move);
+				++_iterations;
 			}
 
-			// Pops a move from the end of the move queue.
-			void PopMove()
+		public:
+
+			// Run the Ensemble simulation for a specified number of iterations. 
+			virtual void Run(int iterations) = 0;
+
+			// Sets the Boltzmann constant.
+			void SetBoltzmannConstant(double kb)
 			{
-				moves.pop_back();
+				_kb = kb;
+			}
+
+			// Gets the Boltzmann constant.
+			inline double GetBoltzmannConstant()
+			{
+				return _kb;
+			}
+
+			// Gets the current iteration count.
+			inline int GetIteration()
+			{
+				return _iterations;
+			}
+
+			// Reset iteration count.
+			void ResetIterations()
+			{
+				_iterations = 0;
 			}
 	};
 }

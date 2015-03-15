@@ -3,6 +3,7 @@
 #include "Neighbor.h"
 #include <list>
 #include <string>
+#include <memory>
 #include <vector>
 
 namespace SAPHRON
@@ -17,6 +18,7 @@ namespace SAPHRON
 	typedef std::vector<double> Director;
 	typedef std::list<Neighbor> NeighborList;
 	typedef std::list<Neighbor>::iterator NeighborIterator;
+	typedef std::shared_ptr<Particle> ParticlePtr;
 
 	// Abstract class Particle represents either a composite or primitive object, from an atom/site to
 	// a molecule to a collection of molecules. It represents an common interface allowing the manipulation

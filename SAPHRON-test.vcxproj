@@ -75,6 +75,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\gtest-1.7.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -82,32 +84,19 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>extern\blas_win64_MT.lib;extern\lapack_win64_MT.lib;extern\gtestd.lib;extern\gtest_maind.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>x64\Debug\main.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="test\BaseModelTests.cpp" />
-    <ClCompile Include="test\FlipSpinMoveTests.cpp" />
-    <ClCompile Include="test\HistogramTests.cpp" />
-    <ClCompile Include="test\Ising3DModelTests.cpp" />
-    <ClCompile Include="test\LebwohlLasherModelTests.cpp" />
-    <ClCompile Include="test\LLCellModelTests.cpp" />
-    <ClCompile Include="test\NVTEnsembleTests.cpp" />
-    <ClCompile Include="test\ParallelDOSEnsembleTests.cpp" />
-    <ClCompile Include="test\RandTests.cpp" />
-    <ClCompile Include="test\SemiGrandDOSEnsembleTests.cpp" />
-    <ClCompile Include="test\SimFlagsTests.cpp" />
-    <ClCompile Include="test\SiteTests.cpp" />
-    <ClCompile Include="test\SpeciesSwapMoveTests.cpp" />
-    <ClCompile Include="test\SphereUnitVectorMoveTests.cpp" />
-    <ClCompile Include="test\WangLandauDOSEnsembleTests.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="test\MockBaseModel.h" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="SAPHRON-lib.vcxproj">
       <Project>{7a387e60-1ed3-4787-9bb2-2d9b88648fb5}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="test\NewForceFieldManagerTests.cpp" />
+    <ClCompile Include="test\NewLebwohlLasherFFTests.cpp" />
+    <ClCompile Include="test\NewSimpleLatticeWorldTests.cpp" />
+    <ClCompile Include="test\NewSiteTests.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
