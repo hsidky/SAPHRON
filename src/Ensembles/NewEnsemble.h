@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../ForceFields/ForceFieldManager.h"
-#include "../Moves/NewMove.h"
 #include "../Worlds/World.h"
 #include <vector>
 
@@ -13,7 +11,7 @@ namespace SAPHRON
 	class Ensemble
 	{
 		private:
-			
+
 			// Boltzmann constant.
 			double _kb = 1.0;
 
@@ -30,7 +28,7 @@ namespace SAPHRON
 
 		public:
 
-			// Run the Ensemble simulation for a specified number of iterations. 
+			// Run the Ensemble simulation for a specified number of iterations.
 			virtual void Run(int iterations) = 0;
 
 			// Sets the Boltzmann constant.
