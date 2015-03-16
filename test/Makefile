@@ -23,7 +23,7 @@ TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \
 		HistogramTests.out WangLandauDOSEnsembleTests.out SpeciesSwapMoveTests.out \
 		SemiGrandDOSEnsembleTests.out ParallelDOSEnsembleTests.out SimFlagsTests.out \
 		NewSiteTests.out NewLebwohlLasherFFTests.out NewSimpleLatticeWorldTests.out \
-		NewForceFieldManagerTests.out
+		NewForceFieldManagerTests.out NewSphereUnitVectorMoveTests.out NewNVTEnsembleTests.out
 
 
 # Google Test libs to link against.

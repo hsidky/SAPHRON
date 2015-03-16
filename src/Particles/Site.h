@@ -29,6 +29,12 @@ namespace SAPHRON
 				_position = position;
 			}
 
+			// Sets site position.
+			virtual void SetPosition(Position && position) override
+			{
+				_position = position;
+			}
+
 			// Gets site director.
 			virtual Director GetDirector() const override
 			{
@@ -37,6 +43,12 @@ namespace SAPHRON
 
 			// Sets site director.
 			virtual void SetDirector(const Director& director) override
+			{
+				_director = director;
+			}
+
+			// Sets site director.
+			virtual void SetDirector(Director && director) override
 			{
 				_director = director;
 			}

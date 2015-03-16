@@ -29,7 +29,7 @@ namespace SAPHRON
 				for(int i = 0; i < 3; i++)
 					dot += n1[i]*n2[i];
 
-				return _eps*(1.5*dot*dot - 0.5) + _gamma;
+				return -1.0*(_eps*(1.5*dot*dot - 0.5) + _gamma);
 			}
 	};
 }

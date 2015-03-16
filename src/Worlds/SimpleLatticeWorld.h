@@ -96,7 +96,7 @@ namespace SAPHRON
 			}
 
 			// Get a particle by index.
-			virtual Particle* GetParticle(int location) override
+			virtual Particle* SelectParticle(int location) override
 			{
 				return _particles[location].get();
 			}

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../Worlds/World.h"
 #include <vector>
 
 namespace SAPHRON

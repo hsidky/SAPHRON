@@ -2,8 +2,8 @@
 
 #include "Neighbor.h"
 #include <list>
-#include <string>
 #include <memory>
+#include <string>
 #include <vector>
 
 namespace SAPHRON
@@ -13,6 +13,11 @@ namespace SAPHRON
 		double x;
 		double y;
 		double z;
+
+		bool operator==(const Position& rhs)
+		{
+			return this->x == rhs.x && this->y == rhs.y && this->z == rhs.z;
+		}
 	};
 
 	typedef std::vector<double> Director;
@@ -48,11 +53,17 @@ namespace SAPHRON
 			// Move a particle to a new set of coordinates.
 			virtual void SetPosition(const Position& position) = 0;
 
+			// Move a particle to a new set of coordinates.
+			virtual void SetPosition(Position && position) = 0;
+
 			// Get the particle director.
 			virtual Director GetDirector() const = 0;
 
 			// Set the particle director.
 			virtual void SetDirector(const Director& director) = 0;
+
+			// Set the particle director.
+			virtual void SetDirector(Director && director) = 0;
 
 			// Gets neighbor list iterator.
 			NeighborList& GetNeighborList()

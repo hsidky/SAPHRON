@@ -10,7 +10,6 @@ namespace SAPHRON
 	// updating negihbor lists on particles.
 	class World
 	{
-
 		public:
 			// Draw a random particle from the world.
 			virtual Particle* DrawRandomParticle() = 0;
@@ -20,9 +19,9 @@ namespace SAPHRON
 
 			// Get number of high level particles in the world.
 			virtual int GetParticleCount() = 0;
-			
+
 			// Get a specific particle based on location.
-			virtual Particle* GetParticle(int location) = 0;
+			virtual Particle* SelectParticle(int location) = 0;
 
 			//virtual int GetWorldParticleCount() = 0;
 

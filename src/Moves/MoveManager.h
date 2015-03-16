@@ -13,7 +13,7 @@ namespace SAPHRON
 			std::vector<Move*> _moves;
 
 		public:
-			MoveManager(int seed = 1) : _rand(1){}
+			MoveManager(int seed = 1) : _rand(seed){}
 
 			// Add a move to the move queue.
 			void PushMove(Move& move)

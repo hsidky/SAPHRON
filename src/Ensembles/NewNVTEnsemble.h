@@ -19,6 +19,9 @@ namespace SAPHRON
 			// System temperature.
 			double _temperature;
 
+			// System energy
+			double _energy;
+
 			// Reference to world.
 			World& _world;
 
@@ -54,7 +57,11 @@ namespace SAPHRON
 
 					if(AcceptanceProbability(prevH, currH) < _rand.doub())
 						move->Undo();
+					else
+						_energy += (currH - prevH);
 				}
+
+				this->IncrementIterations();
 			}
 
 		public:
@@ -63,12 +70,27 @@ namespace SAPHRON
 			            MoveManager& mmanager,
 			            double temperature,
 			            int seed = 1) :
-				_temperature(temperature), _world(world), _ffmanager(ffmanager), _mmanager(mmanager),
-				_rand(seed) {}
+				_temperature(temperature), _energy(0.0), _world(world),
+				_ffmanager(ffmanager), _mmanager(mmanager), _rand(seed)
+			{
+				_energy = 0.0;
+				// Calculate initial energy.
+				for(int i = 0; i < _world.GetParticleCount(); ++i)
+				{
+					auto particle = _world.SelectParticle(i);
+					_energy += _ffmanager.EvaluateHamiltonian(*particle);
+				}
+				_energy /= 2.0;
+			}
 
 			// Run the NVT ensemble fro a specified number of iterations.
 			virtual void Run(int iterations) override
 			{
+				for(int i = 0; i < iterations; ++i)
+				{
+					Iterate();
+					std::cout << "Energy: " << _energy/(_world.GetParticleCount()) << std::endl;
+				}
 			}
 	};
 }
