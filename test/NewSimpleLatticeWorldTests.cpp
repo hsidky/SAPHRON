@@ -22,7 +22,7 @@ TEST(SimpleLatticeWorld, DefaultConstructor)
 	for(int i = 0; i < world.GetParticleCount(); i++)
 	{
 		auto particle = world.SelectParticle(i);
-		counts[particle->GetIdentifier()]++;
+		counts[particle->GetIdentifierString()]++;
 	}
 
 	ASSERT_EQ(9000, counts["E1"]);

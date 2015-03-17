@@ -87,10 +87,7 @@ namespace SAPHRON
 			virtual void Run(int iterations) override
 			{
 				for(int i = 0; i < iterations; ++i)
-				{
 					Iterate();
-					std::cout << "Energy: " << _energy/(_world.GetParticleCount()) << std::endl;
-				}
 			}
 	};
 }

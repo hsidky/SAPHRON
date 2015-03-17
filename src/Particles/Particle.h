@@ -2,6 +2,7 @@
 
 #include "Neighbor.h"
 #include <list>
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -23,6 +24,7 @@ namespace SAPHRON
 	typedef std::vector<double> Director;
 	typedef std::list<Neighbor> NeighborList;
 	typedef std::list<Neighbor>::iterator NeighborIterator;
+	typedef std::map<std::string, int> IdentityMap;
 	typedef std::shared_ptr<Particle> ParticlePtr;
 
 	// Abstract class Particle represents either a composite or primitive object, from an atom/site to
@@ -31,20 +33,56 @@ namespace SAPHRON
 	class Particle
 	{
 		private:
+
+			// String identifier.
 			std::string _identifier;
+
+			// Integer identifier.
+			int _ID;
+
+			// Neighbor identifier.
 			NeighborList _neighbors;
+
+			// Next ID counter for unique map ID.
+			static int _nextID;
+
+			// Map identifier.
+			static IdentityMap _identityMap;
 
 		public:
 
 			// Initialize a particle with a particular identifier. This string represents the global type
 			// identifier for this particle.
-			Particle(std::string identifier) : _identifier(identifier){}
+			Particle(std::string identifier) : _identifier(identifier), _ID(0)
+			{
+				auto search = _identityMap.find(identifier);
+				if(search != _identityMap.end())
+					_ID = search->second;
+				else
+				{
+					_ID = ++_nextID;
+					_identityMap.insert({identifier, _ID});
+				}
+			}
 
 			virtual ~Particle() {}
 
-			std::string GetIdentifier()
+			// Get particle identifier.
+			int GetIdentifier()
+			{
+				return _ID;
+			}
+
+			// Get particle string identifier.
+			std::string GetIdentifierString()
 			{
 				return _identifier;
+			}
+
+			// Get identity map.
+			static IdentityMap GetIdentityMap()
+			{
+				return _identityMap;
 			}
 
 			// Get particle position.
@@ -83,4 +121,7 @@ namespace SAPHRON
 			// Clone particle.
 			virtual Particle* Clone() const = 0;
 	};
+
+	int Particle::_nextID = 0;
+	IdentityMap Particle::_identityMap;
 }

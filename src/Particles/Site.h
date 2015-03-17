@@ -54,7 +54,7 @@ namespace SAPHRON
 			}
 
 			// Get descendants of the site (none).
-			virtual std::vector<Particle*> GetChildren()
+			virtual std::vector<Particle*> GetChildren() override
 			{
 				return {};
 			}

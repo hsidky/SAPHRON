@@ -15,7 +15,7 @@ TEST(Site, DefaultConstructor)
 	for(auto& dir : s.GetDirector())
 		ASSERT_EQ(0.0, dir);
 
-	ASSERT_EQ("L1", s.GetIdentifier());
+	ASSERT_EQ("L1", s.GetIdentifierString());
 
 	// Set a few things
 	Director d {0.1, 0.2, 0.4};
@@ -23,6 +23,27 @@ TEST(Site, DefaultConstructor)
 	ASSERT_EQ(d, s.GetDirector());
 	d[0] = 1.0;
 	ASSERT_NE(d, s.GetDirector());
+}
+
+TEST(Site, Identifiers)
+{
+	Site s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+
+	ASSERT_EQ("L1", s1.GetIdentifierString());
+	ASSERT_EQ(1, s1.GetIdentifier());
+
+	Site s2({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+
+	ASSERT_EQ("L1", s2.GetIdentifierString());
+	ASSERT_EQ(1, s2.GetIdentifier());
+
+	Site s3({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L2");
+
+	ASSERT_EQ("L2", s3.GetIdentifierString());
+	ASSERT_EQ(2, s3.GetIdentifier());
+
+	auto map = Particle::GetIdentityMap();
+	ASSERT_EQ(2, (int)map.size());
 }
 
 TEST(Site, Neighbors)
@@ -43,7 +64,7 @@ TEST(Site, Neighbors)
 	int i = 0;
 	for(NeighborIterator neighbor = neighbors.begin(); neighbor != neighbors.end(); ++neighbor)
 	{
-		auto id = neighbor->GetParticle()->GetIdentifier();
+		auto id = neighbor->GetParticle()->GetIdentifierString();
 
 		ASSERT_EQ(vals[i], id);
 
