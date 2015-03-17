@@ -8,16 +8,22 @@
 
 namespace SAPHRON
 {
-	typedef std::pair<int, int> ParticlePair;
-	typedef std::map<ParticlePair, ForceField*>::iterator ForceFieldIterator;
-
 	// Class responsible for managing forcefields and evaluating energies of particles.
 	class ForceFieldManager
 	{
 		private:
-			std::map<ParticlePair, ForceField*> _forcefields;
+			std::vector<std::vector<ForceField*> > _forcefields;
+
+			void ResizeFF(int n)
+			{
+				_forcefields.resize(n);
+				for(int i = 0; i < n; i++)
+					_forcefields[i].resize(n, nullptr);
+			}
 
 		public:
+
+			ForceFieldManager() : _forcefields(1,std::vector<ForceField*>(1, nullptr)) {}
 
 			// Adds a forcefield to the manager.
 			void AddForceField(std::string p1type, std::string p2type, ForceField& ff)
@@ -39,7 +45,11 @@ namespace SAPHRON
 			// Adds a forcefield to the manager.
 			void AddForceField(int p1type, int p2type, ForceField& ff)
 			{
-				_forcefields.insert({{p1type, p2type}, &ff});
+				if((int)_forcefields.size()-1 < std::max(p1type,p2type))
+					ResizeFF(std::max(p1type,p2type)+1);
+
+				(_forcefields.at(p1type)).at(p2type) = &ff;
+				(_forcefields.at(p2type)).at(p1type) = &ff;
 			}
 
 			// Removes a forcefield from the manager.
@@ -62,24 +72,22 @@ namespace SAPHRON
 			// Removes a forcefield from the manager.
 			void RemoveForceField(int p1type, int p2type)
 			{
-				_forcefields.erase(_forcefields.find({p1type, p2type}));
+				(_forcefields.at(p1type)).at(p2type) = nullptr;
+				(_forcefields.at(p2type)).at(p1type) = nullptr;
 			}
 
 			// Evaluate the Hamiltonian of the particle.
-			double EvaluateHamiltonian(Particle& particle)
+			inline double EvaluateHamiltonian(Particle& particle)
 			{
 				double h = 0;
 				auto& neighbors = particle.GetNeighborList();
 				for(auto& neighbor : neighbors)
 				{
 					auto* particle2 = neighbor.GetParticle();
-					auto& search = _forcefields.find({particle.GetIdentifier(),
-					                                  particle2->GetIdentifier()});
-					if(search != _forcefields.end())
-					{
-						auto ff = search->second;
+
+					auto* ff = _forcefields[particle.GetIdentifier()][particle2->GetIdentifier()];
+					if(ff != nullptr)
 						h += ff->Evaluate(particle, *particle2);
-					}
 				}
 
 				for(auto &child : particle.GetChildren())

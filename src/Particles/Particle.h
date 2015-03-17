@@ -97,6 +97,9 @@ namespace SAPHRON
 			// Get the particle director.
 			virtual Director GetDirector() const = 0;
 
+			// Get the particle director pointer.
+			virtual const Director& GetDirectorRef() const = 0;
+
 			// Set the particle director.
 			virtual void SetDirector(const Director& director) = 0;
 

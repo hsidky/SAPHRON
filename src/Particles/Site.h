@@ -41,6 +41,11 @@ namespace SAPHRON
 				return _director;
 			}
 
+			virtual const Director& GetDirectorRef() const override
+			{
+				return _director;
+			}
+
 			// Sets site director.
 			virtual void SetDirector(const Director& director) override
 			{

@@ -19,10 +19,10 @@ namespace SAPHRON
 			LebwohlLasherFF(double eps, double gamma) : _eps(eps), _gamma(gamma) {}
 
 			// Evaluate Hamiltonian.
-			virtual double Evaluate(const Particle& p1, const Particle& p2) override
+			inline virtual double Evaluate(const Particle& p1, const Particle& p2) override
 			{
-				auto n1 = p1.GetDirector();
-				auto n2 = p2.GetDirector();
+				auto& n1 = p1.GetDirectorRef();
+				auto& n2 = p2.GetDirectorRef();
 
 				// Dot product
 				double dot = 0;

@@ -88,6 +88,8 @@ namespace SAPHRON
 			{
 				for(int i = 0; i < iterations; ++i)
 					Iterate();
+
+				std::cout << "Final energy: " << _energy/_world.GetParticleCount() << std::endl;
 			}
 	};
 }
