@@ -2,8 +2,8 @@
 
 #include "../Particles/Particle.h"
 #include "ForceField.h"
+#include <algorithm>
 #include <iostream>
-#include <map>
 #include <utility>
 
 namespace SAPHRON
@@ -28,10 +28,11 @@ namespace SAPHRON
 			// Adds a forcefield to the manager.
 			void AddForceField(std::string p1type, std::string p2type, ForceField& ff)
 			{
-				auto map = Particle::GetIdentityMap();
-				auto p1 = map.find(p1type);
-				auto p2 = map.find(p2type);
-				if(p1 == map.end() || p2 == map.end())
+				auto list = Particle::GetIdentityList();
+				auto p1 = std::find(list.begin(), list.end(), p1type);
+				auto p2 = std::find(list.begin(), list.end(), p2type);
+
+				if(p1 == list.end() || p2 == list.end())
 				{
 					std::cerr << "ERROR: Uknown particle types. "
 					          << "Make sure they have been registered with the identity map."
@@ -39,7 +40,7 @@ namespace SAPHRON
 					exit(-1);
 				}
 
-				AddForceField(p1->second, p2->second, ff);
+				AddForceField(p1-list.begin(), p2-list.begin(), ff);
 			}
 
 			// Adds a forcefield to the manager.
@@ -55,10 +56,10 @@ namespace SAPHRON
 			// Removes a forcefield from the manager.
 			void RemoveForceField(std::string p1type, std::string p2type)
 			{
-				auto map = Particle::GetIdentityMap();
-				auto p1 = map.find(p1type);
-				auto p2 = map.find(p2type);
-				if(p1 == map.end() || p2 == map.end())
+				auto list = Particle::GetIdentityList();
+				auto p1 = std::find(list.begin(), list.end(), p1type);
+				auto p2 = std::find(list.begin(), list.end(), p2type);
+				if(p1 == list.end() || p2 == list.end())
 				{
 					std::cerr << "ERROR: Uknown particle types. "
 					          << "Make sure they have been registered with the identity map."
@@ -66,7 +67,7 @@ namespace SAPHRON
 					exit(-1);
 				}
 
-				RemoveForceField(p1->second, p2->second);
+				RemoveForceField(p1-list.begin(), p2-list.begin());
 			}
 
 			// Removes a forcefield from the manager.

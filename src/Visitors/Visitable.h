@@ -2,7 +2,7 @@
 
 #include "Visitor.h"
 
-namespace Visitors
+namespace SAPHRON
 {
 	class Visitable
 	{

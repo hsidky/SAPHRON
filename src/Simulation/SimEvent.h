@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Simulation
+namespace SAPHRON
 {
 	class SimObservable;
 

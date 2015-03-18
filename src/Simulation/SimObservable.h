@@ -7,7 +7,7 @@
 
 using namespace Visitors;
 
-namespace Simulation
+namespace SAPHRON
 {
 	// Abstract class for observables in a simulation.
 	class SimObservable : public Visitable

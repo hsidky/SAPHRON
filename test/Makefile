@@ -35,6 +35,8 @@ LINKER_DEPS = -llapack -lblas -lgfortran -lquadmath
 # House-keeping build targets.
 all : pre-build $(TESTS)
 
+tests : $(TESTS)
+
 pre-build:
 	cd $(SRC_DIR) && $(MAKE)
 

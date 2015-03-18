@@ -1,18 +1,21 @@
 #pragma once
 
 #include "../Rand.h"
-#include "../Site.h"
-#include "Move.h"
+#include "NewMove.h"
 
-namespace Moves
+namespace SAPHRON
 {
-	// Class for random swapping the species type of a site.
-	class SpeciesSwapMove : public Move<Site>
+	// Identity swap move. This move merely swaps the identity of a particle. Meaning that it is useful
+	// when performing (semi)grand canonical simulations on spins or atoms, but NOT on moleucles or
+	// composite particle types. The only thing altered is the identifier and string.
+	class IdentitySwapMove : public Move
 	{
 		private:
-			Site* _site;
-			int _prevSpecies;
-			Rand rand;
+			Particle* _particle;
+
+			std::string _prevSpecies;
+
+			Rand _rand;
 			int _speciesCount;
 
 		public:
@@ -20,9 +23,9 @@ namespace Moves
 				rand(seed), _speciesCount(speciesCount) {}
 
 			// Reassigns the species of a site with a new random one.
-			void Perform(Site& site)
+			virtual void Perform(Particle& particle) override
 			{
-				_site = &site;
+				_particle = &particle;
 
 				// Record previous species
 				_prevSpecies = _site->GetSpecies();

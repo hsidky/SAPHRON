@@ -30,20 +30,20 @@ TEST(Site, Identifiers)
 	Site s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 
 	ASSERT_EQ("L1", s1.GetIdentifierString());
-	ASSERT_EQ(1, s1.GetIdentifier());
+	ASSERT_EQ(0, s1.GetIdentifier());
 
 	Site s2({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 
 	ASSERT_EQ("L1", s2.GetIdentifierString());
-	ASSERT_EQ(1, s2.GetIdentifier());
+	ASSERT_EQ(0, s2.GetIdentifier());
 
 	Site s3({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L2");
 
 	ASSERT_EQ("L2", s3.GetIdentifierString());
-	ASSERT_EQ(2, s3.GetIdentifier());
+	ASSERT_EQ(1, s3.GetIdentifier());
 
-	auto map = Particle::GetIdentityMap();
-	ASSERT_EQ(2, (int)map.size());
+	auto list = Particle::GetIdentityList();
+	ASSERT_EQ(2, (int)list.size());
 }
 
 TEST(Site, Neighbors)
