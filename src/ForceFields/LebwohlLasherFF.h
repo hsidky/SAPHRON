@@ -24,10 +24,8 @@ namespace SAPHRON
 				auto& n1 = p1.GetDirectorRef();
 				auto& n2 = p2.GetDirectorRef();
 
-				// Dot product
-				double dot = 0;
-				for(int i = 0; i < 3; i++)
-					dot += n1[i]*n2[i];
+				// Dot product (hard coded to avoid expensive cache misses).
+				double dot = n1[0]*n2[0] + n1[1]*n2[1] + n1[2]*n2[2];
 
 				return -1.0*(_eps*(1.5*dot*dot - 0.5) + _gamma);
 			}

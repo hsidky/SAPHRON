@@ -14,7 +14,7 @@ namespace SAPHRON
 	{
 		private:
 			int _xlength, _ylength, _zlength;
-			std::vector<ParticlePtr> _particles;
+			std::vector<Particle*> _particles;
 			Rand _rand;
 
 		public:
@@ -86,7 +86,7 @@ namespace SAPHRON
 			// Draw a random particle from the world.
 			virtual Particle* DrawRandomParticle() override
 			{
-				return _particles[_rand.int32() % this->_particles.size()].get();
+				return _particles[_rand.int32() % this->_particles.size()];
 			}
 
 			// Get number of high level particles in the world.
@@ -98,7 +98,7 @@ namespace SAPHRON
 			// Get a particle by index.
 			virtual Particle* SelectParticle(int location) override
 			{
-				return _particles[location].get();
+				return _particles[location];
 			}
 
 			int GetLatticeSize()
@@ -138,11 +138,19 @@ namespace SAPHRON
 
 						if((rij.x + rij.y +rij.z) == 1)
 						{
-							ni->AddNeighbor(Neighbor(*nj.get()));
-							nj->AddNeighbor(Neighbor(*ni.get()));
+							ni->AddNeighbor(Neighbor(*nj));
+							nj->AddNeighbor(Neighbor(*ni));
 						}
 					}
 				}
+			}
+
+			~SimpleLatticeWorld()
+			{
+				for(auto it = _particles.begin(); it != _particles.end(); ++it)
+					delete *it;
+
+				_particles.clear();
 			}
 	};
 }
