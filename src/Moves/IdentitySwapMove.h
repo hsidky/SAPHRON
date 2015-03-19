@@ -13,14 +13,15 @@ namespace SAPHRON
 		private:
 			Particle* _particle;
 
-			std::string _prevSpecies;
+			int _prevSpecies;
 
 			Rand _rand;
+
 			int _speciesCount;
 
 		public:
-			SpeciesSwapMove(int speciesCount, int seed = 1337) :
-				rand(seed), _speciesCount(speciesCount) {}
+			IdentitySwapMove(int speciesCount, int seed = 1337) :
+				_particle(nullptr), _prevSpecies(0), _rand(seed), _speciesCount(speciesCount) {}
 
 			// Reassigns the species of a site with a new random one.
 			virtual void Perform(Particle& particle) override
@@ -28,25 +29,22 @@ namespace SAPHRON
 				_particle = &particle;
 
 				// Record previous species
-				_prevSpecies = _site->GetSpecies();
+				_prevSpecies = _particle->GetIdentifier();
 
-				// Select a random species
-				int newSpecies =  rand.int32() % _speciesCount + 1;
-
-				_site->SetSpecies(newSpecies);
+				_particle->SetIdentity(_rand.int32() % _speciesCount);
 			}
 
 			// Undo the move on a site.
 			void Undo()
 			{
-				_site->SetSpecies(_prevSpecies);
+				_particle->SetIdentity(_prevSpecies);
 			}
 
 			// Clone move.
 			virtual Move* Clone() const
 			{
-				return new SpeciesSwapMove(
-				               static_cast<const SpeciesSwapMove&>(*this)
+				return new IdentitySwapMove(
+				               static_cast<const IdentitySwapMove&>(*this)
 				               );
 			}
 	};
