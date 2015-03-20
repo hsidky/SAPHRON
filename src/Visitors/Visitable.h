@@ -4,6 +4,7 @@
 
 namespace SAPHRON
 {
+	// Abstract base class for visitable objects, traversed (usually) by loggers.
 	class Visitable
 	{
 		public:

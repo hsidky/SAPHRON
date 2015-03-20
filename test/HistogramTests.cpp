@@ -1,6 +1,8 @@
 #include "../src/Histogram.h"
 #include "gtest/gtest.h"
 
+using namespace SAPHRON;
+
 //Test default histogram behavor
 TEST(Histogram, DefaultBehavior)
 {

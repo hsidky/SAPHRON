@@ -4,40 +4,23 @@
 #include "SimEvent.h"
 #include <mutex>
 
-using namespace Visitors;
-
-namespace Simulation
+namespace SAPHRON
 {
 	// Abstract class for objects wanting to observe a simulation.
 	class SimObserver : public Visitor
 	{
 		private:
 			unsigned int _frequency = 1;
-			int _iteration = 0;
-			int _identifier = 0;
-			bool _forceObserve = false;
+			SimEvent _event;
 			std::mutex _mutex;
 
 		protected:
 
 			const SimFlags Flags;
 
-			// Get iteration count.
-			int GetIteration()
+			SimEvent& GetEvent()
 			{
-				return _iteration;
-			}
-
-			// Set iteration count.
-			int SetIteration(int i)
-			{
-				return _iteration = i;
-			}
-
-			// Gets the observable ID.
-			int GetObservableID()
-			{
-				return _identifier;
+				return _event;
 			}
 
 			// Get logging frequency.
@@ -52,83 +35,20 @@ namespace Simulation
 				return _frequency = f;
 			}
 
-			bool IsObservableIteration()
-			{
-				return _iteration % _frequency == 0 || _forceObserve;
-			}
-
-			virtual void VisitInternal(Ensembles::WangLandauDOSEnsemble<Site>* e) = 0;
-			virtual void VisitInternal(Ensembles::SemiGrandDOSEnsemble<Site>* e) = 0;
-			virtual void VisitInternal(Ensembles::DensityOfStatesEnsemble<Site>* e) = 0;
-			virtual void VisitInternal(Ensembles::NVTEnsemble<Site>* e) = 0;
-			virtual void VisitInternal(Models::BaseModel* m) = 0;
-			virtual void VisitInternal(Site* s) = 0;
-			virtual void VisitInternal(Histogram* h) = 0;
+			virtual void VisitInternal(Ensemble* e) = 0;
 
 		public:
 
 			// Initialize a SimObserver class with a specified observation frequency.
 			SimObserver(SimFlags flags, unsigned int frequency = 1)
-				: _frequency(frequency), Flags(flags){}
-
-			// Lock Observer.
-			void LockObserver()
-			{
-				_mutex.lock();
-			}
-
-			// Unlock observer.
-			void UnlockObserver()
-			{
-				_mutex.unlock();
-			}
-
-			// Determines if an observer is interested in observing a particular event.
-			bool IsObservableEvent(SimEvent& e);
+				: _frequency(frequency), _event(nullptr, 0), Flags(flags){}
 
 			// Update observer when simulation has changed.
 			void Update(SimEvent& e);
 
-			void Visit(Ensembles::WangLandauDOSEnsemble<Site>* e) override
+			void Visit(Ensemble* e) override
 			{
-				if (IsObservableIteration())
-					VisitInternal(e);
-			}
-
-			void Visit(Ensembles::SemiGrandDOSEnsemble<Site>* e) override
-			{
-				if (IsObservableIteration())
-					VisitInternal(e);
-			}
-
-			void Visit(Ensembles::DensityOfStatesEnsemble<Site>* e) override
-			{
-				if (IsObservableIteration())
-					VisitInternal(e);
-			}
-
-			void Visit(Ensembles::NVTEnsemble<Site>* e) override
-			{
-				if (IsObservableIteration())
-					VisitInternal(e);
-			};
-
-			void Visit(Models::BaseModel* m) override
-			{
-				if (IsObservableIteration())
-					VisitInternal(m);
-			};
-
-			void Visit(Site* s) override
-			{
-				if (IsObservableIteration())
-					VisitInternal(s);
-			};
-
-			void Visit(Histogram* h) override
-			{
-				if(IsObservableIteration())
-					VisitInternal(h);
+				VisitInternal(e);
 			}
 	};
 }

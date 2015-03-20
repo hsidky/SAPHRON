@@ -5,8 +5,6 @@
 #include "SimObserver.h"
 #include <list>
 
-using namespace Visitors;
-
 namespace SAPHRON
 {
 	// Abstract class for observables in a simulation.

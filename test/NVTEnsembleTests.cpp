@@ -9,7 +9,7 @@ using namespace Models;
 using namespace Visitors;
 
 // Expected magnetization for the NVT Ensemble on the 3D Ising model at various temperatures.
-TEST(NVTEnsemble, IsingModelMagnetization)
+TEST(NVTEnsemble, DefaultBehavior)
 {
 	int n = 10;
 	Ising3DModel model(n, n, n, 1);

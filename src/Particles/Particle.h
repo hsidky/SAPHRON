@@ -44,7 +44,10 @@ namespace SAPHRON
 			// Neighbor identifier.
 			NeighborList _neighbors;
 
-			// Next ID counter for unique map ID.
+			// Global identifier.
+			int _globalID;
+
+			// Next ID counter for unique global identifier.
 			static int _nextID;
 
 			// Global list of particle identities.
@@ -54,21 +57,27 @@ namespace SAPHRON
 
 			// Initialize a particle with a particular identifier. This string represents the global type
 			// identifier for this particle.
-			Particle(std::string identifier) : _identifier(identifier), _ID(0)
+			Particle(std::string identifier) : _identifier(identifier), _ID(0), _globalID(++_nextID)
 			{
 				SetIdentity(identifier);
 			}
 
 			virtual ~Particle() {}
 
+			// Get global particle identifier.
+			int GetGlobalIdentifier() const
+			{
+				return _globalID;
+			}
+
 			// Get particle identifier.
-			int GetIdentifier()
+			int GetIdentifier() const
 			{
 				return _ID;
 			}
 
 			// Get particle string identifier.
-			std::string GetIdentifierString()
+			std::string GetIdentifierString() const
 			{
 				return _identifier;
 			}
@@ -80,27 +89,10 @@ namespace SAPHRON
 			}
 
 			// Set the identity of a particle.
-			void SetIdentity(std::string identifier)
-			{
-				auto search = std::find(_identityList.begin(), _identityList.end(), identifier);
-				if (search != _identityList.end())
-					_ID = search - _identityList.begin();
-				else
-				{
-					_ID = (int) _identityList.size();
-					_identityList.push_back(identifier);
-				}
-
-				_identifier = identifier;
-			}
+			void SetIdentity(std::string identifier);
 
 			// Set the identity of a particle.
-			void SetIdentity(int id)
-			{
-				assert(id < (int)_identityList.size());
-				_ID = id;
-				_identifier = _identityList[id];
-			}
+			void SetIdentity(int id);
 
 			// Get particle position.
 			virtual Position GetPosition() const = 0;
@@ -141,6 +133,4 @@ namespace SAPHRON
 			// Clone particle.
 			virtual Particle* Clone() const = 0;
 	};
-
-	IdentityList Particle::_identityList;
 }

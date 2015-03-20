@@ -1,18 +1,20 @@
 #pragma once
 
-#include "../Models/BaseModel.h"
+#include "../Particles/Particle.h"
+#include "../Worlds/World.h"
 
-namespace Properties
+namespace SAPHRON
 {
-	using namespace Models;
-
+	// Abstract base class for defining new properties. A property is initially calculated from a World
+	// object, after which it is updated incrementally by a call to UpdateProperty.
 	class Property
 	{
 		public:
-			Property(const BaseModel& model){}
+			Property(const World& world){}
 
-			// Calculates property based on a change in model element at index.
-			virtual void CalculateProperty(const BaseModel& model, int index) = 0;
+			// Update property based on a change in `particle`.
+			virtual void UpdateProperty(const Particle& particle) = 0;
+
 			virtual ~Property(){}
 	};
 }

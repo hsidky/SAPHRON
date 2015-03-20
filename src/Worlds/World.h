@@ -18,10 +18,13 @@ namespace SAPHRON
 			virtual void UpdateNeighborList() {}
 
 			// Get number of high level particles in the world.
-			virtual int GetParticleCount() = 0;
+			virtual int GetParticleCount() const = 0;
 
 			// Get a specific particle based on location.
 			virtual Particle* SelectParticle(int location) = 0;
+
+			// Get a specific particle based on location (const).
+			virtual const Particle* SelectParticle(int location) const = 0;
 
 			//virtual int GetWorldParticleCount() = 0;
 

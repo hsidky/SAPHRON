@@ -90,13 +90,19 @@ namespace SAPHRON
 			}
 
 			// Get number of high level particles in the world.
-			virtual int GetParticleCount() override
+			virtual int GetParticleCount() const override
 			{
 				return (int)_particles.size();
 			}
 
 			// Get a particle by index.
 			virtual Particle* SelectParticle(int location) override
+			{
+				return _particles[location];
+			}
+
+			// Get a particle by index (const).
+			virtual const Particle*  SelectParticle(int location) const override
 			{
 				return _particles[location];
 			}

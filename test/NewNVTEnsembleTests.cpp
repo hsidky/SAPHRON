@@ -4,6 +4,7 @@
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/NewSphereUnitVectorMove.h"
 #include "../src/Particles/Site.h"
+#include "../src/Simulation/ConsoleObserver.h"
 #include "../src/Worlds/SimpleLatticeWorld.h"
 #include "gtest/gtest.h"
 
@@ -27,8 +28,14 @@ TEST(NVTEnsemble, DefaultBehavior)
 	MoveManager mm;
 	mm.PushMove(move1);
 
+	// Initialize observer.
+	SimFlags flags;
+	flags.temperature = 1;
+	ConsoleObserver co(flags, 10);
+
 	// Initialize ensemble.
 	NVTEnsemble ensemble(world, ffm, mm, 1.0, 45);
+	ensemble.AddObserver(&co);
 
 	// Run
 	ensemble.Run(100);

@@ -62,6 +62,7 @@ namespace SAPHRON
 				}
 
 				this->IncrementIterations();
+				this->NotifyObservers(SimEvent(this, this->GetIteration()));
 			}
 
 		public:

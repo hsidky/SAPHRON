@@ -1,6 +1,6 @@
 #include "SimObservable.h"
 
-namespace Simulation
+namespace SAPHRON
 {
 	// Add simulation observer.
 	void SimObservable::AddObserver(SimObserver* observer)
@@ -18,12 +18,6 @@ namespace Simulation
 	void SimObservable::NotifyObservers(SimEvent event)
 	{
 		for(auto& observer : _observers)
-			if(observer->IsObservableEvent(event))
-			{
-				observer->LockObserver();
-				observer->Update(event);
-				this->AcceptVisitor(*observer);
-				observer->UnlockObserver();
-			}
+			observer->Update(event);
 	}
 }

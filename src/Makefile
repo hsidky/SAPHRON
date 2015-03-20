@@ -42,7 +42,7 @@ $(BUILD_DIR)/%.o: %.cpp
 $(BUILD_DIR)/%.o: Ensembles/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
-$(BUILD_DIR)/%.o: Models/%.cpp
+$(BUILD_DIR)/%.o: Particles/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 $(BUILD_DIR)/%.o: Moves/%.cpp

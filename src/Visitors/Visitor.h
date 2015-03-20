@@ -3,11 +3,12 @@
 namespace SAPHRON
 {
 	// Forward declare.
-	class NVTEnsemble;
+	class Ensemble;
 
 	class Visitor
 	{
+		// Abstract base class for a visiting object that traverses visitables.
 		public:
-			virtual void Visit(NVTEnsemble* e) = 0;
+			virtual void Visit(Ensemble* e) = 0;
 	};
 }

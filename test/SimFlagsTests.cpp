@@ -1,7 +1,7 @@
 #include "../src/Simulation/SimEvent.h"
 #include "gtest/gtest.h"
 
-using namespace Simulation;
+using namespace SAPHRON;
 
 TEST(SimFlags, DefaultBehavior)
 {

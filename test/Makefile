@@ -17,11 +17,9 @@ CXXFLAGS += -g -Wall -Wextra -pthread -std=c++11 -O3 -include ../include/gcc-pre
 DEPS  = $(LIB_DIR)/SAPHRON.a
 
 # All tests produced by this Makefile.
-TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \
-	    FlipSpinMoveTests.out NVTEnsembleTests.out \
-		LebwohlLasherModelTests.out SphereUnitVectorMoveTests.out LLCellModelTests.out \
-		HistogramTests.out WangLandauDOSEnsembleTests.out SpeciesSwapMoveTests.out \
-		SemiGrandDOSEnsembleTests.out ParallelDOSEnsembleTests.out SimFlagsTests.out \
+TESTS = RandTests.out \
+	    IdentitySwapMoveTests.out FlipSpinMoveTests.out \
+		HistogramTests.out SimFlagsTests.out \
 		NewSiteTests.out NewLebwohlLasherFFTests.out NewSimpleLatticeWorldTests.out \
 		NewForceFieldManagerTests.out NewSphereUnitVectorMoveTests.out NewNVTEnsembleTests.out
 
