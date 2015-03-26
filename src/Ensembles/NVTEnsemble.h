@@ -1,80 +1,107 @@
-// #pragma once
-//
-// #include "../Models/BaseModel.h"
-// #include "../Rand.h"
-// #include "Ensemble.h"
-//
-// using namespace Simulation;
-// using namespace Visitors;
-//
-// namespace Ensembles
-// {
-// 	// Class for simple NVT ensemble - also known as "canonical" ensemble. This
-// 	// calls moves off the move queue and uses the Metropolis algorithm for acceptance
-// 	// probability, A(i->j) = min(1,exp(DE/kB*T)). The template represents the return
-// 	// type of DrawSample from model, which should typically be Site.
-// 	template <typename T>
-// 	class NVTEnsemble : public Ensemble<T>
-// 	{
-// 		private:
-//
-// 			// Temperature (K) (Sometimes reduced).
-// 			double _temperature;
-//
-// 			// Energy of system.
-// 			double _energy = 0.0;
-//
-// 			// "Normalized" Boltzmann constant.
-// 			double _kb = 1.0;
-//
-// 			// Random number generator.
-// 			Rand rand;
-//
-// 		public:
-// 			// Initializes NVTEnsemble for a model at a given "reduced" temperature.
-// 			NVTEnsemble(BaseModel& model, double temperature);
-//
-// 			// Performs one Monte Carlo sweep. This is defined as "n" iterations,
-// 			// where "n" is the number of sites in a model.
-// 			void Sweep();
-//
-// 			// Performs one Monte Carlo iteration. This is precicely one random
-// 			// draw from the model (one function call to model->DrawSample()).
-// 			void Iterate();
-//
-// 			// Metropolis acceptance probability of the system transitioning from prevH
-// 			// to currH via exp(-(currH-prevH)/kb*T).
-// 			double AcceptanceProbability(double prevH, double currH);
-//
-// 			// Gets the temperature (K).
-// 			double GetTemperature()
-// 			{
-// 				return this->_temperature;
-// 			}
-//
-// 			// Sets the temperature (K).
-// 			double SetTemperature(double temperature)
-// 			{
-// 				return this->_temperature = temperature;
-// 			}
-//
-// 			// Get the system energy.
-// 			double GetEnergy()
-// 			{
-// 				return this->_energy;
-// 			}
-//
-// 			// Gets the "normalized" Boltzmann constant (J/K).
-// 			double GetBoltzmannConstant()
-// 			{
-// 				return this->_kb;
-// 			}
-//
-// 			// Accept visitor to class.
-// 			virtual void AcceptVisitor(class Visitor& v)
-// 			{
-// 				v.Visit(this);
-// 				this->model.AcceptVisitor(v);
-// 			}
-// 	};
-// }
+#pragma once
+
+#include "../ForceFields/ForceFieldManager.h"
+#include "../Moves/MoveManager.h"
+#include "../Rand.h"
+#include "../Worlds/World.h"
+#include "Ensemble.h"
+#include <cmath>
+
+namespace SAPHRON
+{
+	// Class for simple NVT ensemble - also known as "canonical" ensemble.This
+	// calls moves off the move queue and uses the Metropolis criteria for acceptance
+	// probability, A(i->j) = min(1,exp(DE/kB*T)).
+	class NVTEnsemble : public Ensemble
+	{
+		private:
+
+			// System temperature.
+			double _temperature;
+
+			// System energy
+			double _energy;
+
+			// Reference to world.
+			World& _world;
+
+			// Reference to force field manager.
+			ForceFieldManager& _ffmanager;
+
+			// Reference to move manager.
+			MoveManager& _mmanager;
+
+			// Random number generator.
+			Rand _rand;
+
+			inline double AcceptanceProbability(double prevH, double currH)
+			{
+				double p = exp(-(currH - prevH) / (_temperature*this->GetBoltzmannConstant()));
+				return p > 1.0 ? 1.0 : p;
+			}
+
+			void Iterate()
+			{
+				for (int i = 0; i < _world.GetParticleCount(); ++i)
+				{
+					// Draw sample, evaluate energy.
+					auto particle = _world.DrawRandomParticle();
+					double prevH = _ffmanager.EvaluateHamiltonian(*particle);
+
+					// Select a random move and perform.
+					auto move = _mmanager.SelectRandomMove();
+					move->Perform(*particle);
+
+					// Evaluate energy and accept/reject.
+					double currH = _ffmanager.EvaluateHamiltonian(*particle);
+
+					if(AcceptanceProbability(prevH, currH) < _rand.doub())
+						move->Undo();
+					else
+						_energy += (currH - prevH);
+				}
+
+				this->IncrementIterations();
+				this->NotifyObservers(SimEvent(this, this->GetIteration()));
+			}
+
+		public:
+			NVTEnsemble(World& world,
+			            ForceFieldManager& ffmanager,
+			            MoveManager& mmanager,
+			            double temperature,
+			            int seed = 1) :
+				_temperature(temperature), _energy(0.0), _world(world),
+				_ffmanager(ffmanager), _mmanager(mmanager), _rand(seed)
+			{
+				_energy = 0.0;
+				// Calculate initial energy.
+				for(int i = 0; i < _world.GetParticleCount(); ++i)
+				{
+					auto particle = _world.SelectParticle(i);
+					_energy += _ffmanager.EvaluateHamiltonian(*particle);
+				}
+				_energy /= 2.0;
+			}
+
+			// Run the NVT ensemble fro a specified number of iterations.
+			virtual void Run(int iterations) override
+			{
+				this->NotifyObservers(SimEvent(this, this->GetIteration()));
+				for(int i = 0; i < iterations; ++i)
+					Iterate();
+			}
+
+			// Get temperature.
+			virtual double GetTemperature() override 
+			{
+				return _temperature;
+			}
+
+			// Get energy.
+			virtual double GetEnergy() override
+			{
+				return _energy;
+			}
+	};
+}

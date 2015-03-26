@@ -1,4 +1,4 @@
-#include "../Ensembles/NewNVTEnsemble.h"
+#include "../Ensembles/Ensemble.h"
 #include "ConsoleObserver.h"
 #include <algorithm>
 #include <iomanip>
@@ -12,8 +12,6 @@ namespace SAPHRON
 	void ConsoleObserver::VisitInternal(Ensemble* e)
 	{
 		cout << endl << endl;
-		if (this->Flags.identifier)
-			cout << setw(20) << left << "Identifier";
 		if (this->Flags.iterations)
 			cout << setw(20) << left << "Iteration";
 		if (this->Flags.energy)
@@ -21,16 +19,15 @@ namespace SAPHRON
 		if (this->Flags.temperature)
 			cout << setw(20) << left << "Temperature";
 		cout << endl;
-		/*
-		   if (this->Flags.identifier)
-		   cout << setw(20) << left << this->GetObservableID();
-		   if (this->Flags.iterations)
-		   cout << setw(20) << left << this->GetIteration();
-		   if (this->Flags.energy)
-		   cout << setw(20) << setprecision(5) << left << scientific << e->GetEnergy();
-		   if (this->Flags.temperature)
-		   cout << setw(20) << left << e->GetTemperature();
-		 */
+		
+		
+		if (this->Flags.iterations)
+			cout << setw(20) << left << e->GetIteration();
+		if (this->Flags.energy)
+			cout << setw(20) << setprecision(5) << left << scientific << e->GetEnergy();
+		if (this->Flags.temperature)
+			cout << setw(20) << left << e->GetTemperature();
+		 
 		cout << endl;
 	}
 	//

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Rand.h"
-#include "NewMove.h"
+#include "Move.h"
 
 namespace SAPHRON
 {

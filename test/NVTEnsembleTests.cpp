@@ -1,33 +1,44 @@
 #include "../src/Ensembles/NVTEnsemble.h"
-#include "../src/Models/Ising3DModel.h"
-#include "../src/Moves/FlipSpinMove.h"
-#include "../src/Site.h"
+#include "../src/ForceFields/ForceFieldManager.h"
+#include "../src/ForceFields/LebwohlLasherFF.h"
+#include "../src/Moves/MoveManager.h"
+#include "../src/Moves/SphereUnitVectorMove.h"
+#include "../src/Particles/Site.h"
+#include "../src/Simulation/ConsoleObserver.h"
+#include "../src/Worlds/SimpleLatticeWorld.h"
 #include "gtest/gtest.h"
 
-using namespace Ensembles;
-using namespace Models;
-using namespace Visitors;
+using namespace SAPHRON;
 
-// Expected magnetization for the NVT Ensemble on the 3D Ising model at various temperatures.
 TEST(NVTEnsemble, DefaultBehavior)
 {
-	int n = 10;
-	Ising3DModel model(n, n, n, 1);
-	FlipSpinMove move;
-	NVTEnsemble<Site> s(model, 1.0);
+	// Initialize world.
+	SimpleLatticeWorld world(30, 30, 30, 1);
+	Site site1({0, 0, 0}, {1.0, 0, 0}, "E1");
+	world.ConfigureParticles({&site1}, {1.0});
+	world.ConfigureNeighborList();
 
-	s.AddMove(move);
-	// Iterate
-	for(int i = 0; i < 100; i++)
-		s.Sweep();
+	// Initialize forcefields.
+	LebwohlLasherFF ff(1.0, 0);
+	ForceFieldManager ffm;
+	ffm.AddForceField("E1", "E1", ff);
 
-	ASSERT_EQ(1.0, s.GetTemperature());
+	// Initialize moves.
+	SphereUnitVectorMove move1(33);
+	MoveManager mm;
+	mm.PushMove(move1);
 
-	// Change temperature
-	s.SetTemperature(5.0);
-	ASSERT_EQ(5.0, s.GetTemperature());
+	// Initialize observer.
+	SimFlags flags;
+	flags.temperature = 1;
+	flags.iterations = 1;
+	flags.energy = 1;
+	ConsoleObserver co(flags, 100);
 
-	// Iterate
-	for(int i = 0; i < 100; i++)
-		s.Sweep();
+	// Initialize ensemble.
+	NVTEnsemble ensemble(world, ffm, mm, 1.0, 45);
+	ensemble.AddObserver(&co);
+
+	// Run
+	ensemble.Run(1000);
 }

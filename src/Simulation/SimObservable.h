@@ -23,11 +23,5 @@ namespace SAPHRON
 
 			// Notify registered observers of a change.
 			void NotifyObservers(SimEvent event);
-
-			// Get the iteration count.
-			virtual int GetSimIteration() = 0;
-
-			// Get an identifier of the observable.
-			virtual int GetObservableID() = 0;
 	};
 }
