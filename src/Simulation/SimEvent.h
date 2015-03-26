@@ -7,7 +7,7 @@ namespace SAPHRON
 	class SimFlags
 	{
 		public:
-			SimFlags() : ensemble(0), dos(0), model(0), histogram(0), site(0) {}
+			SimFlags() : ensemble(0), dos(0), histogram(0), particle(0) {}
 			union
 			{
 				struct
@@ -40,17 +40,6 @@ namespace SAPHRON
 			{
 				struct
 				{
-					unsigned int model_interaction_parameter : 1;
-					unsigned int model_isotropic_parameter : 1;
-				};
-
-				unsigned int model;
-			};
-
-			union
-			{
-				struct
-				{
 					unsigned int hist_bin_count : 1;
 					unsigned int hist_lower_outliers : 1;
 					unsigned int hist_upper_outliers : 1;
@@ -63,12 +52,12 @@ namespace SAPHRON
 			{
 				struct
 				{
-					unsigned int site_coordinates : 1;
-					unsigned int site_unit_vectors : 1;
-					unsigned int site_species : 1;
-					unsigned int site_neighbors : 1;
+					unsigned int particle_position : 1;
+					unsigned int particle_director : 1;
+					unsigned int particle_species : 1;
+					unsigned int particle_neighbors : 1;
 				};
-				bool site;
+				bool particle;
 			};
 	};
 

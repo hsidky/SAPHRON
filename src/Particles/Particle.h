@@ -18,7 +18,7 @@ namespace SAPHRON
 		double y;
 		double z;
 
-		bool operator==(const Position& rhs)
+		bool operator==(const Position& rhs) const
 		{
 			return this->x == rhs.x && this->y == rhs.y && this->z == rhs.z;
 		}
@@ -61,6 +61,13 @@ namespace SAPHRON
 			Particle(std::string identifier) : _identifier(identifier), _ID(0), _globalID(++_nextID)
 			{
 				SetIdentity(identifier);
+			}
+
+			// Copy constructor.
+			Particle(const Particle& particle) : 
+			_identifier(particle._identifier), _ID(particle._ID), _neighbors(particle._neighbors), 
+			_globalID(++_nextID)
+			{
 			}
 
 			virtual ~Particle() {}

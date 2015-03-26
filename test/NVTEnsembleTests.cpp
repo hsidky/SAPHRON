@@ -33,6 +33,10 @@ TEST(NVTEnsemble, DefaultBehavior)
 	flags.temperature = 1;
 	flags.iterations = 1;
 	flags.energy = 1;
+	flags.particle_species = 1;
+	flags.particle_director = 1;
+	flags.particle_neighbors = 1;
+	flags.particle_position = 1;
 	ConsoleObserver co(flags, 100);
 
 	// Initialize ensemble.

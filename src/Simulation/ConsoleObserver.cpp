@@ -1,4 +1,5 @@
 #include "../Ensembles/Ensemble.h"
+#include "../Particles/Particle.h"
 #include "ConsoleObserver.h"
 #include <algorithm>
 #include <iomanip>
@@ -33,12 +34,40 @@ namespace SAPHRON
 
 	void ConsoleObserver::Visit(World*)
 	{
-		cout << "Visited world" << endl;
 	}
 
-	void ConsoleObserver::Visit(Particle*)
+	void ConsoleObserver::Visit(Particle* p)
 	{
-		cout << "Visited particle" << endl;
+ 		if(!this->Flags.particle)
+	    	return;
+		
+		cout << "Global ID: " << p->GetGlobalIdentifier() << " ";
+
+	    if (this->Flags.particle_position)
+	    {
+	    	auto coords = p->GetPosition();
+	    	cout << "Coordinates: " << coords.x << " " << coords.y << " " << coords.z << " ";
+		}
+
+	    if (this->Flags.particle_director)
+	    {
+	    	auto& dir = p->GetDirectorRef();
+	    	cout << "Director: " << dir[0] << " " << dir[1] << " " << dir[2] << " ";
+	    }
+	    
+	    if (this->Flags.particle_species)
+	    	cout << "Species: " << p->GetIdentifierString() << " ";
+	    if (this->Flags.particle_neighbors)
+	    {
+	    	auto& neighbors = p->GetNeighborList();
+	        cout << "Neighbors: ";
+	        for(auto& neighbor : neighbors)
+	        	{
+	            	auto* part = neighbor.GetParticle();
+	             	cout << part->GetGlobalIdentifier() << " ";
+	            }
+	   	}
+	   	cout << endl;
 	}
 
 
