@@ -26,6 +26,9 @@ namespace SAPHRON
 				++_iterations;
 			}
 
+			// Visit children.
+			virtual void VisitChildren(Visitor& v) = 0;
+
 		public:
 
 			// Run the Ensemble simulation for a specified number of iterations.
@@ -59,6 +62,7 @@ namespace SAPHRON
 			virtual void AcceptVisitor(class Visitor &v) override
 			{
 				v.Visit(this);
+				VisitChildren(v);
 			}
 
 			/* Properties */

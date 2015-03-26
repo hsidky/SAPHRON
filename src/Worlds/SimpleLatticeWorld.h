@@ -17,6 +17,14 @@ namespace SAPHRON
 			std::vector<Particle*> _particles;
 			Rand _rand;
 
+		protected:
+			// Visit children.
+			virtual void VisitChildren(class Visitor &v) override
+			{
+				for(auto& particle : _particles)
+					particle->AcceptVisitor(v);
+			}
+
 		public:
 			SimpleLatticeWorld(int xlength, int ylength, int zlength, int seed = 1)
 				: _xlength(xlength), _ylength(ylength), _zlength(zlength), _rand(seed)

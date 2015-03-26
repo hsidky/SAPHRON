@@ -65,6 +65,14 @@ namespace SAPHRON
 				this->NotifyObservers(SimEvent(this, this->GetIteration()));
 			}
 
+		protected:
+			
+			// Visit children.
+			virtual void VisitChildren(Visitor& v) override
+			{
+				_world.AcceptVisitor(v);
+			}
+
 		public:
 			NVTEnsemble(World& world,
 			            ForceFieldManager& ffmanager,

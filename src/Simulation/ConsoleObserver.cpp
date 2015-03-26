@@ -9,7 +9,7 @@ using namespace std;
 
 namespace SAPHRON
 {
-	void ConsoleObserver::VisitInternal(Ensemble* e)
+	void ConsoleObserver::Visit(Ensemble* e)
 	{
 		cout << endl << endl;
 		if (this->Flags.iterations)
@@ -30,6 +30,18 @@ namespace SAPHRON
 		 
 		cout << endl;
 	}
+
+	void ConsoleObserver::Visit(World*)
+	{
+		cout << "Visited world" << endl;
+	}
+
+	void ConsoleObserver::Visit(Particle*)
+	{
+		cout << "Visited particle" << endl;
+	}
+
+
 	//
 	// void ConsoleObserver::VisitInternal(WangLandauDOSEnsemble<Site>* e)
 	// {

@@ -35,8 +35,6 @@ namespace SAPHRON
 				return _frequency = f;
 			}
 
-			virtual void VisitInternal(Ensemble* e) = 0;
-
 		public:
 
 			// Initialize a SimObserver class with a specified observation frequency.
@@ -46,9 +44,5 @@ namespace SAPHRON
 			// Update observer when simulation has changed.
 			void Update(SimEvent& e);
 
-			void Visit(Ensemble* e) override
-			{
-				VisitInternal(e);
-			}
 	};
 }

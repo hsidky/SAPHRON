@@ -41,4 +41,7 @@ TEST(NVTEnsemble, DefaultBehavior)
 
 	// Run
 	ensemble.Run(1000);
+
+	double finalE = ensemble.GetEnergy()/world.GetParticleCount();
+	ASSERT_NEAR(-1.59, finalE, 1e-2);
 }

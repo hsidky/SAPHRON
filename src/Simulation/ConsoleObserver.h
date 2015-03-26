@@ -10,6 +10,8 @@ namespace SAPHRON
 			ConsoleObserver(SimFlags flags, unsigned int frequency = 1)
 				: SimObserver(flags, frequency){}
 
-			virtual void VisitInternal(Ensemble* h) override;
+			virtual void Visit(Ensemble* e) override;
+			virtual void Visit(World* w) override;
+			virtual void Visit(Particle* p) override;
 	};
 }

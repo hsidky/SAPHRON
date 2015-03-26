@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Neighbor.h"
+#include "../Visitors/Visitable.h"
 #include <algorithm>
 #include <cassert>
 #include <iostream>
@@ -31,7 +32,7 @@ namespace SAPHRON
 	// Abstract class Particle represents either a composite or primitive object, from an atom/site to
 	// a molecule to a collection of molecules. It represents an common interface allowing the manipulation
 	// of all of the above through a common interface.
-	class Particle
+	class Particle : public Visitable
 	{
 		private:
 
@@ -125,6 +126,11 @@ namespace SAPHRON
 			void AddNeighbor(Neighbor && neighbor)
 			{
 				_neighbors.emplace_back(neighbor);
+			}
+
+			virtual void AcceptVisitor(Visitor &v) override
+			{
+				v.Visit(this);
 			}
 
 			// Gets all descendants of a particle.
