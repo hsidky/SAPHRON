@@ -12,7 +12,7 @@
 *.vspx
 
 # Sublime project 
-*.sublime-project
+*.sublime-*
 
 # Precompiled Headers
 *.gch
