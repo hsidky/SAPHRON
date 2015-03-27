@@ -41,32 +41,43 @@ namespace SAPHRON
  		if(!this->Flags.particle)
 	    	return;
 		
-		cout << "Global ID: " << p->GetGlobalIdentifier() << " ";
+		if(this->Flags.particle_global_id)
+			cout << setw(10) << left << "Global ID";
+		if(this->Flags.particle_species)
+			cout << setw(10) << left << "Species";
+		if(this->Flags.particle_position)
+			cout << setw(42) << left << "Position";
+		if(this->Flags.particle_director)
+			cout << setw(42) <<  left << "Director";
+		if(this->Flags.particle_neighbors)
+			cout << setw(20) << left << "Neighbors";
 
-	    if (this->Flags.particle_position)
+		cout << endl;
+		if(this->Flags.particle_global_id)
+			cout << setw(10) << left << p->GetGlobalIdentifier();
+		if(this->Flags.particle_species)
+			cout << setw(10) << left << p->GetIdentifierString();
+		if (this->Flags.particle_position)
 	    {
 	    	auto coords = p->GetPosition();
-	    	cout << "Coordinates: " << coords.x << " " << coords.y << " " << coords.z << " ";
+	    	cout << fixed << setw(14) << setprecision(5) << left 
+	    		 << coords.x  << setw(14) <<  coords.y << setw(14) << coords.z;
 		}
-
-	    if (this->Flags.particle_director)
+		if (this->Flags.particle_director)
 	    {
 	    	auto& dir = p->GetDirectorRef();
-	    	cout << "Director: " << dir[0] << " " << dir[1] << " " << dir[2] << " ";
+	    	cout << left << setw(14) << dir[0] << setw(14)  << dir[1] << setw(14) << dir[2];
 	    }
-	    
-	    if (this->Flags.particle_species)
-	    	cout << "Species: " << p->GetIdentifierString() << " ";
-	    if (this->Flags.particle_neighbors)
+		if (this->Flags.particle_neighbors)
 	    {
 	    	auto& neighbors = p->GetNeighborList();
-	        cout << "Neighbors: ";
 	        for(auto& neighbor : neighbors)
 	        	{
 	            	auto* part = neighbor.GetParticle();
-	             	cout << part->GetGlobalIdentifier() << " ";
+	             	cout << setw(20/neighbors.size()) << part->GetGlobalIdentifier() << " ";
 	            }
 	   	}
+
 	   	cout << endl;
 	}
 
@@ -196,27 +207,4 @@ namespace SAPHRON
 	//      cout << endl;
 	// }
 	//
-	// void ConsoleObserver::VisitInternal(Site* s)
-	// {
-	//      if(!this->Flags.site)
-	//              return;
-	//
-	//      if (this->Flags.site_coordinates)
-	//              cout << "Coordinates: "  << s->GetXCoordinate() << " " <<
-	//              s->GetYCoordinate() << " " << s->GetZCoordinate() << " ";
-	//      if (this->Flags.site_unit_vectors)
-	//              cout << "Unit Vectors: " << s->GetXUnitVector() << " " <<
-	//              s->GetYUnitVector() << " " << s->GetZUnitVector() << " ";
-	//      if (this->Flags.site_species)
-	//              cout << "Species: " << s->GetSpecies() << " ";
-	//      if (this->Flags.site_neighbors)
-	//      {
-	//              auto& neighbors = s->GetNeighbors();
-	//              cout << "Neighbors: ";
-	//              std::copy(neighbors.begin(), neighbors.end(),
-	//                        std::ostream_iterator<int>(std::cout, " "));
-	//      }
-	//
-	//      cout << endl;
-	// }
 }

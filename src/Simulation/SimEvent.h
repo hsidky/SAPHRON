@@ -52,6 +52,7 @@ namespace SAPHRON
 			{
 				struct
 				{
+					unsigned int particle_global_id : 1;
 					unsigned int particle_position : 1;
 					unsigned int particle_director : 1;
 					unsigned int particle_species : 1;

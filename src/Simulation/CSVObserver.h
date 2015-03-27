@@ -1,3 +1,29 @@
+#pragma once
+
+#include "../Simulation/SimObserver.h"
+#include <memory>
+#include <iostream>
+
+namespace SAPHRON 
+{
+	class CSVObserver : public SimObserver
+	{
+		private: 
+			std::unique_ptr<std::ofstream> _ensemblefs;
+	        std::unique_ptr<std::ofstream> _modelfs;
+	        std::unique_ptr<std::ofstream> _sitefs;
+	        std::unique_ptr<std::ofstream> _dosfs;
+	        std::unique_ptr<std::ofstream> _histfs;
+		
+		public:
+			CSVObserver(std::string prefix, SimFlags flags, unsigned int frequency = 1)
+				: SimObserver(flags, frequency)
+			{
+				
+			}
+	};
+}
+
 // #pragma once
 //
 // #include "SimObserver.h"

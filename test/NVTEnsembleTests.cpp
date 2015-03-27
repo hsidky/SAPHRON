@@ -13,7 +13,7 @@ using namespace SAPHRON;
 TEST(NVTEnsemble, DefaultBehavior)
 {
 	// Initialize world.
-	SimpleLatticeWorld world(30, 30, 30, 1);
+	SimpleLatticeWorld world(10, 10, 10, 1);
 	Site site1({0, 0, 0}, {1.0, 0, 0}, "E1");
 	world.ConfigureParticles({&site1}, {1.0});
 	world.ConfigureNeighborList();
