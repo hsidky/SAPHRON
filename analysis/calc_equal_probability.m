@@ -23,10 +23,10 @@ x = linspace(xrng(1),xrng(2),1000)';
 y = f(x,b);
 
 mindx = 0.01*diff(xrng);
-minxw = 0.005*diff(xrng);
+%minxw = 0.0025*diff(xrng);
 
 % Get peaks
-[~, xpks]= findpeaks(y, x, 'MinPeakWidth', minxw, 'MinPeakDistance', mindx, 'SortStr', 'desc');
+[~, xpks]= findpeaks(y, x, 'MinPeakDistance', mindx, 'MinPeakHeight', 0.1, 'SortStr', 'desc');
 
 if length(xpks) < 2
     error('peak_identify::There must be two identifiable peaks at the starting guess.');
