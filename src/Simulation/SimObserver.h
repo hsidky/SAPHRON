@@ -35,6 +35,18 @@ namespace SAPHRON
 				return _frequency = f;
 			}
 
+			// Get current event iteration
+			unsigned int GetIteration()
+			{
+				return _event.GetIteration();
+			}
+
+			// Get caller identifier.
+			int GetObservableID()
+			{
+				return 0;
+			}
+
 		public:
 
 			// Initialize a SimObserver class with a specified observation frequency.

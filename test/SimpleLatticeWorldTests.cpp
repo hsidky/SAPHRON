@@ -49,7 +49,7 @@ TEST(SimpleLatticeWorld, DefaultConstructor)
 		Position n6 =
 		{(double) coords.x, (double) coords.y, (coords.z == 1) ? (double) n : coords.z - 1.0};
 
-		auto neighbors = particle->GetNeighborList();
+		auto neighbors = particle->GetNeighbors();
 		ASSERT_EQ(6, neighbors.size());
 
 		for(auto& neighbor : neighbors)

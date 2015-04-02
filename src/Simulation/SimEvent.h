@@ -31,6 +31,7 @@ namespace SAPHRON
 					unsigned int dos_scale_factor : 1;
 					unsigned int dos_flatness : 1;
 					unsigned int dos_interval : 1;
+					unsigned int dos_bin_count: 1;
 					unsigned int dos_values : 1;
 				};
 				unsigned int dos;

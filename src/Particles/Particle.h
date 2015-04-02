@@ -2,6 +2,7 @@
 
 #include "Neighbor.h"
 #include "../Visitors/Visitable.h"
+#include "../Connectivities/Connectivity.h"
 #include <algorithm>
 #include <cassert>
 #include <iostream>
@@ -28,6 +29,8 @@ namespace SAPHRON
 	typedef std::list<Neighbor> NeighborList;
 	typedef std::list<Neighbor>::iterator NeighborIterator;
 	typedef std::vector<std::string> IdentityList;
+	typedef std::list<Connectivity*> ConnectivityList;
+	typedef std::list<Connectivity*>::iterator ConnectivityIterator;
 
 	// Abstract class Particle represents either a composite or primitive object, from an atom/site to
 	// a molecule to a collection of molecules. It represents an common interface allowing the manipulation
@@ -54,6 +57,9 @@ namespace SAPHRON
 			// Global list of particle identities.
 			static IdentityList _identityList;
 
+			// Connectivities.
+			ConnectivityList _connectivities;
+
 		public:
 
 			// Initialize a particle with a particular identifier. This string represents the global type
@@ -66,7 +72,7 @@ namespace SAPHRON
 			// Copy constructor.
 			Particle(const Particle& particle) : 
 			_identifier(particle._identifier), _ID(particle._ID), _neighbors(particle._neighbors), 
-			_globalID(++_nextID)
+			_globalID(++_nextID), _connectivities(0)
 			{
 			}
 
@@ -124,7 +130,7 @@ namespace SAPHRON
 			virtual void SetDirector(Director && director) = 0;
 
 			// Gets neighbor list iterator.
-			NeighborList& GetNeighborList()
+			NeighborList& GetNeighbors()
 			{
 				return _neighbors;
 			}
@@ -133,6 +139,18 @@ namespace SAPHRON
 			void AddNeighbor(Neighbor && neighbor)
 			{
 				_neighbors.emplace_back(neighbor);
+			}
+
+			// Add a connectivity to the particle.
+			void AddConnectivity(Connectivity* connectivity)
+			{
+				_connectivities.push_back(connectivity);
+			}
+
+			// Gets connectivity list.
+			const ConnectivityList& GetConnectivities() const
+			{
+				return _connectivities;
 			}
 
 			virtual void AcceptVisitor(Visitor &v) override

@@ -70,7 +70,7 @@ namespace SAPHRON
 	    }
 		if (this->Flags.particle_neighbors)
 	    {
-	    	auto& neighbors = p->GetNeighborList();
+	    	auto& neighbors = p->GetNeighbors();
 	        for(auto& neighbor : neighbors)
 	        	{
 	            	auto* part = neighbor.GetParticle();

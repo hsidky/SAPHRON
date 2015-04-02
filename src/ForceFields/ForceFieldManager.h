@@ -81,7 +81,9 @@ namespace SAPHRON
 			inline double EvaluateHamiltonian(Particle& particle)
 			{
 				double h = 0;
-				auto& neighbors = particle.GetNeighborList();
+				
+				// Calculate energy with neighbors.
+				auto& neighbors = particle.GetNeighbors();
 				for(auto& neighbor : neighbors)
 				{
 					auto* particle2 = neighbor.GetParticle();
@@ -91,8 +93,13 @@ namespace SAPHRON
 						h += ff->Evaluate(particle, *particle2);
 				}
 
+				// Calculate energy of children.
 				for(auto &child : particle.GetChildren())
 					h += EvaluateHamiltonian(*child);
+
+				// Calculate connectivity energy 
+				for(auto &connectivity : particle.GetConnectivities())
+					h+= connectivity->EvaluateHamiltonian(&particle);
 
 				return h;
 			}

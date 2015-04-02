@@ -67,7 +67,7 @@ namespace SAPHRON
 
 			/* Properties */
 			virtual double GetTemperature() { return 0.0; }
-
 			virtual double GetEnergy() { return 0.0; }
+			virtual double GetPressure() { return 0.0; }
 	};
 }

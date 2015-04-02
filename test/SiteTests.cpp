@@ -76,7 +76,7 @@ TEST(Site, Neighbors)
 
 	// Verify
 	std::vector<std::string> vals = {"L2", "L3", "L4"};
-	auto& neighbors = s1.GetNeighborList();
+	auto& neighbors = s1.GetNeighbors();
 	int i = 0;
 	for(NeighborIterator neighbor = neighbors.begin(); neighbor != neighbors.end(); ++neighbor)
 	{
