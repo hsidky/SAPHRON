@@ -2,9 +2,6 @@
 
 #include "../Particles/Particle.h"
 #include "ForceField.h"
-#include <algorithm>
-#include <iostream>
-#include <utility>
 
 namespace SAPHRON
 {
@@ -14,68 +11,24 @@ namespace SAPHRON
 		private:
 			std::vector<std::vector<ForceField*> > _forcefields;
 
-			void ResizeFF(int n)
-			{
-				_forcefields.resize(n);
-				for(int i = 0; i < n; i++)
-					_forcefields[i].resize(n, nullptr);
-			}
+			// Resize Forcefield vector.
+			void ResizeFF(int n);
 
 		public:
 
 			ForceFieldManager() : _forcefields(1,std::vector<ForceField*>(1, nullptr)) {}
 
 			// Adds a forcefield to the manager.
-			void AddForceField(std::string p1type, std::string p2type, ForceField& ff)
-			{
-				auto list = Particle::GetIdentityList();
-				auto p1 = std::find(list.begin(), list.end(), p1type);
-				auto p2 = std::find(list.begin(), list.end(), p2type);
-
-				if(p1 == list.end() || p2 == list.end())
-				{
-					std::cerr << "ERROR: Uknown particle types. "
-					          << "Make sure they have been registered with the identity map."
-					          << std::endl;
-					exit(-1);
-				}
-
-				AddForceField(p1-list.begin(), p2-list.begin(), ff);
-			}
-
+			void AddForceField(std::string p1type, std::string p2type, ForceField& ff);
+			
 			// Adds a forcefield to the manager.
-			void AddForceField(int p1type, int p2type, ForceField& ff)
-			{
-				if((int)_forcefields.size()-1 < std::max(p1type,p2type))
-					ResizeFF(std::max(p1type,p2type)+1);
-
-				(_forcefields.at(p1type)).at(p2type) = &ff;
-				(_forcefields.at(p2type)).at(p1type) = &ff;
-			}
+			void AddForceField(int p1type, int p2type, ForceField& ff);
 
 			// Removes a forcefield from the manager.
-			void RemoveForceField(std::string p1type, std::string p2type)
-			{
-				auto list = Particle::GetIdentityList();
-				auto p1 = std::find(list.begin(), list.end(), p1type);
-				auto p2 = std::find(list.begin(), list.end(), p2type);
-				if(p1 == list.end() || p2 == list.end())
-				{
-					std::cerr << "ERROR: Uknown particle types. "
-					          << "Make sure they have been registered with the identity map."
-					          << std::endl;
-					exit(-1);
-				}
-
-				RemoveForceField(p1-list.begin(), p2-list.begin());
-			}
+			void RemoveForceField(std::string p1type, std::string p2type);
 
 			// Removes a forcefield from the manager.
-			void RemoveForceField(int p1type, int p2type)
-			{
-				(_forcefields.at(p1type)).at(p2type) = nullptr;
-				(_forcefields.at(p2type)).at(p1type) = nullptr;
-			}
+			void RemoveForceField(int p1type, int p2type);
 
 			// Evaluate the Hamiltonian of the particle.
 			inline double EvaluateHamiltonian(Particle& particle)
@@ -100,6 +53,16 @@ namespace SAPHRON
 				// Calculate connectivity energy 
 				for(auto &connectivity : particle.GetConnectivities())
 					h+= connectivity->EvaluateHamiltonian(&particle);
+
+				return h;
+			}
+
+			// Evaluate the Hamiltonian of a list of particles.
+			inline double EvaluateHamiltonian(const ParticleList& particles)
+			{
+				double h = 0.0; 
+				for(auto& particle : particles)
+					h += EvaluateHamiltonian(*particle);
 
 				return h;
 			}

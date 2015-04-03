@@ -18,7 +18,7 @@ TEST(IdentitySwapMove, DefaultBehavior)
 	// Swap identity and make sure we've sampled all three possibilities.
 	for(int i = 0; i < 6; i++)
 	{
-		m.Perform(s);
+		m.Perform({&s});
 		sampled[s.GetIdentifier()] = 1;
 	}
 
@@ -28,7 +28,7 @@ TEST(IdentitySwapMove, DefaultBehavior)
 
 	// Swap, verify, undo, verify.
 	int prev = s.GetIdentifier();
-	m.Perform(s);
+	m.Perform({&s});
 	m.Undo();
 	ASSERT_EQ(prev, s.GetIdentifier());
 }

@@ -12,7 +12,7 @@ TEST(FlipSpinMove, DefaultBehavior)
 
 	// Set the Z unit vector and test move
 	s.SetDirector({-1.0,0,0});
-	m.Perform(s);
+	m.Perform({&s});
 	ASSERT_EQ(1.0, s.GetDirector()[0]);
 	m.Undo();
 	ASSERT_EQ(-1.0, s.GetDirector()[0]);
@@ -27,13 +27,13 @@ TEST(FlipSpinMove, ChangeSiteReusability)
 
 	// Set the Z unit vector and test move
 	s1.SetDirector({-1.0,0,0});
-	m.Perform(s1);
+	m.Perform({&s1});
 	ASSERT_EQ(1.0, s1.GetDirector()[0]);
 	m.Undo();
 	ASSERT_EQ(-1.0, s1.GetDirector()[0]);
 
 	s2.SetDirector({-3.0,0,0});
-	m.Perform(s2);
+	m.Perform({&s2});
 	ASSERT_EQ(3.0, s2.GetDirector()[0]);
 	m.Undo();
 	ASSERT_EQ(-3.0, s2.GetDirector()[0]);
@@ -48,7 +48,7 @@ TEST(FlipSpinMove, PassPointerByReference)
 
 	// Set the Z unit vector and test move
 	sp->SetDirector({-1.0,0,0});
-	m.Perform(*sp);
+	m.Perform({sp});
 	ASSERT_EQ(1.0, sp->GetDirector()[0]);
 	m.Undo();
 	ASSERT_EQ(-1.0, sp->GetDirector()[0]);

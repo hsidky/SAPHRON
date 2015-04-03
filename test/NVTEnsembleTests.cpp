@@ -42,7 +42,7 @@ TEST(NVTEnsemble, DefaultBehavior)
 
 	// Initialize ensemble.
 	NVTEnsemble ensemble(world, ffm, mm, 1.0, 45);
-	ensemble.AddObserver(&co);
+	//ensemble.AddObserver(&co);
 
 	// Run
 	ensemble.Run(1000);

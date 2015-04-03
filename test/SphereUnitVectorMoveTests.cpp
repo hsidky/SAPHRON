@@ -13,7 +13,7 @@ TEST(SphereUnitVectorMove, DefaultBehavior)
 	SphereUnitVectorMove m;
 
 	// Get random unit vector and check that its norm is 1.
-	m.Perform(s);
+	m.Perform({&s});
 	auto v = s.GetDirector();
 	double x = sqrt(std::inner_product( v.begin(), v.end(), v.begin(), 0.0));
 	ASSERT_DOUBLE_EQ(1.0, x);
@@ -27,7 +27,7 @@ TEST(SphereUnitVectorMove, DefaultBehavior)
 	// Do a bunch of these for good measure
 	for(int i = 0; i < 10000; i++)
 	{
-		m.Perform(s);
+		m.Perform({&s});
 		v = s.GetDirector();
 		x = sqrt(std::inner_product( v.begin(), v.end(), v.begin(), 0.0));
 		ASSERT_DOUBLE_EQ(1.0, x);

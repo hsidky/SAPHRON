@@ -20,6 +20,9 @@ namespace SAPHRON
 			// Draw a random particle from the world.
 			virtual Particle* DrawRandomParticle() = 0;
 
+			// Draw random particles from the world and adds them to the list provided. 
+			virtual void DrawRandomParticles(ParticleList& particles, unsigned int count = 1) = 0;
+
 			// Update the neighbor list for all particles in the world.
 			virtual void UpdateNeighborList() {}
 

@@ -14,9 +14,9 @@ namespace SAPHRON
 		public:
 
 			// Perform the flip spin move on a particle.
-			virtual void Perform(Particle& particle) override
+			virtual void Perform(const ParticleList& particles) override
 			{
-				_particle = &particle;
+				_particle = *particles.begin();
 				_prevD = _particle->GetDirector();
 				_particle->SetDirector({-1.0*_prevD[0], -1.0*_prevD[1], -1.0*_prevD[2]});
 			}

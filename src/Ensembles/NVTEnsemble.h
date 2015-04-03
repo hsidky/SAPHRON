@@ -34,36 +34,16 @@ namespace SAPHRON
 			// Random number generator.
 			Rand _rand;
 
+			// Particle list.
+			ParticleList _particles;
+
 			inline double AcceptanceProbability(double prevH, double currH)
 			{
 				double p = exp(-(currH - prevH) / (_temperature*this->GetBoltzmannConstant()));
 				return p > 1.0 ? 1.0 : p;
 			}
 
-			void Iterate()
-			{
-				for (int i = 0; i < _world.GetParticleCount(); ++i)
-				{
-					// Draw sample, evaluate energy.
-					auto particle = _world.DrawRandomParticle();
-					double prevH = _ffmanager.EvaluateHamiltonian(*particle);
-
-					// Select a random move and perform.
-					auto move = _mmanager.SelectRandomMove();
-					move->Perform(*particle);
-
-					// Evaluate energy and accept/reject.
-					double currH = _ffmanager.EvaluateHamiltonian(*particle);
-
-					if(AcceptanceProbability(prevH, currH) < _rand.doub())
-						move->Undo();
-					else
-						_energy += (currH - prevH);
-				}
-
-				this->IncrementIterations();
-				this->NotifyObservers(SimEvent(this, this->GetIteration()));
-			}
+			void Iterate();
 
 		protected:
 			
@@ -80,8 +60,11 @@ namespace SAPHRON
 			            double temperature,
 			            int seed = 1) :
 				_temperature(temperature), _energy(0.0), _world(world),
-				_ffmanager(ffmanager), _mmanager(mmanager), _rand(seed)
+				_ffmanager(ffmanager), _mmanager(mmanager), _rand(seed),
+				_particles(0)
 			{
+				_particles.reserve(10);
+
 				_energy = 0.0;
 				// Calculate initial energy.
 				for(int i = 0; i < _world.GetParticleCount(); ++i)
@@ -92,13 +75,8 @@ namespace SAPHRON
 				_energy /= 2.0;
 			}
 
-			// Run the NVT ensemble fro a specified number of iterations.
-			virtual void Run(int iterations) override
-			{
-				this->NotifyObservers(SimEvent(this, this->GetIteration()));
-				for(int i = 0; i < iterations; ++i)
-					Iterate();
-			}
+			// Run the NVT ensemble for a specified number of iterations.
+			virtual void Run(int iterations) override;
 
 			// Get temperature.
 			virtual double GetTemperature() override 

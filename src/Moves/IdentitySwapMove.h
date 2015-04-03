@@ -24,9 +24,9 @@ namespace SAPHRON
 				_particle(nullptr), _prevSpecies(0), _rand(seed), _speciesCount(speciesCount) {}
 
 			// Reassigns the species of a site with a new random one.
-			virtual void Perform(Particle& particle) override
+			virtual void Perform(const ParticleList& particles) override
 			{
-				_particle = &particle;
+				_particle = *particles.begin();
 
 				// Record previous species
 				_prevSpecies = _particle->GetIdentifier();

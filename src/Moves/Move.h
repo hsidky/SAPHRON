@@ -10,8 +10,11 @@ namespace SAPHRON
 		public:
 			virtual ~Move(){}
 
+			// Get required number of particles.
+			virtual unsigned int RequiredParticles() { return 1; }
+
 			// Perform a move.
-			virtual void Perform(Particle& particle) = 0;
+			virtual void Perform(const ParticleList& particles) = 0;
 
 			// Undo a move.
 			virtual void Undo() = 0;

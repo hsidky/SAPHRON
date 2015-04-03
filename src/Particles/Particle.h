@@ -31,6 +31,7 @@ namespace SAPHRON
 	typedef std::vector<std::string> IdentityList;
 	typedef std::list<Connectivity*> ConnectivityList;
 	typedef std::list<Connectivity*>::iterator ConnectivityIterator;
+	typedef std::vector<Particle*> ParticleList;
 
 	// Abstract class Particle represents either a composite or primitive object, from an atom/site to
 	// a molecule to a collection of molecules. It represents an common interface allowing the manipulation

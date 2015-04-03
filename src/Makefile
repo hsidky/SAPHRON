@@ -54,6 +54,12 @@ $(BUILD_DIR)/%.o: Simulation/%.cpp
 $(BUILD_DIR)/%.o: Visitors/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
+$(BUILD_DIR)/%.o: Worlds/%.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+
+$(BUILD_DIR)/%.o: ForceFields/%.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+
 $(TARGET): $(OBJECTS) $(DEPS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $(BIN_DIR)/$@ $(LINKER_DEPS)
 
