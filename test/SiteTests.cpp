@@ -15,7 +15,7 @@ TEST(Site, DefaultConstructor)
 	for(auto& dir : s.GetDirector())
 		ASSERT_EQ(0.0, dir);
 
-	ASSERT_EQ("L1", s.GetIdentifierString());
+	ASSERT_EQ("L1", s.GetSpecies());
 
 	// Set a few things
 	Director d {0.1, 0.2, 0.4};
@@ -29,14 +29,14 @@ TEST(Site, Identifiers)
 {
 	Site s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 
-	ASSERT_EQ("L1", s1.GetIdentifierString());
-	ASSERT_EQ(0, s1.GetIdentifier());
+	ASSERT_EQ("L1", s1.GetSpecies());
+	ASSERT_EQ(0, s1.GetSpeciesID());
 	ASSERT_EQ(2, s1.GetGlobalIdentifier());
 
 	Site s2({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 
-	ASSERT_EQ("L1", s2.GetIdentifierString());
-	ASSERT_EQ(0, s2.GetIdentifier());
+	ASSERT_EQ("L1", s2.GetSpecies());
+	ASSERT_EQ(0, s2.GetSpeciesID());
 	ASSERT_EQ(3, s2.GetGlobalIdentifier());
 
 	Director dir{4.0, 5.0, 6.0};
@@ -44,11 +44,11 @@ TEST(Site, Identifiers)
 
 	Site s3({1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}, "L2");
 
-	ASSERT_EQ("L2", s3.GetIdentifierString());
-	ASSERT_EQ(1, s3.GetIdentifier());
+	ASSERT_EQ("L2", s3.GetSpecies());
+	ASSERT_EQ(1, s3.GetSpeciesID());
 	ASSERT_EQ(4, s3.GetGlobalIdentifier());
 
-	auto list = Particle::GetIdentityList();
+	auto list = Particle::GetSpeciesList();
 	ASSERT_EQ(2, (int)list.size());
 
 	// Test copy 
@@ -80,7 +80,7 @@ TEST(Site, Neighbors)
 	int i = 0;
 	for(NeighborIterator neighbor = neighbors.begin(); neighbor != neighbors.end(); ++neighbor)
 	{
-		auto id = neighbor->GetParticle()->GetIdentifierString();
+		auto id = neighbor->GetParticle()->GetSpecies();
 
 		ASSERT_EQ(vals[i], id);
 

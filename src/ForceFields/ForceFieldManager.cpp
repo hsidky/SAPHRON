@@ -16,7 +16,7 @@ namespace SAPHRON
 	// Adds a forcefield to the manager.
 	void ForceFieldManager::AddForceField(std::string p1type, std::string p2type, ForceField& ff)
 	{
-		auto list = Particle::GetIdentityList();
+		auto list = Particle::GetSpeciesList();
 		auto p1 = std::find(list.begin(), list.end(), p1type);
 		auto p2 = std::find(list.begin(), list.end(), p2type);
 
@@ -44,7 +44,7 @@ namespace SAPHRON
 	// Removes a forcefield from the manager.
 	void ForceFieldManager::RemoveForceField(std::string p1type, std::string p2type)
 	{
-		auto list = Particle::GetIdentityList();
+		auto list = Particle::GetSpeciesList();
 		auto p1 = std::find(list.begin(), list.end(), p1type);
 		auto p2 = std::find(list.begin(), list.end(), p2type);
 		if(p1 == list.end() || p2 == list.end())

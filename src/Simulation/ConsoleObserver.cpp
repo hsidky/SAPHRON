@@ -56,7 +56,7 @@ namespace SAPHRON
 		if(this->Flags.particle_global_id)
 			cout << setw(10) << left << p->GetGlobalIdentifier();
 		if(this->Flags.particle_species)
-			cout << setw(10) << left << p->GetIdentifierString();
+			cout << setw(10) << left << p->GetSpecies();
 		if (this->Flags.particle_position)
 	    {
 	    	auto coords = p->GetPosition();
@@ -86,7 +86,7 @@ namespace SAPHRON
 	// void ConsoleObserver::VisitInternal(WangLandauDOSEnsemble<Site>* e)
 	// {
 	//      cout << endl << endl;
-	//      if (this->Flags.identifier)
+	//      if (this->Flags.species)
 	//              cout << setw(20) << left << "Identifier";
 	//      if (this->Flags.iterations)
 	//              cout << setw(20) << left << "Iteration";
@@ -94,7 +94,7 @@ namespace SAPHRON
 	//              cout << setw(20) << left << "Energy";
 	//      cout << endl;
 	//
-	//      if (this->Flags.identifier)
+	//      if (this->Flags.species)
 	//              cout << setw(20) << left << this->GetObservableID();
 	//      if (this->Flags.iterations)
 	//              cout << setw(20) << left << this->GetIteration();
@@ -111,7 +111,7 @@ namespace SAPHRON
 	// void ConsoleObserver::VisitInternal(SemiGrandDOSEnsemble<Site>* e)
 	// {
 	//      cout << endl << endl;
-	//      if (this->Flags.identifier)
+	//      if (this->Flags.species)
 	//              cout << setw(20) << left << "Identifier";
 	//      if (this->Flags.iterations)
 	//              cout << setw(20) << left << "Iteration";
@@ -123,7 +123,7 @@ namespace SAPHRON
 	//              cout << setw(20) << left << "Composition";
 	//      cout << endl;
 	//
-	//      if (this->Flags.identifier)
+	//      if (this->Flags.species)
 	//              cout << setw(20) << left << this->GetObservableID();
 	//      if (this->Flags.iterations)
 	//              cout << setw(20) << left << this->GetIteration();

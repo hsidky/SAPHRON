@@ -5,10 +5,10 @@
 
 namespace SAPHRON
 {
-	// Identity swap move. This move merely swaps the identity of a particle. Meaning that it is useful
+	// Identity change move. This move merely changes the identity of a particle. Meaning that it is useful
 	// when performing (semi)grand canonical simulations on spins or atoms, but NOT on moleucles or
-	// composite particle types. The only thing altered is the identifier and string.
-	class IdentitySwapMove : public Move
+	// composite particle types. The only thing altered is the species and string.
+	class IdentityChangeMove : public Move
 	{
 		private:
 			Particle* _particle;
@@ -20,7 +20,7 @@ namespace SAPHRON
 			int _speciesCount;
 
 		public:
-			IdentitySwapMove(int speciesCount, int seed = 1337) :
+			IdentityChangeMove(int speciesCount, int seed = 1337) :
 				_particle(nullptr), _prevSpecies(0), _rand(seed), _speciesCount(speciesCount) {}
 
 			// Reassigns the species of a site with a new random one.
@@ -29,22 +29,22 @@ namespace SAPHRON
 				_particle = *particles.begin();
 
 				// Record previous species
-				_prevSpecies = _particle->GetIdentifier();
+				_prevSpecies = _particle->GetSpeciesID();
 
-				_particle->SetIdentity(_rand.int32() % _speciesCount);
+				_particle->SetSpecies(_rand.int32() % _speciesCount);
 			}
 
 			// Undo the move on a site.
 			void Undo()
 			{
-				_particle->SetIdentity(_prevSpecies);
+				_particle->SetSpecies(_prevSpecies);
 			}
 
 			// Clone move.
 			virtual Move* Clone() const
 			{
-				return new IdentitySwapMove(
-				               static_cast<const IdentitySwapMove&>(*this)
+				return new IdentityChangeMove(
+				               static_cast<const IdentityChangeMove&>(*this)
 				               );
 			}
 	};

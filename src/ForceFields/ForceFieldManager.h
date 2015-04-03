@@ -41,7 +41,7 @@ namespace SAPHRON
 				{
 					auto* particle2 = neighbor.GetParticle();
 
-					auto* ff = _forcefields[particle.GetIdentifier()][particle2->GetIdentifier()];
+					auto* ff = _forcefields[particle.GetSpeciesID()][particle2->GetSpeciesID()];
 					if(ff != nullptr)
 						h += ff->Evaluate(particle, *particle2);
 				}

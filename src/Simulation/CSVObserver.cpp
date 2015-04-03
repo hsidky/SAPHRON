@@ -116,7 +116,7 @@ namespace SAPHRON
 		if(this->Flags.particle_global_id)
 			*_particlefs << p->GetGlobalIdentifier() << ",";
 		if(this->Flags.particle_species)
-			*_particlefs << p->GetIdentifierString() << ",";
+			*_particlefs << p->GetSpecies() << ",";
 		if (this->Flags.particle_position)
 	    {
 	    	auto coords = p->GetPosition();

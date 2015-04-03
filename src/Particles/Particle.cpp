@@ -2,29 +2,29 @@
 
 namespace SAPHRON
 {
-	// Set the identity of a particle.
-	void Particle::SetIdentity(std::string identifier)
+	// Set the species of a particle.
+	void Particle::SetSpecies(std::string species)
 	{
-		auto search = std::find(_identityList.begin(), _identityList.end(), identifier);
-		if (search != _identityList.end())
-			_ID = search - _identityList.begin();
+		auto search = std::find(_speciesList.begin(), _speciesList.end(), species);
+		if (search != _speciesList.end())
+			_speciesID = search - _speciesList.begin();
 		else
 		{
-			_ID = (int) _identityList.size();
-			_identityList.push_back(identifier);
+			_speciesID = (int) _speciesList.size();
+			_speciesList.push_back(species);
 		}
 
-		_identifier = identifier;
+		_species = species;
 	}
 
-	// Set the identity of the particle.
-	void Particle::SetIdentity(int id)
+	// Set the species of the particle.
+	void Particle::SetSpecies(int speciesID)
 	{
-		assert(id < (int)_identityList.size());
-		_ID = id;
-		_identifier = _identityList[id];
+		assert(speciesID < (int)_speciesList.size());
+		_speciesID = speciesID;
+		_species = _speciesList[speciesID];
 	}
 
-	IdentityList Particle::_identityList;
+	SpeciesList Particle::_speciesList;
 	int Particle::_nextID = 0;
 }

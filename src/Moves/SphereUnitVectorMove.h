@@ -23,9 +23,12 @@ namespace SAPHRON
 				_particle = *particles.begin();
 
 				// Record prev director.
-				_prevD = _particle->GetDirector();
+				auto& d = _particle->GetDirectorRef();
 
-				// Get new unit vector.
+				_prevD[0] = d[0];
+				_prevD[1] = d[1];
+				_prevD[2] = d[2];
+
 				// Get new unit vector.
 				double v3 = 0;
 				do
@@ -36,7 +39,7 @@ namespace SAPHRON
 					v2 = 1 - 2 * v2;
 					v3 = v1*v1 + v2*v2;
 					if(v3 < 1)
-						_particle->SetDirector({2*v1*sqrt(1 - v3), 2*v2*sqrt(1 - v3), 1-2*v3});
+						_particle->SetDirector(2.0*v1*sqrt(1 - v3), 2.0*v2*sqrt(1 - v3), 1.0-2.0*v3);
 				} while(v3 > 1);
 			}
 

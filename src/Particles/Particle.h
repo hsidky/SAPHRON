@@ -28,7 +28,7 @@ namespace SAPHRON
 	typedef std::vector<double> Director;
 	typedef std::list<Neighbor> NeighborList;
 	typedef std::list<Neighbor>::iterator NeighborIterator;
-	typedef std::vector<std::string> IdentityList;
+	typedef std::vector<std::string> SpeciesList;
 	typedef std::list<Connectivity*> ConnectivityList;
 	typedef std::list<Connectivity*>::iterator ConnectivityIterator;
 	typedef std::vector<Particle*> ParticleList;
@@ -40,74 +40,74 @@ namespace SAPHRON
 	{
 		private:
 
-			// String identifier.
-			std::string _identifier;
+			// String species.
+			std::string _species;
 
-			// Integer identifier.
-			int _ID;
+			// Integer species.
+			int _speciesID;
 
-			// Neighbor identifier.
+			// Neighbor list.
 			NeighborList _neighbors;
 
 			// Global identifier.
 			int _globalID;
 
-			// Next ID counter for unique global identifier.
+			// Next ID counter for unique global species.
 			static int _nextID;
 
 			// Global list of particle identities.
-			static IdentityList _identityList;
+			static SpeciesList _speciesList;
 
 			// Connectivities.
 			ConnectivityList _connectivities;
 
 		public:
 
-			// Initialize a particle with a particular identifier. This string represents the global type
-			// identifier for this particle.
-			Particle(std::string identifier) : _identifier(identifier), _ID(0), _globalID(++_nextID)
+			// Initialize a particle with a particular species. This string represents the global type
+			// species for this particle.
+			Particle(std::string species) : _species(species), _speciesID(0), _globalID(++_nextID)
 			{
-				SetIdentity(identifier);
+				SetSpecies(species);
 			}
 
 			// Copy constructor.
 			Particle(const Particle& particle) : 
-			_identifier(particle._identifier), _ID(particle._ID), _neighbors(particle._neighbors), 
+			_species(particle._species), _speciesID(particle._speciesID), _neighbors(particle._neighbors), 
 			_globalID(++_nextID), _connectivities(0)
 			{
 			}
 
 			virtual ~Particle() {}
 
-			// Get global particle identifier.
+			// Get global particle species.
 			int GetGlobalIdentifier() const
 			{
 				return _globalID;
 			}
 
-			// Get particle identifier.
-			int GetIdentifier() const
+			// Get particle species.
+			int GetSpeciesID() const
 			{
-				return _ID;
+				return _speciesID;
 			}
 
-			// Get particle string identifier.
-			std::string GetIdentifierString() const
+			// Get particle string species.
+			std::string GetSpecies() const
 			{
-				return _identifier;
+				return _species;
 			}
 
 			// Get identity list.
-			static IdentityList GetIdentityList()
+			static SpeciesList GetSpeciesList()
 			{
-				return _identityList;
+				return _speciesList;
 			}
 
-			// Set the identity of a particle.
-			void SetIdentity(std::string identifier);
+			// Set the species of a particle.
+			void SetSpecies(std::string species);
 
-			// Set the identity of a particle.
-			void SetIdentity(int id);
+			// Set the species of a particle.
+			void SetSpecies(int id);
 
 			// Get particle position.
 			virtual Position GetPosition() const = 0;
@@ -129,6 +129,9 @@ namespace SAPHRON
 
 			// Set the particle director.
 			virtual void SetDirector(Director && director) = 0;
+
+			// Set the particle director.
+			virtual void SetDirector(double ux, double uy, double uz) = 0;
 
 			// Gets neighbor list iterator.
 			NeighborList& GetNeighbors()

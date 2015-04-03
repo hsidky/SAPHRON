@@ -13,9 +13,9 @@ namespace SAPHRON
 
 		public:
 
-			// Initializes a site at a given position with a given director and identifier.
-			Site(Position position, Director director, std::string identifier)
-				: Particle(identifier), _position(position), _director(director){}
+			// Initializes a site at a given position with a given director and species.
+			Site(Position position, Director director, std::string species)
+				: Particle(species), _position(position), _director(director){}
 
 			// Gets site position.
 			virtual Position GetPosition() const override
@@ -49,7 +49,9 @@ namespace SAPHRON
 			// Sets site director.
 			virtual void SetDirector(const Director& director) override
 			{
-				_director = director;
+				_director[0] = director[0];
+				_director[1] = director[1];
+				_director[2] = director[2];
 			}
 
 			// Sets site director.
@@ -57,6 +59,13 @@ namespace SAPHRON
 			{
 				_director = director;
 			}
+
+			virtual void SetDirector(double ux, double uy, double uz) override
+			{
+				_director[0] = ux;
+				_director[1] = uy;
+				_director[2] = uz;
+ 			}
 
 			// Get descendants of the site (none).
 			virtual std::vector<Particle*> GetChildren() override
