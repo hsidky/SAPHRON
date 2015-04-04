@@ -6,12 +6,15 @@ namespace SAPHRON
 	{
 		for (int i = 0; i < _world.GetParticleCount(); ++i)
 		{
+
+			// Select random move.
+			auto move = _mmanager.SelectRandomMove();
+
 			// Draw sample, evaluate energy.
-			_world.DrawRandomParticles(_particles);
+			_world.DrawRandomParticles(_particles, move->RequiredParticles());
 			double prevH = _ffmanager.EvaluateHamiltonian(_particles);
 
-			// Select a random move and perform.
-			auto move = _mmanager.SelectRandomMove();
+			// Perform move.
 			move->Perform(_particles);
 
 			// Evaluate energy and accept/reject.

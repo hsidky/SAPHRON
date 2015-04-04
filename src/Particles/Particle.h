@@ -65,7 +65,8 @@ namespace SAPHRON
 
 			// Initialize a particle with a particular species. This string represents the global type
 			// species for this particle.
-			Particle(std::string species) : _species(species), _speciesID(0), _globalID(++_nextID)
+			Particle(std::string species) : 
+			_species(species), _speciesID(0), _globalID(++_nextID), _connectivities(0)
 			{
 				SetSpecies(species);
 			}
@@ -73,7 +74,7 @@ namespace SAPHRON
 			// Copy constructor.
 			Particle(const Particle& particle) : 
 			_species(particle._species), _speciesID(particle._speciesID), _neighbors(particle._neighbors), 
-			_globalID(++_nextID), _connectivities(0)
+			_globalID(++_nextID), _connectivities(particle._connectivities)
 			{
 			}
 
@@ -112,6 +113,9 @@ namespace SAPHRON
 			// Get particle position.
 			virtual Position GetPosition() const = 0;
 
+			// Get particle position reference.
+			virtual const Position& GetPositionRef() const = 0;
+
 			// Move a particle to a new set of coordinates.
 			virtual void SetPosition(const Position& position) = 0;
 
@@ -140,7 +144,7 @@ namespace SAPHRON
 			}
 
 			// Add a neighbor to neighbor list.
-			void AddNeighbor(Neighbor && neighbor)
+			void AddNeighbor(Neighbor&& neighbor)
 			{
 				_neighbors.emplace_back(neighbor);
 			}

@@ -45,6 +45,8 @@ namespace SAPHRON
 			cout << setw(10) << left << "Global ID";
 		if(this->Flags.particle_species)
 			cout << setw(10) << left << "Species";
+		if(this->Flags.particle_species_id)
+			cout << setw(10) << left << "Species ID";
 		if(this->Flags.particle_position)
 			cout << setw(42) << left << "Position";
 		if(this->Flags.particle_director)
@@ -57,6 +59,8 @@ namespace SAPHRON
 			cout << setw(10) << left << p->GetGlobalIdentifier();
 		if(this->Flags.particle_species)
 			cout << setw(10) << left << p->GetSpecies();
+		if(this->Flags.particle_species_id)
+			cout << setw(10) << left << p->GetSpeciesID();
 		if (this->Flags.particle_position)
 	    {
 	    	auto coords = p->GetPosition();

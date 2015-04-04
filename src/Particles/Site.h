@@ -23,6 +23,12 @@ namespace SAPHRON
 				return _position;
 			}
 
+			// Get position reference.
+			virtual const Position& GetPositionRef() const override
+			{
+				return _position;
+			}
+
 			// Sets site position.
 			virtual void SetPosition(const Position& position) override
 			{
@@ -41,6 +47,7 @@ namespace SAPHRON
 				return _director;
 			}
 
+			// Get director reference.
 			virtual const Director& GetDirectorRef() const override
 			{
 				return _director;

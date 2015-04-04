@@ -70,6 +70,8 @@ namespace SAPHRON
             if(this->Flags.particle_global_id)
             	*_particlefs << "Global ID,";
          	if(this->Flags.particle_species)
+                *_particlefs << "Species,";
+            if(this->Flags.particle_species_id)
                 *_particlefs << "Species ID,";
          	if(this->Flags.particle_position)
                 *_particlefs << "X,Y,Z,";
@@ -117,6 +119,8 @@ namespace SAPHRON
 			*_particlefs << p->GetGlobalIdentifier() << ",";
 		if(this->Flags.particle_species)
 			*_particlefs << p->GetSpecies() << ",";
+		if(this->Flags.particle_species_id)
+			*_particlefs << p->GetSpeciesID() << ",";
 		if (this->Flags.particle_position)
 	    {
 	    	auto coords = p->GetPosition();
