@@ -18,16 +18,12 @@ namespace SAPHRON
 			SphereUnitVectorMove (int seed = 3) : _prevD({0.0, 0.0, 0.0}), _rand(seed) {}
 
 			// Select a new random unit vector on a sphere.
-			virtual void Perform(const ParticleList& particles) override
+			inline virtual void Perform(const ParticleList& particles) override
 			{
 				_particle = *particles.begin();
 
 				// Record prev director.
-				auto& d = _particle->GetDirectorRef();
-
-				_prevD[0] = d[0];
-				_prevD[1] = d[1];
-				_prevD[2] = d[2];
+				_prevD = _particle->GetDirectorRef();
 
 				// Get new unit vector.
 				double v3 = 0;

@@ -49,8 +49,9 @@ namespace SAPHRON
 											        unsigned int count = 1) override 
 			{
 				particles.resize(count);
+				unsigned int n = this->_particles.size();
 				for(unsigned int i = 0; i < count; i ++)
-					particles[i] = DrawRandomParticle();
+					particles[i] = _particles[_rand.int32() % n];
 			}
 
 			// Get number of high level particles in the world.
