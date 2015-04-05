@@ -93,10 +93,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test\NewForceFieldManagerTests.cpp" />
-    <ClCompile Include="test\NewLebwohlLasherFFTests.cpp" />
-    <ClCompile Include="test\NewSimpleLatticeWorldTests.cpp" />
-    <ClCompile Include="test\NewSiteTests.cpp" />
+    <ClCompile Include="test\FlipSpinMoveTests.cpp" />
+    <ClCompile Include="test\ForceFieldManagerTests.cpp" />
+    <ClCompile Include="test\HistogramTests.cpp" />
+    <ClCompile Include="test\IdentityChangeMoveTests.cpp" />
+    <ClCompile Include="test\LebwohlLasherFFTests.cpp" />
+    <ClCompile Include="test\NVTEnsembleTests.cpp" />
+    <ClCompile Include="test\P2SAConnectivityTests.cpp" />
+    <ClCompile Include="test\P2SFAConnectivityTests.cpp" />
+    <ClCompile Include="test\RandTests.cpp" />
+    <ClCompile Include="test\SimFlagsTests.cpp" />
+    <ClCompile Include="test\SimpleLatticeWorldTests.cpp" />
+    <ClCompile Include="test\SiteTests.cpp" />
+    <ClCompile Include="test\SpeciesSwapMoveTests.cpp" />
+    <ClCompile Include="test\SphereUnitVectorMoveTests.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
