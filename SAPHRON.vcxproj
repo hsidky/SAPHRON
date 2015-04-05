@@ -64,7 +64,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo-4.650.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -98,6 +98,7 @@
     <ClInclude Include="include\prng_engine.h" />
     <ClInclude Include="include\ThreadPool.h" />
     <ClInclude Include="src\Connectivities\Connectivity.h" />
+    <ClInclude Include="src\Connectivities\DLSAConnectivity.h" />
     <ClInclude Include="src\Connectivities\P2SAConnectivity.h" />
     <ClInclude Include="src\Connectivities\P2SFAConnectivity.h" />
     <ClInclude Include="src\dataloggers\ConsoleDataLogger.h" />

@@ -74,7 +74,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\gtest-1.7.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\gtest-1.7.0\include;C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
@@ -93,12 +93,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="test\DLSAConnectivityTests.cpp" />
     <ClCompile Include="test\FlipSpinMoveTests.cpp" />
     <ClCompile Include="test\ForceFieldManagerTests.cpp" />
     <ClCompile Include="test\HistogramTests.cpp" />
     <ClCompile Include="test\IdentityChangeMoveTests.cpp" />
     <ClCompile Include="test\LebwohlLasherFFTests.cpp" />
-    <ClCompile Include="test\NVTEnsembleTests.cpp" />
     <ClCompile Include="test\P2SAConnectivityTests.cpp" />
     <ClCompile Include="test\P2SFAConnectivityTests.cpp" />
     <ClCompile Include="test\RandTests.cpp" />

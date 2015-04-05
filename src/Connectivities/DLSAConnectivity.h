@@ -29,10 +29,6 @@ namespace SAPHRON
 		std::vector<arma::mat> _u;
 		std::vector<std::vector<int>> _idmap;
 
-		arma::cx_vec _eigval;
-		arma::cx_mat _eigvec;
-		arma::uword _imax;
-
 	public:
 		DLSAConnectivity(const World& world, double coeff, DirectorFunc dfunc, PFilterFunc pfunc) :
 			_dir({ 0.0, 0.0, 0.0 }), _coeff(coeff), _dfunc(dfunc), _pfunc(pfunc), _u(0), _idmap(0)
@@ -43,13 +39,12 @@ namespace SAPHRON
 			for (int i = 0; i < world.GetParticleCount(); ++i)
 			{
 				auto* particle = world.SelectParticle(i);
-				int group = particle->GetGlobalIdentifier();
-				_groupMap.insert(
-					std::pair<int, int>(group,_pfunc(particle))
-				);
+				int id = particle->GetGlobalIdentifier();
+				int group = _pfunc(particle);
+				_groupMap[id] = group;
 
 				if (counts.find(group) == counts.end())
-					counts[group] = 0;
+					counts[group] = 1;
 				else
 					counts[group]++;
 
@@ -72,7 +67,7 @@ namespace SAPHRON
 						      << std::endl;
 					exit(-1);
 				}
-				it->second = *loc;
+				it->second = loc - groups.begin();
 			}
 
 			// Allocate directors.
@@ -90,6 +85,7 @@ namespace SAPHRON
 				int id = particle->GetGlobalIdentifier();
 				int idx1 = _groupMap[id];
 				int idx2 = _idmap[idx1].size();
+
 				for (int j = 0; j < 3; ++j)
 					_u[idx1](idx2, j) = dir[j];
 				
@@ -117,15 +113,22 @@ namespace SAPHRON
 			_u[idx1](idx2, 2) = dir[2];		
 
 			auto Q = 3.0 / (2.0*_u[idx1].n_rows)*(_u[idx1].t()*_u[idx1] - 1.0 / 3.0 * arma::eye(3, 3));
-			arma::eig_gen(_eigval, _eigvec, Q);
-			_eigval.max(_imax);
+		
+			arma::cx_vec _eigval;
+			arma::cx_mat _eigvec;
+			arma::uword _imax;
 
+			arma::eig_gen(_eigval, _eigvec, Q);
+
+			_eigval.max(_imax);
 			// Calculate director based on user supplied func.
 			_dfunc(p, _dir);
 
-			double dot = _dir[0] * _eigvec(0, _imax).real 
-					   + _dir[1] * _eigvec(1, _imax).real 
-					   + _dir[2] * _eigvec(2, _imax).real;
+			double d1 = _eigvec(0, (int)_imax).real();
+			double d2 = _eigvec(1, (int)_imax).real();
+			double d3 = _eigvec(2, (int)_imax).real();
+
+			double dot = d1*_dir[0] + d2*_dir[1] + d3*_dir[2];
 
 			return _coeff*dot;
 		}

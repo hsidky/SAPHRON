@@ -30,9 +30,6 @@
     <ClCompile Include="test\LebwohlLasherFFTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test\NVTEnsembleTests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="test\P2SAConnectivityTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -55,6 +52,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="test\SphereUnitVectorMoveTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\DLSAConnectivityTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
