@@ -20,117 +20,92 @@ namespace SAPHRON
 	// and d is the director from a user-supplied function.
 	class DLSAConnectivity : public Connectivity
 	{
-	private:
-		double _coeff;
-		Director _dir;
-		DirectorFunc _dfunc;
-		PFilterFunc _pfunc;
-		std::map<int, int> _groupMap;
-		std::vector<arma::mat> _u;
-		std::vector<std::vector<int>> _idmap;
-
-	public:
-		DLSAConnectivity(const World& world, double coeff, DirectorFunc dfunc, PFilterFunc pfunc) :
-			_dir({ 0.0, 0.0, 0.0 }), _coeff(coeff), _dfunc(dfunc), _pfunc(pfunc), _u(0), _idmap(0)
-		{
-			std::vector<int> groups;
-			std::map<int, int> counts;
-			// Generate all possible groupings.
-			for (int i = 0; i < world.GetParticleCount(); ++i)
-			{
-				auto* particle = world.SelectParticle(i);
-				int id = particle->GetGlobalIdentifier();
-				int group = _pfunc(particle);
-				_groupMap[id] = group;
-
-				if (counts.find(group) == counts.end())
-					counts[group] = 1;
-				else
-					counts[group]++;
-
-				groups.push_back(group);
-			}
-
-			// Determine unique groups.
-			std::sort(groups.begin(), groups.end());
-			auto last = std::unique(groups.begin(), groups.end());
-			groups.erase(last, groups.end());
-
-			// Update group map to match vector indices.
-			for (auto it = _groupMap.begin(); it != _groupMap.end(); ++it)
-			{
-				auto loc = std::find(groups.begin(), groups.end(), it->second);
-				if (loc == groups.end())
-				{
-					std::cerr << "ERROR: Invalid group type. "
-						      << "Please report this error."
-						      << std::endl;
-					exit(-1);
-				}
-				it->second = loc - groups.begin();
-			}
-
-			// Allocate directors.
-			for (auto& group : groups)
-			{
-				_u.push_back(arma::mat(counts[group], 3, arma::fill::zeros));
-				_idmap.push_back(std::vector<int>(0));
-			}
-
-			// Fill in particle directors.
-			for (int i = 0; i < world.GetParticleCount(); ++i)
-			{
-				auto* particle = world.SelectParticle(i);
-				auto& dir = particle->GetDirectorRef();
-				int id = particle->GetGlobalIdentifier();
-				int idx1 = _groupMap[id];
-				int idx2 = _idmap[idx1].size();
-
-				for (int j = 0; j < 3; ++j)
-					_u[idx1](idx2, j) = dir[j];
-				
-				_idmap[idx1].push_back(id);
-			}
-		}
-
-		// Evaluate Hamiltonian.
-		virtual double EvaluateHamiltonian(Particle* p) override
-		{
-			int id = p->GetGlobalIdentifier();
-			auto& dir = p->GetDirectorRef();
-			int idx1 = _groupMap[id];
-			
-			auto search = std::find(_idmap[idx1].begin(), _idmap[idx1].end(), id);
-			if (search == _idmap[idx1].end())
-			{
-				std::cerr << "ERROR: Particle not found in map."	
-					      << std::endl;
-			}
-
-			int idx2 = search - _idmap[idx1].begin();
-			_u[idx1](idx2, 0) = dir[0];
-			_u[idx1](idx2, 1) = dir[1];
-			_u[idx1](idx2, 2) = dir[2];		
-
-			auto Q = 3.0 / (2.0*_u[idx1].n_rows)*(_u[idx1].t()*_u[idx1] - 1.0 / 3.0 * arma::eye(3, 3));
-		
+		private:
+			std::map<int, int> _groupMap;
+			std::map<int, arma::vec> _idmap;
+			std::vector<arma::mat> _Qmats;
+			arma::vec _tmpVec;
+			std::vector<int> _groupCounts;
 			arma::cx_vec _eigval;
 			arma::cx_mat _eigvec;
 			arma::uword _imax;
+			DirectorFunc _dfunc;
+			Director _dir;
+			double _coeff;
+			PFilterFunc _pfunc;
 
-			arma::eig_gen(_eigval, _eigvec, Q);
+		public:
+			DLSAConnectivity(const World& world, double coeff, DirectorFunc dfunc, PFilterFunc pfunc) :
+				_groupMap(), _idmap(), _Qmats(0), _tmpVec(3, arma::fill::zeros), _groupCounts(0), 
+				_eigval(3, arma::fill::zeros), _eigvec(3,3,arma::fill::zeros), _imax(0), _dfunc(dfunc), 
+				_dir({ 0.0, 0.0, 0.0 }), _coeff(coeff),  _pfunc(pfunc)
+			{
+				std::vector<int> _groupVec(0);
 
-			_eigval.max(_imax);
-			// Calculate director based on user supplied func.
-			_dfunc(p, _dir);
+				for (int i = 0; i < world.GetParticleCount(); ++i)
+				{
+					auto* particle = world.SelectParticle(i);
+					int id = particle->GetGlobalIdentifier();
+					int group = _pfunc(particle);
 
-			double d1 = _eigvec(0, (int)_imax).real();
-			double d2 = _eigvec(1, (int)_imax).real();
-			double d3 = _eigvec(2, (int)_imax).real();
+					// See if the group is already registered in the vector. If not add it.
+					auto loc = std::find(std::begin(_groupVec),std::end(_groupVec), group);
+					if(loc == std::end(_groupVec))
+					{
+						_groupVec.push_back(group);
+						_Qmats.push_back(arma::mat(3,3, arma::fill::zeros));
+						_groupCounts.push_back(0);
+						loc = std::find(std::begin(_groupVec),std::end(_groupVec), group);
+					}
 
-			double dot = d1*_dir[0] + d2*_dir[1] + d3*_dir[2];
+					// Get director and build up Q matrix.
+					int index = loc - _groupVec.begin();
+					auto& dir = particle->GetDirectorRef();
+					_tmpVec[0] = dir[0];
+					_tmpVec[1] = dir[1];
+					_tmpVec[2] = dir[2];
+					_Qmats[index] += arma::kron(_tmpVec, _tmpVec) - 1.0/3.0*arma::eye(3,3);
+					_groupCounts[index]++;
+					_groupMap.insert(std::pair<int,int>(id, index));
+					_idmap.insert(std::pair<int, arma::vec>(id, _tmpVec));
+				}
 
-			return _coeff*dot;
-		}
+				// Average
+				for (int i = 0; i < (int)_Qmats.size(); ++i)
+					_Qmats[i] *= 3.0/(2.0*_groupCounts[i]);			
+			}
+
+			// Evaluate Hamiltonian.
+			virtual double EvaluateHamiltonian(Particle* p) override
+			{
+				int id = p->GetGlobalIdentifier();
+				auto loc = _groupMap.find(id);
+				if(loc == _groupMap.end())
+					return 0.0;
+
+				// Update Q.
+				int index = loc->second;
+				auto& dir = p->GetDirectorRef();
+				arma::vec& prevDir = _idmap[id];
+
+				_tmpVec = dir;
+				_Qmats[index] += 3.0/(2.0*_groupCounts[index])*(arma::kron(_tmpVec, _tmpVec)-arma::kron(prevDir, prevDir));
+				prevDir = _tmpVec;
+
+				if(!arma::eig_gen(_eigval, _eigvec, _Qmats[index]))
+				   std::cout << "Failed!!" << std::endl;
+
+				_eigval.max(_imax);
+
+				// Calculate director based on user supplied func.
+				_dfunc(p, _dir);
+				
+				double d1 = _eigvec(0, _imax).real();
+				double d2 = _eigvec(1, _imax).real();
+				double d3 = _eigvec(2, _imax).real();
+
+				double dot = d1*_dir[0] + d2*_dir[1] + d3*_dir[2];
+				return _coeff*dot;
+			}
 	};
 }
