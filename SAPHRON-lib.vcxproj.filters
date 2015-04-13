@@ -191,5 +191,11 @@
     <ClInclude Include="src\Selector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Particles\ParticleObserver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Connectivities\DLSAConnectivity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

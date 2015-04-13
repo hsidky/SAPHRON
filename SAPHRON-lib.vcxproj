@@ -99,6 +99,7 @@
     <ClInclude Include="include\prng_engine.h" />
     <ClInclude Include="include\ThreadPool.h" />
     <ClInclude Include="src\Connectivities\Connectivity.h" />
+    <ClInclude Include="src\Connectivities\DLSAConnectivity.h" />
     <ClInclude Include="src\Connectivities\P2SAConnectivity.h" />
     <ClInclude Include="src\Connectivities\P2SFAConnectivity.h" />
     <ClInclude Include="src\ensembles\DensityOfStatesEnsemble.h" />
@@ -125,6 +126,7 @@
     <ClInclude Include="src\moves\SphereUnitVectorMove.h" />
     <ClInclude Include="src\Particles\Neighbor.h" />
     <ClInclude Include="src\Particles\Particle.h" />
+    <ClInclude Include="src\Particles\ParticleObserver.h" />
     <ClInclude Include="src\Particles\Site.h" />
     <ClInclude Include="src\Properties\GlobalDirector.h" />
     <ClInclude Include="src\Properties\Property.h" />
