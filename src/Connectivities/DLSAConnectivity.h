@@ -64,7 +64,7 @@ namespace SAPHRON
 					_tmpVec[0] = dir[0];
 					_tmpVec[1] = dir[1];
 					_tmpVec[2] = dir[2];
-					_Qmats[index] += arma::kron(_tmpVec, _tmpVec) - 1.0/3.0*arma::eye(3,3);
+					_Qmats[index] += arma::kron(_tmpVec.t(), _tmpVec) - 1.0/3.0*arma::eye(3,3);
 					_groupCounts[index]++;
 					_groupMap.insert(std::pair<int,int>(id, index));
 					_idmap.insert(std::pair<int, arma::vec>(id, _tmpVec));
@@ -89,7 +89,7 @@ namespace SAPHRON
 				arma::vec& prevDir = _idmap[id];
 
 				_tmpVec = dir;
-				_Qmats[index] += 3.0/(2.0*_groupCounts[index])*(arma::kron(_tmpVec, _tmpVec)-arma::kron(prevDir, prevDir));
+				_Qmats[index] += 3.0/(2.0*_groupCounts[index])*(arma::kron(_tmpVec.t(), _tmpVec)-arma::kron(prevDir.t(), prevDir));
 				prevDir = _tmpVec;
 
 				if(!arma::eig_gen(_eigval, _eigvec, _Qmats[index]))

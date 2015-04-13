@@ -8,7 +8,7 @@ using namespace SAPHRON;
 TEST(P2SFAConnectivity, DefaultBehavior)
 {
 	// Test pure connectivity on a site.
-	P2SFAConnectivity connectivity(-1.0, [](Particle*, Director& dir){
+	P2SFAConnectivity connectivity(1.0, [](Particle*, Director& dir){
 		dir[0] = 1.0;
 		dir[1] = 0.0;
 		dir[2] = 0.0;
