@@ -3,6 +3,7 @@
 #include "Neighbor.h"
 #include "../Visitors/Visitable.h"
 #include "../Connectivities/Connectivity.h"
+#include "ParticleObserver.h"
 #include <algorithm>
 #include <cassert>
 #include <iostream>
@@ -10,9 +11,11 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <list>
 
 namespace SAPHRON
 {
+	// Particle position.
 	struct Position
 	{
 		double x;
@@ -22,6 +25,33 @@ namespace SAPHRON
 		bool operator==(const Position& rhs) const
 		{
 			return this->x == rhs.x && this->y == rhs.y && this->z == rhs.z;
+		}
+	};
+
+	// Particle event class.
+	class ParticleEvent
+	{
+	private:
+		Particle* _particle;
+
+	public:
+		ParticleEvent(Particle* particle) : _particle(particle), mask(0) {}
+
+		union
+		{
+			struct
+			{
+				unsigned int position : 1;
+				unsigned int director : 1;
+				unsigned int species : 1;
+				unsigned int neighbors : 1;
+			};
+			bool mask;
+		};
+
+		inline Particle* GetParticle() const
+		{
+			return _particle;
 		}
 	};
 
@@ -49,6 +79,9 @@ namespace SAPHRON
 			// Neighbor list.
 			NeighborList _neighbors;
 
+			// Observer list. 
+			std::list<ParticleObserver*> _observers;
+
 			// Global identifier.
 			int _globalID;
 
@@ -60,21 +93,26 @@ namespace SAPHRON
 
 			// Connectivities.
 			ConnectivityList _connectivities;
+		
+		protected:
+
+			// Particle event. 
+			ParticleEvent _pEvent;
 
 		public:
 
 			// Initialize a particle with a particular species. This string represents the global type
 			// species for this particle.
 			Particle(std::string species) : 
-			_species(species), _speciesID(0), _globalID(++_nextID), _connectivities(0)
+			_species(species), _speciesID(0), _neighbors(), _observers(), _pEvent(this), _globalID(++_nextID), _connectivities(0)
 			{
 				SetSpecies(species);
 			}
 
 			// Copy constructor.
 			Particle(const Particle& particle) : 
-			_species(particle._species), _speciesID(particle._speciesID), _neighbors(particle._neighbors), 
-			_globalID(++_nextID), _connectivities(particle._connectivities)
+			_species(particle._species), _speciesID(particle._speciesID), _neighbors(particle._neighbors),
+			_observers(particle._observers), _pEvent(this),	_globalID(++_nextID), _connectivities(particle._connectivities)
 			{
 			}
 
@@ -155,10 +193,37 @@ namespace SAPHRON
 				_connectivities.push_back(connectivity);
 			}
 
+			// Remove a connectivity from the particle.
+			void RemoveConnectivity(Connectivity* connectivity)
+			{
+				_connectivities.remove(connectivity);
+			}
+
 			// Gets connectivity list.
 			const ConnectivityList& GetConnectivities() const
 			{
 				return _connectivities;
+			}
+
+			// Add particle observer.
+			void AddObserver(ParticleObserver* observer)
+			{
+				_observers.push_back(observer);
+			}
+
+			// Remove particle observer.
+			void RemoveObserver(ParticleObserver* observer)
+			{
+				_observers.remove(observer);
+			}
+
+			// Notify registered particle observers of a change.
+			void NotifyObservers()
+			{
+				for (auto observer : _observers)
+					observer->Update(_pEvent);
+
+				_pEvent.mask = false;
 			}
 
 			virtual void AcceptVisitor(Visitor &v) override

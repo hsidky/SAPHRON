@@ -18,60 +18,71 @@ namespace SAPHRON
 				: Particle(species), _position(position), _director(director){}
 
 			// Gets site position.
-			virtual Position GetPosition() const override
+			inline virtual Position GetPosition() const override
 			{
 				return _position;
 			}
 
 			// Get position reference.
-			virtual const Position& GetPositionRef() const override
+			inline virtual const Position& GetPositionRef() const override
 			{
 				return _position;
 			}
 
 			// Sets site position.
-			virtual void SetPosition(const Position& position) override
+			inline virtual void SetPosition(const Position& position) override
 			{
 				_position = position;
+				this->_pEvent.position = 1; 
+				this->NotifyObservers();
 			}
 
 			// Sets site position.
-			virtual void SetPosition(Position && position) override
+			inline virtual void SetPosition(Position && position) override
 			{
 				_position = position;
+				this->_pEvent.position = 1;
+				this->NotifyObservers();
 			}
 
 			// Gets site director.
-			virtual Director GetDirector() const override
+			inline virtual Director GetDirector() const override
 			{
 				return _director;
 			}
 
 			// Get director reference.
-			virtual const Director& GetDirectorRef() const override
+			inline virtual const Director& GetDirectorRef() const override
 			{
 				return _director;
 			}
 
 			// Sets site director.
-			virtual void SetDirector(const Director& director) override
+			inline virtual void SetDirector(const Director& director) override
 			{
 				_director[0] = director[0];
 				_director[1] = director[1];
 				_director[2] = director[2];
+				this->_pEvent.director = 1;
+				this->NotifyObservers();
 			}
 
 			// Sets site director.
-			virtual void SetDirector(Director && director) override
+			inline virtual void SetDirector(Director && director) override
 			{
 				_director = director;
+				this->_pEvent.director = 1;
+				this->NotifyObservers();
 			}
-
-			virtual void SetDirector(double ux, double uy, double uz) override
+			
+			// Sets site director.
+			inline virtual void SetDirector(double ux, double uy, double uz) override
 			{
 				_director[0] = ux;
 				_director[1] = uy;
 				_director[2] = uz;
+				this->_pEvent.director = 1;
+				this->NotifyObservers();
  			}
 
 			// Get descendants of the site (none).
