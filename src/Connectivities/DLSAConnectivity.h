@@ -6,6 +6,7 @@
 #include <map>
 #include "Connectivity.h"
 #include "../Particles/Particle.h"
+#include "../Particles/ParticleObserver.h"
 #include "../Worlds/World.h"
 
 namespace SAPHRON
@@ -18,7 +19,7 @@ namespace SAPHRON
 	// the particle potential itself. This allows for more particle mobility.
 	// The Hamiltonian H = coeff*dot(n,d) where n is the de-localized director 
 	// and d is the director from a user-supplied function.
-	class DLSAConnectivity : public Connectivity
+	class DLSAConnectivity : public Connectivity, public ParticleObserver
 	{
 		private:
 			std::map<int, int> _groupMap;
@@ -76,22 +77,15 @@ namespace SAPHRON
 			}
 
 			// Evaluate Hamiltonian.
-			virtual double EvaluateHamiltonian(Particle* p) override
+			inline virtual double EvaluateHamiltonian(Particle* p) override
 			{
 				int id = p->GetGlobalIdentifier();
 				auto loc = _groupMap.find(id);
 				if(loc == _groupMap.end())
 					return 0.0;
 
-				// Update Q.
+				// Calculate eigenpairs.
 				int index = loc->second;
-				auto& dir = p->GetDirectorRef();
-				arma::vec& prevDir = _idmap[id];
-
-				_tmpVec = dir;
-				_Qmats[index] += 3.0/(2.0*_groupCounts[index])*(arma::kron(_tmpVec.t(), _tmpVec)-arma::kron(prevDir.t(), prevDir));
-				prevDir = _tmpVec;
-
 				if(!arma::eig_gen(_eigval, _eigvec, _Qmats[index]))
 				   std::cout << "Failed!!" << std::endl;
 
@@ -106,6 +100,28 @@ namespace SAPHRON
 
 				double dot = d1*_dir[0] + d2*_dir[1] + d3*_dir[2];
 				return _coeff*dot;
+			}
+
+			// Update delocalized director on particle director change.
+			virtual void Update(const ParticleEvent& pEvent) override
+			{
+				if (!pEvent.director)
+					return;
+
+				auto* p = pEvent.GetParticle();
+				int id = p->GetGlobalIdentifier();
+				auto loc = _groupMap.find(id);
+				if (loc == _groupMap.end())
+					return;
+
+				// Update Q.
+				int index = loc->second;
+				auto& dir = p->GetDirectorRef();
+				arma::vec& prevDir = _idmap[id];
+
+				_tmpVec = dir;
+				_Qmats[index] += 3.0 / (2.0*_groupCounts[index])*(arma::kron(_tmpVec.t(), _tmpVec) - arma::kron(prevDir.t(), prevDir));
+				prevDir = _tmpVec;
 			}
 	};
 }

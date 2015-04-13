@@ -28,6 +28,7 @@ TEST(DLSAConnectivity, DefaultBehavior)
 	{
 		auto* particle = world.SelectParticle(i);
 		particle->AddConnectivity(&connectivity);
+		particle->AddObserver(&connectivity);
 		ASSERT_EQ(1.0, ffm.EvaluateHamiltonian(*particle));
 	}
 
@@ -36,7 +37,7 @@ TEST(DLSAConnectivity, DefaultBehavior)
 	{
 		auto* particle = world.SelectParticle(i);
 		particle->SetDirector({0.0, 0.0, 1.0});
-		ffm.EvaluateHamiltonian(*particle);
+		//ffm.EvaluateHamiltonian(*particle);
 	}
 
 	// Re-evaluate energies 
