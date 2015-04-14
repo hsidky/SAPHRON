@@ -64,15 +64,7 @@ namespace SAPHRON
 				_particles(0)
 			{
 				_particles.reserve(10);
-
-				_energy = 0.0;
-				// Calculate initial energy.
-				for(int i = 0; i < _world.GetParticleCount(); ++i)
-				{
-					auto particle = _world.SelectParticle(i);
-					_energy += _ffmanager.EvaluateHamiltonian(*particle);
-				}
-				_energy /= 2.0;
+				_energy = ffmanager.EvaluateHamiltonian(world);
 			}
 
 			// Run the NVT ensemble for a specified number of iterations.

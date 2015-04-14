@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Particles/Particle.h"
+#include "../Worlds/World.h"
 #include "ForceField.h"
 
 namespace SAPHRON
@@ -13,6 +14,44 @@ namespace SAPHRON
 
 			// Resize Forcefield vector.
 			void ResizeFF(int n);
+
+			// Evaluate the only two body interactions of a particle.
+			inline double EvaluateTwoBodyHamiltonian(Particle& particle)
+			{
+				double h = 0;
+				
+				// Calculate energy with neighbors.
+				auto& neighbors = particle.GetNeighbors();
+				for(auto& neighbor : neighbors)
+				{
+					auto* particle2 = neighbor.GetParticle();
+
+					auto* ff = _forcefields[particle.GetSpeciesID()][particle2->GetSpeciesID()];
+					if(ff != nullptr)
+						h += ff->Evaluate(particle, *particle2);
+				}
+
+				// Calculate energy of children.
+				for(auto &child : particle.GetChildren())
+					h += EvaluateTwoBodyHamiltonian(*child);
+
+				return h;
+			}
+
+			inline double EvaluateConnectivityHamiltonian(Particle& particle)
+			{
+				double h = 0;
+
+				// Calculate connectivity energy 
+				for(auto &connectivity : particle.GetConnectivities())
+					h+= connectivity->EvaluateHamiltonian(&particle);
+
+				// Calculate energy of children.
+				for(auto &child : particle.GetChildren())
+					h += EvaluateConnectivityHamiltonian(*child);
+
+				return h;
+			}
 
 		public:
 
@@ -30,29 +69,33 @@ namespace SAPHRON
 			// Removes a forcefield from the manager.
 			void RemoveForceField(int p1type, int p2type);
 
+			// Evaluate the Hamiltonian of the entire world.
+			inline double EvaluateHamiltonian(World& world)
+			{
+				// Two body interactions.
+				double h1 = 0;
+
+				// Connectivity.
+				double h2 = 0;
+
+				for (int i = 0; i < world.GetParticleCount(); ++i)
+				{
+					auto* particle = world.SelectParticle(i);
+					
+					h1 += EvaluateTwoBodyHamiltonian(*particle);
+					h2 += EvaluateConnectivityHamiltonian(*particle);
+				}
+
+				return 0.5*h1 + h2;
+			}
+
 			// Evaluate the Hamiltonian of the particle.
 			inline double EvaluateHamiltonian(Particle& particle)
 			{
 				double h = 0;
 				
-				// Calculate energy with neighbors.
-				auto& neighbors = particle.GetNeighbors();
-				for(auto& neighbor : neighbors)
-				{
-					auto* particle2 = neighbor.GetParticle();
-
-					auto* ff = _forcefields[particle.GetSpeciesID()][particle2->GetSpeciesID()];
-					if(ff != nullptr)
-						h += ff->Evaluate(particle, *particle2);
-				}
-
-				// Calculate energy of children.
-				for(auto &child : particle.GetChildren())
-					h += EvaluateHamiltonian(*child);
-
-				// Calculate connectivity energy 
-				for(auto &connectivity : particle.GetConnectivities())
-					h+= connectivity->EvaluateHamiltonian(&particle);
+				h+= EvaluateTwoBodyHamiltonian(particle);
+				h+= EvaluateConnectivityHamiltonian(particle);
 
 				return h;
 			}
