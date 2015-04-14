@@ -104,7 +104,8 @@ namespace SAPHRON
 			// Initialize a particle with a particular species. This string represents the global type
 			// species for this particle.
 			Particle(std::string species) : 
-			_species(species), _speciesID(0), _neighbors(), _observers(), _pEvent(this), _globalID(++_nextID), _connectivities(0)
+			_species(species), _speciesID(0), _neighbors(), _observers(), 
+			_globalID(++_nextID), _connectivities(0), _pEvent(this)
 			{
 				SetSpecies(species);
 			}
@@ -112,7 +113,8 @@ namespace SAPHRON
 			// Copy constructor.
 			Particle(const Particle& particle) : 
 			_species(particle._species), _speciesID(particle._speciesID), _neighbors(particle._neighbors),
-			_observers(particle._observers), _pEvent(this),	_globalID(++_nextID), _connectivities(particle._connectivities)
+			_observers(particle._observers), _globalID(++_nextID), _connectivities(particle._connectivities),
+			_pEvent(this)
 			{
 			}
 
