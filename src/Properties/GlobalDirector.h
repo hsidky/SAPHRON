@@ -46,15 +46,18 @@ namespace SAPHRON
 				}
 			}
 
-			virtual void UpdateProperty(const Particle& particle) override
+			virtual void UpdateProperty(const ParticleList& particles) override
 			{
-				auto id = std::find(_idmap.begin(), _idmap.end(), particle.GetGlobalIdentifier());
-				if(id != _idmap.end())
+				for(auto& particle : particles)
 				{
-					int index = id-_idmap.begin();
-					auto& director = particle.GetDirectorRef();
-					for(int j = 0; j < 3; ++j)
-						_u(index, j) = director[j];
+					auto id = std::find(_idmap.begin(), _idmap.end(), particle->GetGlobalIdentifier());
+					if(id != _idmap.end())
+					{
+						int index = id-_idmap.begin();
+						auto& director = particle->GetDirectorRef();
+						for(int j = 0; j < 3; ++j)
+							_u(index, j) = director[j];
+					}
 				}
 			}
 	};

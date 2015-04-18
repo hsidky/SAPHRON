@@ -20,7 +20,6 @@
 using namespace SAPHRON;
 
 // Function definition of our basic input parser.
-// // A very basic input parser.
 int parse_input(char const* args[], int& latticeSize,
                 int& iterations,
                 double& temperature,

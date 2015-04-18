@@ -15,6 +15,8 @@ namespace SAPHRON
 		}
 
 		_species = species;
+		_pEvent.species = 1;
+		NotifyObservers();
 	}
 
 	// Set the species of the particle.
@@ -23,6 +25,8 @@ namespace SAPHRON
 		assert(speciesID < (int)_speciesList.size());
 		_speciesID = speciesID;
 		_species = _speciesList[speciesID];
+		_pEvent.species = 1;
+		NotifyObservers();
 	}
 
 	SpeciesList Particle::_speciesList;

@@ -13,7 +13,7 @@ namespace SAPHRON
 			Property(const World& world){}
 
 			// Update property based on a change in `particle`.
-			virtual void UpdateProperty(const Particle& particle) = 0;
+			virtual void UpdateProperty(const ParticleList& particles) = 0;
 
 			virtual ~Property(){}
 	};
