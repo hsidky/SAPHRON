@@ -19,6 +19,8 @@ namespace SAPHRON
 			cout << setw(20) << left << "Energy";
 		if (this->Flags.temperature)
 			cout << setw(20) << left << "Temperature";
+		if (this->Flags.acceptance)
+			cout << setw(20) << left << "Acceptance";
 		cout << endl;
 		
 		
@@ -28,7 +30,9 @@ namespace SAPHRON
 			cout << setw(20) << setprecision(5) << left << scientific << e->GetEnergy();
 		if (this->Flags.temperature)
 			cout << setw(20) << left << e->GetTemperature();
-		 
+		if(this->Flags.acceptance)
+			cout << setw(20) << left << e->GetAcceptanceRatio();
+					 
 		cout << endl;
 	}
 

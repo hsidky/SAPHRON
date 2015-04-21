@@ -18,6 +18,7 @@ namespace SAPHRON
 					unsigned int temperature : 1;
 					unsigned int pressure : 1;
 					unsigned int composition : 1;
+					unsigned int acceptance: 1;
 				};
 
 				unsigned int ensemble;

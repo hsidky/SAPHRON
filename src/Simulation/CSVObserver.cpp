@@ -26,6 +26,8 @@ namespace SAPHRON
 				*_ensemblefs << "Temperature,";
 			if(flags.pressure)
 				*_ensemblefs << "Pressure,";
+			if(flags.acceptance)
+				*_ensemblefs << "Acceptance,";
 
 			*_ensemblefs << std::endl;
 		}
@@ -97,6 +99,8 @@ namespace SAPHRON
 			*_ensemblefs << e->GetTemperature() << ",";
 		if(this->Flags.pressure)
 			*_ensemblefs << e->GetPressure() << ",";
+		if(this->Flags.acceptance)
+			*_ensemblefs << e->GetAcceptanceRatio() << ",";
 
 		*_ensemblefs << std::endl;
 	}
