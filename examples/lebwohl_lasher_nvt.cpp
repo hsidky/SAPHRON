@@ -91,10 +91,14 @@ int main(int argc, char const* argv[])
 	flags2.iterations = 1;
 	flags2.energy = 1;
 	CSVObserver csv(filePrefix, flags2, 500);
-
+        
 	// Initialize the NVT ensemble. For this particular ensemble, it requires a reference to world, 
 	// the forcefield manager and the move manager. It also takes in a temperature and RNG seed.
 	NVTEnsemble ensemble(world, ffm, mm, temperature, 45);
+
+	// Add the observers to the ensemble. 
+	ensemble.AddObserver(&console);
+	ensemble.AddObserver(&csv);	
 
 	// Run the simulation. 
 	ensemble.Run(iterations);
