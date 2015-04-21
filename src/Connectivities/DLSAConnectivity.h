@@ -17,7 +17,7 @@ namespace SAPHRON
 	// The de-localization is w.r.t. a user-supplied filter that uses a 
 	// de-localized director to compute the anchoring potential rather than 
 	// the particle potential itself. This allows for more particle mobility.
-	// The Hamiltonian H = coeff*dot(n,d) where n is the de-localized director 
+	// The Hamiltonian H = -coeff*P2(dot((n,d)) where n is the de-localized director 
 	// and d is the director from a user-supplied function.
 	class DLSAConnectivity : public Connectivity, public ParticleObserver
 	{
@@ -99,7 +99,7 @@ namespace SAPHRON
 				double d3 = _eigvec(2, _imax).real();
 
 				double dot = d1*_dir[0] + d2*_dir[1] + d3*_dir[2];
-				return _coeff*dot;
+				return -1.0*_coeff*(1.5*dot*dot-0.5);
 			}
 
 			// Update delocalized director on particle director change.
