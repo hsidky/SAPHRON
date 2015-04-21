@@ -70,7 +70,8 @@ end
 % Pull all DOS data.
 dos = zeros(length(windows), max(bincount));
 for i=1:length(windows)
-    dos(i,:) = A(wlast(i),coldos:end)-min(A(wlast(i),coldos:end));
+    lastbin = coldos+bincount(i)-1;
+    dos(i,:) = A(wlast(i),coldos:end)-min(A(wlast(i),coldos:lastbin));
 end
 
 cint = intervals(1,1:bincount(1));
