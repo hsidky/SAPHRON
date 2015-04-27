@@ -72,6 +72,19 @@ namespace SAPHRON
 				return _particles[location];
 			}
 
+			// Remove a particle by index.
+			virtual void RemoveParticle(int location) override
+			{
+				_particles.erase(_particles.begin() + location);
+			}
+
+			// Remove particle(s) based on a supplied filter.
+			virtual void RemoveParticle(std::function<bool(Particle*)> filter) override
+			{
+				_particles.erase(std::remove_if(_particles.begin(), _particles.end(), filter), 
+								_particles.end());
+			}
+
 			int GetLatticeSize()
 			{
 				return _xlength*_ylength*_zlength;

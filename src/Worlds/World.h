@@ -3,6 +3,7 @@
 #include "../Particles/Particle.h"
 #include "../Visitors/Visitable.h"
 #include <memory>
+#include <functional>
 
 namespace SAPHRON
 {
@@ -34,6 +35,12 @@ namespace SAPHRON
 
 			// Get a specific particle based on location (const).
 			virtual const Particle* SelectParticle(int location) const = 0;
+
+			// Remove a specific particle based on location.
+			virtual void RemoveParticle(int location) = 0;
+
+			// Remove particle(s) based on a supplied filter.
+			virtual void RemoveParticle(std::function<bool(Particle*)> filter) = 0;
 
 			//virtual int GetWorldParticleCount() = 0;
 
