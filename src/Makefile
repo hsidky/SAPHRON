@@ -60,6 +60,9 @@ $(BUILD_DIR)/%.o: Worlds/%.cpp
 $(BUILD_DIR)/%.o: ForceFields/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
+$(BUILD_DIR)/%.o: DensityOfStates/%.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+
 $(TARGET): $(OBJECTS) $(DEPS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $(BIN_DIR)/$@ $(LINKER_DEPS)
 
