@@ -84,12 +84,14 @@ int main(int argc, char const* argv[])
 	flags1.temperature = 1;
 	flags1.iterations = 1;
 	flags1.energy = 1;
+	flags1.acceptance = 1;
 	ConsoleObserver console(flags1, 1000);
 
 	SimFlags flags2;
 	flags2.temperature = 1;
 	flags2.iterations = 1;
 	flags2.energy = 1;
+	flags2.acceptance = 1;
 	CSVObserver csv(filePrefix, flags2, 500);
         
 	// Initialize the NVT ensemble. For this particular ensemble, it requires a reference to world, 
