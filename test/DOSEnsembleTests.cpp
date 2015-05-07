@@ -37,8 +37,12 @@ TEST(DOSEnsemble, DefaultBehavior)
 	flags.identifier = 1;
 	flags.energy = 1;
 	flags.temperature = 1;
+	flags.dos_flatness = 1;
+	flags.dos_interval = 1;
+	flags.dos_bin_count = 1;
+	flags.dos_scale_factor = 1;
+	flags.dos_values = 1;
 	CSVObserver co("test", flags, 100);
-
 
 	// Initialize Wang-Landau order parameter. 
 	WangLandauOP op;

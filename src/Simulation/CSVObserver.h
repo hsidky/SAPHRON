@@ -21,6 +21,7 @@ namespace SAPHRON
 			CSVObserver(std::string prefix, SimFlags flags, unsigned int frequency = 1);
 
 			virtual void Visit(Ensemble* e) override;
+			virtual void Visit(DOSEnsemble* e) override;
 			virtual void Visit(World* w) override;
 			virtual void Visit(Particle* p) override;
 

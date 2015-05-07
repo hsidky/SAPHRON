@@ -59,7 +59,7 @@ namespace SAPHRON
 			}
 
 			// Accept a visitor.
-			virtual void AcceptVisitor(class Visitor &v) override
+			virtual void AcceptVisitor(class Visitor &v)
 			{
 				v.Visit(this);
 				VisitChildren(v);

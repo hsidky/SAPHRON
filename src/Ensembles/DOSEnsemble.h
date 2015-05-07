@@ -23,7 +23,7 @@ namespace SAPHRON
 			double _energy;
 
 			// Energy interval.
-			Interval _E;
+			Interval _interval;
 
 			// Histogram
 			Histogram _hist;
@@ -83,10 +83,10 @@ namespace SAPHRON
 		public:
 			DOSEnsemble(DOSOrderParameter& orderp, World& world, 
 						ForceFieldManager& ffmanager, 
-					    MoveManager& mmanager, Interval E, int binCount, int seed = 1) : 
-				_energy(0), _E(E), _hist(E.first, E.second, binCount), _sf(1.0), _flatness(0),
-				_world(world), _ffmanager(ffmanager), _mmanager(mmanager), _orderp(orderp), _rand(seed), 
-				_particles(0), _targetFlatness(0.80)
+					    MoveManager& mmanager, Interval interval, int binCount, int seed = 1) : 
+				_energy(0), _interval(interval), _hist(interval.first, interval.second, binCount), 
+				_sf(1.0), _flatness(0), _world(world), _ffmanager(ffmanager), _mmanager(mmanager), 
+				_orderp(orderp), _rand(seed), _particles(0), _targetFlatness(0.80)
 			{
 				_particles.reserve(10);
 				_energy = ffmanager.EvaluateHamiltonian(world);
@@ -99,7 +99,7 @@ namespace SAPHRON
 				return _energy;
 			}
 
-			virtual double GetTemperature() override
+			virtual double GetFlatness()
 			{
 				return _flatness;
 			}
@@ -116,6 +116,23 @@ namespace SAPHRON
 				_targetFlatness = f;
 			}
 
+			// Get bin count.
+			double GetBinCount()
+			{
+				return _hist.GetBinCount();
+			}
+
+			// Get interval.
+			Interval GetInterval()
+			{
+				return _interval;
+			}
+
+			std::vector<double>* GetDensityOfStates()
+			{
+				return _hist.GetValuesPointer();
+			}
+
 			// Reset histogram.
 			void ResetHistogram()
 			{
@@ -128,6 +145,19 @@ namespace SAPHRON
             	// We store log of scale factor. So we simply multiply.
                 _sf = _sf*order;
          	}
+
+         	// Gets the scale factor.
+         	virtual double GetScaleFactor()
+         	{
+         		return _sf;
+         	}
+
+         	// Accept a visitor.
+			virtual void AcceptVisitor(class Visitor &v) override
+			{
+				v.Visit(this);
+				VisitChildren(v);
+			}
 
 			~DOSEnsemble() {};
 	};

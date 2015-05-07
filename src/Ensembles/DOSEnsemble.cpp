@@ -58,5 +58,6 @@ namespace SAPHRON
 			ResetHistogram();
 			ReduceScaleFactor();
 		}
+		this->NotifyObservers(SimEvent(this, this->GetIteration(), true));
 	}
 }

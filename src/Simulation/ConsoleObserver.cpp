@@ -1,4 +1,5 @@
 #include "../Ensembles/Ensemble.h"
+#include "../Ensembles/DOSEnsemble.h"
 #include "../Particles/Particle.h"
 #include "ConsoleObserver.h"
 #include <algorithm>
@@ -33,6 +34,44 @@ namespace SAPHRON
 		if(this->Flags.acceptance)
 			cout << setw(20) << left << e->GetAcceptanceRatio();
 					 
+		cout << endl;
+	}
+
+	void ConsoleObserver::Visit(DOSEnsemble* e)
+	{
+		Visit((Ensemble*) e);
+
+		if(!this->Flags.dos)
+			return;
+
+		cout << endl;
+		cout << setw(20) << "";
+		if(this->Flags.dos_scale_factor)
+			cout << setw(20) << left << "Scale Factor";
+		if(this->Flags.dos_flatness)
+			cout << setw(20) << left << "Flatness";
+		if(this->Flags.dos_bin_count)
+			cout << setw(20) << left << "Bin Count";
+		if(this->Flags.dos_interval)
+			cout << setw(20) << left << "Interval";
+		cout << endl;
+
+		cout << setw(20) << "";
+		if(this->Flags.dos_scale_factor)
+			cout << setw(20) << left << setprecision(5) << scientific <<  e->GetScaleFactor();
+		if(this->Flags.dos_flatness)
+			cout << setw(20) << left << setprecision(5) << fixed << e->GetFlatness();
+		if(this->Flags.dos_bin_count)
+			cout << setw(20) << left << e->GetBinCount();
+		if(this->Flags.dos_interval)
+		{
+			auto interval = e->GetInterval();
+			cout << setw(10) << fixed 
+				 << setprecision(3) << left 
+				 << interval.first << " " 
+				 << interval.second;
+		}
+
 		cout << endl;
 	}
 

@@ -1,6 +1,8 @@
+#include <iterator>
 #include "CSVObserver.h"
 #include "../Particles/Particle.h"
 #include "../Ensembles/Ensemble.h"
+#include "../Ensembles/DOSEnsemble.h"
 #include "../Worlds/World.h"
 
 namespace SAPHRON
@@ -49,10 +51,10 @@ namespace SAPHRON
 				*_dosfs << "Scale Factor,";
 			if(flags.dos_flatness)
 				*_dosfs << "Flatness,";
-			if(flags.dos_interval)
-				*_dosfs << "Interval Min,Interval Max,";
 			if(flags.dos_bin_count)
 				*_dosfs << "Bin Count,";
+			if(flags.dos_interval)
+				*_dosfs << "Interval Min,Interval Max,";
 			if(flags.dos_values)
 				*_dosfs << "DOS,";
 
@@ -103,6 +105,34 @@ namespace SAPHRON
 			*_ensemblefs << e->GetAcceptanceRatio() << ",";
 
 		*_ensemblefs << std::endl;
+	}
+
+	void CSVObserver::Visit(DOSEnsemble *e)
+	{
+		if(this->Flags.identifier)
+				*_dosfs << this->GetObservableID() << ",";
+		if(this->Flags.iterations)
+			*_dosfs << this->GetIteration() << ",";
+		if(this->Flags.dos_walker)
+			*_dosfs << "Walker ID,";
+		if(this->Flags.dos_scale_factor)
+			*_dosfs << e->GetScaleFactor() << ",";
+		if(this->Flags.dos_flatness)
+			*_dosfs << e->GetFlatness() << ",";
+		if(this->Flags.dos_bin_count)
+			*_dosfs << e->GetBinCount() << ",";
+		if(this->Flags.dos_interval)
+		{
+			auto interval = e->GetInterval();
+			*_dosfs << interval.first << "," << interval.second << ",";
+		}
+		if(this->Flags.dos_values)
+		{
+			auto *dos = e->GetDensityOfStates();
+			std::copy(dos->begin(), dos->end(), std::ostream_iterator<double>(*_dosfs, ","));
+		}
+
+		*_dosfs << std::endl;
 	}
 
 	void CSVObserver::Visit(World* w)
