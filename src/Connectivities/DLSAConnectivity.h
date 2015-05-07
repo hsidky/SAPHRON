@@ -62,9 +62,7 @@ namespace SAPHRON
 					// Get director and build up Q matrix.
 					int index = loc - _groupVec.begin();
 					auto& dir = particle->GetDirectorRef();
-					_tmpVec[0] = dir[0];
-					_tmpVec[1] = dir[1];
-					_tmpVec[2] = dir[2];
+					_tmpVec = dir;
 					_Qmats[index] += arma::kron(_tmpVec.t(), _tmpVec) - 1.0/3.0*arma::eye(3,3);
 					_groupCounts[index]++;
 					_groupMap.insert(std::pair<int,int>(id, index));

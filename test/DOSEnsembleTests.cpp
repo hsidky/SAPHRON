@@ -12,7 +12,7 @@
 
 using namespace SAPHRON;
 
-TEST(WLDOSEnsemble, DefaultBehavior)
+TEST(DOSEnsemble, DefaultBehavior)
 {
 	int n = 25;
 	// Initialize world.

@@ -82,8 +82,8 @@ namespace SAPHRON
 
 		public:
 			DOSEnsemble(DOSOrderParameter& orderp, World& world, 
-						  ForceFieldManager& ffmanager, 
-					      MoveManager& mmanager, Interval E, int binCount, int seed = 1) : 
+						ForceFieldManager& ffmanager, 
+					    MoveManager& mmanager, Interval E, int binCount, int seed = 1) : 
 				_energy(0), _E(E), _hist(E.first, E.second, binCount), _sf(1.0), _flatness(0),
 				_world(world), _ffmanager(ffmanager), _mmanager(mmanager), _orderp(orderp), _rand(seed), 
 				_particles(0), _targetFlatness(0.80)
