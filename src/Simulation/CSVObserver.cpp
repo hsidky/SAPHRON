@@ -109,6 +109,9 @@ namespace SAPHRON
 
 	void CSVObserver::Visit(DOSEnsemble *e)
 	{
+		// Visit ensemble.
+		Visit((Ensemble*) e);
+
 		if(this->Flags.identifier)
 				*_dosfs << this->GetObservableID() << ",";
 		if(this->Flags.iterations)
