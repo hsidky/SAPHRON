@@ -71,11 +71,6 @@ namespace SAPHRON
 			// Evaluate the order parameter.
 			inline virtual double EvaluateParameter(double) override
 			{
-				if(!arma::eig_gen(_eigval, _eigvec, _Q))
-				   std::cerr << "Eigenvalue decomposition failed!!" << std::endl;
-
-				_eigval.max(_imax);
-
 				double dny = _eigvec(1, _imax).real();
 				
 				// Return dny/dx. (this is twist, hardcoded for now). 
@@ -107,6 +102,18 @@ namespace SAPHRON
 				_tmpVec = dir;
 				_Q += 3.0/(2.0*_pcount)*(arma::kron(_tmpVec.t(), _tmpVec) - arma::kron(prevDir.t(), prevDir));
 				prevDir = _tmpVec;
+
+				// Eager decomposition. Only on appropriate update.
+				if(!arma::eig_gen(_eigval, _eigvec, _Q))
+				   std::cerr << "Eigenvalue decomposition failed!!" << std::endl;
+
+				_eigval.max(_imax);
+			}
+
+			// Get temperature.
+			virtual double GetTemperature() override
+			{
+				return _temperature;
 			}
 
 	};

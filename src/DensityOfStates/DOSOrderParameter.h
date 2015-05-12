@@ -13,6 +13,12 @@ namespace SAPHRON
 			// value of Log(\Omega) (prevO) and new values.
 			virtual double AcceptanceProbability(double prevE, double prevO, double newE, double newO) = 0;
 
+			// Get temperature from DOS order parameter. 
+			virtual double GetTemperature()
+			{
+				 return 0.0;
+			}
+
 			virtual ~DOSOrderParameter(){}
 	};
 } 	

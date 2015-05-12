@@ -99,6 +99,11 @@ namespace SAPHRON
 				return _energy;
 			}
 
+			virtual double GetTemperature() override 
+			{
+				return _orderp.GetTemperature();
+			}
+
 			virtual double GetFlatness()
 			{
 				return _flatness;
@@ -144,6 +149,12 @@ namespace SAPHRON
          	{
             	// We store log of scale factor. So we simply multiply.
                 _sf = _sf*order;
+         	}
+
+         	// Sets the scale factor.
+         	void SetScaleFactor(double sf)
+         	{
+         		_sf = sf;
          	}
 
          	// Gets the scale factor.
