@@ -15,7 +15,7 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 	world.ConfigureParticles({&site1}, {1.0});
 	world.ConfigureNeighborList();
 
-	// Initialize ElasticCoeffOOP 
+	// Initialize ElasticCoeffOP 
 	int middle = ceil(n/2);
 	ElasticCoeffOP op(world, 1.0, n - middle, [=](const Particle* p){
 		auto& pos = p->GetPositionRef();
@@ -25,29 +25,32 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 	ASSERT_EQ(0, op.EvaluateParameter(0));
 
 	// Register event handler for particles of interest.
+	//int idx = 0; // Get index of one of the middle spins for later.
 	for(int i = 0; i < world.GetParticleCount(); ++i)
 	{
 		auto* p = world.SelectParticle(i);
 		auto& pos = p->GetPositionRef();
 		if(pos.x == middle)
+		{
 			p->AddObserver(&op);
+			//idx = i;
+		}
 
 		// Modify angle of particle.
-		p->SetPosition({0, 1.0, 0.0});
+		p->SetDirector({0, 1.0, 0.0});
 	}
 
 	// Re-evaluate OP.
-	ASSERT_EQ(1/(n-middle), op.EvaluateParameter(0));
+	ASSERT_EQ(1.0/(n-middle), op.EvaluateParameter(0));
 
 	for(int i = 0; i < world.GetParticleCount(); ++i)
 	{
 		auto* p = world.SelectParticle(i);
 
 		// Modify angle of particle.
-		p->SetPosition({0, -1.0, 0.0});
+		p->SetDirector({0, sqrt(2.0)/2.0, sqrt(2.0)/2.0});
 	}
 
 	// Re-evaluate OP.
-	ASSERT_EQ(-1/(n-middle), op.EvaluateParameter(0));
-
+	ASSERT_NEAR(sqrt(2.0)/(2.0*(n-middle)), op.EvaluateParameter(0), 1e-9);
 }
