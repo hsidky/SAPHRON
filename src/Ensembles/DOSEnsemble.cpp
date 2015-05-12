@@ -8,6 +8,7 @@ namespace SAPHRON
 		_flatness = _hist.CalculateFlatness();
 		while(_flatness < GetTargetFlatness())
 		{
+			_acceptedCount = 0;
 			for (int i = 0; i < _world.GetParticleCount(); ++i)
 			{
 			
@@ -33,9 +34,11 @@ namespace SAPHRON
 					newO = prevO;
 				}
 				else
+				{
 					_energy = newE;
+					++_acceptedCount;
+				}
 				
-
 				// Update bins and energy (log DOS).
 				int bin = _hist.Record(newO);
 				_hist.UpdateValue(bin, _hist.GetValue(bin) + _sf);	

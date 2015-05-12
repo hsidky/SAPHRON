@@ -26,7 +26,7 @@ namespace SAPHRON
 			else
 			{
 				_energy += (currH - prevH);
-				_acceptedCount++;
+				++_acceptedCount;
 			}
 		}
 

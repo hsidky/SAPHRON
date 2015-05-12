@@ -25,6 +25,9 @@ namespace SAPHRON
 			// Energy interval.
 			Interval _interval;
 
+			// Accepted moves count.
+			int _acceptedCount;
+
 			// Histogram
 			Histogram _hist;
 
@@ -84,7 +87,7 @@ namespace SAPHRON
 			DOSEnsemble(DOSOrderParameter& orderp, World& world, 
 						ForceFieldManager& ffmanager, 
 					    MoveManager& mmanager, Interval interval, int binCount, int seed = 1) : 
-				_energy(0), _interval(interval), _hist(interval.first, interval.second, binCount), 
+				_energy(0), _interval(interval), _acceptedCount(0), _hist(interval.first, interval.second, binCount), 
 				_sf(1.0), _flatness(0), _world(world), _ffmanager(ffmanager), _mmanager(mmanager), 
 				_orderp(orderp), _rand(seed), _particles(0), _targetFlatness(0.80)
 			{
@@ -102,6 +105,12 @@ namespace SAPHRON
 			virtual double GetTemperature() override 
 			{
 				return _orderp.GetTemperature();
+			}
+
+			// Get ratio of accepted moves.
+			virtual double GetAcceptanceRatio() override
+			{
+				return (double)_acceptedCount/(double)_world.GetParticleCount();
 			}
 
 			virtual double GetFlatness()
