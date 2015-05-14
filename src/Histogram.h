@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Visitors/Visitable.h"
 #include <algorithm>
 #include <cmath>
 #include <vector>
@@ -10,7 +9,7 @@
 // each entry in a bin.
 namespace SAPHRON
 {
-	class Histogram : public Visitable
+	class Histogram
 	{
 		private:
 			// Width of bins.
@@ -204,12 +203,6 @@ namespace SAPHRON
 					return 0;
 
 				return minVal/avg;
-			}
-
-			// Accept visitor.
-			virtual void AcceptVisitor(class Visitor &v)
-			{
-				//v.Visit(this);
 			}
 	};
 }

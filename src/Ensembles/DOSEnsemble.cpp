@@ -2,6 +2,22 @@
 
 namespace SAPHRON
 {
+
+	inline double DOSEnsemble::AcceptanceProbability(double prevE, double prevO, double newE, double newO)
+	{
+		if(_hist.GetBin(newO) == -1)
+		{
+			if(prevO < _hist.GetMinimum() && newO > prevO)
+				return 1.0;
+			else if(prevO > _hist.GetMaximum() && newO < prevO)
+				return 1.0;
+
+			return 0;
+		}
+
+		return _orderp.AcceptanceProbability(prevE, _hist.GetValue(prevO), newE, _hist.GetValue(newO));
+	}
+
 	// Run until the histogram has been flattened at the set scale factor.
 	inline void DOSEnsemble::Iterate()
 	{
