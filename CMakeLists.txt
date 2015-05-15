@@ -8,8 +8,10 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 set(SAPH_USE_LINAL false)
+SET(ARMA_PATHS "" CACHE STRING "Search directory for Armadillo")
 
 # BEGIN - Identify linear algebra dependencies.
+include(FindArma)
 include(FindQuadMath)
 include(FindgFortran)
 include(FindBLAS)
@@ -21,6 +23,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra -pthread -std=c++11 -i
 
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-as-needed")
 
+message(STATUS "      ARMA_FOUND = ${ARMA_FOUND}"  )
 message(STATUS "  QUADMATH_FOUND = ${QUADMATH_FOUND}"  )
 message(STATUS "  GFORTRAN_FOUND = ${GFORTRAN_FOUND}"  )
 message(STATUS "      BLAS_FOUND = ${BLAS_FOUND}"    )
@@ -113,6 +116,11 @@ set(TEST_DEPS
 	${GTEST_LIBRARY_PATH} 
 	${GTEST_LIBRARY_MAIN_PATH}
 	libsaphron)
+
+add_executable(DOSEnsembleTests test/DOSEnsembleTests.cpp)
+target_link_libraries(DOSEnsembleTests ${TEST_DEPS})
+add_dependencies(DOSEnsembleTests googletest) 
+add_test(DOSEnsembleTests DOSEnsembleTests)
 
 add_executable(DLSAConnectivityTests test/DLSAConnectivityTests.cpp)
 target_link_libraries(DLSAConnectivityTests ${TEST_DEPS})
