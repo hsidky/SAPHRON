@@ -49,6 +49,10 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 
 		// Modify angle of particle.
 		p->SetDirector({0, sqrt(2.0)/2.0, sqrt(2.0)/2.0});
+		auto eigvec = op.GetDirector();
+
+		// Check eigenvectors are normalized.
+		ASSERT_NEAR(1.0, sqrt(eigvec[0]*eigvec[0] + eigvec[1]*eigvec[1] + eigvec[2]*eigvec[2]), 1e-5);
 	}
 
 	// Re-evaluate OP.

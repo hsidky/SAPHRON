@@ -116,5 +116,10 @@ namespace SAPHRON
 				return _temperature;
 			}
 
+			std::vector<double> GetDirector()
+			{
+				return {_eigvec(0, _imax).real(), _eigvec(1, _imax).real(), _eigvec(2, _imax).real()};
+			}
+
 	};
 }

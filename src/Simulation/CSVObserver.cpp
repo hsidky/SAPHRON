@@ -138,7 +138,7 @@ namespace SAPHRON
 		*_dosfs << std::endl;
 	}
 
-	void CSVObserver::Visit(World* w)
+	void CSVObserver::Visit(World*)
 	{
 
 	}
