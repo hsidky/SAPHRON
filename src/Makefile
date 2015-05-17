@@ -42,7 +42,7 @@ $(BUILD_DIR)/%.o: %.cpp
 $(BUILD_DIR)/%.o: Ensembles/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
-$(BUILD_DIR)/%.o: Models/%.cpp
+$(BUILD_DIR)/%.o: Particles/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 $(BUILD_DIR)/%.o: Moves/%.cpp
@@ -52,6 +52,15 @@ $(BUILD_DIR)/%.o: Simulation/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 $(BUILD_DIR)/%.o: Visitors/%.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+
+$(BUILD_DIR)/%.o: Worlds/%.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+
+$(BUILD_DIR)/%.o: ForceFields/%.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+
+$(BUILD_DIR)/%.o: DensityOfStates/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 $(TARGET): $(OBJECTS) $(DEPS)

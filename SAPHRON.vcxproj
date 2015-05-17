@@ -48,7 +48,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo-4.650.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo-4.650.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
@@ -64,7 +64,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo-4.650.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Hythem\Documents\Visual Studio 2013\Projects\armadillo\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -85,27 +85,35 @@
     <ClCompile Include="src\Ensembles\NVTEnsemble.cpp" />
     <ClCompile Include="src\ensembles\ParallelDOSEnsemble.cpp" />
     <ClCompile Include="src\ensembles\WangLandauDOSEnsemble.cpp" />
+    <ClCompile Include="src\ForceFields\ForceFieldManager.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\models\Lattice3DModel.cpp" />
-    <ClCompile Include="src\models\LebwohlLasherModel.cpp" />
-    <ClCompile Include="src\models\LLCellModel.cpp" />
+    <ClCompile Include="src\Particles\Particle.cpp" />
     <ClCompile Include="src\Simulation\CSVObserver.cpp" />
     <ClCompile Include="src\simulation\SimObservable.cpp" />
     <ClCompile Include="src\Simulation\SimObserver.cpp" />
     <ClCompile Include="src\Simulation\ConsoleObserver.cpp" />
+    <ClCompile Include="src\Worlds\SimpleLatticeWorld.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\prng_engine.h" />
     <ClInclude Include="include\ThreadPool.h" />
+    <ClInclude Include="src\Connectivities\Connectivity.h" />
+    <ClInclude Include="src\Connectivities\DLSAConnectivity.h" />
+    <ClInclude Include="src\Connectivities\P2SAConnectivity.h" />
+    <ClInclude Include="src\Connectivities\P2SFAConnectivity.h" />
     <ClInclude Include="src\dataloggers\ConsoleDataLogger.h" />
     <ClInclude Include="src\dataloggers\CSVDataLogger.h" />
     <ClInclude Include="src\dataloggers\DataLogger.h" />
     <ClInclude Include="src\ensembles\DensityOfStatesEnsemble.h" />
     <ClInclude Include="src\ensembles\Ensemble.h" />
+    <ClInclude Include="src\Ensembles\NewNVTEnsemble.h" />
     <ClInclude Include="src\ensembles\SemiGrandDOSEnsemble.h" />
     <ClInclude Include="src\ensembles\NVTEnsemble.h" />
     <ClInclude Include="src\ensembles\ParallelDOSEnsemble.h" />
     <ClInclude Include="src\ensembles\WangLandauDOSEnsemble.h" />
+    <ClInclude Include="src\ForceFields\ForceField.h" />
+    <ClInclude Include="src\ForceFields\ForceFieldManager.h" />
+    <ClInclude Include="src\ForceFields\LebwohlLasherFF.h" />
     <ClInclude Include="src\Histogram.h" />
     <ClInclude Include="src\models\BaseModel.h" />
     <ClInclude Include="src\models\Ising3DModel.h" />
@@ -113,9 +121,15 @@
     <ClInclude Include="src\models\LebwohlLasherModel.h" />
     <ClInclude Include="src\models\LLCellModel.h" />
     <ClInclude Include="src\moves\FlipSpinMove.h" />
+    <ClInclude Include="src\Moves\IdentityChangeMove.h" />
+    <ClInclude Include="src\Moves\IdentitySwapMove.h" />
     <ClInclude Include="src\moves\Move.h" />
+    <ClInclude Include="src\Moves\MoveManager.h" />
     <ClInclude Include="src\moves\SpeciesSwapMove.h" />
     <ClInclude Include="src\moves\SphereUnitVectorMove.h" />
+    <ClInclude Include="src\Particles\Neighbor.h" />
+    <ClInclude Include="src\Particles\Particle.h" />
+    <ClInclude Include="src\Particles\Site.h" />
     <ClInclude Include="src\Properties\GlobalDirector.h" />
     <ClInclude Include="src\Properties\Property.h" />
     <ClInclude Include="src\Rand.h" />
@@ -128,6 +142,9 @@
     <ClInclude Include="src\Simulation\ConsoleObserver.h" />
     <ClInclude Include="src\visitors\Visitable.h" />
     <ClInclude Include="src\visitors\Visitor.h" />
+    <ClInclude Include="src\Worlds\SimpleLatticeWorld.h" />
+    <ClInclude Include="src\Worlds\World.h" />
+    <ClInclude Include="src\Worlds\WorldBuilder.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

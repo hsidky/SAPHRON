@@ -1,40 +1,20 @@
 #pragma once
 
-// Forward declare.
-namespace Ensembles
+namespace SAPHRON
 {
-	template <class T>
-	class NVTEnsemble;
+	// Forward declare.
+	class Ensemble;
+	class DOSEnsemble;
+	class World;
+	class Particle;
 
-	template <class T>
-	class DensityOfStatesEnsemble;
-
-	template <class T>
-	class WangLandauDOSEnsemble;
-
-	template <class T>
-	class SemiGrandDOSEnsemble;
-}
-
-namespace Models
-{
-	class BaseModel;
-}
-
-class Site;
-class Histogram;
-
-namespace Visitors
-{
 	class Visitor
 	{
+		// Abstract base class for a visiting object that traverses visitables.
 		public:
-			virtual void Visit(Ensembles::DensityOfStatesEnsemble<Site>* e) = 0;
-			virtual void Visit(Ensembles::WangLandauDOSEnsemble<Site>* e) = 0;
-			virtual void Visit(Ensembles::SemiGrandDOSEnsemble<Site>* e) = 0;
-			virtual void Visit(Ensembles::NVTEnsemble<Site>* e) = 0;
-			virtual void Visit(Models::BaseModel* m) = 0;
-			virtual void Visit(Histogram* h) = 0;
-			virtual void Visit(Site* s) = 0;
+			virtual void Visit(Ensemble* e) = 0;
+			virtual void Visit(DOSEnsemble* e) = 0;
+			virtual void Visit(World* w) = 0;
+			virtual void Visit(Particle* p) = 0;
 	};
 }

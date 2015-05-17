@@ -1,46 +1,43 @@
-#pragma once
+#pragma once 
 
-#include "../Rand.h"
-#include "../Site.h"
 #include "Move.h"
+#include <utility>
 
-namespace Moves
+namespace SAPHRON
 {
-	// Class for random swapping the species type of a site.
-	class SpeciesSwapMove : public Move<Site>
+	// Species swap move. This move swaps the species identity between two particles. Note this does not 
+	// alter the underlying structure of the particles, but merely exchanges their species identifier.
+	class SpeciesSwapMove : public Move
 	{
 		private:
-			Site* _site;
-			int _prevSpecies;
-			Rand rand;
-			int _speciesCount;
+			int _prevA, _prevB;
+			std::pair<Particle*, Particle*> _particlePair;
 
 		public:
-			SpeciesSwapMove(int speciesCount, int seed = 1337) :
-				rand(seed), _speciesCount(speciesCount) {}
+			SpeciesSwapMove() : _prevA(0), _prevB(0), _particlePair{nullptr, nullptr} {} 
 
-			// Reassigns the species of a site with a new random one.
-			void Perform(Site& site)
+			virtual unsigned int RequiredParticles() override { return 2; }
+
+			// Perform move.
+			virtual void Perform(const ParticleList& particles) override
 			{
-				_site = &site;
+				_particlePair.first = particles[0];
+				_particlePair.second = particles[1];
 
-				// Record previous species
-				_prevSpecies = _site->GetSpecies();
+				_prevA = particles[0]->GetSpeciesID();
+				_prevB = particles[1]->GetSpeciesID();
+				particles[0]->SetSpecies(_prevB);
+				particles[1]->SetSpecies(_prevA);
+			};
 
-				// Select a random species
-				int newSpecies =  rand.int32() % _speciesCount + 1;
-
-				_site->SetSpecies(newSpecies);
+			// Undo move.
+			virtual void Undo() override
+			{
+				_particlePair.first->SetSpecies(_prevA);
+				_particlePair.second->SetSpecies(_prevB);
 			}
 
-			// Undo the move on a site.
-			void Undo()
-			{
-				_site->SetSpecies(_prevSpecies);
-			}
-
-			// Clone move.
-			virtual Move* Clone() const
+			virtual Move* Clone() const override
 			{
 				return new SpeciesSwapMove(
 				               static_cast<const SpeciesSwapMove&>(*this)

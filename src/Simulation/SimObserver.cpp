@@ -1,18 +1,17 @@
 #include "SimObservable.h"
 #include "SimObserver.h"
 
-namespace Simulation
+namespace SAPHRON
 {
 	void SimObserver::Update(SimEvent& e)
 	{
-		this->SetIteration(e.GetObservable()->GetSimIteration());
-		_forceObserve = e.ForceObserve();
-		_identifier = e.GetObservable()->GetObservableID();
+		// Only lock and proceed if we have to.
+		if(e.GetIteration() % _frequency == 0 || e.ForceObserve())
+		{
+			_mutex.lock();
+			_event = e;
+			_event.GetObservable()->AcceptVisitor(*this);
+			_mutex.unlock();
+		}
 	};
-
-	// Determines of an observer is interested in observing a particular event.
-	bool SimObserver::IsObservableEvent(SimEvent& e)
-	{
-		return e.GetObservable()->GetSimIteration() % _frequency == 0 || e.ForceObserve();
-	}
 }

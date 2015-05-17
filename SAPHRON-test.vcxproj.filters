@@ -15,37 +15,34 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test\BaseModelTests.cpp">
+    <ClCompile Include="test\FlipSpinMoveTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test\FlipSpinMoveTests.cpp">
+    <ClCompile Include="test\ForceFieldManagerTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="test\HistogramTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test\Ising3DModelTests.cpp">
+    <ClCompile Include="test\IdentityChangeMoveTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test\LebwohlLasherModelTests.cpp">
+    <ClCompile Include="test\LebwohlLasherFFTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test\LLCellModelTests.cpp">
+    <ClCompile Include="test\P2SAConnectivityTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test\NVTEnsembleTests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test\ParallelDOSEnsembleTests.cpp">
+    <ClCompile Include="test\P2SFAConnectivityTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="test\RandTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test\SemiGrandDOSEnsembleTests.cpp">
+    <ClCompile Include="test\SimFlagsTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test\SimFlagsTests.cpp">
+    <ClCompile Include="test\SimpleLatticeWorldTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="test\SiteTests.cpp">
@@ -57,13 +54,11 @@
     <ClCompile Include="test\SphereUnitVectorMoveTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test\WangLandauDOSEnsembleTests.cpp">
+    <ClCompile Include="test\DLSAConnectivityTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="test\MockBaseModel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="test\ParticleObserverTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,9 +1,10 @@
 #pragma once
 
 #include "Property.h"
+#include <algorithm>
 #include <armadillo>
 
-namespace Properties
+namespace SAPHRON
 {
 	// Calculates the global nematic director as the highest
 	// eigenvalue of the 2nd rank Q-tensor matrix.
@@ -11,6 +12,7 @@ namespace Properties
 	{
 		private:
 			arma::mat _u;
+			std::vector<int> _idmap;
 
 			std::vector<double> ComputeDirector()
 			{
@@ -25,26 +27,37 @@ namespace Properties
 			}
 
 		public:
-			GlobalDirector(const BaseModel& model) :
-				Property(model), _u(model.GetSiteCount(), 3, arma::fill::zeros)
+			GlobalDirector(const World& world) :
+				Property(world),
+				_u(world.GetParticleCount(), 3, arma::fill::zeros),
+				_idmap(world.GetParticleCount(),0)
 			{
-				for (int i = 0; i < model.GetSiteCount(); i++)
+				for (int i = 0; i < world.GetParticleCount(); ++i)
 				{
-					auto site = model.SelectSite(i);
-					auto vec = site->GetUnitVectors();
+					auto particle = world.SelectParticle(i);
+
+					// Update ID map.
+					_idmap[i] = particle->GetGlobalIdentifier();
+
+					// Store director.
+					auto vec = particle->GetDirector();
 					for (int j = 0; j < 3; j++)
 						_u(i, j) = vec[j];
 				}
 			}
 
-			virtual void CalculateProperty(const BaseModel& model, int index)
+			virtual void UpdateProperty(const ParticleList& particles) override
 			{
-				for (int i = 0; i < model.GetSiteCount(); i++)
+				for(auto& particle : particles)
 				{
-					auto site = model.SelectSite(i);
-					auto vec = site->GetUnitVectors();
-					for (int j = 0; j < 3; j++)
-						_u(i, j) = vec[j];
+					auto id = std::find(_idmap.begin(), _idmap.end(), particle->GetGlobalIdentifier());
+					if(id != _idmap.end())
+					{
+						int index = id-_idmap.begin();
+						auto& director = particle->GetDirectorRef();
+						for(int j = 0; j < 3; ++j)
+							_u(index, j) = director[j];
+					}
 				}
 			}
 	};

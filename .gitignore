@@ -11,6 +11,9 @@
 *.psess
 *.vspx
 
+# Sublime project 
+*.sublime-workspace
+
 # Precompiled Headers
 *.gch
 *.pch

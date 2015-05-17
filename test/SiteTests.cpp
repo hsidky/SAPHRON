@@ -1,58 +1,92 @@
-#include "../src/Site.h"
+#include "../src/Particles/Site.h"
 #include "gtest/gtest.h"
 
-// Test the default constructor initializes everything to zero or empty.
+using namespace SAPHRON;
+
 TEST(Site, DefaultConstructor)
 {
-	Site s(0, 0, 0, 0);
+	Site s({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 
-	auto zeros = std::vector<double> {0.0, 0.0, 0.0};
+	auto pos = s.GetPosition();
+	ASSERT_EQ(0.0, pos.x);
+	ASSERT_EQ(0.0, pos.y);
+	ASSERT_EQ(0.0, pos.z);
 
-	// Coordinates and unit vectors should initialize to zero.
-	for(auto &i : s.GetCoordinates())
-		ASSERT_NEAR(0.0, i, 1e-50);
+	for(auto& dir : s.GetDirector())
+		ASSERT_EQ(0.0, dir);
 
-	for(auto &i : s.GetUnitVectors())
-		ASSERT_NEAR(0.0, i, 1e-50);
+	ASSERT_EQ("L1", s.GetSpecies());
 
-	// Neighbor list should be empty.
-	ASSERT_TRUE(s.GetNeighbors().size() == 0);
-
-	// Species type is one.
-	ASSERT_EQ(1, s.GetSpecies());
+	// Set a few things
+	Director d {0.1, 0.2, 0.4};
+	s.SetDirector(d);
+	ASSERT_EQ(d, s.GetDirector());
+	d[0] = 1.0;
+	ASSERT_NE(d, s.GetDirector());
 }
 
-// Tests the getters and setters of Site.
-TEST(Site, GettersandSetters)
+TEST(Site, Identifiers)
 {
-	Site s(0, 0, 0, 0);
+	Site s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 
-	double val = 5.0;
+	ASSERT_EQ("L1", s1.GetSpecies());
+	ASSERT_EQ(0, s1.GetSpeciesID());
+	ASSERT_EQ(2, s1.GetGlobalIdentifier());
 
-	ASSERT_DOUBLE_EQ(val, s.SetXCoordinate(val));
-	ASSERT_DOUBLE_EQ(val, s.SetYCoordinate(val));
-	ASSERT_DOUBLE_EQ(val, s.SetZCoordinate(val));
+	Site s2({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 
-	ASSERT_DOUBLE_EQ(val, s.SetXUnitVector(val));
-	ASSERT_DOUBLE_EQ(val, s.SetYUnitVector(val));
-	ASSERT_DOUBLE_EQ(val, s.SetZUnitVector(val));
+	ASSERT_EQ("L1", s2.GetSpecies());
+	ASSERT_EQ(0, s2.GetSpeciesID());
+	ASSERT_EQ(3, s2.GetGlobalIdentifier());
+
+	Director dir{4.0, 5.0, 6.0};
+	Position pos{1.0, 2.0, 3.0};
+
+	Site s3({1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}, "L2");
+
+	ASSERT_EQ("L2", s3.GetSpecies());
+	ASSERT_EQ(1, s3.GetSpeciesID());
+	ASSERT_EQ(4, s3.GetGlobalIdentifier());
+
+	auto list = Particle::GetSpeciesList();
+	ASSERT_EQ(2, (int)list.size());
+
+	// Test copy 
+	Particle* particle = s3.Clone();
+
+	ASSERT_EQ(dir, particle->GetDirector());
+	ASSERT_EQ(pos, particle->GetPosition());
+	ASSERT_EQ(5, particle->GetGlobalIdentifier());
+
+	delete particle;
+
 }
 
-// Test the neighbors vector for adding and removing neighbors.
-TEST(Site, NeighborsVector)
+TEST(Site, Neighbors)
 {
-	Site s(0, 0, 0, 0);
+	Site s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Site s2({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L2");
+	Site s3({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L3");
+	Site s4({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L4");
 
-	// Neighbor list should be empty by default.
-	ASSERT_TRUE(s.GetNeighbors().size() == 0);
+	// Add neighbors.
+	s1.AddNeighbor(Neighbor(s2));
+	s1.AddNeighbor(Neighbor(s3));
+	s1.AddNeighbor(Neighbor(s4));
 
-	// Push value to neighbor list and check.
-	s.AppendNeighbor(5);
-	ASSERT_EQ(*s.GetNeighbors().begin(), 5);
+	// Verify
+	std::vector<std::string> vals = {"L2", "L3", "L4"};
+	auto& neighbors = s1.GetNeighbors();
+	int i = 0;
+	for(NeighborIterator neighbor = neighbors.begin(); neighbor != neighbors.end(); ++neighbor)
+	{
+		auto id = neighbor->GetParticle()->GetSpecies();
 
-	// Get neighbors list, modify, and re-check original list to make sure it
-	// hasn't changed.
-	auto v = s.GetNeighbors();
-	v.push_back(37);
-	ASSERT_TRUE(s.GetNeighbors().size() == 1);
+		ASSERT_EQ(vals[i], id);
+
+		if(i == 1)
+			neighbor = neighbors.erase(neighbor);
+
+		i++;
+	}
 }

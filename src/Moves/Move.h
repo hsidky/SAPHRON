@@ -1,40 +1,25 @@
 #pragma once
 
-#include "../Site.h"
+#include "../Particles/Particle.h"
 
-namespace Moves
+namespace SAPHRON
 {
 	// Abstract base class for a Monte Carlo move.
-	template<typename T>
 	class Move
 	{
-		private:
-			bool _forceAccept = false;
-
 		public:
 			virtual ~Move(){}
 
-			// Perform a Monte Carlo move.
-			virtual void Perform(T& type) = 0;
+			// Get required number of particles.
+			virtual unsigned int RequiredParticles() { return 1; }
 
-			// Undo a Monte Carlo move.
+			// Perform a move.
+			virtual void Perform(const ParticleList& particles) = 0;
+
+			// Undo a move.
 			virtual void Undo() = 0;
 
-			// Specify if a move is to be accepted unconditionally.
-			// It is the responsibility of the derived classes to enforce
-			// this on Undo().
-			bool SetForceAccept(bool force)
-			{
-				return _forceAccept = force;
-			}
-
-			// Detemrine if a move is to be accepted unconditionally.
-			bool ForceAccept()
-			{
-				return _forceAccept;
-			}
-
-			// Clone Move.
+			// Clone a move.
 			virtual Move* Clone() const = 0;
 	};
 }

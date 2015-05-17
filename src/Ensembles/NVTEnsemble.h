@@ -1,80 +1,94 @@
 #pragma once
 
-#include "../Models/BaseModel.h"
+#include "../ForceFields/ForceFieldManager.h"
+#include "../Moves/MoveManager.h"
 #include "../Rand.h"
+#include "../Worlds/World.h"
 #include "Ensemble.h"
+#include <cmath>
 
-using namespace Simulation;
-using namespace Visitors;
-
-namespace Ensembles
+namespace SAPHRON
 {
-	// Class for simple NVT ensemble - also known as "canonical" ensemble. This
-	// calls moves off the move queue and uses the Metropolis algorithm for acceptance
-	// probability, A(i->j) = min(1,exp(DE/kB*T)). The template represents the return
-	// type of DrawSample from model, which should typically be Site.
-	template <typename T>
-	class NVTEnsemble : public Ensemble<T>
+	// Class for simple NVT ensemble - also known as "canonical" ensemble.This
+	// calls moves off the move queue and uses the Metropolis criteria for acceptance
+	// probability, A(i->j) = min(1,exp(DE/kB*T)).
+	class NVTEnsemble : public Ensemble
 	{
 		private:
 
-			// Temperature (K) (Sometimes reduced).
+			// System temperature.
 			double _temperature;
 
-			// Energy of system.
-			double _energy = 0.0;
+			// System energy
+			double _energy;
 
-			// "Normalized" Boltzmann constant.
-			double _kb = 1.0;
+			// Accepted moves count.
+			int _acceptedCount; 
+
+			// Reference to world.
+			World& _world;
+
+			// Reference to force field manager.
+			ForceFieldManager& _ffmanager;
+
+			// Reference to move manager.
+			MoveManager& _mmanager;
 
 			// Random number generator.
-			Rand rand;
+			Rand _rand;
 
-		public:
-			// Initializes NVTEnsemble for a model at a given "reduced" temperature.
-			NVTEnsemble(BaseModel& model, double temperature);
+			// Particle list.
+			ParticleList _particles;
 
-			// Performs one Monte Carlo sweep. This is defined as "n" iterations,
-			// where "n" is the number of sites in a model.
-			void Sweep();
+			inline double AcceptanceProbability(double prevH, double currH)
+			{
+				double p = exp(-(currH - prevH) / (_temperature*this->GetBoltzmannConstant()));
+				return p > 1.0 ? 1.0 : p;
+			}
 
-			// Performs one Monte Carlo iteration. This is precicely one random
-			// draw from the model (one function call to model->DrawSample()).
 			void Iterate();
 
-			// Metropolis acceptance probability of the system transitioning from prevH
-			// to currH via exp(-(currH-prevH)/kb*T).
-			double AcceptanceProbability(double prevH, double currH);
-
-			// Gets the temperature (K).
-			double GetTemperature()
+		protected:
+			
+			// Visit children.
+			virtual void VisitChildren(Visitor& v) override
 			{
-				return this->_temperature;
+				_world.AcceptVisitor(v);
 			}
 
-			// Sets the temperature (K).
-			double SetTemperature(double temperature)
+		public:
+			NVTEnsemble(World& world,
+			            ForceFieldManager& ffmanager,
+			            MoveManager& mmanager,
+			            double temperature,
+			            int seed = 1) :
+				_temperature(temperature), _energy(0.0), _acceptedCount(0), _world(world),
+				_ffmanager(ffmanager), _mmanager(mmanager), _rand(seed),
+				_particles(0)
 			{
-				return this->_temperature = temperature;
+				_particles.reserve(10);
+				_energy = ffmanager.EvaluateHamiltonian(world);
 			}
 
-			// Get the system energy.
-			double GetEnergy()
+			// Run the NVT ensemble for a specified number of iterations.
+			virtual void Run(int iterations) override;
+
+			// Get temperature.
+			virtual double GetTemperature() override 
 			{
-				return this->_energy;
+				return _temperature;
 			}
 
-			// Gets the "normalized" Boltzmann constant (J/K).
-			double GetBoltzmannConstant()
+			// Get energy.
+			virtual double GetEnergy() override
 			{
-				return this->_kb;
+				return _energy;
 			}
 
-			// Accept visitor to class.
-			virtual void AcceptVisitor(class Visitor& v)
+			// Get ratio of accepted moves.
+			virtual double GetAcceptanceRatio() override
 			{
-				v.Visit(this);
-				this->model.AcceptVisitor(v);
+				return (double)_acceptedCount/(double)_world.GetParticleCount();
 			}
 	};
 }

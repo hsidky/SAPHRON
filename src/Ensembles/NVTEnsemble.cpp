@@ -1,68 +1,44 @@
 #include "NVTEnsemble.h"
 
-namespace Ensembles
+namespace SAPHRON
 {
-	// Initializes NVTEnsemble for a model at a given "reduced" temperature.
-	template<typename T>
-	NVTEnsemble<T>::NVTEnsemble(BaseModel& model, double temperature)
-		: Ensemble<T>(model), _temperature(temperature), rand(1)
+	inline void NVTEnsemble::Iterate()
 	{
-		_energy = 0.0;
-		for (int i = 0; i < this->model.GetSiteCount(); i++)
-			_energy += this->model.EvaluateHamiltonian(i);
-		_energy /= 2.0;
-	}
+		_acceptedCount = 0;
+		for (int i = 0; i < _world.GetParticleCount(); ++i)
+		{
 
-	// Performs one Monte Carlo sweep. This is defined as "n" iterations,
-	// where "n" is the number of sites in a model.
-	template<typename T>
-	void NVTEnsemble<T>::Sweep()
-	{
-		for (int i = 0; i < this->model.GetSiteCount(); i++)
-			Iterate();
+			// Select random move.
+			auto move = _mmanager.SelectRandomMove();
 
-		this->NotifyObservers(SimEvent(this));
-		this->IncrementSweeps();
-	}
+			// Draw sample, evaluate energy.
+			_world.DrawRandomParticles(_particles, move->RequiredParticles());
+			double prevH = _ffmanager.EvaluateHamiltonian(_particles);
 
-	// Performs one Monte Carlo iteration. This is precicely one random
-	// draw from the model (one function call to model->DrawSample()).
-	template<typename T>
-	void NVTEnsemble<T>::Iterate()
-	{
-		// Draw sample and evaluate Hamiltonian
-		auto sample = this->model.DrawSample();
-		double prevH = this->model.EvaluateHamiltonian(*sample);
+			// Perform move.
+			move->Perform(_particles);
 
-		// Perform moves
-		for (auto &move : this->moves)
-			move->Perform(*sample);
+			// Evaluate energy and accept/reject.
+			double currH = _ffmanager.EvaluateHamiltonian(_particles);
 
-		// Get new Hamiltonian.
-		double currH = this->model.EvaluateHamiltonian(*sample);
-		double newE = this->_energy + (currH - prevH);
-
-		// Check probabilities.
-		if (AcceptanceProbability(this->_energy, newE) < rand.doub())
-			for (auto &move : this->moves)
+			if(AcceptanceProbability(prevH, currH) < _rand.doub())
 				move->Undo();
-		else
-			this->_energy = newE;
+			else
+			{
+				_energy += (currH - prevH);
+				++_acceptedCount;
+			}
+		}
 
 		this->IncrementIterations();
+		this->NotifyObservers(SimEvent(this, this->GetIteration()));
 	}
 
-	// Metropolis acceptance probability of the system transitioning from prevH
-	// to currH via exp(-(currH-prevH)/kb*T).
-	template<typename T>
-	double NVTEnsemble<T>::AcceptanceProbability(double prevH, double currH)
+	// Run the NVT ensemble for a specified number of iterations.
+	void NVTEnsemble::Run(int iterations)
 	{
-		auto p =
-		        exp(-(currH -
-		              prevH) / (GetBoltzmannConstant() * GetTemperature()));
-
-		return p > 1.0 ? 1.0 : p;
+		this->NotifyObservers(SimEvent(this, this->GetIteration()));
+		for(int i = 0; i < iterations; ++i)
+			Iterate();
 	}
-
-	template class NVTEnsemble<Site>;
 }

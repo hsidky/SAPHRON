@@ -1,37 +1,34 @@
 #pragma once
 
-#include "../Site.h"
 #include "Move.h"
 
-namespace Moves
+namespace SAPHRON
 {
-	// Class for performing a spin flip Monte Carlo move on a site.
-	// Each site will have the Z unit vector changed in sign - as in flipping
-	// the spin.
-	class FlipSpinMove : public Move<Site>
+	// Class for performing a spin flip Monte Carlo move on a particle.
+	class FlipSpinMove : public Move
 	{
 		private:
-			Site* _site;
-			double _uzBefore;
+			Director _prevD;
+			Particle* _particle;
 
 		public:
 
-			// Perform the flip spin move on a site.
-			void Perform(Site& site)
+			// Perform the flip spin move on a particle.
+			virtual void Perform(const ParticleList& particles) override
 			{
-				_site = &site;
-				_uzBefore = _site->GetZUnitVector();
-				_site->SetZUnitVector(-1 * _uzBefore);
+				_particle = *particles.begin();
+				_prevD = _particle->GetDirector();
+				_particle->SetDirector({-1.0*_prevD[0], -1.0*_prevD[1], -1.0*_prevD[2]});
 			}
 
-			// Undo the flip spin move on a site.
-			void Undo()
+			// Undo the flip spin move on a particle.
+			virtual void Undo() override
 			{
-				_site->SetZUnitVector(_uzBefore);
+				_particle->SetDirector(_prevD);
 			}
 
 			// Clone move.
-			virtual Move* Clone() const
+			Move* Clone() const override
 			{
 				return new FlipSpinMove(static_cast<const FlipSpinMove&>(*this));
 			}

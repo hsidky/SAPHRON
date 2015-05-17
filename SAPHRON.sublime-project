@@ -1,0 +1,22 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	], 
+
+	"build_systems":
+ 	[
+    	{
+        	"name": "Make Source",
+         	"shell_cmd": "make",
+         	"working_dir" : "${project_path}/src/"
+     	},
+     	{
+        	"name": "Make Tests",
+         	"shell_cmd": "make",
+         	"working_dir" : "${project_path}/test/"
+     	}
+ 	]
+}

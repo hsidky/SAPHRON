@@ -17,12 +17,12 @@ CXXFLAGS += -g -Wall -Wextra -pthread -std=c++11 -O3 -include ../include/gcc-pre
 DEPS  = $(LIB_DIR)/SAPHRON.a
 
 # All tests produced by this Makefile.
-TESTS = RandTests.out SiteTests.out BaseModelTests.out Ising3DModelTests.out \
-	    FlipSpinMoveTests.out NVTEnsembleTests.out \
-		LebwohlLasherModelTests.out SphereUnitVectorMoveTests.out LLCellModelTests.out \
-		HistogramTests.out WangLandauDOSEnsembleTests.out SpeciesSwapMoveTests.out \
-		SemiGrandDOSEnsembleTests.out ParallelDOSEnsembleTests.out SimFlagsTests.out
-
+TESTS = RandTests.out HistogramTests.out SimFlagsTests.out SiteTests.out \
+	    IdentityChangeMoveTests.out FlipSpinMoveTests.out SphereUnitVectorMoveTests.out \
+		LebwohlLasherFFTests.out SimpleLatticeWorldTests.out ForceFieldManagerTests.out \
+		NVTEnsembleTests.out P2SAConnectivityTests.out P2SFAConnectivityTests.out \
+		SpeciesSwapMoveTests.out DLSAConnectivityTests.out ParticleObserverTests.out \
+		DOSEnsembleTests.out ElasticCoeffOPTests.out
 
 # Google Test libs to link against.
 GTEST_LIBS = $(GTEST_DIR)/lib/libgtest.a $(GTEST_DIR)/lib/libgtest_main.a
@@ -32,6 +32,8 @@ LINKER_DEPS = -llapack -lblas -lgfortran -lquadmath
 
 # House-keeping build targets.
 all : pre-build $(TESTS)
+
+tests : $(TESTS)
 
 pre-build:
 	cd $(SRC_DIR) && $(MAKE)
