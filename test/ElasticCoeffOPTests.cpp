@@ -26,6 +26,7 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 
 	// Register event handler for particles of interest.
 	//int idx = 0; // Get index of one of the middle spins for later.
+	int count = 0; // Count the number of particles that are in the "middle".
 	for(int i = 0; i < world.GetParticleCount(); ++i)
 	{
 		auto* p = world.SelectParticle(i);
@@ -33,12 +34,15 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 		if(pos.x == middle)
 		{
 			p->AddObserver(&op);
+			++count;
 			//idx = i;
 		}
 
 		// Modify angle of particle.
 		p->SetDirector({0, 1.0, 0.0});
 	}
+
+	ASSERT_EQ(n*n, count);
 
 	// Re-evaluate OP.
 	ASSERT_EQ(1.0/(n-middle), op.EvaluateParameter(0));

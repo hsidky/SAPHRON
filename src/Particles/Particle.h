@@ -50,6 +50,11 @@ namespace SAPHRON
 		return lhs;
 	} 
 
+	inline double anint( const double &x )
+	{
+		return ( x >= 0 ) ? floor( x + 0.5 ) : ceil( x - 0.5 );
+	}
+
 	// Particle event class.
 	class ParticleEvent
 	{

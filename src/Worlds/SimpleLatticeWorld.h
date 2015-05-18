@@ -13,9 +13,12 @@ namespace SAPHRON
 	class SimpleLatticeWorld : public World
 	{
 		private:
-			int _xlength, _ylength, _zlength;
+			double _xlength, _ylength, _zlength;
 			std::vector<Particle*> _particles;
 			Rand _rand;
+
+			// Cutoff radius.
+			double _rcut;
 
 		protected:
 			// Visit children.
@@ -26,8 +29,8 @@ namespace SAPHRON
 			}
 
 		public:
-			SimpleLatticeWorld(int xlength, int ylength, int zlength, int seed = 1)
-				: _xlength(xlength), _ylength(ylength), _zlength(zlength), _rand(seed)
+			SimpleLatticeWorld(double xlength, double ylength, double zlength, double rcut, int seed = 1)
+				: _xlength(xlength), _ylength(ylength), _zlength(zlength), _rand(seed), _rcut(rcut)
 			{
 			}
 

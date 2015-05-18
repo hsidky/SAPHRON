@@ -42,54 +42,84 @@
 	"components" : {
 		"Water" : {
 			"children": [
-				{
-					"Hw" : {
-					"index" : 1,
-					"position" : [0, 0, 0]
-					}
-				},
-				{
-					"Ow" : {
-						"index" : 2,
-						"position" : [0, 0, 0]
-					}
-				},
-				{
-					"Hw" : {
-						"index" : 3,
-						"position" : [0, 0, 0]
-					}
-				}
+				{ "Hw" : { "index" : 1 } },
+				{ "Ow" : { "index" : 2 } },
+				{ "Hw" : { "index" : 3 } }
 			],
 
 			"connectivity" : {
 				"bond" : {
 					"type" : "harmonic",
-					"members" : [0,1],
+					"members" : [1,2],
 					"constant" : 1e3
 				},
 				"bond" : {
 					"type" : "harmonic",
-					"members" : [1,2],
+					"members" : [2,3],
 					"constant" : 1e3
 				},
 				"bend" : { 
 					"type" : "standard",
-					"members" : [0, 1, 2],
+					"members" : [1, 2, 3],
 					"constant": 1e3
-				} 
+				},
+				"field" : {
+					"type" : "electric",
+					"members" : [0],
+					"constant" : 1000
+				}
 			}
 		}
 	},
 
 	"particles" : [
-		{ "Hw":{ "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } },
-		{ "Hw":{ "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } },
-		{ "Hw":{ "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } },
-		{ "Hw":{ "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } }
+		{ "Hw":{ "parent": "Water", "residue" : "H2O1", "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } },
+		{ "Ow":{ "parent": "Water", "residue" : "H2O1", "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } },
+		{ "Hw":{ "parent": "Water", "residue" : "H2O1", "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } },
+		{ "Hw":{ "parent": "Water", "residue" : "H2O2", "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } }
 	],
 
 	"observers" : {
-		
-	}
+	
+		"CSV" : {
+			"file_prefix" : "test",
+			"frequency" : 100,
+			"flags" : {
+				"identifier" : 1, 
+				"sweeps" : 1,
+				"energy" : 1,
+				"temperature" : 1,
+				"acceptance" : 1,
+				"dos_walker" : 1, 
+				"dos_scale_factor" : 1,
+				"dos_flatness" : 1, 
+				"dos_interval" : 1,
+				"dos_bin_count" : 1,
+				"dos_values" : 1
+			}
+		},
+
+		"Console" : {
+			"flags" : {
+				"sweeps" : 1,
+				"energy" : 1
+			}
+		}	
+	},
+
+	"forcefields" : [
+		{ "LJ" : {
+			"epsilon" : 1e-3,
+			"sigma"   :	1e-3,
+			"species" : ["Hw", "Ow"]
+			}
+		},
+
+		{ "LJ" : {
+			"epsilon" : 1e-3,
+			"sigma"   :	1e-3,
+			"species" : ["Hw", "Ow"]
+			}
+		}
+	]
 }

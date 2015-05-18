@@ -64,38 +64,35 @@ namespace SAPHRON
 
 	void SimpleLatticeWorld::ConfigureNeighborList()
 	{
+		/* TODO: remove this later.
 		if((int)_particles.size() != GetLatticeSize())
 		{
 			std::cerr << "ERROR: Please configure particles first." << std::endl;
 			exit(-1);
 		}
+		*/
 
-		for(int i = 0; i < GetLatticeSize()- 1; i++)
+		int n = this->GetParticleCount();
+		for(int i = 0; i < n - 1; ++i)
 		{
-			auto ni = _particles[i];
-			auto ci = ni->GetPosition();
+			auto* pi = _particles[i];
+			auto posi = pi->GetPosition();
 
-			for(int j = i + 1; j < GetLatticeSize(); j++)
+			for(int j = i + 1; j < n; ++j)
 			{
-				auto nj = _particles[j];
-				auto cj = nj->GetPosition();
+				auto pj = _particles[j];
+				auto posj = pj->GetPositionRef();
 
-				Position rij;
-				rij.x = std::abs(ci.x - cj.x);
-				rij.y = std::abs(ci.y - cj.y);
-				rij.z = std::abs(ci.z - cj.z);
+				Position dist = posi - posj;
 
-				if(rij.x == _xlength-1)
-					rij.x = 1;
-				if(rij.y == _ylength-1)
-					rij.y = 1;
-				if(rij.z == _xlength-1)
-					rij.z = 1;
+				dist.x -= _xlength*anint(dist.x/_xlength);
+				dist.y -= _xlength*anint(dist.y/_ylength);
+				dist.z -= _xlength*anint(dist.z/_zlength);
 
-				if((rij.x + rij.y +rij.z) == 1)
+				if(dist.norm() <= _rcut)
 				{
-					ni->AddNeighbor(Neighbor(*nj));
-					nj->AddNeighbor(Neighbor(*ni));
+					pi->AddNeighbor(Neighbor(*pj));
+					pj->AddNeighbor(Neighbor(*pi));
 				}
 			}
 		}
