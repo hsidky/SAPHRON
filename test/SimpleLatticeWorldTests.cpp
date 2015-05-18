@@ -66,3 +66,16 @@ TEST(SimpleLatticeWorld, DefaultConstructor)
 		}
 	}
 }
+
+TEST(SimpleLatticeWorld, MoveParticleSemantics)
+{
+	int n = 30;
+	SimpleLatticeWorld world(n, n, n, 1);
+
+	ASSERT_EQ(0, world.GetParticleCount());
+	world.AddParticle(new Site({0,0,0}, {1,0,0}, "E1"));
+	ASSERT_EQ(1, world.GetParticleCount());
+	auto * p = world.SelectParticle(0);
+	Director d {1, 0, 0};
+	ASSERT_EQ(d, p->GetDirector());
+}
