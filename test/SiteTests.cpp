@@ -90,3 +90,31 @@ TEST(Site, Neighbors)
 		i++;
 	}
 }
+
+TEST(Site, PositionArithmetic)
+{
+	Site s1({1.0, 1.0, 1.0}, {0.0, 0.0, 0.0}, "L1");
+	Site s2({1.0, 1.0, 2.0}, {0.0, 0.0, 0.0}, "L2");
+	Site s3({1.0, 2.0, 1.0}, {0.0, 0.0, 0.0}, "L3");
+	Site s4({2.0, 1.0, 1.0}, {0.0, 0.0, 0.0}, "L4");
+
+	Position p1({2.0, 2.0, 3.0});
+	Position p2({2.0, 3.0, 2.0});
+	Position p3({3.0, 2.0, 2.0});
+	ASSERT_EQ(p1, s1.GetPosition() + s2.GetPosition()); 
+	ASSERT_EQ(p2, s1.GetPosition() + s3.GetPosition()); 
+	ASSERT_EQ(p3, s1.GetPosition() + s4.GetPosition()); 
+	ASSERT_EQ(sqrt(17.0), (s1.GetPosition() + s2.GetPosition()).norm());
+	ASSERT_EQ(sqrt(17.0), (s1.GetPosition() + s3.GetPosition()).norm());
+	ASSERT_EQ(sqrt(17.0), (s1.GetPosition() + s4.GetPosition()).norm());
+
+	Position p4({0.0, 0.0, -1.0});
+	Position p5({0.0, -1.0, 0.0});
+	Position p6({-1.0, 0.0, 0.0});
+	ASSERT_EQ(p4, s1.GetPosition() - s2.GetPosition()); 
+	ASSERT_EQ(p5, s1.GetPosition() - s3.GetPosition()); 
+	ASSERT_EQ(p6, s1.GetPosition() - s4.GetPosition()); 
+	ASSERT_EQ(1.0, (s1.GetPosition() - s2.GetPosition()).norm());
+	ASSERT_EQ(1.0, (s1.GetPosition() - s3.GetPosition()).norm());
+	ASSERT_EQ(1.0, (s1.GetPosition() - s4.GetPosition()).norm());
+}
