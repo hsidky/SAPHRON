@@ -3,19 +3,19 @@
 namespace SAPHRON
 {
 
-	inline double DOSEnsemble::AcceptanceProbability(double prevE, double prevO, double newE, double newO)
+	inline double DOSEnsemble::AcceptanceProbability(double prevE, double prevOP, double newE, double newOP)
 	{
-		if(_hist.GetBin(newO) == -1)
+		if(_hist.GetBin(newOP) == -1)
 		{
-			if(prevO < _hist.GetMinimum() && newO > prevO)
+			if(prevOP < _hist.GetMinimum() && newOP > prevOP)
 				return 1.0;
-			else if(prevO > _hist.GetMaximum() && newO < prevO)
+			else if(prevOP > _hist.GetMaximum() && newOP < prevOP)
 				return 1.0;
 
 			return 0;
 		}
 
-		return _orderp.AcceptanceProbability(prevE, _hist.GetValue(prevO), newE, _hist.GetValue(newO));
+		return _orderp.AcceptanceProbability(prevE, _hist.GetValue(prevOP), newE, _hist.GetValue(newOP));
 	}
 
 	// Run until the histogram has been flattened at the set scale factor.
@@ -34,7 +34,7 @@ namespace SAPHRON
 				// Draw sample, evaluate energy.
 				_world.DrawRandomParticles(_particles, move->RequiredParticles());
 				double prevH = _ffmanager.EvaluateHamiltonian(_particles);
-				double prevO = _orderp.EvaluateParameter(_energy);
+				double prevOP = _orderp.EvaluateParameter(_energy);
 
 				// Perform move.
 				move->Perform(_particles);
@@ -42,12 +42,12 @@ namespace SAPHRON
 				// Evaluate new energy and accept/reject.
 				double currH = _ffmanager.EvaluateHamiltonian(_particles);
 				double newE = _energy + (currH - prevH);
-				double newO = _orderp.EvaluateParameter(newE);
+				double newOP = _orderp.EvaluateParameter(newE);
 
-				if(AcceptanceProbability(_energy, prevO, newE, newO) < _rand.doub())
+				if(AcceptanceProbability(_energy, prevOP, newE, newOP) < _rand.doub())
 				{
 					move->Undo();
-					newO = prevO;
+					newOP = prevOP;
 				}
 				else
 				{
@@ -56,7 +56,7 @@ namespace SAPHRON
 				}
 				
 				// Update bins and energy (log DOS).
-				int bin = _hist.Record(newO);
+				int bin = _hist.Record(newOP);
 				_hist.UpdateValue(bin, _hist.GetValue(bin) + _sf);	
 			}
 
