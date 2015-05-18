@@ -86,40 +86,6 @@ message(STATUS "")
 include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
-set(CONFIGSRC 
-	src/configparser/ConfigItem.cpp                      src/configparser/SchemaTypeEnum.cpp
-	src/configparser/ConfigLex.cpp                       src/configparser/SchemaTypeFloat.cpp
-	src/configparser/ConfigParser.cpp                    src/configparser/SchemaTypeFloatWithUnits.cpp
-	src/configparser/ConfigScope.cpp                     src/configparser/SchemaTypeInt.cpp
-	src/configparser/ConfigScopeEntry.cpp                src/configparser/SchemaTypeIntWithUnits.cpp
-	src/configparser/Configuration.cpp                   src/configparser/SchemaTypeList.cpp
-	src/configparser/ConfigurationException.cpp          src/configparser/SchemaTypeMemorySizeBytes.cpp
-	src/configparser/ConfigurationImpl.cpp               src/configparser/SchemaTypeMemorySizeKB.cpp
-	src/configparser/DefaultSecurityConfiguration.cpp    src/configparser/SchemaTypeMemorySizeMB.cpp
-	src/configparser/DefaultSecurity.cpp                 src/configparser/SchemaTypeScope.cpp
-	src/configparser/LexBase.cpp                         src/configparser/SchemaTypeString.cpp
-	src/configparser/LexToken.cpp                        src/configparser/SchemaTypeTable.cpp
-	src/configparser/MBChar.cpp                          src/configparser/SchemaTypeTuple.cpp
-	src/configparser/platform.cpp                        src/configparser/SchemaTypeTypedef.cpp
-	src/configparser/SchemaLex.cpp                       src/configparser/SchemaTypeUnitsWithFloat.cpp
-	src/configparser/SchemaParser.cpp                    src/configparser/SchemaTypeUnitsWithInt.cpp
-	src/configparser/SchemaTypeBoolean.cpp               src/configparser/SchemaValidator.cpp
-	src/configparser/SchemaType.cpp                      src/configparser/StringBuffer.cpp
-	src/configparser/SchemaTypeDurationMicroseconds.cpp  src/configparser/StringVector.cpp
-	src/configparser/SchemaTypeDurationMilliseconds.cpp  src/configparser/UidIdentifierProcessor.cpp
-	src/configparser/SchemaTypeDurationSeconds.cpp       src/configparser/util.cpp
-)
-
-set(CONFIGH 
-	include/config4cpp/Configuration.h
-	include/config4cpp/ConfigurationException.h
-	include/config4cpp/SchemaType.h
-	include/config4cpp/SchemaValidator.h
-	include/config4cpp/StringBuffer.h
-	include/config4cpp/StringVector.h
-	include/config4cpp/namespace.h
-)
-
 set(SOURCE
 	src/Ensembles/DOSEnsemble.cpp
 	src/Ensembles/NVTEnsemble.cpp
@@ -132,15 +98,12 @@ set(SOURCE
 	src/Worlds/SimpleLatticeWorld.cpp
 )
 
-add_library(configparser ${CONFIGSRC} ${CONFIGH})
-
 add_library(libsaphron ${SOURCE})
 set_target_properties(libsaphron PROPERTIES PREFIX "")
 target_link_libraries(libsaphron ${SAPH_LIBS})
 
-add_executable(saphron src/main.cpp)
-target_link_libraries(saphron libsaphron configparser ${SAPH_LIBS})
-add_dependencies(saphron configparser)
+add_executable(saphron src/main.cpp src/jsoncpp.cpp)
+target_link_libraries(saphron libsaphron ${SAPH_LIBS})
 
 # Configure flags 
 # - Globals 

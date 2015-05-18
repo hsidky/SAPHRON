@@ -35,13 +35,13 @@ namespace SAPHRON
 			}
 
 			// Undo the move on a site.
-			void Undo()
+			void Undo() override
 			{
 				_particle->SetSpecies(_prevSpecies);
 			}
 
 			// Clone move.
-			virtual Move* Clone() const
+			virtual Move* Clone() const override
 			{
 				return new IdentityChangeMove(
 				               static_cast<const IdentityChangeMove&>(*this)
