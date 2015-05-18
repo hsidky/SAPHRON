@@ -1,0 +1,95 @@
+{
+	"ensemble" : {
+		"type" : "DOS",
+		"sweeps" : 1000000,
+		"temperature" : [50, "K"],
+		"seed" : 100000
+	},
+
+	"DOS" : {
+		"type" : "ElasticCoeff",
+		
+		"order_parameter" : {
+			"dxj" : 100
+		},
+		
+		"interval" : [-1.7, 30.6],
+		"bin_count" : 7000, 
+		"bin_width" : 0.07,
+		"scale_factor" : 1e-5,
+		"target_flatness" : 0.80
+	},
+
+	"moves" : {
+		"seed" : 1234,
+		"FlipSpin" : {},
+		"IdentityChange" : {
+			"seed" : 1337
+		},
+		"SpeciesSwap" : {},
+		"SphereUnitVector" : {
+			"seed" : 10000
+		}
+	}, 
+
+	"world" : {
+		"type" : "SimpleLattice",
+		"size" : [32, 32, 32],
+		"seed" : 300, 
+		"cutoff_radius" : 10
+	},
+
+	"components" : {
+		"Water" : {
+			"children": [
+				{
+					"Hw" : {
+					"index" : 1,
+					"position" : [0, 0, 0]
+					}
+				},
+				{
+					"Ow" : {
+						"index" : 2,
+						"position" : [0, 0, 0]
+					}
+				},
+				{
+					"Hw" : {
+						"index" : 3,
+						"position" : [0, 0, 0]
+					}
+				}
+			],
+
+			"connectivity" : {
+				"bond" : {
+					"type" : "harmonic",
+					"members" : [0,1],
+					"constant" : 1e3
+				},
+				"bond" : {
+					"type" : "harmonic",
+					"members" : [1,2],
+					"constant" : 1e3
+				},
+				"bend" : { 
+					"type" : "standard",
+					"members" : [0, 1, 2],
+					"constant": 1e3
+				} 
+			}
+		}
+	},
+
+	"particles" : [
+		{ "Hw":{ "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } },
+		{ "Hw":{ "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } },
+		{ "Hw":{ "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } },
+		{ "Hw":{ "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } }
+	],
+
+	"observers" : {
+		
+	}
+}
