@@ -9,7 +9,7 @@
 
 namespace SAPHRON
 {
-	// A class describing a simple lattice world with periodic boundary conditions.
+	// A class describing a simple world with periodic boundary conditions.
 	class SimpleWorld : public World
 	{
 		private:
@@ -92,6 +92,18 @@ namespace SAPHRON
 			{
 				_particles.erase(std::remove_if(_particles.begin(), _particles.end(), filter), 
 								_particles.end());
+			}
+
+			// Sets the cutoff radius.
+			virtual void SetCutoffRadius(double rcut) override
+			{
+				_rcut = rcut;
+			}
+
+			// Gets the cutoff radius.
+			virtual double GetCutoffRadius() override
+			{
+				return _rcut; 
 			}
 
 			int GetLatticeSize()

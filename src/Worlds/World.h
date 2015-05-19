@@ -44,6 +44,10 @@ namespace SAPHRON
 			// Remove particle(s) based on a supplied filter.
 			virtual void RemoveParticle(std::function<bool(Particle*)> filter) = 0;
 
+			virtual double GetCutoffRadius() = 0;
+
+			virtual void SetCutoffRadius(double rcut) = 0;
+
 			//virtual int GetWorldParticleCount() = 0;
 
 			// Accept a visitor.
