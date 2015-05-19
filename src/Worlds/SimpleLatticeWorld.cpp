@@ -62,16 +62,8 @@ namespace SAPHRON
 		}
 	}
 
-	void SimpleLatticeWorld::ConfigureNeighborList()
+	void SimpleLatticeWorld::UpdateNeighborList()
 	{
-		/* TODO: remove this later.
-		if((int)_particles.size() != GetLatticeSize())
-		{
-			std::cerr << "ERROR: Please configure particles first." << std::endl;
-			exit(-1);
-		}
-		*/
-
 		int n = this->GetParticleCount();
 		for(int i = 0; i < n - 1; ++i)
 		{

@@ -61,7 +61,7 @@ int main(int argc, char const* argv[])
 	// box entirely with that site. We then configure connectivity through neighbor list 
 	// initialization.
 	world.ConfigureParticles({ &site1 }, { 1.0 });
-	world.ConfigureNeighborList();
+	world.UpdateNeighborList();
 
 
 	// Initialize the Lebwohl-Lasher (LL) force field and add it to an instance of the forcefield

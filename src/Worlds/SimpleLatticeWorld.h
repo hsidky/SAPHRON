@@ -99,7 +99,8 @@ namespace SAPHRON
 				return _xlength*_ylength*_zlength;
 			}
 
-			void ConfigureNeighborList();			
+			// Update the neighbor list for all particles in the world.
+			virtual void UpdateNeighborList() override;			
 
 			~SimpleLatticeWorld()
 			{

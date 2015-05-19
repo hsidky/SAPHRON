@@ -13,7 +13,7 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 	SimpleLatticeWorld world(n, n, n, 1);
 	Site site1({0, 0, 0}, {0, 0, 1.0}, "E1");
 	world.ConfigureParticles({&site1}, {1.0});
-	world.ConfigureNeighborList();
+	world.UpdateNeighborList();
 
 	// Initialize ElasticCoeffOP 
 	int middle = ceil(n/2);

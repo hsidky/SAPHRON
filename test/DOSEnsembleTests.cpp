@@ -21,7 +21,7 @@ TEST(DOSEnsemble, DefaultBehavior)
 	SimpleLatticeWorld world(n, n, n, 1);
 	Site site1({0, 0, 0}, {1.0, 0, 0}, "E1");
 	world.ConfigureParticles({&site1}, {1.0});
-	world.ConfigureNeighborList();
+	world.UpdateNeighborList();
 
 	// Initialize forcefields.
 	LebwohlLasherFF ff(1.0, 0);

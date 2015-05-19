@@ -9,7 +9,7 @@ using namespace SAPHRON;
 TEST(SimpleLatticeWorld, DefaultConstructor)
 {
 	int n = 30;
-	SimpleLatticeWorld world(n, n, n, 1);
+	SimpleLatticeWorld world(n, n, n, 1.0);
 	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
 	Site site2({0, 0, 0}, {0, 1, 0}, "E2");
 	Site site3({0, 0, 0}, {0, 0, 1}, "E3");
@@ -29,8 +29,8 @@ TEST(SimpleLatticeWorld, DefaultConstructor)
 	ASSERT_EQ(9000, counts["E2"]);
 	ASSERT_EQ(9000, counts["E3"]);
 
-	world.ConfigureNeighborList();
-	for(int i = 0; i < world.GetParticleCount(); i++)
+	world.UpdateNeighborList();
+	for(int i = 0; i < world.GetParticleCount(); ++i)
 	{
 		auto particle = world.SelectParticle(i);
 		Position coords = particle->GetPosition();

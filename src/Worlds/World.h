@@ -16,7 +16,6 @@ namespace SAPHRON
 			// Visit children.
 			virtual void VisitChildren(class Visitor &v) = 0;
 
-
 		public:
 			// Draw a random particle from the world.
 			virtual Particle* DrawRandomParticle() = 0;
@@ -25,7 +24,7 @@ namespace SAPHRON
 			virtual void DrawRandomParticles(ParticleList& particles, unsigned int count = 1) = 0;
 
 			// Update the neighbor list for all particles in the world.
-			virtual void UpdateNeighborList() {}
+			virtual void UpdateNeighborList() = 0;
 
 			// Get number of high level particles in the world.
 			virtual int GetParticleCount() const = 0;
