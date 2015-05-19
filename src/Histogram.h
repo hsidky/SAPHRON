@@ -6,7 +6,7 @@
 
 // A Histogram class. Along with the traditional histogram and binning, this class
 // provides "value" storage, which can be used to store custom data associated with
-// each entry in a bin.
+// each entry in a bin. The interval specified in the histogram is [min, max). 
 namespace SAPHRON
 {
 	class Histogram
@@ -42,39 +42,38 @@ namespace SAPHRON
 			Histogram(double min, double max, double binWidth) :
 				_binWidth(binWidth), _min(min), _max(max)
 			{
-				_binCount = (int) ceil(std::abs(max-min)/binWidth);
+				_binCount = (int) ceil((max-min)/binWidth);
 				_counts.resize(_binCount, 0);
 				_values.resize(_binCount, 0.0);
 			}
 
 			// Record a data point in the histogram and returns the bin index updated.
-			int Record(double datum)
+			inline int Record(double datum)
 			{
-				int bin = (int)((datum - _min) / _binWidth);
+				int bin = floor((datum - _min) / _binWidth);
+
 				if (bin < 0)
-					//_counts[0]++;
 					_lowerOutlierCount++;
 				else if(bin >= _binCount)
-					//_counts[_binCount-1];
 					_upperOutlierCount++;
 				else
 					_counts[bin]++;
-
+		
 				return bin;
 			}
 
 			// Get the bin index associated with a data point.
-			int GetBin(double datum)
+			inline int GetBin(double datum)
 			{
-				int bin = (int)((datum - _min) / _binWidth);
+				int bin = floor((datum - _min) / _binWidth);
 				if(bin >= _binCount || bin < 0)
 					return -1;
-
+				
 				return bin;
 			}
 
 			// Gets an associated value from a bin.
-			double GetValue(int bin)
+			inline double GetValue(int bin)
 			{
 				if(bin >= _binCount)
 					bin = _binCount -1;
@@ -85,16 +84,14 @@ namespace SAPHRON
 			}
 
 			// Gets an associated value with the bin in which datum would reside.
-			double GetValue(double datum)
+			inline double GetValue(double datum)
 			{
-				int bin = (int)((datum - _min) / _binWidth);
+				int bin = floor((datum - _min)/_binWidth);
 
 				if(bin >= _binCount)
 					bin = _binCount -1;
 				if(bin < 0)
 					bin = 0;
-				//if(bin >= _binCount || bin < 0)
-				//	return datum;
 
 				return _values[bin];
 			}
@@ -121,7 +118,7 @@ namespace SAPHRON
 			}
 
 			// Update associated values in a bin.
-			void UpdateValue(int bin, double value)
+			inline void UpdateValue(int bin, double value)
 			{
 				if(bin >= _binCount)
 					return;
