@@ -65,6 +65,11 @@ namespace SAPHRON
 	void SimpleWorld::UpdateNeighborList()
 	{
 		int n = this->GetParticleCount();
+
+		// Clear neighbor list before repopulating.
+		for(int i = 0; i < n; ++i)
+			_particles[i]->ClearNeighborList();
+
 		for(int i = 0; i < n - 1; ++i)
 		{
 			auto* pi = _particles[i];
@@ -78,8 +83,8 @@ namespace SAPHRON
 				Position dist = posi - posj;
 
 				dist.x -= _xlength*anint(dist.x/_xlength);
-				dist.y -= _xlength*anint(dist.y/_ylength);
-				dist.z -= _xlength*anint(dist.z/_zlength);
+				dist.y -= _ylength*anint(dist.y/_ylength);
+				dist.z -= _zlength*anint(dist.z/_zlength);
 
 				if(dist.norm() <= _rcut)
 				{

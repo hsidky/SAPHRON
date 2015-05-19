@@ -216,6 +216,12 @@ namespace SAPHRON
 				_neighbors.emplace_back(neighbor);
 			}
 
+			// Clear the neighbor list.
+			void ClearNeighborList()
+			{
+				_neighbors.clear();
+			}
+
 			// Add a connectivity to the particle.
 			void AddConnectivity(Connectivity* connectivity)
 			{

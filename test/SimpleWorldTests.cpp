@@ -33,7 +33,7 @@ TEST(SimpleWorld, DefaultConstructor)
 	for(int i = 0; i < world.GetParticleCount(); ++i)
 	{
 		auto particle = world.SelectParticle(i);
-		Position coords = particle->GetPosition();
+		Position coords = particle->GetPositionRef();
 
 		// Check neighbors
 		Position n1 =
@@ -49,12 +49,50 @@ TEST(SimpleWorld, DefaultConstructor)
 		Position n6 =
 		{(double) coords.x, (double) coords.y, (coords.z == 1) ? (double) n : coords.z - 1.0};
 
-		auto neighbors = particle->GetNeighbors();
+		auto& neighbors = particle->GetNeighbors();
 		ASSERT_EQ(6, (int)neighbors.size());
 
 		for(auto& neighbor : neighbors)
 		{
-			auto np = neighbor.GetParticle()->GetPosition();
+			auto np = neighbor.GetParticle()->GetPositionRef();
+			ASSERT_TRUE(
+			        np == n1 ||
+			        np == n2 ||
+			        np == n3 ||
+			        np == n4 ||
+			        np == n5 ||
+			        np == n6
+			        );
+		}
+	}
+
+	// Update list again to make sure lists are being properly cleared.
+	world.UpdateNeighborList();
+	for(int i = 0; i < world.GetParticleCount(); ++i)
+	{
+		auto particle = world.SelectParticle(i);
+		Position coords = particle->GetPositionRef();
+
+		// Check neighbors
+		Position n1 =
+		{(coords.x == n) ? 1.0 : (double) coords.x + 1.0, (double) coords.y, (double) coords.z};
+		Position n2 =
+		{(coords.x == 1) ? (double) n : coords.x - 1.0, (double) coords.y, (double) coords.z};
+		Position n3 =
+		{(double) coords.x, (coords.y == n) ? 1.0 : (double) coords.y + 1.0, (double) coords.z};
+		Position n4 =
+		{(double) coords.x, (coords.y == 1) ? (double) n : coords.y - 1.0, (double) coords.z};
+		Position n5 =
+		{(double) coords.x, (double) coords.y, (coords.z == n) ? 1.0 : (double) coords.z + 1.0};
+		Position n6 =
+		{(double) coords.x, (double) coords.y, (coords.z == 1) ? (double) n : coords.z - 1.0};
+
+		auto& neighbors = particle->GetNeighbors();
+		ASSERT_EQ(6, (int)neighbors.size());
+
+		for(auto& neighbor : neighbors)
+		{
+			auto np = neighbor.GetParticle()->GetPositionRef();
 			ASSERT_TRUE(
 			        np == n1 ||
 			        np == n2 ||
