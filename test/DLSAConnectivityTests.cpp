@@ -1,6 +1,6 @@
 #include "../src/Connectivities/DLSAConnectivity.h"
 #include "../src/Particles/Site.h"
-#include "../src/Worlds/SimpleLatticeWorld.h"
+#include "../src/Worlds/SimpleWorld.h"
 #include "../src/ForceFields/ForceFieldManager.h"
 #include "gtest/gtest.h"
 
@@ -8,7 +8,7 @@ using namespace SAPHRON;
 
 TEST(DLSAConnectivity, DefaultBehavior)
 {
-	SimpleLatticeWorld world(10, 10, 10, 1);
+	SimpleWorld world(10, 10, 10, 1);
 	Site site1({ 0, 0, 0 }, { 1.0, 0, 0 }, "E1");
 	world.ConfigureParticles({ &site1 }, { 1.0 });
 

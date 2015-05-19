@@ -9,7 +9,7 @@
 
 
 #include "Worlds/World.h"
-#include "Worlds/SimpleLatticeWorld.h"
+#include "Worlds/SimpleWorld.h"
 #include "Particles/Site.h"
 #include "json/json.h"
 
@@ -56,7 +56,7 @@ int main(int argc, char const* argv[])
 		World* world; 
 		if(iequal("SimpleLattice", json_world["type"].asString()))
 		{
-			world = new SimpleLatticeWorld(json_world_size[0].asInt(), 
+			world = new SimpleWorld(json_world_size[0].asInt(), 
 										   json_world_size[1].asInt(), 
 										   json_world_size[2].asInt(),
 										   json_world.get("seed", 12345).asInt());

@@ -7,7 +7,7 @@
 #include "../src/Particles/Site.h"
 #include "../src/Simulation/CSVObserver.h"
 #include "../src/Simulation/ConsoleObserver.h"
-#include "../src/Worlds/SimpleLatticeWorld.h"
+#include "../src/Worlds/SimpleWorld.h"
 #include "gtest/gtest.h"
 
 
@@ -18,7 +18,7 @@ TEST(DOSEnsemble, DefaultBehavior)
 	/*
 	int n = 20;
 	// Initialize world.
-	SimpleLatticeWorld world(n, n, n, 1);
+	SimpleWorld world(n, n, n, 1);
 	Site site1({0, 0, 0}, {1.0, 0, 0}, "E1");
 	world.ConfigureParticles({&site1}, {1.0});
 	world.UpdateNeighborList();

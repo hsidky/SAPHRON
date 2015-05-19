@@ -11,7 +11,7 @@
 #include "../src/Particles/Site.h"
 #include "../src/Simulation/CSVObserver.h"
 #include "../src/Simulation/ConsoleObserver.h"
-#include "../src/Worlds/SimpleLatticeWorld.h"
+#include "../src/Worlds/SimpleWorld.h"
 
 // Includes for parsing using stringstream.
 #include <iostream>
@@ -49,7 +49,7 @@ int main(int argc, char const* argv[])
 	// Initialize a simple cubic lattice "world". This defines the type of box for our simulation.
 	// The constructor takes in the lattice dimensions and an optional seed for the pseudo random 
 	// number generator.
-	SimpleLatticeWorld world(latticeSize, latticeSize, latticeSize, 1);
+	SimpleWorld world(latticeSize, latticeSize, latticeSize, 1);
 
 	// Initialize a site. This will represent an individual spin on the lattice in our world. 
 	// The constructor takes in an initial position, director and species type (string). Note that 

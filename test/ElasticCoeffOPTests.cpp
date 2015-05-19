@@ -1,6 +1,6 @@
 #include "../src/DensityOfStates/ElasticCoeffOP.h"
 #include "../src/Particles/Site.h"
-#include "../src/Worlds/SimpleLatticeWorld.h"
+#include "../src/Worlds/SimpleWorld.h"
 #include "gtest/gtest.h"
 
 
@@ -10,7 +10,7 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 {
 	int n = 25;
 	// Initialize world.
-	SimpleLatticeWorld world(n, n, n, 1);
+	SimpleWorld world(n, n, n, 1);
 	Site site1({0, 0, 0}, {0, 0, 1.0}, "E1");
 	world.ConfigureParticles({&site1}, {1.0});
 	world.UpdateNeighborList();

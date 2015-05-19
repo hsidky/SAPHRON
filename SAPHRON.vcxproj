@@ -92,7 +92,7 @@
     <ClCompile Include="src\simulation\SimObservable.cpp" />
     <ClCompile Include="src\Simulation\SimObserver.cpp" />
     <ClCompile Include="src\Simulation\ConsoleObserver.cpp" />
-    <ClCompile Include="src\Worlds\SimpleLatticeWorld.cpp" />
+    <ClCompile Include="src\Worlds\SimpleWorld.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\prng_engine.h" />
@@ -142,7 +142,7 @@
     <ClInclude Include="src\Simulation\ConsoleObserver.h" />
     <ClInclude Include="src\visitors\Visitable.h" />
     <ClInclude Include="src\visitors\Visitor.h" />
-    <ClInclude Include="src\Worlds\SimpleLatticeWorld.h" />
+    <ClInclude Include="src\Worlds\SimpleWorld.h" />
     <ClInclude Include="src\Worlds\World.h" />
     <ClInclude Include="src\Worlds\WorldBuilder.h" />
   </ItemGroup>

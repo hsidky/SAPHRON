@@ -5,7 +5,7 @@
 #include "../src/Moves/SphereUnitVectorMove.h"
 #include "../src/Particles/Site.h"
 #include "../src/Simulation/CSVObserver.h"
-#include "../src/Worlds/SimpleLatticeWorld.h"
+#include "../src/Worlds/SimpleWorld.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
@@ -13,7 +13,7 @@ using namespace SAPHRON;
 TEST(NVTEnsemble, DefaultBehavior)
 {
 	// Initialize world.
-	SimpleLatticeWorld world(30, 30, 30, 1);
+	SimpleWorld world(30, 30, 30, 1);
 	Site site1({0, 0, 0}, {1.0, 0, 0}, "E1");
 	world.ConfigureParticles({&site1}, {1.0});
 	world.UpdateNeighborList();

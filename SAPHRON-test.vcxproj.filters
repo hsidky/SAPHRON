@@ -42,7 +42,7 @@
     <ClCompile Include="test\SimFlagsTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test\SimpleLatticeWorldTests.cpp">
+    <ClCompile Include="test\SimpleWorldTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="test\SiteTests.cpp">

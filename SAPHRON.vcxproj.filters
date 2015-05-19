@@ -51,7 +51,7 @@
     <ClCompile Include="src\Particles\Particle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Worlds\SimpleLatticeWorld.cpp">
+    <ClCompile Include="src\Worlds\SimpleWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -194,7 +194,7 @@
     <ClInclude Include="src\Particles\Site.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Worlds\SimpleLatticeWorld.h">
+    <ClInclude Include="src\Worlds\SimpleWorld.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Worlds\World.h">

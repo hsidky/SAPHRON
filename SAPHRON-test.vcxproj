@@ -104,7 +104,7 @@
     <ClCompile Include="test\ParticleObserverTests.cpp" />
     <ClCompile Include="test\RandTests.cpp" />
     <ClCompile Include="test\SimFlagsTests.cpp" />
-    <ClCompile Include="test\SimpleLatticeWorldTests.cpp" />
+    <ClCompile Include="test\SimpleWorldTests.cpp" />
     <ClCompile Include="test\SiteTests.cpp" />
     <ClCompile Include="test\SpeciesSwapMoveTests.cpp" />
     <ClCompile Include="test\SphereUnitVectorMoveTests.cpp" />

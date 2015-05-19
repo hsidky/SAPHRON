@@ -1,15 +1,15 @@
 #include "../src/Particles/Site.h"
-#include "../src/Worlds/SimpleLatticeWorld.h"
+#include "../src/Worlds/SimpleWorld.h"
 #include "gtest/gtest.h"
 
 #include <map>
 
 using namespace SAPHRON;
 
-TEST(SimpleLatticeWorld, DefaultConstructor)
+TEST(SimpleWorld, DefaultConstructor)
 {
 	int n = 30;
-	SimpleLatticeWorld world(n, n, n, 1.0);
+	SimpleWorld world(n, n, n, 1.0);
 	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
 	Site site2({0, 0, 0}, {0, 1, 0}, "E2");
 	Site site3({0, 0, 0}, {0, 0, 1}, "E3");
@@ -67,10 +67,10 @@ TEST(SimpleLatticeWorld, DefaultConstructor)
 	}
 }
 
-TEST(SimpleLatticeWorld, MoveParticleSemantics)
+TEST(SimpleWorld, MoveParticleSemantics)
 {
 	int n = 30;
-	SimpleLatticeWorld world(n, n, n, 1);
+	SimpleWorld world(n, n, n, 1);
 
 	ASSERT_EQ(0, world.GetParticleCount());
 	world.AddParticle(new Site({0,0,0}, {1,0,0}, "E1"));

@@ -95,7 +95,7 @@ set(SOURCE
 	src/Simulation/ConsoleObserver.cpp
 	src/Simulation/SimObservable.cpp
 	src/Simulation/SimObserver.cpp
-	src/Worlds/SimpleLatticeWorld.cpp
+	src/Worlds/SimpleWorld.cpp
 )
 
 add_library(libsaphron ${SOURCE})
@@ -203,11 +203,11 @@ target_include_directories(SimFlagsTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(SimFlagsTests googletest) 
 add_test(SimFlagsTests SimFlagsTests)
 
-add_executable(SimpleLatticeWorldTests test/SimpleLatticeWorldTests.cpp)
-target_link_libraries(SimpleLatticeWorldTests ${TEST_DEPS})
-target_include_directories(SimpleLatticeWorldTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(SimpleLatticeWorldTests googletest) 
-add_test(SimpleLatticeWorldTests SimpleLatticeWorldTests)
+add_executable(SimpleWorldTests test/SimpleWorldTests.cpp)
+target_link_libraries(SimpleWorldTests ${TEST_DEPS})
+target_include_directories(SimpleWorldTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(SimpleWorldTests googletest) 
+add_test(SimpleWorldTests SimpleWorldTests)
 
 add_executable(SiteTests test/SiteTests.cpp)
 target_link_libraries(SiteTests ${TEST_DEPS})

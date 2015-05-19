@@ -1,10 +1,10 @@
-#include "SimpleLatticeWorld.h"
+#include "SimpleWorld.h"
 
 namespace SAPHRON
 {
 	// Configure Particles in the lattice. For n particles and n fractions, the lattice will be
 	// initialized with the appropriate composition.
-	void SimpleLatticeWorld::ConfigureParticles(const std::vector<Particle*> particles,
+	void SimpleWorld::ConfigureParticles(const std::vector<Particle*> particles,
 	                        const std::vector<double> fractions)
 	{
 		if(particles.size() != fractions.size())
@@ -62,7 +62,7 @@ namespace SAPHRON
 		}
 	}
 
-	void SimpleLatticeWorld::UpdateNeighborList()
+	void SimpleWorld::UpdateNeighborList()
 	{
 		int n = this->GetParticleCount();
 		for(int i = 0; i < n - 1; ++i)

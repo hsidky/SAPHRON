@@ -10,7 +10,7 @@
 namespace SAPHRON
 {
 	// A class describing a simple lattice world with periodic boundary conditions.
-	class SimpleLatticeWorld : public World
+	class SimpleWorld : public World
 	{
 		private:
 			double _xlength, _ylength, _zlength;
@@ -29,7 +29,7 @@ namespace SAPHRON
 			}
 
 		public:
-			SimpleLatticeWorld(double xlength, double ylength, double zlength, double rcut, int seed = 1)
+			SimpleWorld(double xlength, double ylength, double zlength, double rcut, int seed = 1)
 				: _xlength(xlength), _ylength(ylength), _zlength(zlength), _rand(seed), _rcut(rcut)
 			{
 			}
@@ -102,7 +102,7 @@ namespace SAPHRON
 			// Update the neighbor list for all particles in the world.
 			virtual void UpdateNeighborList() override;			
 
-			~SimpleLatticeWorld()
+			~SimpleWorld()
 			{
 				for(auto it = _particles.begin(); it != _particles.end(); ++it)
 					delete *it;
