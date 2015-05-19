@@ -11,7 +11,7 @@
 #include "Worlds/World.h"
 #include "Worlds/SimpleWorld.h"
 #include "Particles/Site.h"
-#include "json/json.h"
+#include "Simulation/SimBuilder.h"
 
 
 inline bool caseInsCharCompareN(char a, char b) {
@@ -30,12 +30,32 @@ using namespace SAPHRON;
 // histogram and model, sites and vector file outputs.
 int main(int argc, char const* argv[])
 {
+
+	SimBuilder builder; 
+	if(!builder.ParseInput(std::cin))
+	{
+		auto msgs = builder.GetErrorMessages();
+		for(auto& msg : msgs)
+			std::cout << msg << std::endl;
+
+		return -1;
+	}
+
+	return 0;
+
+	/*
 	Json::Value root;   // 'root' will contain the root value after parsing.
 	
 	try {
 		
 		Json::Reader reader;	
-		std::cin >> root;
+
+		if(!reader.parse(std::cin, root))
+		{
+			std::cout << reader.getFormattedErrorMessages() << std::endl;
+			return -1;
+		}
+
 
 		// Create world. 
 		const Json::Value json_world = root["world"];
@@ -88,6 +108,7 @@ int main(int argc, char const* argv[])
 
 
 	}
+	*/
 
 	return 0;
 }
