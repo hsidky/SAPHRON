@@ -33,7 +33,7 @@
 	}, 
 
 	"world" : {
-		"type" : "SimpleLattice",
+		"type" : "Simple",
 		"size" : [32, 32, 32],
 		"seed" : 300, 
 		"cutoff_radius" : 10
@@ -75,8 +75,7 @@
 	"particles" : [
 		{ "Hw":{ "parent": "Water", "residue" : "H2O1", "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } },
 		{ "Ow":{ "parent": "Water", "residue" : "H2O1", "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } },
-		{ "Hw":{ "parent": "Water", "residue" : "H2O1", "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } },
-		{ "Hw":{ "parent": "Water", "residue" : "H2O2", "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } }
+		{ "Hw":{ "parent": "Water", "residue" : "H2O1", "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } }
 	],
 
 	"observers" : {

@@ -102,7 +102,11 @@ add_library(libsaphron ${SOURCE})
 set_target_properties(libsaphron PROPERTIES PREFIX "")
 target_link_libraries(libsaphron ${SAPH_LIBS})
 
-add_executable(saphron src/main.cpp src/jsoncpp.cpp)
+add_executable(saphron 
+	src/main.cpp 
+	src/jsoncpp.cpp 
+	src/Simulation/SimBuilder.cpp
+)
 target_link_libraries(saphron libsaphron ${SAPH_LIBS})
 
 # Configure flags 

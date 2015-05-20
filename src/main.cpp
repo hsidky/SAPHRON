@@ -6,7 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-
+#include <iomanip>
 
 #include "Worlds/World.h"
 #include "Worlds/SimpleWorld.h"
@@ -14,101 +14,105 @@
 #include "Simulation/SimBuilder.h"
 
 
-inline bool caseInsCharCompareN(char a, char b) {
-    return(toupper(a) == toupper(b));
-}
-
-bool iequal(const std::string& s1, const std::string& s2) {
-	return((s1.size() == s2.size()) &&
-    	equal(s1.begin(), s1.end(), s2.begin(), caseInsCharCompareN));
-}
-
-
 using namespace SAPHRON;
+
+int DumpErrorsToConsole(std::vector<std::string> msgs)
+{
+	for(auto& msg : msgs)
+			std::cout << "   * " << msg << "\n";
+	return -1;
+}
+
+void DumpNoticesToConsole(std::vector<std::string> msgs, std::string prefix)
+{
+	if(msgs.size() == 0)
+		return;
+	
+	for(auto& msg : msgs)
+		std::cout << prefix << " * " << msg << "\n";
+}
+
 // The main program expects a user to input the lattice size, number of EXEDOS
 // iterations, minimum and maximum mole fractions, number of bins for density-of-states
 // histogram and model, sites and vector file outputs.
 int main(int argc, char const* argv[])
 {
+	std::cout << "                                                                         \n" << 
+	             " ******************************************************************      \n" << 
+	             " *       ____      _     ____   _   _  ____    ___   _   _        *      \n" << 
+	             " *      / ___|    / \\   |  _ \\ | | | ||  _ \\  / _ \\ | \\ | |       * \n" << 
+	             " *      \\___ \\   / _ \\  | |_) || |_| || |_) || | | ||  \\| |       *  \n" << 
+	             " *       ___) | / ___ \\ |  __/ |  _  ||  _ < | |_| || |\\  |       *    \n" << 
+	             " *      |____/ /_/   \\_\\|_|    |_| |_||_| \\_\\ \\___/ |_| \\_|       *\n" << 
+	             " *                                                                *      \n" << 
+	             " * \033[1mS\033[0mtatistical \033[1mA\033[0mpplied \033[1mPH\033[0mysics "   <<
+	             "through \033[1mR\033[0mandom \033[1mO\033[0mn-the-fly \033[1mN\033[0mumerics *\n" << 
+	             " ******************************************************************      \n" << 
+	             "                                                                         \n";
 
+	int ltot = 77;
+	int msgw = 47;
+	int notw = ltot - msgw;
+
+	// Validate JSON.	
+	std::cout << std::setw(msgw) << std::left << " > Validating JSON...";
 	SimBuilder builder; 
 	if(!builder.ParseInput(std::cin))
 	{
-		auto msgs = builder.GetErrorMessages();
+		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n ";
+		auto msgs = builder.GetErrorMessages();	
 		for(auto& msg : msgs)
-			std::cout << msg << std::endl;
+			std::cout << "  " << msg << std::endl;
 
 		return -1;
 	}
+	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
 
-	return 0;
-
-	/*
-	Json::Value root;   // 'root' will contain the root value after parsing.
-	
-	try {
-		
-		Json::Reader reader;	
-
-		if(!reader.parse(std::cin, root))
-		{
-			std::cout << reader.getFormattedErrorMessages() << std::endl;
-			return -1;
-		}
-
-
-		// Create world. 
-		const Json::Value json_world = root["world"];
-
-		if(!json_world)
-		{
-			std::cerr << "No world specified!" << std::endl;
-			return -1;
-		}
-
-		auto json_world_size = json_world["size"];
-		if(json_world_size.size() != 3)
-		{
-			std::cerr << "The size needs to be three vectors." << std::endl;
-			return -1;
-		}
-
-		World* world; 
-		if(iequal("SimpleLattice", json_world["type"].asString()))
-		{
-			world = new SimpleWorld(json_world_size[0].asInt(), 
-										   json_world_size[1].asInt(), 
-										   json_world_size[2].asInt(),
-										   json_world.get("seed", 12345).asInt());
-		}
-		else 
-		{
-			std::cerr << "Uknown world specified!" << std::endl;
-			return -1;
-		}
-
-		auto json_particles = root["particles"];
-		for(int i = 0; i < json_particles.size(); ++i)
-		{
-			auto member = json_particles[i].getMemberNames();
-			auto particle = json_particles[i];
-			auto pos = particle["position"];
-			auto dir = particle["director"];
-			world->AddParticle(
-				new Site({pos[0].asFloat(), pos[1].asFloat(), pos[2].asFloat()}, 
-				     	 {dir[0].asFloat(), dir[1].asFloat(), dir[2].asFloat()}, 
-						 member[0]) 
-			);
-		}
-
-
-		delete world;
-	} catch(std::exception& e) {
-		std::cout << e.what() << std::endl;
-
-
+	// Parse world.
+	std::cout << std::setw(msgw) << std::left << " > Validating World...";
+	if(!builder.ParseWorld())
+	{
+		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
+		return DumpErrorsToConsole(builder.GetErrorMessages());
 	}
-	*/
+	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
+	DumpNoticesToConsole(builder.GetNotices(), "  ");
+	builder.ResetNotices();
 
+	// Initialize world.
+	std::cout << std::setw(msgw) << std::left << " > Initializing World...";
+	World* world = nullptr;
+	world = builder.BuildWorld();
+	if(world == nullptr)
+	{
+		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
+		delete world;
+		return DumpErrorsToConsole({"Unable to initialize world. Unknown error occured!"});
+	}
+
+	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
+	DumpNoticesToConsole(builder.GetNotices(), "  ");
+	builder.ResetNotices();
+
+	// Parse particles.
+	std::cout << std::setw(msgw) << std::left << " > Validating Particles...";
+	if(!builder.ParseParticles())
+	{
+		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
+		delete world;
+		return DumpErrorsToConsole(builder.GetErrorMessages());
+	}
+	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
+	DumpNoticesToConsole(builder.GetNotices(), "  ");
+	builder.ResetNotices();
+
+	// Build particles.
+	std::cout << std::setw(msgw) << std::left << " > Building Particles...";
+	builder.BuildParticles(world);
+	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
+	DumpNoticesToConsole(builder.GetNotices(), "  ");
+	builder.ResetNotices();
+
+	delete world;
 	return 0;
 }
