@@ -75,10 +75,17 @@ namespace SAPHRON
 				return _particles[location];
 			}
 
-			// Add particle.
+			// Add particle. TODO: CAREFUL with the move semantics. 
+			// Need to visit this further.
 			virtual void AddParticle(Particle*&& particle) override
 			{
 				_particles.push_back(std::move(particle));
+			}
+
+			// Add particle.
+			virtual void AddParticle(Particle* particle) override
+			{
+				_particles.push_back(particle);
 			}
 
 			// Remove a particle by index.

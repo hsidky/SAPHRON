@@ -38,6 +38,9 @@ namespace SAPHRON
 			// Add a particle. 
 			virtual void AddParticle(Particle*&& particle) = 0;
 
+			// Add a particle.
+			virtual void AddParticle(Particle* particle) = 0;
+
 			// Remove a specific particle based on location.
 			virtual void RemoveParticle(int location) = 0;
 

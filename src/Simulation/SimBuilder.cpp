@@ -471,6 +471,68 @@ namespace SAPHRON
 		return !err;
 	}
 
+	bool SimBuilder::ValidateConnectivities(Json::Value connectivities)
+	{
+		bool err = false;
+		assert(_errors == false);
+
+		// Connectivities are optional.
+		if(!connectivities)
+		{
+			return true; 
+		}
+
+		// Validate type.
+		if(!connectivities.isArray())
+		{
+			_emsgs.push_back("Connectivity specification must be an array.");
+			return false;
+		}
+
+		// Valid connectivities. 
+		std::vector<std::string> types = {"P2SA"};
+
+		for (int i = 0; i < (int)connectivities.size(); ++i)
+		{
+			
+			// connectivity type specified.
+			std::string type = [&]() -> std::string {
+				try{
+					return connectivities[i].getMemberNames()[0];
+				} catch(std::exception& e) {
+					_emsgs.push_back("Type unserialization error: " + std::string(e.what()));
+					err = true;
+					return "";
+				}
+			}();
+
+			auto connectivity = connectivities[i][type];
+
+			if(type.length() == 0)
+			{
+				_emsgs.push_back("A connectivity has been incorrectly specified.");
+				err = true;
+			}
+			else
+			{
+				// Validate that the connectivity type is a valid entry.
+				auto it = std::find(types.begin(), types.end(), type);
+				if(it == types.end())
+				{
+					_emsgs.push_back("The type of connectivity specified is invalid.");
+
+					std::ostringstream s;
+					std::copy(types.begin(), types.end(), 
+							  std::ostream_iterator<std::string>(s," "));
+					_emsgs.push_back("    Valid entries are: " + s.str());
+					err = true;
+				}
+			}
+		}
+
+	}
+
+
 	bool SimBuilder::ConstructBlueprint(Json::Value components, std::string parent)
 	{
 		bool err = false;
@@ -523,7 +585,6 @@ namespace SAPHRON
 		return !err;
 	}
 
-
 	World* SimBuilder::BuildWorld()
 	{
 		assert(_errors == false);
@@ -563,12 +624,16 @@ namespace SAPHRON
 				++counts[particle.species];
 
 			// Initialize particles.
-			world->AddParticle(new Site(particle.position, particle.director, particle.species));
+			Particle* p = new Site(particle.position, particle.director, particle.species);
+			_ppointers.push_back(p);
+			world->AddParticle(p);
 		}
 
 		for(auto& count : counts)
 			_nmsgs.push_back("Initialized " + 
 				std::to_string(count.second) + " particle(s) of type " + count.first + ".");
+
+		assert(_particles.size() == _ppointers.size());
 	}
 
 	void SimBuilder::BuildForceFields(std::vector<ForceField*>& forcefields, ForceFieldManager& ffm)

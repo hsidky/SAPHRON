@@ -47,10 +47,23 @@ namespace SAPHRON
 				std::vector<double> parameters;
 			};
 
+			struct ConnectivityProps
+			{
+				std::string type;
+				std::vector<double> parameters;
+				std::vector<std::vector<double>> vparameters; 
+				std::vector<std::string> sparameters;
+			};
+
+
+			// Forcefields.
 			std::vector<ForceFieldProps> _forcefields;
 
 			// Blueprint representing each unique species in the system.
 			std::map<std::string, ParticleProps> _blueprint;
+
+			// Pointer of initialized particles. 
+			std::vector<Particle*> _ppointers;
 
 			// Vector of particles (sites really). These are the actual particles 
 			// that will enter.
@@ -75,10 +88,12 @@ namespace SAPHRON
 			
 			bool ValidateParticles(Json::Value components, Json::Value particles);
 
+			bool ValidateConnectivities(Json::Value connectivities);
+
 		public:
 			SimBuilder() : 
-				_worldprops(), _forcefields(0), _blueprint(), _particles(0), _reader(), 
-				_root(), _errors(false), _emsgs(0), _nmsgs(0) 
+				_worldprops(), _forcefields(0), _blueprint(), _ppointers(0), _particles(0),
+				_reader(), _root(), _errors(false), _emsgs(0), _nmsgs(0) 
 			{
 			}
 
@@ -144,7 +159,6 @@ namespace SAPHRON
 			// Builds particles by adding them to a World object. Must be called after 
 			// ParseParticles().
 			void BuildParticles(World* world);
-
 
 			// Builds forcefields and ads them to the forcefield vector. Object lifetime
 			// is the caller's responsibility!
