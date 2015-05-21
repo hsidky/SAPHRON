@@ -29,11 +29,20 @@ namespace SAPHRON
 
 			struct ParticleProps
 			{
-				Position position;
-				Director director; 
-				std::string species;
+				Position position; // Particle position.
+				Director director; // Particle director
+				std::string species; // Particle species/type.
+				std::string parent; // Particle parent species/type.
+				std::string residue;  // Paricle parent id. 
+				int index; // Particle index relative to parent (1-n).
+				std::vector<std::string> children; // Particle children species/type.
 			};
 
+			// Blueprint representing each unique species in the system.
+			std::map<std::string, ParticleProps> _blueprint;
+
+			// Vector of particles (sites really). These are the actual particles 
+			// that will enter.
 			std::vector<ParticleProps> _particles;
 
 			Json::Reader _reader;
@@ -47,12 +56,19 @@ namespace SAPHRON
 			// Note messages.
 			std::vector<std::string> _nmsgs;
 
+
+			bool ConstructBlueprint(Json::Value components, std::string parent);
+
 			bool ValidateWorld(Json::Value world);
 			
 			bool ValidateParticles(Json::Value components, Json::Value particles);
 
 		public:
-			SimBuilder() : _worldprops(), _particles(0), _reader(), _root(), _errors(false), _emsgs(0), _nmsgs(0) {}
+			SimBuilder() : 
+				_worldprops(), _blueprint(), _particles(0), _reader(), 
+				_root(), _errors(false), _emsgs(0), _nmsgs(0) 
+			{
+			}
 
 			// Parse stream input. Returns true if parse was successful or 
 			// false if otherwise. Error(s) can be obtained via GetErrorMessages().

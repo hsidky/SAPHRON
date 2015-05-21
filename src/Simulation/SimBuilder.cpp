@@ -175,6 +175,9 @@ namespace SAPHRON
 			return false;
 		}
 
+		// Build blueprint of "components" section.
+		ConstructBlueprint(components, "");
+
 		// Parse particles.
 		for (int i = 0; i < (int)particles.size(); ++i)
 		{
@@ -185,11 +188,43 @@ namespace SAPHRON
 
 			// Make sure the species exists as a component.
 			// TODO: check children.
-			if(!components[species])
+			if(_blueprint.find(species) == _blueprint.end())
 			{
 				_emsgs.push_back("Particle " + istr + 
 					" species, " + species + ", has not been delcared as a component.");
 				return false;
+			}
+
+			// Get blueprint.
+			auto blueprint = _blueprint[species];
+
+			// Validate parent. 
+			auto parent = [&]() -> std::string {
+				try {
+					return particle.get("parent", "").asString();
+				} catch(std::exception& e) {
+					err = true;
+					_emsgs.push_back("Particle " + istr + 
+					" parent unserialization error : " + std::string(e.what()));
+					return "";
+				}
+			}();
+
+			if(parent != blueprint.parent)
+			{
+				std::cout << "Parent: " << parent << " " << blueprint.parent << std::endl;
+				_emsgs.push_back("Particle " + istr + " parent must match component definition.");
+				err = true;
+			}
+
+			// Validate residue.
+			auto residue = particle.get("residue", "").asString();
+
+			// Make sure molecule is not specified. Only primitives/atoms. 
+			if((int)blueprint.children.size() != 0)
+			{
+				_emsgs.push_back("Particle " + istr + " cannot have children. Check definition.");
+				err = true;
 			}
 
 			// Validate position.
@@ -279,11 +314,64 @@ namespace SAPHRON
 			}
 
 			// Push back struct 
-			_particles.push_back({position, director, species});
+			_particles.push_back({position, director, species, parent, residue, 0, {}});
 		}
 
 		return !err;
 	}
+
+	bool SimBuilder::ConstructBlueprint(Json::Value components, std::string parent)
+	{
+		bool err = false;
+
+		auto species = components.getMemberNames();
+		for(int i = 0; i < (int)components.size(); ++i)
+		{
+			auto component = components[species[i]];
+			// Species is new, add to blueprint.
+			if(_blueprint.find(species[i]) == _blueprint.end())
+			{
+				ParticleProps blueprint;
+				blueprint.species = species[i];
+				blueprint.parent = parent;
+
+				blueprint.index = [&]() -> int {
+					try {
+						return component.get("index", 0).asInt();
+					} catch(std::exception& e) {
+						err = true;
+						_emsgs.push_back("Component" + species[i] + "index unserialization error : " + 
+							std::string(e.what()));
+						return 0;
+					}
+				}();
+
+				// Enumerate children.
+				if(component.isMember("children"))
+				{
+					auto children = component["children"];
+					if(!children.isArray())
+					{
+						_emsgs.push_back("Component " + species[i] + " children must be an array.");
+						err = true;
+					}
+					else 
+					{
+						for(int j = 0; j < (int)children.size(); ++j)
+						{							
+							ConstructBlueprint(children[j], species[i]);
+							blueprint.children.push_back(children[j].getMemberNames()[0]);
+						}
+					}
+				}
+				_blueprint[species[i]] = blueprint;
+				_nmsgs.push_back("Created blueprint for " + species[i] + ".");
+			}
+		}
+
+		return !err;
+	}
+
 
 	World* SimBuilder::BuildWorld()
 	{
@@ -294,9 +382,9 @@ namespace SAPHRON
 			_nmsgs.push_back("Setting size to [" +  
 				std::to_string(_worldprops.xlength) + ", " + 
 				std::to_string(_worldprops.ylength) + ", " + 
-				std::to_string(_worldprops.zlength) + "] \u212B");
-			_nmsgs.push_back("Setting cutoff radius to " + std::to_string(_worldprops.rcutoff) + " \u212B");
-			_nmsgs.push_back("Setting seed to " + std::to_string(_worldprops.seed));
+				std::to_string(_worldprops.zlength) + "] \u212B.");
+			_nmsgs.push_back("Setting cutoff radius to " + std::to_string(_worldprops.rcutoff) + " \u212B.");
+			_nmsgs.push_back("Setting seed to " + std::to_string(_worldprops.seed) + ".");
 			return new SimpleWorld(_worldprops.xlength, 
 								   _worldprops.ylength, 
 								   _worldprops.zlength, 
