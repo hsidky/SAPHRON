@@ -10,6 +10,7 @@
 #include "json/json.h"
 #include "Worlds/SimpleWorld.h"
 #include "Particles/Site.h"
+#include "ForceFields/ForceFieldManager.h"
 
 namespace SAPHRON
 {
@@ -38,6 +39,16 @@ namespace SAPHRON
 				std::vector<std::string> children; // Particle children species/type.
 			};
 
+			struct ForceFieldProps
+			{
+				std::string type;
+				std::string species1;
+				std::string species2;
+				std::vector<double> parameters;
+			};
+
+			std::vector<ForceFieldProps> _forcefields;
+
 			// Blueprint representing each unique species in the system.
 			std::map<std::string, ParticleProps> _blueprint;
 
@@ -56,6 +67,7 @@ namespace SAPHRON
 			// Note messages.
 			std::vector<std::string> _nmsgs;
 
+			bool ValidateForceFields(Json::Value forcefields);
 
 			bool ConstructBlueprint(Json::Value components, std::string parent);
 
@@ -65,7 +77,7 @@ namespace SAPHRON
 
 		public:
 			SimBuilder() : 
-				_worldprops(), _blueprint(), _particles(0), _reader(), 
+				_worldprops(), _forcefields(0), _blueprint(), _particles(0), _reader(), 
 				_root(), _errors(false), _emsgs(0), _nmsgs(0) 
 			{
 			}
@@ -111,6 +123,18 @@ namespace SAPHRON
 				return true;
 			}
 
+			// Parse forcefields node and store results in internal structure. Returns 
+			// true if successful and false otherwise. Must be run after particle parse!
+			// Error(s) can be obtained via GetErrorMessages().
+			bool ParseForceFields()
+			{
+				if(!ValidateForceFields(_root["forcefields"]))
+				{
+					_errors = true; 
+					return false;
+				}
+				return true;
+			}
 
 			// Builds a world object from parsed data (see ParseWorld()). 
 			// Returns pointer to newly created World object. Object lifetime is 
@@ -120,6 +144,11 @@ namespace SAPHRON
 			// Builds particles by adding them to a World object. Must be called after 
 			// ParseParticles().
 			void BuildParticles(World* world);
+
+
+			// Builds forcefields and ads them to the forcefield vector. Object lifetime
+			// is the caller's responsibility!
+			void BuildForceFields(std::vector<ForceField*>& forcefields, ForceFieldManager& ffm);
 
 			std::vector<std::string> GetErrorMessages()
 			{

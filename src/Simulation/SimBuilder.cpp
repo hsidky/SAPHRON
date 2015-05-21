@@ -1,4 +1,5 @@
 #include "SimBuilder.h"
+#include "ForceFields/LebwohlLasherFF.h"
 
 namespace SAPHRON
 {
@@ -320,6 +321,156 @@ namespace SAPHRON
 		return !err;
 	}
 
+	bool SimBuilder::ValidateForceFields(Json::Value forcefields)
+	{
+		bool err = false;
+		assert(_errors == false);
+
+		// Necessary tags exist.
+		if(!forcefields)
+		{
+			_emsgs.push_back("No forcefields have been specified.");
+			return false;
+		}
+
+		// Validate type.
+		if(!forcefields.isArray())
+		{
+			_emsgs.push_back("Forcefield specification must be an array.");
+			return false;
+		}
+
+		// Valid forcefields  . 
+		std::vector<std::string> types = {"LebwohlLasher"};
+
+
+		for (int i = 0; i < (int)forcefields.size(); ++i)
+		{
+			
+			// forcefield type specified.
+			std::string type = [&]() -> std::string {
+				try{
+					return forcefields[i].getMemberNames()[0];
+				} catch(std::exception& e) {
+					_emsgs.push_back("Type unserialization error: " + std::string(e.what()));
+					err = true;
+					return "";
+				}
+			}();
+
+			auto forcefield = forcefields[i][type];
+
+			if(type.length() == 0)
+			{
+				_emsgs.push_back("A forcefield has been incorrectly specified.");
+				err = true;
+			}
+			else
+			{
+				// Validate that the forcefield type is a valid entry.
+				auto it = std::find(types.begin(), types.end(), type);
+				if(it == types.end())
+				{
+					_emsgs.push_back("The type of forcefield specified is invalid.");
+
+					std::ostringstream s;
+					std::copy(types.begin(), types.end(), 
+							  std::ostream_iterator<std::string>(s," "));
+					_emsgs.push_back("    Valid entries are: " + s.str());
+					err = true;
+				}
+				else
+				{
+					ForceFieldProps ff;
+					// Lebwohl Lasher
+					if(type == types[0])
+					{
+						if(!forcefield["epsilon"] || !forcefield["gamma"])
+						{
+							_emsgs.push_back("Both epsilon and gamma must be specified for the " + type + " forcefield.");
+						}
+
+						double epsilon = [&]()-> double { 
+							try {	
+								return forcefield.get("epsilon", 0).asDouble(); 
+							} catch(std::exception& e) {
+								_emsgs.push_back("Epsilon unserialization error : " + std::string(e.what()));
+								err = true;
+								return 0;
+							}
+						}();	
+
+						double gamma = [&]()-> double { 
+							try {	
+								return forcefield.get("gamma", 0).asDouble(); 
+							} catch(std::exception& e) {
+								_emsgs.push_back("Epsilon unserialization error : " + std::string(e.what()));
+								err = true;
+								return 0;
+							}
+						}();
+
+						ff.type = type;
+						ff.parameters.push_back(epsilon);
+						ff.parameters.push_back(gamma);
+					}
+
+					// Validate species 
+					auto species = forcefield["species"];
+					if(!species || !species.isArray() || species.size() != 2)
+					{
+						_emsgs.push_back("Forcefield " + type  + " species is required and must be a 1x2 array.");
+						err = true;
+					}
+
+					std::string species1 = [&]() -> std::string {
+						try {
+							return species[0].asString();
+						} catch(std::exception& e) {
+							err = true;
+							_emsgs.push_back("Forcefield " + type + 
+							" species unserialization error : " + std::string(e.what()));
+							return "";
+						}
+					}();
+
+					std::string species2 = [&]() -> std::string {
+						try {
+							return species[1].asString();
+						} catch(std::exception& e) {
+							err = true;
+							_emsgs.push_back("Forcefield " + type + 
+							" species unserialization error : " + std::string(e.what()));
+							return "";
+						}
+					}();
+
+					// Make sure species exist in our blueprint. 
+					if(_blueprint.find(species1) == _blueprint.end())
+					{
+						_emsgs.push_back("Forcefield " + type + 
+							" is defined for an undefined species " + species1 + ".");
+						err = true;
+					}
+
+					if(_blueprint.find(species2) == _blueprint.end())
+					{
+						_emsgs.push_back("Forcefield " + type + 
+							" is defined for an undefined species " + species2 + ".");
+						err = true;
+					}
+
+					ff.species1 = species1;
+					ff.species2 = species2;
+
+					_forcefields.push_back(ff);
+				}
+			}
+		}
+
+		return !err;
+	}
+
 	bool SimBuilder::ConstructBlueprint(Json::Value components, std::string parent)
 	{
 		bool err = false;
@@ -418,5 +569,26 @@ namespace SAPHRON
 		for(auto& count : counts)
 			_nmsgs.push_back("Initialized " + 
 				std::to_string(count.second) + " particle(s) of type " + count.first + ".");
+	}
+
+	void SimBuilder::BuildForceFields(std::vector<ForceField*>& forcefields, ForceFieldManager& ffm)
+	{
+		assert(_errors = false);
+
+		for(auto& forcefield : _forcefields)
+		{
+			if(forcefield.type == "LebwohlLasher")
+			{
+				ForceField* ff = new LebwohlLasherFF(forcefield.parameters[0], 
+													 forcefield.parameters[1]);
+				
+				ffm.AddForceField(forcefield.species1, forcefield.species2, *ff);
+				forcefields.push_back(ff);
+				_nmsgs.push_back("Initialized " + forcefield.type + " force field for [" + 
+					forcefield.species1 + "," + forcefield.species2 + 
+					"]\n     with epsilon = "  + std::to_string(forcefield.parameters[0]) + 
+					" and gamma = " + std::to_string(forcefield.parameters[1]) + ".");
+			}
+		}
 	}
 }

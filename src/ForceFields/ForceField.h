@@ -11,5 +11,7 @@ namespace SAPHRON
 		public:
 			// Evaluates the potential between two particles.
 			virtual double Evaluate(const Particle& p1, const Particle& p2) = 0;
+
+			virtual ~ForceField() {}
 	};
 }

@@ -12,7 +12,7 @@
 #include "Worlds/SimpleWorld.h"
 #include "Particles/Site.h"
 #include "Simulation/SimBuilder.h"
-
+#include "ForceFields/ForceFieldManager.h"
 
 using namespace SAPHRON;
 
@@ -87,7 +87,7 @@ int main(int argc, char const* argv[])
 	{
 		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
 		delete world;
-		return DumpErrorsToConsole({"Unable to initialize world. Unknown error occured!"});
+		return DumpErrorsToConsole({"Unable to initialize world. Unknown error occurred!"});
 	}
 
 	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
@@ -112,6 +112,38 @@ int main(int argc, char const* argv[])
 	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
 	DumpNoticesToConsole(builder.GetNotices(), "  ");
 	builder.ResetNotices();
+
+	// Parse forcefields.
+	std::cout << std::setw(msgw) << std::left << " > Validating ForceFields...";
+	if(!builder.ParseForceFields())
+	{
+		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
+		delete world;
+		return DumpErrorsToConsole(builder.GetErrorMessages());
+	}
+	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
+	DumpNoticesToConsole(builder.GetNotices(), "  ");
+	builder.ResetNotices();
+
+
+	// Initialize forcefields.
+	ForceFieldManager ffm;
+	std::vector<ForceField*> forcefields(0);
+	std::cout << std::setw(msgw) << std::left << " > Building ForceFields...";
+	builder.BuildForceFields(forcefields, ffm);
+	if((int)forcefields.size() == 0)
+	{
+		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
+		delete world;
+		return DumpErrorsToConsole({"Unable to initialize forcefields. Unknown error occurred."});
+	}
+	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
+	DumpNoticesToConsole(builder.GetNotices(), "  ");
+	builder.ResetNotices();
+
+	// Cleanup.
+	for ( auto& ff : forcefields ) delete ff;
+	forcefields.clear();
 
 	delete world;
 	return 0;
