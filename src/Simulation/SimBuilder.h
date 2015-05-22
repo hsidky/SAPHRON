@@ -11,6 +11,7 @@
 #include "Worlds/SimpleWorld.h"
 #include "Particles/Site.h"
 #include "ForceFields/ForceFieldManager.h"
+#include "Connectivities/Connectivity.h"
 
 namespace SAPHRON
 {
@@ -49,12 +50,18 @@ namespace SAPHRON
 
 			struct ConnectivityProps
 			{
-				std::string type;
-				std::vector<double> parameters;
-				std::vector<std::vector<double>> vparameters; 
-				std::vector<std::string> sparameters;
+				std::string type; // Connectivity type.
+				std::vector<double> parameters; //Connectivity parameters (scalar).
+				std::vector<std::vector<double>> vparameters; // Connectivity parameters (vector).
+				std::vector<std::string> sparameters; // Connectivity parameters (string).
+				
+				std::vector<int> piselector; // Connectivity integer selectors for particles.
+				std::vector<std::string> psselector; // Connectivity string selectors for particles.
+				std::vector<std::string> ssselector; // Connectivity string selectors for species (parents).
 			};
 
+			// Connectivities.
+			std::vector<ConnectivityProps> _connectivities;
 
 			// Forcefields.
 			std::vector<ForceFieldProps> _forcefields;
@@ -90,10 +97,16 @@ namespace SAPHRON
 
 			bool ValidateConnectivities(Json::Value connectivities);
 
+			bool LookupParticleInConnectivity(ParticleProps& particle, ConnectivityProps& connectivity);
+
+			bool LookupIndexInConnectivity(int index, ConnectivityProps& connectivity);
+
+			bool LookupStringInConnectivity(std::string keyword, ConnectivityProps& connectivity);
+
 		public:
 			SimBuilder() : 
-				_worldprops(), _forcefields(0), _blueprint(), _ppointers(0), _particles(0),
-				_reader(), _root(), _errors(false), _emsgs(0), _nmsgs(0) 
+				_worldprops(), _connectivities(0), _forcefields(0), _blueprint(), _ppointers(0),
+				_particles(0), _reader(), _root(), _errors(false), _emsgs(0), _nmsgs(0) 
 			{
 			}
 
@@ -151,6 +164,20 @@ namespace SAPHRON
 				return true;
 			}
 
+			// Parse connectivities and store results in internal structure. Returns 
+			// true if successful and false otherwise. Must be run after particle parse but 
+			// before particlebuild!
+			// Error(s) can be obtained via GetErrorMessages().
+			bool ParseConnectivities()
+			{
+				if(!ValidateConnectivities(_root["connectivities"]))
+				{
+					_errors = true;
+					return false;
+				}
+				return true;
+			}
+
 			// Builds a world object from parsed data (see ParseWorld()). 
 			// Returns pointer to newly created World object. Object lifetime is 
 			// caller's responsibility.
@@ -158,7 +185,7 @@ namespace SAPHRON
 
 			// Builds particles by adding them to a World object. Must be called after 
 			// ParseParticles().
-			void BuildParticles(World* world);
+			void BuildParticles(World* world, std::vector<Connectivity*>& connectivities);
 
 			// Builds forcefields and ads them to the forcefield vector. Object lifetime
 			// is the caller's responsibility!

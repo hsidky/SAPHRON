@@ -13,6 +13,7 @@
 #include "Particles/Site.h"
 #include "Simulation/SimBuilder.h"
 #include "ForceFields/ForceFieldManager.h"
+#include "Connectivities/Connectivity.h"
 
 using namespace SAPHRON;
 
@@ -106,16 +107,9 @@ int main(int argc, char const* argv[])
 	DumpNoticesToConsole(builder.GetNotices(), "  ");
 	builder.ResetNotices();
 
-	// Build particles.
-	std::cout << std::setw(msgw) << std::left << " > Building Particles...";
-	builder.BuildParticles(world);
-	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
-	DumpNoticesToConsole(builder.GetNotices(), "  ");
-	builder.ResetNotices();
-
-	// Parse forcefields.
-	std::cout << std::setw(msgw) << std::left << " > Validating ForceFields...";
-	if(!builder.ParseForceFields())
+	// Parse connectivities.
+	std::cout << std::setw(msgw) << std::left << " > Validating Connectivities...";
+	if(!builder.ParseConnectivities())
 	{
 		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
 		delete world;
@@ -125,6 +119,27 @@ int main(int argc, char const* argv[])
 	DumpNoticesToConsole(builder.GetNotices(), "  ");
 	builder.ResetNotices();
 
+	// Build particles.
+	std::vector<Connectivity*> connectivities;
+	std::cout << std::setw(msgw) << std::left << " > Building Particles...";
+	builder.BuildParticles(world, connectivities);
+	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
+	DumpNoticesToConsole(builder.GetNotices(), "  ");
+	builder.ResetNotices();
+
+	// Parse forcefields.
+	std::cout << std::setw(msgw) << std::left << " > Validating ForceFields...";
+	if(!builder.ParseForceFields())
+	{
+		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
+		for ( auto& cc : connectivities ) delete cc;
+		connectivities.clear();
+		delete world;
+		return DumpErrorsToConsole(builder.GetErrorMessages());
+	}
+	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
+	DumpNoticesToConsole(builder.GetNotices(), "  ");
+	builder.ResetNotices();
 
 	// Initialize forcefields.
 	ForceFieldManager ffm;
@@ -134,6 +149,8 @@ int main(int argc, char const* argv[])
 	if((int)forcefields.size() == 0)
 	{
 		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
+		for ( auto& cc : connectivities ) delete cc;
+		connectivities.clear();
 		delete world;
 		return DumpErrorsToConsole({"Unable to initialize forcefields. Unknown error occurred."});
 	}
@@ -144,6 +161,9 @@ int main(int argc, char const* argv[])
 	// Cleanup.
 	for ( auto& ff : forcefields ) delete ff;
 	forcefields.clear();
+
+	for ( auto& cc : connectivities ) delete cc;
+	connectivities.clear();
 
 	delete world;
 	return 0;

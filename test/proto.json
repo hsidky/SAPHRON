@@ -107,18 +107,18 @@
 	},
 
 	"forcefields" : [
-		{ "LJ" : {
+		{ "LebwohlLasher" : {
 			"epsilon" : 1e-3,
-			"sigma"   :	1e-3,
+			"gamma"   :	1e-3,
 			"species" : ["Hw", "Ow"]
 			}
 		},
-
+		
 		{ "LJ" : {
 			"epsilon" : 1e-3,
 			"sigma"   :	1e-3,
 			"species" : ["Hw", "Ow"]
 			}
-		}
+		} 
 	]
 }

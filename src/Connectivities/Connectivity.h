@@ -13,5 +13,7 @@ namespace SAPHRON
 		public:
 			// Evaluate the Hamiltonian of the connectivity.
 			virtual double EvaluateHamiltonian(Particle* p) = 0;
+
+			virtual ~Connectivity(){}
 	};
 }

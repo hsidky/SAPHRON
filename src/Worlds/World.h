@@ -36,7 +36,7 @@ namespace SAPHRON
 			virtual const Particle* SelectParticle(int location) const = 0;
 			
 			// Add a particle. 
-			virtual void AddParticle(Particle*&& particle) = 0;
+			virtual void AddParticle(Particle&& particle) = 0;
 
 			// Add a particle.
 			virtual void AddParticle(Particle* particle) = 0;

@@ -77,9 +77,9 @@ namespace SAPHRON
 
 			// Add particle. TODO: CAREFUL with the move semantics. 
 			// Need to visit this further.
-			virtual void AddParticle(Particle*&& particle) override
+			virtual void AddParticle(Particle&& particle) override
 			{
-				_particles.push_back(std::move(particle));
+				_particles.push_back(std::move(&particle));
 			}
 
 			// Add particle.
