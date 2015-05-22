@@ -21,6 +21,12 @@ namespace SAPHRON
 				_moves.push_back(&move);
 			}
 
+			// Add a move to the move queue.
+			void PushMove(Move* move)
+			{
+				_moves.push_back(move);
+			}
+
 			// Pops a move from the end of the move queue.
 			void PopMove()
 			{
@@ -43,6 +49,12 @@ namespace SAPHRON
 			inline Move* SelectRandomMove()
 			{
 				return _moves[_rand.int32() % _moves.size()];
+			}
+
+			// Seed seed.
+			void SetSeed(int seed)
+			{
+				_rand.seed(seed);
 			}
 	};
 }

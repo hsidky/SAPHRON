@@ -14,6 +14,7 @@
 #include "Simulation/SimBuilder.h"
 #include "ForceFields/ForceFieldManager.h"
 #include "Connectivities/Connectivity.h"
+#include "Moves/MoveManager.h"
 
 using namespace SAPHRON;
 
@@ -158,12 +159,50 @@ int main(int argc, char const* argv[])
 	DumpNoticesToConsole(builder.GetNotices(), "  ");
 	builder.ResetNotices();
 
+	// Parse moves.
+	std::cout << std::setw(msgw) << std::left << " > Validating Moves...";
+	if(!builder.ParseMoves())
+	{
+		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
+		for ( auto& cc : connectivities ) delete cc;
+		connectivities.clear();
+		for ( auto& ff : forcefields ) delete ff;
+		forcefields.clear();
+		delete world;
+		return DumpErrorsToConsole(builder.GetErrorMessages());
+	}
+	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
+	DumpNoticesToConsole(builder.GetNotices(), "  ");
+	builder.ResetNotices();
+
+	// Initialize moves.
+	MoveManager mm;
+	std::vector<Move*> moves(0);
+	std::cout << std::setw(msgw) << std::left << " > Building Moves...";
+	builder.BuildMoves(moves, mm);
+	if((int)moves.size() == 0)
+	{
+		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
+		for ( auto& cc : connectivities ) delete cc;
+		connectivities.clear();
+		for ( auto& ff : forcefields ) delete ff;
+		forcefields.clear();
+		delete world;
+		return DumpErrorsToConsole({"Unable to initialize moves. Unknown error occurred."});
+	}
+	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
+	DumpNoticesToConsole(builder.GetNotices(), "  ");
+	builder.ResetNotices();
+
 	// Cleanup.
 	for ( auto& ff : forcefields ) delete ff;
 	forcefields.clear();
 
 	for ( auto& cc : connectivities ) delete cc;
 	connectivities.clear();
+
+	for ( auto& mm : moves ) delete mm;
+	moves.clear();
 
 	delete world;
 	return 0;

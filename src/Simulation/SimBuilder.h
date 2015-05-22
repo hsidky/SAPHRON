@@ -12,6 +12,7 @@
 #include "Particles/Site.h"
 #include "ForceFields/ForceFieldManager.h"
 #include "Connectivities/Connectivity.h"
+#include "Moves/MoveManager.h"
 
 namespace SAPHRON
 {
@@ -60,6 +61,19 @@ namespace SAPHRON
 				std::vector<std::string> ssselector; // Connectivity string selectors for species (parents).
 			};
 
+			struct MoveProps
+			{
+				std::string type; // Move type.
+				int seed; // Move seed. 
+				std::vector<double> parameters; // Move parameters.
+			}; 
+
+			// Moves.
+			std::vector<MoveProps> _moves;
+
+			int _moveseed;
+
+
 			// Connectivities.
 			std::vector<ConnectivityProps> _connectivities;
 
@@ -103,10 +117,12 @@ namespace SAPHRON
 
 			bool LookupStringInConnectivity(std::string keyword, ConnectivityProps& connectivity);
 
+			bool ValidateMoves(Json::Value moves);
+
 		public:
 			SimBuilder() : 
-				_worldprops(), _connectivities(0), _forcefields(0), _blueprint(), _ppointers(0),
-				_particles(0), _reader(), _root(), _errors(false), _emsgs(0), _nmsgs(0) 
+				_worldprops(), _moves(0), _moveseed(0), _connectivities(0), _forcefields(0), _blueprint(),
+				_ppointers(0), _particles(0), _reader(), _root(), _errors(false), _emsgs(0), _nmsgs(0) 
 			{
 			}
 
@@ -178,6 +194,18 @@ namespace SAPHRON
 				return true;
 			}
 
+			// Parse moves and store results in internal stucture. Returns true if 
+			// successful and false otherwise.
+			bool ParseMoves()
+			{
+				if(!ValidateMoves(_root["moves"]))
+				{
+					_errors = true;
+					return false;
+				}
+				return true;
+			}
+
 			// Builds a world object from parsed data (see ParseWorld()). 
 			// Returns pointer to newly created World object. Object lifetime is 
 			// caller's responsibility.
@@ -190,6 +218,10 @@ namespace SAPHRON
 			// Builds forcefields and ads them to the forcefield vector. Object lifetime
 			// is the caller's responsibility!
 			void BuildForceFields(std::vector<ForceField*>& forcefields, ForceFieldManager& ffm);
+
+			// Builds moves and adds them to the move vector and move manager. Object lifetime 
+			// is the caller's responsibility! 
+			void BuildMoves(std::vector<Move*>& moves, MoveManager& mm);
 
 			std::vector<std::string> GetErrorMessages()
 			{

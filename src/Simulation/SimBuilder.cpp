@@ -1,6 +1,10 @@
 #include "SimBuilder.h"
 #include "ForceFields/LebwohlLasherFF.h"
 #include "Connectivities/P2SAConnectivity.h"
+#include "Moves/FlipSpinMove.h"
+#include "Moves/IdentityChangeMove.h"
+#include "Moves/SpeciesSwapMove.h"
+#include "Moves/SphereUnitVectorMove.h"
 
 namespace SAPHRON
 {
@@ -559,7 +563,7 @@ namespace SAPHRON
 						Director director({0.0, 0.0, 0.0});
 						if(!connectivity["director"].isArray() || connectivity["director"].size() != 3)
 						{
-							_emsgs.push_back("Connectivity " + type + " director must be a 1x3 array.");
+							_emsgs.push_back(type + " director must be a 1x3 array.");
 							err = true;
 						}	
 						else
@@ -573,8 +577,7 @@ namespace SAPHRON
 
 								} catch(std::exception& e)
 								{
-									_emsgs.push_back("Connectivity "  + 
-										type + " director unserialization error : " + 
+									_emsgs.push_back(type + " director unserialization error : " + 
 										std::string(e.what()));
 									err = true;
 									return Director{NAN, NAN, NAN};
@@ -588,7 +591,7 @@ namespace SAPHRON
 										   director[2]*director[2]);
 						if(std::abs(norm - 1.0) > 1e-7 && norm != 0)
 						{
-							_nmsgs.push_back("Connectivity " + type + " norm is not equal to 1. Normalizing vector.");
+							_nmsgs.push_back(type + " norm is not equal to 1. Normalizing vector.");
 							director[0] /= norm;
 							director[1] /= norm;
 							director[2] /= norm;
@@ -602,12 +605,12 @@ namespace SAPHRON
 					auto particles = connectivity["particles"];
 					if(!particles.isArray())
 					{
-						_emsgs.push_back("Connectivity " + type + " selector must be an array.");
+						_emsgs.push_back(type + " selector must be an array.");
 						err = true;
 					}
 					else if(particles.size() < 1)
 					{
-						_emsgs.push_back("Connectivity " + type + " selector must contain at least 1 element.");
+						_emsgs.push_back(type + " selector must contain at least 1 element.");
 						err = true;
 					}
 
@@ -619,7 +622,7 @@ namespace SAPHRON
 							int iselector = selector.asInt();
 							if(iselector >= (int)_particles.size())
 							{
-								_emsgs.push_back("Connectivity " + type +  
+								_emsgs.push_back(type +  
 									" selector \"index" + std::to_string(iselector) + 
 									"\" is invalid.");
 								err = true;
@@ -630,7 +633,7 @@ namespace SAPHRON
 								if(LookupIndexInConnectivity(iselector, cprops) || 
 								   LookupParticleInConnectivity(_particles[i],cprops))
 								{
-									_emsgs.push_back("Connectivity " + type + " duplicated for " + 
+									_emsgs.push_back(type + " duplicated for " + 
 										"selector \"index " + std::to_string(iselector) + "\".");
 									err = true;
 								}
@@ -645,7 +648,7 @@ namespace SAPHRON
 								try {	
 									return selector[0].asInt(); 
 								} catch(std::exception& e) {
-									_emsgs.push_back("Connectivity " + type + 
+									_emsgs.push_back(type + 
 										"selector unserialization error : " + 
 										std::string(e.what()));
 									err = true;
@@ -657,7 +660,7 @@ namespace SAPHRON
 								try {	
 									return selector[1].asInt(); 
 								} catch(std::exception& e) {
-									_emsgs.push_back("Connectivity " + type + 
+									_emsgs.push_back(type + 
 										"selector unserialization error : " + 
 										std::string(e.what()));
 									err = true;
@@ -670,7 +673,7 @@ namespace SAPHRON
 								int iselector = j;
 								if(iselector >= (int)_particles.size())
 								{
-									_emsgs.push_back("Connectivity " + type +  
+									_emsgs.push_back(type +  
 										" selector \"index " + std::to_string(iselector) + 
 										"\" is invalid.");
 									err = true;
@@ -681,7 +684,7 @@ namespace SAPHRON
 									if(LookupIndexInConnectivity(iselector, cprops) || 
 									   LookupParticleInConnectivity(_particles[i],cprops))
 									{
-										_emsgs.push_back("Connectivity " + type + " duplicated for " + 
+										_emsgs.push_back(type + " duplicated for " + 
 											"selector \"index " + std::to_string(iselector) + "\".");
 										err = true;
 									}
@@ -697,7 +700,7 @@ namespace SAPHRON
 							std::string iselector = selector.asString();
 							if(LookupStringInConnectivity(iselector, cprops))
 									{
-										_emsgs.push_back("Connectivity " + type + " duplicated for " + 
+										_emsgs.push_back(type + " duplicated for " + 
 											"selector " + iselector + ".");
 										err = true;
 									}
@@ -706,7 +709,7 @@ namespace SAPHRON
 						}
 						else
 						{
-							_emsgs.push_back("Connectivity " + type + " selector is invalid.");
+							_emsgs.push_back(type + " selector is invalid.");
 							err = true;
 						}
 					} // End selector loop.
@@ -715,6 +718,131 @@ namespace SAPHRON
 				}
 			}
 		}
+
+		return !err;
+	}
+
+	bool SimBuilder::ValidateMoves(Json::Value moves)
+	{
+		assert(_errors = false);
+
+		bool err = false;
+
+		// Moves tag exists.
+		if(!moves)
+		{
+			_emsgs.push_back("No moves have been specified.");
+			return false;
+		}
+
+		// World type specified.
+		auto members = moves.getMemberNames();
+
+		int seed = 0;
+
+
+		// Valid move types.
+		std::vector<std::string> types =  {
+			"FlipSpin", "IdentityChange", "SpeciesSwap", 
+			"SphereUnitVector"
+		};
+
+		// Go through members.
+		for(auto& member : members)
+		{
+			// Main seed.
+			if(member == "seed")
+			{
+				seed = [&]()-> int { 
+					try {	
+						return moves[member].asInt(); 
+					} catch(std::exception& e) {
+						_emsgs.push_back("Seed unserialization error : " + std::string(e.what()));
+						err = true;
+						return 0;
+					}
+				}();
+			}
+			else if(std::find(types.begin(), types.end(), member) == types.end())
+			{
+				_emsgs.push_back("The type of move specified is invalid.");
+
+				std::ostringstream s;
+				std::copy(types.begin(), types.end(), 
+						  std::ostream_iterator<std::string>(s," "));
+				_emsgs.push_back("    Valid entries are: " + s.str());
+
+				err = true;
+			}
+			else
+			{
+				MoveProps move;
+
+				// Flip spin.
+				if(member == types[0])
+					move.type = types[0];
+				// Identity change.
+				else if(member == types[1])
+					move.type = types[1];
+				// Species swap.
+				else if(member == types[2])
+					move.type = types[2];
+				else if(member == types[3])
+					move.type = types[3];
+				else // This is technically unneccesary because we check above. But good
+					 // for debugging purposes.
+				{
+					_emsgs.push_back("The type of move specified is invalid.");
+
+					std::ostringstream s;
+					std::copy(types.begin(), types.end(), 
+							  std::ostream_iterator<std::string>(s," "));
+					_emsgs.push_back("    Valid entries are: " + s.str());
+
+					err = true;
+				}
+
+				// Process seed for all types even if they don't need it. Easier this way.
+				int moveseed = 0;
+				if(!moves[member].isMember("seed"))
+				{
+					_nmsgs.push_back("No seed provided for " + member + 
+						" move.\n     Generating a random number.");
+					srand(time(NULL));
+					moveseed = rand();
+				}
+				else 
+				{
+					moveseed = [&]()-> int { 
+						try {	
+							return moves[member]["seed"].asInt(); 
+						} catch(std::exception& e) {
+							_emsgs.push_back("Seed unserialization error : " + std::string(e.what()));
+							err = true;
+							return 0;
+						}
+					}();
+				}
+
+				move.seed = moveseed;
+
+				_moves.push_back(move);
+			}
+		}
+
+		if(!seed)
+		{
+			_nmsgs.push_back("No seed provided. Generating a random number.");
+			srand(time(NULL));
+			seed = rand();
+		}
+		else if(seed <= 0)
+		{
+			_emsgs.push_back("Invalid seed specified. Seed cannot be less than or equal to zero.");
+			err = true;
+		}
+		else 
+			_moveseed = seed;
 
 		return !err;
 	}
@@ -926,6 +1054,54 @@ namespace SAPHRON
 					forcefield.species1 + "," + forcefield.species2 + 
 					"]\n     with epsilon = "  + std::to_string(forcefield.parameters[0]) + 
 					" and gamma = " + std::to_string(forcefield.parameters[1]) + ".");
+			}
+		}
+	}
+
+	void SimBuilder::BuildMoves(std::vector<Move*>& moves, MoveManager& mm)
+	{
+		assert(_errors = false);
+
+		mm.SetSeed(_moveseed);
+		_nmsgs.push_back("Set move manager seed to " + std::to_string(_moveseed) + ".");
+
+		int pcount = 0;
+		// Count primitive types (site).
+		for(auto& particle : _blueprint)
+			if((int)particle.second.children.size() == 0)
+				pcount++;
+
+		for(auto& move : _moves)
+		{
+			Move* moveptr = nullptr;
+			if(move.type == "Flipspin")
+			{
+				moveptr = new FlipSpinMove();
+				_nmsgs.push_back("Initialized " + move.type + " move.");
+			}
+			else if(move.type == "IdentityChange")
+			{
+				moveptr = new IdentityChangeMove(pcount, move.seed);
+				_nmsgs.push_back("Initialized " + move.type  + " move with nspecies = " + 
+					std::to_string(pcount) + "\n     and seed = " + 
+					std::to_string(move.seed) + ".");
+			}
+			else if(move.type == "SpeciesSwap")
+			{
+				moveptr = new SpeciesSwapMove();
+				_nmsgs.push_back("Initialized " + move.type + " move.");
+			}
+			else if(move.type == "SphereUnitVector")
+			{
+				moveptr = new SphereUnitVectorMove(move.seed);
+				_nmsgs.push_back("Initialized " + move.type +
+				 " move with seed = " + std::to_string(move.seed) + ".");
+			}
+
+			if(moveptr != nullptr)
+			{
+				moves.push_back(moveptr);
+				mm.PushMove(moveptr);
 			}
 		}
 	}
