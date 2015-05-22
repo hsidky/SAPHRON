@@ -13,6 +13,7 @@
 #include "ForceFields/ForceFieldManager.h"
 #include "Connectivities/Connectivity.h"
 #include "Moves/MoveManager.h"
+#include "SimObserver.h"
 
 namespace SAPHRON
 {
@@ -68,11 +69,22 @@ namespace SAPHRON
 				std::vector<double> parameters; // Move parameters.
 			}; 
 
+
+			struct ObserverProps 
+			{
+				std::string type; 
+				SimFlags flags; 
+				int frequency; 
+				std::string prefix; 
+			};
+
+			// Observers
+			std::vector<ObserverProps> _observers;
+
 			// Moves.
 			std::vector<MoveProps> _moves;
 
 			int _moveseed;
-
 
 			// Connectivities.
 			std::vector<ConnectivityProps> _connectivities;
@@ -111,19 +123,25 @@ namespace SAPHRON
 
 			bool ValidateConnectivities(Json::Value connectivities);
 
+			bool ValidateObservers(Json::Value observers);
+
 			bool LookupParticleInConnectivity(ParticleProps& particle, ConnectivityProps& connectivity);
 
 			bool LookupIndexInConnectivity(int index, ConnectivityProps& connectivity);
 
 			bool LookupStringInConnectivity(std::string keyword, ConnectivityProps& connectivity);
 
+			int ProcessFlag(Json::Value& flagtree, std::string flag, std::string observer, bool& err);
+
 			bool ValidateMoves(Json::Value moves);
 
 		public:
 			SimBuilder() : 
-				_worldprops(), _moves(0), _moveseed(0), _connectivities(0), _forcefields(0), _blueprint(),
-				_ppointers(0), _particles(0), _reader(), _root(), _errors(false), _emsgs(0), _nmsgs(0) 
+				_worldprops(), _observers(0), _moves(0), _moveseed(0), _connectivities(0),
+				_forcefields(0), _blueprint(), _ppointers(0), _particles(0), _reader(), 
+				_root(), _errors(false), _emsgs(0), _nmsgs(0) 
 			{
+					srand(time(NULL));
 			}
 
 			// Parse stream input. Returns true if parse was successful or 
@@ -206,6 +224,18 @@ namespace SAPHRON
 				return true;
 			}
 
+			// Parse observer and store results in internal structure. Returns true if 
+			// successful and false otherwise.
+			bool ParseObservers()
+			{
+				if(!ValidateObservers(_root["observers"]))
+				{
+					_errors = true;
+					return false;
+				}
+				return true;
+			}
+
 			// Builds a world object from parsed data (see ParseWorld()). 
 			// Returns pointer to newly created World object. Object lifetime is 
 			// caller's responsibility.
@@ -222,6 +252,10 @@ namespace SAPHRON
 			// Builds moves and adds them to the move vector and move manager. Object lifetime 
 			// is the caller's responsibility! 
 			void BuildMoves(std::vector<Move*>& moves, MoveManager& mm);
+
+			// Builds observers and adds them to the observer vector. Object lifetime is the 
+			// caller's responsibility!
+			void BuildObservers(std::vector<SimObserver*>& observers);
 
 			std::vector<std::string> GetErrorMessages()
 			{

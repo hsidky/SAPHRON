@@ -56,5 +56,7 @@ namespace SAPHRON
 			// Update observer when simulation has changed.
 			void Update(SimEvent& e);
 
+			virtual ~SimObserver(){}
+
 	};
 }

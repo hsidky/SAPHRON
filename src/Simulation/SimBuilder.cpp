@@ -5,6 +5,8 @@
 #include "Moves/IdentityChangeMove.h"
 #include "Moves/SpeciesSwapMove.h"
 #include "Moves/SphereUnitVectorMove.h"
+#include "CSVObserver.h"
+#include "ConsoleObserver.h"
 
 namespace SAPHRON
 {
@@ -149,7 +151,6 @@ namespace SAPHRON
 		if(!seed)
 		{
 			_nmsgs.push_back("No seed provided. Generating a random number.");
-			srand(time(NULL));
 			_worldprops.seed = rand();
 		}
 		else if(seed <= 0)
@@ -724,7 +725,7 @@ namespace SAPHRON
 
 	bool SimBuilder::ValidateMoves(Json::Value moves)
 	{
-		assert(_errors = false);
+		assert(_errors == false);
 
 		bool err = false;
 
@@ -735,7 +736,7 @@ namespace SAPHRON
 			return false;
 		}
 
-		// World type specified.
+		// Move type specified.
 		auto members = moves.getMemberNames();
 
 		int seed = 0;
@@ -808,7 +809,6 @@ namespace SAPHRON
 				{
 					_nmsgs.push_back("No seed provided for " + member + 
 						" move.\n     Generating a random number.");
-					srand(time(NULL));
 					moveseed = rand();
 				}
 				else 
@@ -824,6 +824,13 @@ namespace SAPHRON
 					}();
 				}
 
+				if(moveseed <= 0)
+				{
+					_emsgs.push_back("Invalid " + member + 
+						" seed specified.\n     Seed cannot be less than or equal to zero.");
+					err = true;
+				}
+		
 				move.seed = moveseed;
 
 				_moves.push_back(move);
@@ -833,7 +840,6 @@ namespace SAPHRON
 		if(!seed)
 		{
 			_nmsgs.push_back("No seed provided. Generating a random number.");
-			srand(time(NULL));
 			seed = rand();
 		}
 		else if(seed <= 0)
@@ -845,6 +851,142 @@ namespace SAPHRON
 			_moveseed = seed;
 
 		return !err;
+	}
+
+	bool SimBuilder::ValidateObservers(Json::Value observers)
+	{
+		assert(_errors == false);
+
+		bool err = false; 
+
+		if(!observers)
+		{
+			_emsgs.push_back("At least one observer must be specified");
+			return false;
+		}
+
+		// World type specified.
+		auto members = observers.getMemberNames();
+
+		// Valid observer types.
+		std::vector<std::string> types =  {
+			"Console", "CSV"
+		};
+
+		// Go through observers.
+		for(auto& member: members)
+		{
+			if(std::find(types.begin(), types.end(), member) == types.end())
+			{
+				_emsgs.push_back("The type of observer specified is invalid.");
+
+				std::ostringstream s;
+				std::copy(types.begin(), types.end(), 
+						  std::ostream_iterator<std::string>(s," "));
+				_emsgs.push_back("    Valid entries are: " + s.str());
+
+				err = true;
+			}
+			else
+			{
+				ObserverProps obs;
+
+				// Console observer.
+				if(member == types[0])
+				{
+					obs.type = types[0];	
+				} 
+				// CSV observer.
+				else if(member == types[1])
+				{
+					obs.type = types[1];
+
+					obs.prefix = [&]() -> std::string {
+						try{
+							return observers[member].get("file_prefix", "").asString();
+						} catch(std::exception& e) {
+							_emsgs.push_back("File prefix unserialization error: " + std::string(e.what()));
+							err = true;
+							return "";
+						}
+					}();
+
+					if((int)obs.prefix.size() == 0)
+					{
+						_emsgs.push_back(member + " observer file prefix must be specified.");
+						err = true;
+					}
+				}
+
+
+				// Get frequency spec.
+				obs.frequency = [&]()-> int { 
+					try {	
+						return observers[member]["frequency"].asInt(); 
+					} catch(std::exception& e) {
+						_emsgs.push_back("Frequency unserialization error : " + std::string(e.what()));
+						err = true;
+						return 0;
+					}
+				}();
+
+				if(obs.frequency == 0)
+				{
+					_emsgs.push_back(member + " frequency must be a positive integer.");
+					err = true;
+				}
+
+				if(!observers[member].isMember("flags"))
+				{
+					_emsgs.push_back(member + " flags must be specified.");
+					err = true;
+				}
+				else
+				{
+					SimFlags sflags;
+
+					auto flagtree = observers[member]["flags"];
+					sflags.identifier = ProcessFlag(flagtree, "identifier", member, err);
+					sflags.iterations = ProcessFlag(flagtree, "iterations", member, err);
+					sflags.energy = ProcessFlag(flagtree, "energy", member, err);
+					sflags.temperature = ProcessFlag(flagtree, "temperature", member, err);
+					sflags.pressure = ProcessFlag(flagtree, "pressure", member, err);
+					sflags.composition = ProcessFlag(flagtree, "composition", member, err);
+					sflags.acceptance = ProcessFlag(flagtree, "acceptance", member, err);
+					sflags.dos_walker = ProcessFlag(flagtree, "dos_walker", member, err);
+					sflags.dos_scale_factor = ProcessFlag(flagtree, "dos_scale_factor", member, err);
+					sflags.dos_flatness = ProcessFlag(flagtree, "dos_flatness", member, err);
+					sflags.dos_interval = ProcessFlag(flagtree, "dos_interval", member, err);
+					sflags.dos_bin_count = ProcessFlag(flagtree, "dos_bin_count", member, err);
+					sflags.dos_values = ProcessFlag(flagtree, "dos_values", member, err);
+					sflags.particle_global_id = ProcessFlag(flagtree, "particle_global_id", member, err);
+					sflags.particle_position = ProcessFlag(flagtree, "particle_position", member, err);
+					sflags.particle_director = ProcessFlag(flagtree, "particle_director", member, err);
+					sflags.particle_species = ProcessFlag(flagtree, "particle_species", member, err);
+					sflags.particle_species_id = ProcessFlag(flagtree, "particle_species_id", member, err);
+					sflags.particle_neighbors = ProcessFlag(flagtree, "particle_neighbors", member, err);
+				}
+
+				_observers.push_back(obs);
+			}
+		}
+
+		return !err;
+	}
+
+	int SimBuilder::ProcessFlag(Json::Value& flagtree, std::string flag, std::string observer, bool& err)
+	{
+		return [&]()-> int { 
+			try {	
+				return flagtree.get(flag, 0).asInt() != 0 ? 1 : 0; 
+			} catch(std::exception& e) {
+				_emsgs.push_back(
+					observer + " identifier flag " + flag + " unserialization error : " 
+					+ std::string(e.what()));
+				err = true;
+				return 0;
+			}
+		}();
 	}
 
 	bool SimBuilder::LookupParticleInConnectivity(ParticleProps& particle, ConnectivityProps& connectivity)
@@ -977,7 +1119,7 @@ namespace SAPHRON
 
 	void SimBuilder::BuildParticles(World* world, std::vector<Connectivity*>& connectivities)
 	{
-		assert(_errors = false);
+		assert(_errors == false);
 		
 
 		// Initialize connectivities. 
@@ -1039,7 +1181,7 @@ namespace SAPHRON
 
 	void SimBuilder::BuildForceFields(std::vector<ForceField*>& forcefields, ForceFieldManager& ffm)
 	{
-		assert(_errors = false);
+		assert(_errors == false);
 
 		for(auto& forcefield : _forcefields)
 		{
@@ -1060,7 +1202,7 @@ namespace SAPHRON
 
 	void SimBuilder::BuildMoves(std::vector<Move*>& moves, MoveManager& mm)
 	{
-		assert(_errors = false);
+		assert(_errors == false);
 
 		mm.SetSeed(_moveseed);
 		_nmsgs.push_back("Set move manager seed to " + std::to_string(_moveseed) + ".");
@@ -1104,5 +1246,40 @@ namespace SAPHRON
 				mm.PushMove(moveptr);
 			}
 		}
+	}
+
+	void SimBuilder::BuildObservers(std::vector<SimObserver*>& observers)
+	{
+		assert(_errors == false);
+
+		for(auto& observer : _observers)
+		{
+			if(observer.type == "CSV")
+			{
+				observers.push_back(
+					new CSVObserver(observer.prefix,
+									observer.flags, 
+									observer.frequency)
+				);
+
+				_nmsgs.push_back("Initilaized " + observer.type + 
+					" observer with frequency = " + std::to_string(observer.frequency) + 
+					"\n     and file prefix = " + observer.prefix + ".");
+
+			}
+			else if(observer.type == "Console")
+			{
+				observers.push_back(
+					new ConsoleObserver(observer.flags,
+										observer.frequency)
+				);
+
+				_nmsgs.push_back("Initilaized " + observer.type + 
+					" observer with frequency = " + std::to_string(observer.frequency) + 
+					".");
+			}
+		}
+
+		assert(observers.size() == _observers.size());
 	}
 }

@@ -15,24 +15,30 @@
 #include "ForceFields/ForceFieldManager.h"
 #include "Connectivities/Connectivity.h"
 #include "Moves/MoveManager.h"
+#include "Simulation/SimObserver.h"
 
 using namespace SAPHRON;
 
-int DumpErrorsToConsole(std::vector<std::string> msgs)
+int DumpErrorsToConsole(std::vector<std::string> msgs, int notw)
 {
+	std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
 	for(auto& msg : msgs)
 			std::cout << "   * " << msg << "\n";
 	return -1;
 }
 
-void DumpNoticesToConsole(std::vector<std::string> msgs, std::string prefix)
+void DumpNoticesToConsole(std::vector<std::string> msgs, std::string prefix, int notw)
 {
+	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
 	if(msgs.size() == 0)
 		return;
 	
 	for(auto& msg : msgs)
 		std::cout << prefix << " * " << msg << "\n";
 }
+
+
+
 
 // The main program expects a user to input the lattice size, number of EXEDOS
 // iterations, minimum and maximum mole fractions, number of bins for density-of-states
@@ -56,30 +62,74 @@ int main(int argc, char const* argv[])
 	int msgw = 47;
 	int notw = ltot - msgw;
 
+	//******************************************
+	//                                         *
+	//      BEGIN PARSING AND VALIDATION       *
+	//                                         *
+	//******************************************
+
 	// Validate JSON.	
 	std::cout << std::setw(msgw) << std::left << " > Validating JSON...";
 	SimBuilder builder; 
 	if(!builder.ParseInput(std::cin))
-	{
-		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n ";
-		auto msgs = builder.GetErrorMessages();	
-		for(auto& msg : msgs)
-			std::cout << "  " << msg << std::endl;
-
-		return -1;
-	}
-	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
+		return DumpErrorsToConsole(builder.GetErrorMessages(), notw);
+	DumpNoticesToConsole({}, "", notw);
 
 	// Parse world.
 	std::cout << std::setw(msgw) << std::left << " > Validating World...";
 	if(!builder.ParseWorld())
-	{
-		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
-		return DumpErrorsToConsole(builder.GetErrorMessages());
-	}
-	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
-	DumpNoticesToConsole(builder.GetNotices(), "  ");
+		return DumpErrorsToConsole(builder.GetErrorMessages(), notw);
+	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
 	builder.ResetNotices();
+
+	// Parse particles.
+	std::cout << std::setw(msgw) << std::left << " > Validating Particles...";
+	if(!builder.ParseParticles())
+		return DumpErrorsToConsole(builder.GetErrorMessages(), notw);
+	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
+	builder.ResetNotices();
+
+	// Parse connectivities.
+	std::cout << std::setw(msgw) << std::left << " > Validating Connectivities...";
+	if(!builder.ParseConnectivities())
+		return DumpErrorsToConsole(builder.GetErrorMessages(), notw);
+	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
+	builder.ResetNotices();
+
+	// Parse forcefields.
+	std::cout << std::setw(msgw) << std::left << " > Validating ForceFields...";
+	if(!builder.ParseForceFields())
+		return DumpErrorsToConsole(builder.GetErrorMessages(), notw);
+	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
+	builder.ResetNotices();
+
+	// Parse moves.
+	std::cout << std::setw(msgw) << std::left << " > Validating Moves...";
+	if(!builder.ParseMoves())
+		return DumpErrorsToConsole(builder.GetErrorMessages(), notw);
+	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
+	builder.ResetNotices();
+
+	// Parse observers.
+	std::cout << std::setw(msgw) << std::left << " > Validating Observers...";
+	if(!builder.ParseObservers())
+		return DumpErrorsToConsole(builder.GetErrorMessages(), notw);
+	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
+	builder.ResetNotices();
+
+	//******************************************
+	//                                         *
+	//        END PARSING AND VALIDATION       *
+	//                                         *
+	//******************************************
+
+
+
+	//******************************************
+	//                                         *
+	//           BEGIN INITIALIZATION          *
+	//                                         *
+	//******************************************
 
 	// Initialize world.
 	std::cout << std::setw(msgw) << std::left << " > Initializing World...";
@@ -87,59 +137,17 @@ int main(int argc, char const* argv[])
 	world = builder.BuildWorld();
 	if(world == nullptr)
 	{
-		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
 		delete world;
-		return DumpErrorsToConsole({"Unable to initialize world. Unknown error occurred!"});
+		return DumpErrorsToConsole({"Unable to initialize world. Unknown error occurred!"}, notw);
 	}
-
-	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
-	DumpNoticesToConsole(builder.GetNotices(), "  ");
-	builder.ResetNotices();
-
-	// Parse particles.
-	std::cout << std::setw(msgw) << std::left << " > Validating Particles...";
-	if(!builder.ParseParticles())
-	{
-		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
-		delete world;
-		return DumpErrorsToConsole(builder.GetErrorMessages());
-	}
-	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
-	DumpNoticesToConsole(builder.GetNotices(), "  ");
-	builder.ResetNotices();
-
-	// Parse connectivities.
-	std::cout << std::setw(msgw) << std::left << " > Validating Connectivities...";
-	if(!builder.ParseConnectivities())
-	{
-		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
-		delete world;
-		return DumpErrorsToConsole(builder.GetErrorMessages());
-	}
-	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
-	DumpNoticesToConsole(builder.GetNotices(), "  ");
+	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
 	builder.ResetNotices();
 
 	// Build particles.
 	std::vector<Connectivity*> connectivities;
 	std::cout << std::setw(msgw) << std::left << " > Building Particles...";
 	builder.BuildParticles(world, connectivities);
-	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
-	DumpNoticesToConsole(builder.GetNotices(), "  ");
-	builder.ResetNotices();
-
-	// Parse forcefields.
-	std::cout << std::setw(msgw) << std::left << " > Validating ForceFields...";
-	if(!builder.ParseForceFields())
-	{
-		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
-		for ( auto& cc : connectivities ) delete cc;
-		connectivities.clear();
-		delete world;
-		return DumpErrorsToConsole(builder.GetErrorMessages());
-	}
-	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
-	DumpNoticesToConsole(builder.GetNotices(), "  ");
+	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
 	builder.ResetNotices();
 
 	// Initialize forcefields.
@@ -149,30 +157,12 @@ int main(int argc, char const* argv[])
 	builder.BuildForceFields(forcefields, ffm);
 	if((int)forcefields.size() == 0)
 	{
-		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
 		for ( auto& cc : connectivities ) delete cc;
 		connectivities.clear();
 		delete world;
-		return DumpErrorsToConsole({"Unable to initialize forcefields. Unknown error occurred."});
+		return DumpErrorsToConsole({"Unable to initialize forcefields. Unknown error occurred."}, notw);
 	}
-	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
-	DumpNoticesToConsole(builder.GetNotices(), "  ");
-	builder.ResetNotices();
-
-	// Parse moves.
-	std::cout << std::setw(msgw) << std::left << " > Validating Moves...";
-	if(!builder.ParseMoves())
-	{
-		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
-		for ( auto& cc : connectivities ) delete cc;
-		connectivities.clear();
-		for ( auto& ff : forcefields ) delete ff;
-		forcefields.clear();
-		delete world;
-		return DumpErrorsToConsole(builder.GetErrorMessages());
-	}
-	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
-	DumpNoticesToConsole(builder.GetNotices(), "  ");
+	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
 	builder.ResetNotices();
 
 	// Initialize moves.
@@ -182,17 +172,39 @@ int main(int argc, char const* argv[])
 	builder.BuildMoves(moves, mm);
 	if((int)moves.size() == 0)
 	{
-		std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
 		for ( auto& cc : connectivities ) delete cc;
 		connectivities.clear();
 		for ( auto& ff : forcefields ) delete ff;
 		forcefields.clear();
 		delete world;
-		return DumpErrorsToConsole({"Unable to initialize moves. Unknown error occurred."});
+		return DumpErrorsToConsole({"Unable to initialize moves. Unknown error occurred."}, notw);
 	}
-	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
-	DumpNoticesToConsole(builder.GetNotices(), "  ");
+	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
 	builder.ResetNotices();
+
+	// Initialize observers.
+	std::vector<SimObserver*> observers(0);
+	std::cout << std::setw(msgw) << std::left << " > Initializing Observers...";
+	builder.BuildObservers(observers);
+	if((int)moves.size() == 0)
+	{
+		for ( auto& cc : connectivities ) delete cc;
+		connectivities.clear();
+		for ( auto& ff : forcefields ) delete ff;
+		forcefields.clear();
+		for ( auto& mm : moves ) delete mm;
+		moves.clear();
+		delete world;
+		return DumpErrorsToConsole({"Unable to initialize observers. Unknown error occurred."}, notw);
+	}
+	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
+	builder.ResetNotices();
+
+	//******************************************
+	//                                         *
+	//             END INITIALIZATION          *
+	//                                         *
+	//******************************************
 
 	// Cleanup.
 	for ( auto& ff : forcefields ) delete ff;
@@ -203,6 +215,9 @@ int main(int argc, char const* argv[])
 
 	for ( auto& mm : moves ) delete mm;
 	moves.clear();
+
+	for (auto& oo : observers) delete oo;
+	observers.clear();
 
 	delete world;
 	return 0;
