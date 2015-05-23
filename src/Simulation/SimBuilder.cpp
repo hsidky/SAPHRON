@@ -10,6 +10,24 @@
 
 namespace SAPHRON
 {
+	bool SimBuilder::CheckType(std::string type, std::vector<std::string> types)
+	{
+		auto it = std::find(types.begin(), types.end(), type);
+		if(it == types.end())
+		{
+			_emsgs.push_back("The specified type, " + type + ", is invalid.");
+
+			std::ostringstream s;
+			std::copy(types.begin(), types.end(), 
+					  std::ostream_iterator<std::string>(s," "));
+			_emsgs.push_back("  Valid entries are: " + s.str());
+
+			return false;
+		}
+
+		return true;
+	}
+
 	bool SimBuilder::ValidateWorld(Json::Value world)
 	{
 		bool err = false;
@@ -39,18 +57,8 @@ namespace SAPHRON
 
 		// Validate that the world type is a valid entry.
 		std::vector<std::string> types =  {"Simple"};
-		auto it = std::find(types.begin(), types.end(), type);
-		if(it == types.end())
-		{
-			_emsgs.push_back("The type of world specified is invalid.");
-
-			std::ostringstream s;
-			std::copy(types.begin(), types.end(), 
-					  std::ostream_iterator<std::string>(s," "));
-			_emsgs.push_back("    Valid entries are: " + s.str());
-
+		if(!CheckType(type, types))
 			err = true;
-		}
 
 		// Assign world type.
 		_worldprops.type = type;
@@ -373,18 +381,9 @@ namespace SAPHRON
 			}
 			else
 			{
-				// Validate that the forcefield type is a valid entry.
-				auto it = std::find(types.begin(), types.end(), type);
-				if(it == types.end())
-				{
-					_emsgs.push_back("The type of forcefield specified is invalid.");
 
-					std::ostringstream s;
-					std::copy(types.begin(), types.end(), 
-							  std::ostream_iterator<std::string>(s," "));
-					_emsgs.push_back("    Valid entries are: " + s.str());
+				if(!CheckType(type, types))
 					err = true;
-				}
 				else
 				{
 					ForceFieldProps ff;
@@ -522,18 +521,8 @@ namespace SAPHRON
 			}
 			else
 			{
-				// Validate that the connectivity type is a valid entry.
-				auto it = std::find(types.begin(), types.end(), type);
-				if(it == types.end())
-				{
-					_emsgs.push_back("The type of connectivity specified is invalid.");
-
-					std::ostringstream s;
-					std::copy(types.begin(), types.end(), 
-							  std::ostream_iterator<std::string>(s," "));
-					_emsgs.push_back("    Valid entries are: " + s.str());
+				if(!CheckType(type, types))
 					err = true;
-				}
 				else
 				{
 					ConnectivityProps cprops;
@@ -764,17 +753,8 @@ namespace SAPHRON
 					}
 				}();
 			}
-			else if(std::find(types.begin(), types.end(), member) == types.end())
-			{
-				_emsgs.push_back("The type of move specified is invalid.");
-
-				std::ostringstream s;
-				std::copy(types.begin(), types.end(), 
-						  std::ostream_iterator<std::string>(s," "));
-				_emsgs.push_back("    Valid entries are: " + s.str());
-
-				err = true;
-			}
+			else if(!CheckType(member, types))
+				err = true;		
 			else
 			{
 				MoveProps move;
@@ -876,17 +856,8 @@ namespace SAPHRON
 		// Go through observers.
 		for(auto& member: members)
 		{
-			if(std::find(types.begin(), types.end(), member) == types.end())
-			{
-				_emsgs.push_back("The type of observer specified is invalid.");
-
-				std::ostringstream s;
-				std::copy(types.begin(), types.end(), 
-						  std::ostream_iterator<std::string>(s," "));
-				_emsgs.push_back("    Valid entries are: " + s.str());
-
+			if(!CheckType(member, types))
 				err = true;
-			}
 			else
 			{
 				ObserverProps obs;

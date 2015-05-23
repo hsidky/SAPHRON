@@ -37,9 +37,6 @@ void DumpNoticesToConsole(std::vector<std::string> msgs, std::string prefix, int
 		std::cout << prefix << " * " << msg << "\n";
 }
 
-
-
-
 // The main program expects a user to input the lattice size, number of EXEDOS
 // iterations, minimum and maximum mole fractions, number of bins for density-of-states
 // histogram and model, sites and vector file outputs.
@@ -192,7 +189,7 @@ int main(int argc, char const* argv[])
 		connectivities.clear();
 		for ( auto& ff : forcefields ) delete ff;
 		forcefields.clear();
-		for ( auto& mm : moves ) delete mm;
+		for ( auto& m : moves ) delete m;
 		moves.clear();
 		delete world;
 		return DumpErrorsToConsole({"Unable to initialize observers. Unknown error occurred."}, notw);
@@ -213,7 +210,7 @@ int main(int argc, char const* argv[])
 	for ( auto& cc : connectivities ) delete cc;
 	connectivities.clear();
 
-	for ( auto& mm : moves ) delete mm;
+	for ( auto& m : moves ) delete m;
 	moves.clear();
 
 	for (auto& oo : observers) delete oo;
@@ -221,4 +218,4 @@ int main(int argc, char const* argv[])
 
 	delete world;
 	return 0;
-}
+}	

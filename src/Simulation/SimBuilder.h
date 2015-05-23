@@ -125,6 +125,8 @@ namespace SAPHRON
 
 			bool ValidateObservers(Json::Value observers);
 
+			bool CheckType(std::string type, std::vector<std::string> types);
+
 			bool LookupParticleInConnectivity(ParticleProps& particle, ConnectivityProps& connectivity);
 
 			bool LookupIndexInConnectivity(int index, ConnectivityProps& connectivity);
