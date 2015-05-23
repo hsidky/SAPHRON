@@ -240,7 +240,7 @@ namespace SAPHRON
 			virtual void SetDirector(const Director& director) = 0;
 
 			// Set the particle director.
-			virtual void SetDirector(Director && director) = 0;
+			virtual void SetDirector(Director&& director) = 0;
 
 			// Set the particle director.
 			virtual void SetDirector(double ux, double uy, double uz) = 0;
