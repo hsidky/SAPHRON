@@ -11,7 +11,8 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <list>
+#include <map>
+#include <exception>
 
 namespace SAPHRON
 {
@@ -58,28 +59,28 @@ namespace SAPHRON
 	// Particle event class.
 	class ParticleEvent
 	{
-	private:
-		Particle* _particle;
+		private:
+			Particle* _particle;
 
-	public:
-		ParticleEvent(Particle* particle) : _particle(particle), mask(0) {}
+		public:
+			ParticleEvent(Particle* particle) : _particle(particle), mask(0) {}
 
-		union
-		{
-			struct
+			union
 			{
-				unsigned int position : 1;
-				unsigned int director : 1;
-				unsigned int species : 1;
-				unsigned int neighbors : 1;
+				struct
+				{
+					unsigned int position : 1;
+					unsigned int director : 1;
+					unsigned int species : 1;
+					unsigned int neighbors : 1;
+				};
+				bool mask;
 			};
-			bool mask;
-		};
 
-		inline Particle* GetParticle() const
-		{
-			return _particle;
-		}
+			inline Particle* GetParticle() const
+			{
+				return _particle;
+			}
 	};
 
 	typedef std::vector<double> Director;
@@ -89,6 +90,7 @@ namespace SAPHRON
 	typedef std::list<Connectivity*> ConnectivityList;
 	typedef std::list<Connectivity*>::iterator ConnectivityIterator;
 	typedef std::vector<Particle*> ParticleList;
+	typedef std::map<int, Particle*> ParticleMap;
 
 	// Abstract class Particle represents either a composite or primitive object, from an atom/site to
 	// a molecule to a collection of molecules. It represents an common interface allowing the manipulation
@@ -115,11 +117,24 @@ namespace SAPHRON
 			// Next ID counter for unique global species.
 			static int _nextID;
 
-			// Global list of particle identities.
+			// Global list of particle species.
 			static SpeciesList _speciesList;
+
+			// Global list of particle id's and pointers.
+			static ParticleMap _identityList;
 
 			// Connectivities.
 			ConnectivityList _connectivities;
+
+			// Gets the next available global ID.
+			int GetNextGlobalID()
+			{
+				int candidate = ++_nextID;
+				if(_identityList.find(candidate) == _identityList.end())
+					return candidate;
+				else
+					return GetNextGlobalID();
+			}
 		
 		protected:
 
@@ -132,7 +147,7 @@ namespace SAPHRON
 			// species for this particle.
 			Particle(std::string species) : 
 			_species(species), _speciesID(0), _neighbors(), _observers(), 
-			_globalID(++_nextID), _connectivities(0), _pEvent(this)
+			_globalID(SetGlobalIdentifier(GetNextGlobalID())), _connectivities(0), _pEvent(this)
 			{
 				SetSpecies(species);
 			}
@@ -140,27 +155,53 @@ namespace SAPHRON
 			// Copy constructor.
 			Particle(const Particle& particle) : 
 			_species(particle._species), _speciesID(particle._speciesID), _neighbors(particle._neighbors),
-			_observers(particle._observers), _globalID(++_nextID), _connectivities(particle._connectivities),
+			_observers(particle._observers), _globalID(SetGlobalIdentifier(GetNextGlobalID())), _connectivities(particle._connectivities),
 			_pEvent(this)
 			{
 			}
 
-			virtual ~Particle() {}
+			virtual ~Particle() 
+			{
+				// Remove particle from map.
+				_identityList.erase(_globalID);
+			}
 
 			// Get global particle species.
-			int GetGlobalIdentifier() const
+			inline int GetGlobalIdentifier() const
 			{
 				return _globalID;
 			}
 
+			// Set global particle species. If ID is taken, returns an alternative ID that is unique.
+			inline int SetGlobalIdentifier(int id)
+			{
+				// ID MUST be unique. But make sure we are not re-assigning the same value.
+				auto it = _identityList.find(id);
+				if(it != _identityList.end() && it->second != this)
+					id = GetNextGlobalID();
+
+				// Clear previous ID and update new one.
+				_identityList.erase(_globalID);
+				_identityList[id] = this;
+
+				_globalID = id;
+				return id;
+			}
+
+			// Get reference to global particle map.
+			static const ParticleMap& GetParticleMap()
+			{
+				return _identityList;
+			}
+
 			// Get particle species.
-			int GetSpeciesID() const
+			inline int GetSpeciesID() const
 			{
 				return _speciesID;
 			}
 
 			// Get particle string species.
-			std::string GetSpecies() const
+			inline std::string GetSpecies() const
 			{
 				return _species;
 			}
@@ -205,7 +246,7 @@ namespace SAPHRON
 			virtual void SetDirector(double ux, double uy, double uz) = 0;
 
 			// Gets neighbor list iterator.
-			NeighborList& GetNeighbors()
+			inline NeighborList& GetNeighbors()
 			{
 				return _neighbors;
 			}

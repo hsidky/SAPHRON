@@ -58,8 +58,20 @@ TEST(Site, Identifiers)
 	ASSERT_EQ(pos, particle->GetPosition());
 	ASSERT_EQ(5, particle->GetGlobalIdentifier());
 
-	delete particle;
+	// Test setting new identifier.
+	ASSERT_EQ(5, particle->SetGlobalIdentifier(5));
+	ASSERT_EQ(5, particle->GetGlobalIdentifier());
+	ASSERT_EQ(3, s2.SetGlobalIdentifier(3));
+	ASSERT_EQ(3, s2.GetGlobalIdentifier());
 
+	// Test changing identifier. It should give 6 which is the next free index.
+	ASSERT_EQ(6, s2.SetGlobalIdentifier(5));
+
+	// There should only be 4 particles in the map because items are cleared 
+	// as they are destroyed.
+	ASSERT_EQ(4, (int)Particle::GetParticleMap().size());
+
+	delete particle;
 }
 
 TEST(Site, Neighbors)
