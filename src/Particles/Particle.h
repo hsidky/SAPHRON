@@ -147,17 +147,19 @@ namespace SAPHRON
 			// species for this particle.
 			Particle(std::string species) : 
 			_species(species), _speciesID(0), _neighbors(), _observers(), 
-			_globalID(SetGlobalIdentifier(GetNextGlobalID())), _connectivities(0), _pEvent(this)
+			_globalID(-1), _connectivities(0), _pEvent(this)
 			{
+				_globalID = SetGlobalIdentifier(GetNextGlobalID());
 				SetSpecies(species);
 			}
 
 			// Copy constructor.
 			Particle(const Particle& particle) : 
 			_species(particle._species), _speciesID(particle._speciesID), _neighbors(particle._neighbors),
-			_observers(particle._observers), _globalID(SetGlobalIdentifier(GetNextGlobalID())), _connectivities(particle._connectivities),
+			_observers(particle._observers), _globalID(-1), _connectivities(particle._connectivities),
 			_pEvent(this)
 			{
+				_globalID = SetGlobalIdentifier(GetNextGlobalID());
 			}
 
 			virtual ~Particle() 
@@ -183,7 +185,6 @@ namespace SAPHRON
 				// Clear previous ID and update new one.
 				_identityList.erase(_globalID);
 				_identityList[id] = this;
-
 				_globalID = id;
 				return id;
 			}

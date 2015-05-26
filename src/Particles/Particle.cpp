@@ -29,7 +29,7 @@ namespace SAPHRON
 		NotifyObservers();
 	}
 	
-	SpeciesList Particle::_speciesList;
-	std::map<int, Particle*> Particle::_identityList;
+	SpeciesList Particle::_speciesList(0);
+	std::map<int, Particle*> Particle::_identityList {};
 	int Particle::_nextID = 0;
 }
