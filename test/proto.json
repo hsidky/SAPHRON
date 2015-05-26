@@ -2,22 +2,22 @@
 	"ensemble" : {
 		"type" : "DOS",
 		"sweeps" : 1000000,
-		"temperature" : [50, "K"],
-		"seed" : 100000
-	},
-
-	"DOS" : {
-		"type" : "ElasticCoeff",
+		"seed" : 100000,
 		
-		"order_parameter" : {
-			"dxj" : 100
-		},
-		
-		"interval" : [-1.7, 30.6],
-		"bin_count" : 7000, 
-		"bin_width" : 0.07,
-		"scale_factor" : 1e-5,
-		"target_flatness" : 0.80
+		"DOS" : {
+			"type" : "ElasticCoeff",
+			
+			"order_parameter" : {
+				"dxj" : 100,
+				"temperature" : [50, "K"],
+				"particles": ["Hw"]
+			},
+			
+			"interval" : [-1.7, 30.6],
+			"bin_count" : 7000, 
+			"scale_factor" : 1e-5,
+			"target_flatness" : 0.80
+		}
 	},
 
 	"moves" : {
@@ -99,6 +99,7 @@
 		},
 
 		"Console" : {
+			"frequency" : 1000,
 			"flags" : {
 				"sweeps" : 1,
 				"energy" : 1
@@ -112,13 +113,6 @@
 			"gamma"   :	1e-3,
 			"species" : ["Hw", "Ow"]
 			}
-		},
-		
-		{ "LJ" : {
-			"epsilon" : 1e-3,
-			"sigma"   :	1e-3,
-			"species" : ["Hw", "Ow"]
-			}
-		} 
+		}
 	]
 }

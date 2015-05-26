@@ -107,7 +107,7 @@ add_executable(saphron
 	src/jsoncpp.cpp 
 	src/Simulation/SimBuilder.cpp
 )
-target_link_libraries(saphron libsaphron ${SAPH_LIBS})
+target_link_libraries(saphron ${SAPH_LIBS} libsaphron)
 
 # Configure flags 
 # - Globals 

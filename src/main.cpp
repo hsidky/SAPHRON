@@ -16,6 +16,8 @@
 #include "Connectivities/Connectivity.h"
 #include "Moves/MoveManager.h"
 #include "Simulation/SimObserver.h"
+#include "DensityOfStates/DOSOrderParameter.h"
+#include "Ensembles/Ensemble.h"
 
 using namespace SAPHRON;
 
@@ -114,6 +116,14 @@ int main(int argc, char const* argv[])
 	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
 	builder.ResetNotices();
 
+	// Parse ensemble.
+	std::cout << std::setw(msgw) << std::left << " > Validating Ensemble...";
+	if(!builder.ParseEnsemble())
+		return DumpErrorsToConsole(builder.GetErrorMessages(), notw);
+	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
+	builder.ResetNotices();
+
+
 	//******************************************
 	//                                         *
 	//        END PARSING AND VALIDATION       *
@@ -197,6 +207,28 @@ int main(int argc, char const* argv[])
 	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
 	builder.ResetNotices();
 
+	Ensemble* ensemble = nullptr; 
+	DOSOrderParameter* op = nullptr;
+	std::cout << std::setw(msgw) << std::left << " > Initializing Ensemble...";
+	ensemble = builder.BuildEnsemble(*world, ffm, mm, observers, op);
+	if(ensemble == nullptr)
+	{
+		for ( auto& cc : connectivities ) delete cc;
+		connectivities.clear();
+		for ( auto& ff : forcefields ) delete ff;
+		forcefields.clear();
+		for ( auto& m : moves ) delete m;
+		moves.clear();
+		for (auto& oo : observers) delete oo;
+		observers.clear();
+		delete op;
+		delete world;
+		return DumpErrorsToConsole({"Unable to initialize ensemble. Unknown error occurred."}, notw);
+	}
+	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
+	builder.ResetNotices();
+
+
 	//******************************************
 	//                                         *
 	//             END INITIALIZATION          *
@@ -216,6 +248,8 @@ int main(int argc, char const* argv[])
 	for (auto& oo : observers) delete oo;
 	observers.clear();
 
+	delete op;
+	delete ensemble; 
 	delete world;
 	return 0;
 }	

@@ -14,6 +14,7 @@
 #include "Connectivities/Connectivity.h"
 #include "Moves/MoveManager.h"
 #include "SimObserver.h"
+#include "DensityOfStates/DOSOrderParameter.h"
 
 namespace SAPHRON
 {
@@ -69,7 +70,6 @@ namespace SAPHRON
 				std::vector<double> parameters; // Move parameters.
 			}; 
 
-
 			struct ObserverProps 
 			{
 				std::string type; 
@@ -82,7 +82,7 @@ namespace SAPHRON
 			{
 				std::string type;
 				int sweeps;
-				double temperature; 
+				std::vector<double> parameters; // Scalar parameters for ensembles.
 				double pressure; 
 				int seed;
 			} _ensemble;
@@ -95,7 +95,13 @@ namespace SAPHRON
 				double binwidth;
 				double scalefactor;
 				double targetflatness;
-			};
+				std::vector<double> parameters; // scalar parameters for order parameters.
+
+				// Selectors which may be used by some OP.
+				std::vector<int> piselector; // Connectivity integer selectors for particles.
+				std::vector<std::string> psselector; // Connectivity string selectors for particles.
+				std::vector<std::string> ssselector; // Connectivity string selectors for species (parents).
+			} _dosprops;
 
 			// Observers
 			std::vector<ObserverProps> _observers;
@@ -146,23 +152,28 @@ namespace SAPHRON
 
 			bool ValidateEnsemble(Json::Value ensemble);
 
+			bool ValidateDOS(Json::Value dos);
+
 			bool CheckType(std::string type, std::vector<std::string> types);
 
-			bool LookupParticleInConnectivity(ParticleProps& particle, ConnectivityProps& connectivity);
+			bool LookupParticleInConnectivity(ParticleProps& particle, std::vector<std::string>& psselector);
 
-			bool LookupIndexInConnectivity(int index, ConnectivityProps& connectivity);
+			bool LookupIndexInConnectivity(int index, std::vector<int>& piselector);
 
-			bool LookupStringInConnectivity(std::string keyword, ConnectivityProps& connectivity);
+			bool LookupStringInConnectivity(std::string keyword, std::vector<int>& piselector, std::vector<std::string>& psselector);
 
 			int ProcessFlag(Json::Value& flagtree, std::string flag, std::string observer, bool& err);
 
 			bool ValidateMoves(Json::Value moves);
 
+			bool ParseSelectors(Json::Value particles, std::string type, std::vector<int>& piselector, std::vector<std::string>& psselector);
+
 		public:
 			SimBuilder() : 
-				_worldprops(), _ensemble(), _observers(0), _moves(0), _moveseed(0), 
-				_connectivities(0), _forcefields(0), _blueprint(), _ppointers(0), 
-				_particles(0), _reader(), _root(), _errors(false), _emsgs(0), _nmsgs(0) 
+				_worldprops(), _ensemble(), _dosprops(), _observers(0), 
+				_moves(0), _moveseed(0), _connectivities(0), _forcefields(0), 
+				_blueprint(), _ppointers(0), _particles(0), _reader(), _root(), _errors(false), 
+				_emsgs(0), _nmsgs(0) 
 			{
 					srand(time(NULL));
 			}
@@ -259,6 +270,18 @@ namespace SAPHRON
 				return true;
 			}
 
+			// Parse ensemble and store results in internal structure. Returns true if 
+			// successful and false otherwise.
+			bool ParseEnsemble()
+			{
+				if(!ValidateEnsemble(_root["ensemble"]))
+				{
+					_errors = true;
+					return false;
+				}
+				return true;
+			}
+
 			// Builds a world object from parsed data (see ParseWorld()). 
 			// Returns pointer to newly created World object. Object lifetime is 
 			// caller's responsibility.
@@ -279,6 +302,15 @@ namespace SAPHRON
 			// Builds observers and adds them to the observer vector. Object lifetime is the 
 			// caller's responsibility!
 			void BuildObservers(std::vector<SimObserver*>& observers);
+
+			// Builds ensemble using world, forcefield manager, move manager and observers.
+			// Returns pointer to ensemble object. Also returns pointer to DOSOrderParameter if it is used, 
+			// otherwise returns nullptr.
+			Ensemble* BuildEnsemble(World& world, 
+									ForceFieldManager& ffm, 
+									MoveManager& mm, 
+									std::vector<SimObserver*>& observers, 
+									DOSOrderParameter*& dosop);
 
 			std::vector<std::string> GetErrorMessages()
 			{

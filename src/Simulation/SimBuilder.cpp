@@ -7,6 +7,10 @@
 #include "Moves/SphereUnitVectorMove.h"
 #include "CSVObserver.h"
 #include "ConsoleObserver.h"
+#include "Ensembles/NVTEnsemble.h"
+#include "Ensembles/DOSEnsemble.h"
+#include "DensityOfStates/WangLandauOP.h"
+#include "DensityOfStates/ElasticCoeffOP.h"
 
 namespace SAPHRON
 {
@@ -26,6 +30,124 @@ namespace SAPHRON
 		}
 
 		return true;
+	}
+
+	bool SimBuilder::ParseSelectors(Json::Value particles, std::string type, std::vector<int>& piselector, std::vector<std::string>& psselector)
+	{
+		bool err = false;
+		// General selector parsing for particles.
+		if(!particles.isArray())
+		{
+			_emsgs.push_back(type + " selector must be an array.");
+			err = true;
+		}
+		else if(particles.size() < 1)
+		{
+			_emsgs.push_back(type + " selector must contain at least 1 element.");
+			err = true;
+		}
+
+		for(auto& selector : particles)
+		{
+			// Individual particle.
+			if(selector.isInt())
+			{
+				int iselector = selector.asInt();
+				if(iselector >= (int)_particles.size())
+				{
+					_emsgs.push_back(type +  
+						" selector \"index " + std::to_string(iselector) + 
+						"\" is invalid.");
+					err = true;
+				}
+				else 
+				{
+					// Look up particle to check for duplicates.
+					if(LookupIndexInConnectivity(iselector, piselector) || 
+					   LookupParticleInConnectivity(_particles[iselector],psselector))
+					{
+						_emsgs.push_back(type + " duplicated for " + 
+							"selector \"index " + std::to_string(iselector) + "\".");
+						err = true;
+					}
+					else
+						piselector.push_back(iselector);
+				}				
+			}
+			// Array of particles.
+			else if(selector.isArray())
+			{
+				int lower = [&]()-> int { 
+					try {	
+						return selector[0].asInt(); 
+					} catch(std::exception& e) {
+						_emsgs.push_back(type + 
+							"selector unserialization error : " + 
+							std::string(e.what()));
+						err = true;
+						return 0;
+					}
+				}();
+
+				int upper = [&]()-> int { 
+					try {	
+						return selector[1].asInt(); 
+					} catch(std::exception& e) {
+						_emsgs.push_back(type + 
+							"selector unserialization error : " + 
+							std::string(e.what()));
+						err = true;
+						return 0;
+					}
+				}();
+
+				for(int j = lower; j <= upper; ++j)
+				{
+					int iselector = j;
+					if(iselector >= (int)_particles.size())
+					{
+						_emsgs.push_back(type +  
+							" selector \"index " + std::to_string(iselector) + 
+							"\" is invalid.");
+						err = true;
+					}
+					else 
+					{
+						// Look up particle to check for duplicates.
+						if(LookupIndexInConnectivity(iselector, piselector) || 
+						   LookupParticleInConnectivity(_particles[j], psselector))
+						{
+							_emsgs.push_back(type + " duplicated for " + 
+								"selector \"index " + std::to_string(iselector) + "\".");
+							err = true;
+						}
+						else
+							piselector.push_back(iselector);
+					}			
+				}
+
+			}
+			// Selector string. 
+			else if(selector.isString())
+			{
+				std::string iselector = selector.asString();
+				if(LookupStringInConnectivity(iselector, piselector, psselector))
+						{
+							_emsgs.push_back(type + " duplicated for " + 
+								"selector " + iselector + ".");
+							err = true;
+						}
+						else
+							psselector.push_back(iselector);
+			}
+			else
+			{
+				_emsgs.push_back(type + " selector is invalid.");
+				err = true;
+			}
+		} // End selector loop.
+
+		return !err;
 	}
 
 	bool SimBuilder::ValidateWorld(Json::Value world)
@@ -593,116 +715,9 @@ namespace SAPHRON
 
 					// General selector parsing for particles.
 					auto particles = connectivity["particles"];
-					if(!particles.isArray())
-					{
-						_emsgs.push_back(type + " selector must be an array.");
+					if(!ParseSelectors(particles, type, cprops.piselector, cprops.psselector))
 						err = true;
-					}
-					else if(particles.size() < 1)
-					{
-						_emsgs.push_back(type + " selector must contain at least 1 element.");
-						err = true;
-					}
 
-					for(auto& selector : particles)
-					{
-						// Individual particle.
-						if(selector.isInt())
-						{
-							int iselector = selector.asInt();
-							if(iselector >= (int)_particles.size())
-							{
-								_emsgs.push_back(type +  
-									" selector \"index" + std::to_string(iselector) + 
-									"\" is invalid.");
-								err = true;
-							}
-							else 
-							{
-								// Look up particle to check for duplicates.
-								if(LookupIndexInConnectivity(iselector, cprops) || 
-								   LookupParticleInConnectivity(_particles[i],cprops))
-								{
-									_emsgs.push_back(type + " duplicated for " + 
-										"selector \"index " + std::to_string(iselector) + "\".");
-									err = true;
-								}
-								else
-									cprops.piselector.push_back(iselector);
-							}				
-						}
-						// Array of particles.
-						else if(selector.isArray())
-						{
-							int lower = [&]()-> int { 
-								try {	
-									return selector[0].asInt(); 
-								} catch(std::exception& e) {
-									_emsgs.push_back(type + 
-										"selector unserialization error : " + 
-										std::string(e.what()));
-									err = true;
-									return 0;
-								}
-							}();
-
-							int upper = [&]()-> int { 
-								try {	
-									return selector[1].asInt(); 
-								} catch(std::exception& e) {
-									_emsgs.push_back(type + 
-										"selector unserialization error : " + 
-										std::string(e.what()));
-									err = true;
-									return 0;
-								}
-							}();
-
-							for(int j = lower; j <= upper; ++j)
-							{
-								int iselector = j;
-								if(iselector >= (int)_particles.size())
-								{
-									_emsgs.push_back(type +  
-										" selector \"index " + std::to_string(iselector) + 
-										"\" is invalid.");
-									err = true;
-								}
-								else 
-								{
-									// Look up particle to check for duplicates.
-									if(LookupIndexInConnectivity(iselector, cprops) || 
-									   LookupParticleInConnectivity(_particles[i],cprops))
-									{
-										_emsgs.push_back(type + " duplicated for " + 
-											"selector \"index " + std::to_string(iselector) + "\".");
-										err = true;
-									}
-									else
-										cprops.piselector.push_back(iselector);
-								}			
-							}
-
-						}
-						// Selector string. 
-						else if(selector.isString())
-						{
-							std::string iselector = selector.asString();
-							if(LookupStringInConnectivity(iselector, cprops))
-									{
-										_emsgs.push_back(type + " duplicated for " + 
-											"selector " + iselector + ".");
-										err = true;
-									}
-									else
-										cprops.psselector.push_back(iselector);
-						}
-						else
-						{
-							_emsgs.push_back(type + " selector is invalid.");
-							err = true;
-						}
-					} // End selector loop.
 					cprops.type = type;
 					_connectivities.push_back(cprops);
 				}
@@ -972,11 +987,47 @@ namespace SAPHRON
 			err = true;
 		}
 
-		std::vector<std::string> types =  {"NVT"};
+		std::vector<std::string> types =  {"NVT", "DOS"};
 		if(!CheckType(type, types))
 			err = true;
 
 		_ensemble.type = type;
+
+
+		// Validate different ensembles 
+		if(type == types[0]) // NVT
+		{
+			if(!ensemble.isMember("temperature"))
+			{
+				_emsgs.push_back(type + " ensemble requires the temperature to be specified.");
+				err = true;
+			}
+			else
+			{
+				double temperature = [&]() -> double {
+					try{
+						return ensemble.get("temperature", 0)[0].asDouble();
+					} catch(std::exception& e)
+					{
+						_emsgs.push_back("Temperature unserialization error : " + std::string(e.what()));
+						err = true;
+						return 0;
+					}
+				}();
+
+				if(temperature <= 0)
+				{
+					_emsgs.push_back("Invalid temperature specified. Must be >= 0.");
+					err = true;
+				}
+				_ensemble.parameters.push_back(temperature);
+			}
+		} // End NVT.
+		else if(type == types[1]) // DOS
+		{
+			if(!ValidateDOS(ensemble["DOS"]))
+				err = true;
+		}
 
 		// Sweeps
 		int sweeps = [&]()-> int { 
@@ -1024,6 +1075,227 @@ namespace SAPHRON
 		return !err;
 	}
 
+	bool SimBuilder::ValidateDOS(Json::Value dos)
+	{
+		bool err = false;
+		if(!dos)
+		{
+			_emsgs.push_back("DOS section must be specified for ensemble type.");
+			return false;
+		}
+
+		// Ensemble type specified.
+		std::string type = [&]() -> std::string {
+			try{
+				return dos.get("type", "").asString();
+			} catch(std::exception& e) {
+				_emsgs.push_back("Type unserialization error: " + std::string(e.what()));
+				err = true;
+				return "";
+			}
+		}();
+
+		if(type.length() == 0)
+		{
+			_emsgs.push_back("No DOS type has been specified.");
+			err = true;
+		}
+
+		// Valid types 
+		std::vector<std::string> types =  {"WangLandau", "ElasticCoeff"};
+		if(!CheckType(type, types))
+			err = true;
+
+		_dosprops.type = type; 
+
+
+		// Validate order parameter options for different types.
+		if(type == types[0]) // Wang Landau 
+		{
+			/* WL has no other settings */
+		}
+		else if(type == types[1]) // Elastic Coeff OP
+		{
+			if(!dos.isMember("order_parameter"))
+			{
+				_emsgs.push_back("order_parameter is required for " + type + " OP.");
+				err = true;
+			}
+			else
+			{
+				auto op = dos["order_parameter"];
+			
+				// Parse temperature.
+				double temperature = [&]() -> double {
+					try{
+						return op.get("temperature", 0)[0].asDouble();
+					} catch(std::exception& e)
+					{
+						_emsgs.push_back("Temperature unserialization error : " + std::string(e.what()));
+						err = true;
+						return 0;
+					}
+				}();
+
+				if(temperature <= 0)
+				{
+					_emsgs.push_back("Invalid temperature specified. Must be >= 0.");
+					err = true;
+				}
+				_dosprops.parameters.push_back(temperature);
+
+				// Parse dxj.
+				double dxj = [&]()-> double {
+					try{
+						return op.get("dxj", 0).asDouble();
+					} catch(std::exception& e)
+					{
+						_emsgs.push_back("dxj unserialization error : " + std::string(e.what()));
+						err = true;
+						return 0;
+					}
+				}();
+
+				if(!dxj)
+				{
+					_emsgs.push_back("dxj must be cannot be zero.");
+					err = true;
+				}
+				_dosprops.parameters.push_back(dxj);
+
+				// Parse selectors.
+				if(!op.isMember("particles"))
+				{
+					_emsgs.push_back("Selectors must be specified for " + type + ".");
+					err = true;
+				}
+				else
+				{
+					if(!ParseSelectors(op["particles"], type, _dosprops.piselector, _dosprops.psselector))
+						err = true;
+				}
+			}
+		}
+
+		// Validate interval.
+		if(!dos.isMember("interval") || !dos["interval"].isArray() || (int)dos["interval"].size() != 2)
+		{
+			_emsgs.push_back("DOS interval must be specified and a 1x2 array.");
+			err = true;
+		}
+		
+		auto interval = dos["interval"];
+
+		_dosprops.interval.first = [&]()-> double {
+			try{
+				return interval[0].asDouble();
+			} catch(std::exception& e)
+			{
+				_emsgs.push_back("Interval min unserialization error : " + std::string(e.what()));
+				err = true;
+				return 0;
+			}
+		}();
+
+		_dosprops.interval.second = [&]()-> double {
+			try{
+				return interval[1].asDouble();
+			} catch(std::exception& e)
+			{
+				_emsgs.push_back("Interval min unserialization error : " + std::string(e.what()));
+				err = true;
+				return 0;
+			}
+		}();
+
+		if(_dosprops.interval.first >= _dosprops.interval.second)
+		{
+			_emsgs.push_back("Interval min must be less than max.");
+			err = true;
+		}
+
+		// Validate bin width/ count.
+		if(dos.isMember("bin_count") && dos.isMember("bin_width"))
+		{
+			_emsgs.push_back("Either bin_count or bin_width can be specified.");
+			err = true;
+		}
+
+		int bin_count = [&]()-> int { 
+			try {	
+				return dos.get("bin_count", 0).asInt(); 
+			} catch(std::exception& e) {
+				_emsgs.push_back("bin_count unserialization error : " + std::string(e.what()));
+				err = true;
+				return 0;
+			}
+		}();
+
+		_dosprops.bincount = bin_count;
+
+		double bin_width = [&]()-> double { 
+			try {	
+				return dos.get("bin_width", 0).asDouble(); 
+			} catch(std::exception& e) {
+				_emsgs.push_back("bin_width unserialization error : " + std::string(e.what()));
+				err = true;
+				return 0;
+			}
+		}();
+
+		_dosprops.binwidth = bin_width;
+
+
+		if(bin_count <= 0 && !bin_width)
+		{
+			_emsgs.push_back("Invalid bin_count specified. Cannot be less than or equal to zero.");
+			err = true;
+		}
+
+		if(bin_width <= 0 && !bin_count)
+		{
+			_emsgs.push_back("Invalid bin_width specified. Cannot be less than or equal to zero.");
+			err = true;
+		}
+		
+
+		// Validate scale factor.
+		_dosprops.scalefactor = [&]()-> double { 
+			try {	
+				return dos.get("scale_factor", 0).asDouble(); 
+			} catch(std::exception& e) {
+				_emsgs.push_back("scale_factor unserialization error : " + std::string(e.what()));
+				err = true;
+				return 0;
+			}
+		}();
+
+		if(_dosprops.scalefactor <= 0)
+		{
+			_emsgs.push_back("Invalid scale_factor specified. Cannot be less than or equal to zero.");
+			err = true;
+		}
+
+		// Validate target flatness.
+		_dosprops.targetflatness = [&]()-> double { 
+			try {	
+				return dos.get("target_flatness", 0).asDouble(); 
+			} catch(std::exception& e) {
+				_emsgs.push_back("target_flatness unserialization error : " + std::string(e.what()));
+				err = true;
+				return 0;
+			}
+		}();
+
+		if(_dosprops.targetflatness <= 0 || _dosprops.targetflatness > 1)
+		{
+			_emsgs.push_back("Invalid target_flatness specified. Must be between zero and one.");
+			err = true;
+		}
+		
+		return !err;
+	}
+
 	int SimBuilder::ProcessFlag(Json::Value& flagtree, std::string flag, std::string observer, bool& err)
 	{
 		return [&]()-> int { 
@@ -1039,38 +1311,38 @@ namespace SAPHRON
 		}();
 	}
 
-	bool SimBuilder::LookupParticleInConnectivity(ParticleProps& particle, ConnectivityProps& connectivity)
+	bool SimBuilder::LookupParticleInConnectivity(ParticleProps& particle, std::vector<std::string>& psselector)
 	{
-		if(std::find(connectivity.psselector.begin(), connectivity.psselector.end(), particle.species) != 
-			connectivity.psselector.end())
+		if(std::find(psselector.begin(), psselector.end(), particle.species) != 
+			psselector.end())
 			return true;
 
-		if(std::find(connectivity.psselector.begin(), connectivity.psselector.end(), particle.residue) != 
-			connectivity.psselector.end())
+		if(std::find(psselector.begin(), psselector.end(), particle.residue) != 
+			psselector.end())
 			return true;
 
-		if(std::find(connectivity.psselector.begin(), connectivity.psselector.end(), particle.parent) != 
-			connectivity.psselector.end())
+		if(std::find(psselector.begin(), psselector.end(), particle.parent) != 
+			psselector.end())
 			return true;
 
 		return false;
 	}
 
-	bool SimBuilder::LookupStringInConnectivity(std::string keyword, ConnectivityProps& connectivity)
+	bool SimBuilder::LookupStringInConnectivity(std::string keyword, std::vector<int>& piselector, std::vector<std::string>& psselector)
 	{
-		if(std::find(connectivity.psselector.begin(), connectivity.psselector.end(), keyword) != 
-			connectivity.psselector.end())
+		if(std::find(psselector.begin(), psselector.end(), keyword) != 
+			psselector.end())
 			return true;
 
-		if(std::find(connectivity.psselector.begin(), connectivity.psselector.end(), keyword) != 
-			connectivity.psselector.end())
+		if(std::find(psselector.begin(), psselector.end(), keyword) != 
+			psselector.end())
 			return true;
 
-		if(std::find(connectivity.psselector.begin(), connectivity.psselector.end(), keyword) != 
-			connectivity.psselector.end())
+		if(std::find(psselector.begin(), psselector.end(), keyword) != 
+			psselector.end())
 			return true;
 
-		for(auto &index : connectivity.piselector)
+		for(auto &index : piselector)
 		{
 			if(_particles[index].species == keyword)
 				return true;
@@ -1083,11 +1355,10 @@ namespace SAPHRON
 		return false;
 	}
 
-
-	bool SimBuilder::LookupIndexInConnectivity(int index, ConnectivityProps& connectivity)
+	bool SimBuilder::LookupIndexInConnectivity(int index, std::vector<int>& piselector)
 	{
-		if(std::find(connectivity.piselector.begin(),connectivity.piselector.end(), index) != 
-			connectivity.piselector.end())
+		if(std::find(piselector.begin(),piselector.end(), index) != 
+			piselector.end())
 			return true;
 
 		return false;
@@ -1206,8 +1477,8 @@ namespace SAPHRON
 			for(int j = 0; j < (int)connectivities.size(); ++j)
 			{
 				auto connectivity = _connectivities[j];
-				if(LookupParticleInConnectivity(particle, connectivity) || 
-				   LookupIndexInConnectivity(i, connectivity))
+				if(LookupParticleInConnectivity(particle, connectivity.psselector) || 
+				   LookupIndexInConnectivity(i, connectivity.piselector))
 				{
 					p->AddConnectivity(connectivities[j]);
 					if(ccounts.find(connectivity.type) == ccounts.end())
@@ -1331,5 +1602,96 @@ namespace SAPHRON
 		}
 
 		assert(observers.size() == _observers.size());
+	}
+
+	Ensemble* SimBuilder::BuildEnsemble(World& world, 
+										ForceFieldManager& ffm, 
+										MoveManager& mm, 
+										std::vector<SimObserver*>& observers, 
+										DOSOrderParameter*& dosop)
+	{
+		assert(_errors == false);
+
+		Ensemble* ensemble = nullptr;
+
+		if(_ensemble.type == "NVT")
+		{
+			ensemble = new NVTEnsemble(world, ffm, mm, _ensemble.parameters[0], _ensemble.seed);
+			_nmsgs.push_back("Initialized NVT ensemble with T = " + 
+				std::to_string(_ensemble.parameters[0]) + " and seed = "  + std::to_string(_ensemble.seed) + 
+				".");
+		}
+		else if(_ensemble.type == "DOS")
+		{
+			if(_dosprops.type == "WangLandau")
+			{
+				dosop = new WangLandauOP();
+				_nmsgs.push_back("Initialized Wang-Landau order parameter.");
+			}
+			else if(_dosprops.type == "ElasticCoeff")
+			{
+				ElasticCoeffOP* eop = new ElasticCoeffOP(world, _dosprops.parameters[0], _dosprops.parameters[1], [](const Particle*){
+					return true;
+				});
+
+				dosop = dynamic_cast<DOSOrderParameter*>(eop);
+
+				_nmsgs.push_back("Initialized ElasticCoeff order parameter with T = " +
+					std::to_string(_dosprops.parameters[0]) + " and dxj = " + 
+					std::to_string(_dosprops.parameters[1]) + ".");
+
+				std::map<std::string, int> pcounts; // Particle counts.
+
+				// Add add elasticcoeff as observer to pertinent particles.
+				for (int i = 0; i < (int)_particles.size(); ++i)
+				{
+					auto particle = _particles[i];
+					auto ppointer = _ppointers[i];
+
+					if(LookupParticleInConnectivity(particle, _dosprops.psselector) || 
+					   LookupIndexInConnectivity(i, _dosprops.piselector))
+					{
+						ppointer->AddObserver(eop);
+						if(pcounts.find(particle.species) == pcounts.end())
+							pcounts[particle.species] = 1;
+						else
+							++pcounts[particle.species];
+					}
+				}
+
+				for(auto& count : pcounts)
+					_nmsgs.push_back("Added " + 
+						std::to_string(count.second) + " particle(s) of species " + 
+						count.first + " to ElasticCoeff.");
+				
+			}
+
+			if(_dosprops.binwidth)
+			{
+				ensemble = new DOSEnsemble(*dosop, world, ffm, mm, 
+					_dosprops.interval, _dosprops.binwidth, _ensemble.seed);
+				_nmsgs.push_back("Initialized DOS ensemble with interval [" + 
+					std::to_string(_dosprops.interval.first) + "," + std::to_string(_dosprops.interval.second) + 
+					"], bin width = " + std::to_string(_dosprops.binwidth) + ", seed = " + 
+					std::to_string(_ensemble.seed) + ".");
+			}
+			else
+			{
+				ensemble = new DOSEnsemble(*dosop, world, ffm, mm, 
+					_dosprops.interval, _dosprops.bincount, _ensemble.seed);
+				_nmsgs.push_back("Initialized DOS ensemble with interval [" + 
+					std::to_string(_dosprops.interval.first) + "," + std::to_string(_dosprops.interval.second) + 
+					"], bin count = " + std::to_string(_dosprops.bincount) + ", seed = " + 
+					std::to_string(_ensemble.seed) + ".");
+			}
+
+		}
+
+		for(auto& observer : observers)
+			ensemble->AddObserver(observer);
+
+		_nmsgs.push_back("Added " + std::to_string(observers.size()) + " observers.");
+
+		return ensemble;
 	}
 }
