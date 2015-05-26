@@ -78,6 +78,25 @@ namespace SAPHRON
 				std::string prefix; 
 			};
 
+			struct EnsembleProps
+			{
+				std::string type;
+				int sweeps;
+				double temperature; 
+				double pressure; 
+				int seed;
+			} _ensemble;
+
+			struct DOSProps
+			{
+				std::string type;
+				std::pair<double, double> interval;
+				int bincount;
+				double binwidth;
+				double scalefactor;
+				double targetflatness;
+			};
+
 			// Observers
 			std::vector<ObserverProps> _observers;
 
@@ -125,6 +144,8 @@ namespace SAPHRON
 
 			bool ValidateObservers(Json::Value observers);
 
+			bool ValidateEnsemble(Json::Value ensemble);
+
 			bool CheckType(std::string type, std::vector<std::string> types);
 
 			bool LookupParticleInConnectivity(ParticleProps& particle, ConnectivityProps& connectivity);
@@ -139,9 +160,9 @@ namespace SAPHRON
 
 		public:
 			SimBuilder() : 
-				_worldprops(), _observers(0), _moves(0), _moveseed(0), _connectivities(0),
-				_forcefields(0), _blueprint(), _ppointers(0), _particles(0), _reader(), 
-				_root(), _errors(false), _emsgs(0), _nmsgs(0) 
+				_worldprops(), _ensemble(), _observers(0), _moves(0), _moveseed(0), 
+				_connectivities(0), _forcefields(0), _blueprint(), _ppointers(0), 
+				_particles(0), _reader(), _root(), _errors(false), _emsgs(0), _nmsgs(0) 
 			{
 					srand(time(NULL));
 			}

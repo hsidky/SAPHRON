@@ -945,6 +945,85 @@ namespace SAPHRON
 		return !err;
 	}
 
+	bool SimBuilder::ValidateEnsemble(Json::Value ensemble)
+	{
+		bool err = false;
+
+		if(!ensemble)
+		{
+			_emsgs.push_back("No ensemble has been specified");
+			return false;
+		}
+
+		// Ensemble type specified.
+		std::string type = [&]() -> std::string {
+			try{
+				return ensemble.get("type", "").asString();
+			} catch(std::exception& e) {
+				_emsgs.push_back("Type unserialization error: " + std::string(e.what()));
+				err = true;
+				return "";
+			}
+		}();
+
+		if(type.length() == 0)
+		{
+			_emsgs.push_back("No ensemble type has been specified.");
+			err = true;
+		}
+
+		std::vector<std::string> types =  {"NVT"};
+		if(!CheckType(type, types))
+			err = true;
+
+		_ensemble.type = type;
+
+		// Sweeps
+		int sweeps = [&]()-> int { 
+			try {	
+				return ensemble.get("sweeps", 0).asInt(); 
+			} catch(std::exception& e) {
+				_emsgs.push_back("Sweeps unserialization error : " + std::string(e.what()));
+				err = true;
+				return 0;
+			}
+		}();
+
+		if(sweeps <= 0)
+		{
+			_emsgs.push_back("Invalid sweeps specified. Sweeps cannot be less than or equal to zero.");
+			err = true;
+		}
+		else 
+			_ensemble.sweeps = sweeps;
+
+		// Seed
+		int seed = [&]()-> int { 
+			try {	
+				return ensemble.get("seed", 0).asInt(); 
+			} catch(std::exception& e) {
+				_emsgs.push_back("Seed unserialization error : " + std::string(e.what()));
+				err = true;
+				return 0;
+			}
+		}();
+
+		if(!seed)
+		{
+			_nmsgs.push_back("No seed provided. Generating a random number.");
+			_ensemble.seed = rand();
+		}
+		else if(seed <= 0)
+		{
+			_emsgs.push_back("Invalid seed specified. Seed cannot be less than or equal to zero.");
+			err = true;
+		}
+		else 
+			_ensemble.seed = seed;
+
+		return !err;
+	}
+
 	int SimBuilder::ProcessFlag(Json::Value& flagtree, std::string flag, std::string observer, bool& err)
 	{
 		return [&]()-> int { 
