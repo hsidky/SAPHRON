@@ -165,6 +165,16 @@ namespace SAPHRON
 			{
 				// Remove particle from map.
 				_identityList.erase(_globalID);
+				
+				RemoveFromNeighbors();
+			}
+
+			// Removes self from neighbors.
+			void RemoveFromNeighbors()
+			{
+				// Remove particle from neighbor list. 
+				for(auto& neighbor : _neighbors)
+					neighbor->RemoveNeighbor(this);
 			}
 
 			// Get global particle species.

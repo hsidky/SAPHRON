@@ -91,6 +91,8 @@ namespace SAPHRON
 			// Remove a particle by index.
 			virtual void RemoveParticle(int location) override
 			{
+				Particle* p = _particles[location];
+				p->RemoveFromNeighbors();
 				_particles.erase(_particles.begin() + location);
 			}
 

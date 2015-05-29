@@ -95,12 +95,21 @@ TEST(Site, Neighbors)
 		auto id = (*neighbor)->GetSpecies();
 
 		ASSERT_EQ(vals[i], id);
-
-		if(i == 1)
-			neighbor = neighbors.erase(neighbor);
-
 		i++;
 	}
+
+	// Check that neighbor destructor works. 
+	Site* s5 = new Site({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L5");
+	s1.AddNeighbor(s5);
+	s5->AddNeighbor(&s1);
+
+	ASSERT_EQ(4, (int)s1.GetNeighbors().size());
+	ASSERT_EQ(1, (int)s5->GetNeighbors().size());
+
+	// Dlete 5. Make sure it's all been cleaned up. 
+	delete s5; 
+
+	ASSERT_EQ(3, (int)s1.GetNeighbors().size());
 }
 
 TEST(Site, PositionArithmetic)
