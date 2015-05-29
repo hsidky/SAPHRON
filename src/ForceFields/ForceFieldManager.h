@@ -24,11 +24,9 @@ namespace SAPHRON
 				auto& neighbors = particle.GetNeighbors();
 				for(auto& neighbor : neighbors)
 				{
-					auto* particle2 = neighbor.GetParticle();
-
-					auto* ff = _forcefields[particle.GetSpeciesID()][particle2->GetSpeciesID()];
+					auto* ff = _forcefields[particle.GetSpeciesID()][neighbor->GetSpeciesID()];
 					if(ff != nullptr)
-						h += ff->Evaluate(particle, *particle2);
+						h += ff->Evaluate(particle, *neighbor);
 				}
 
 				// Calculate energy of children.

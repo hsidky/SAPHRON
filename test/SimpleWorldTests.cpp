@@ -54,7 +54,7 @@ TEST(SimpleWorld, DefaultConstructor)
 
 		for(auto& neighbor : neighbors)
 		{
-			auto np = neighbor.GetParticle()->GetPositionRef();
+			auto np = neighbor->GetPositionRef();
 			ASSERT_TRUE(
 			        np == n1 ||
 			        np == n2 ||
@@ -92,7 +92,7 @@ TEST(SimpleWorld, DefaultConstructor)
 
 		for(auto& neighbor : neighbors)
 		{
-			auto np = neighbor.GetParticle()->GetPositionRef();
+			auto np = neighbor->GetPositionRef();
 			ASSERT_TRUE(
 			        np == n1 ||
 			        np == n2 ||

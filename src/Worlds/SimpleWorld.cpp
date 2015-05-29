@@ -88,8 +88,8 @@ namespace SAPHRON
 
 				if(dist.norm() <= _rcut)
 				{
-					pi->AddNeighbor(Neighbor(*pj));
-					pj->AddNeighbor(Neighbor(*pi));
+					pi->AddNeighbor(pj);
+					pj->AddNeighbor(pi);
 				}
 			}
 		}

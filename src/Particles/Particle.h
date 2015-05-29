@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Neighbor.h"
 #include "../Visitors/Visitable.h"
 #include "../Connectivities/Connectivity.h"
 #include "ParticleObserver.h"
@@ -84,8 +83,8 @@ namespace SAPHRON
 	};
 
 	typedef std::vector<double> Director;
-	typedef std::list<Neighbor> NeighborList;
-	typedef std::list<Neighbor>::iterator NeighborIterator;
+	typedef std::list<Particle*> NeighborList;
+	typedef std::list<Particle*>::iterator NeighborIterator;
 	typedef std::vector<std::string> SpeciesList;
 	typedef std::list<Connectivity*> ConnectivityList;
 	typedef std::list<Connectivity*>::iterator ConnectivityIterator;
@@ -253,9 +252,15 @@ namespace SAPHRON
 			}
 
 			// Add a neighbor to neighbor list.
-			void AddNeighbor(Neighbor&& neighbor)
+			void AddNeighbor(Particle* particle)
 			{
-				_neighbors.emplace_back(neighbor);
+				_neighbors.push_back(particle);
+			}
+
+			// Remove a neighbor from the neighbor list.
+			void RemoveNeighbor(Particle* particle)
+			{
+				_neighbors.remove(particle);
 			}
 
 			// Clear the neighbor list.

@@ -82,9 +82,9 @@ TEST(Site, Neighbors)
 	Site s4({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L4");
 
 	// Add neighbors.
-	s1.AddNeighbor(Neighbor(s2));
-	s1.AddNeighbor(Neighbor(s3));
-	s1.AddNeighbor(Neighbor(s4));
+	s1.AddNeighbor(&s2);
+	s1.AddNeighbor(&s3);
+	s1.AddNeighbor(&s4);
 
 	// Verify
 	std::vector<std::string> vals = {"L2", "L3", "L4"};
@@ -92,7 +92,7 @@ TEST(Site, Neighbors)
 	int i = 0;
 	for(NeighborIterator neighbor = neighbors.begin(); neighbor != neighbors.end(); ++neighbor)
 	{
-		auto id = neighbor->GetParticle()->GetSpecies();
+		auto id = (*neighbor)->GetSpecies();
 
 		ASSERT_EQ(vals[i], id);
 

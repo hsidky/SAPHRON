@@ -172,10 +172,7 @@ namespace SAPHRON
 	    {
 	    	auto& neighbors = p->GetNeighbors();
 	        for(auto& neighbor : neighbors)
-	        	{
-	            	auto* part = neighbor.GetParticle();
-	             	*_particlefs << part->GetGlobalIdentifier() << ",";
-	            }
+	        	*_particlefs << neighbor->GetGlobalIdentifier() << ",";
 	   	}
 
 	   	*_particlefs << std::endl;

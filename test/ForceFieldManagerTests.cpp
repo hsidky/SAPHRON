@@ -14,9 +14,9 @@ TEST(ForceFieldManager, DefaultBehavior)
 	Site s4({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "L2");
 
 	// Add neighbors.
-	s1.AddNeighbor(Neighbor(s2));
-	s1.AddNeighbor(Neighbor(s3));
-	s1.AddNeighbor(Neighbor(s4));
+	s1.AddNeighbor(&s2);
+	s1.AddNeighbor(&s3);
+	s1.AddNeighbor(&s4);
 
 	// Define force field.
 	LebwohlLasherFF ff(1.0, 0);

@@ -119,10 +119,7 @@ namespace SAPHRON
 	    {
 	    	auto& neighbors = p->GetNeighbors();
 	        for(auto& neighbor : neighbors)
-	        	{
-	            	auto* part = neighbor.GetParticle();
-	             	cout << setw(20/neighbors.size()) << part->GetGlobalIdentifier() << " ";
-	            }
+	           	cout << setw(20/neighbors.size()) << neighbor->GetGlobalIdentifier() << " ";
 	   	}
 
 	   	cout << endl;
