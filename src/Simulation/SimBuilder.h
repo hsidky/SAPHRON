@@ -310,7 +310,7 @@ namespace SAPHRON
 									ForceFieldManager& ffm, 
 									MoveManager& mm, 
 									std::vector<SimObserver*>& observers, 
-									DOSOrderParameter*& dosop);
+									DOSOrderParameter*& dosop, int& sweeps);
 
 			std::vector<std::string> GetErrorMessages()
 			{

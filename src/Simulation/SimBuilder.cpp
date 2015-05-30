@@ -933,7 +933,7 @@ namespace SAPHRON
 
 					auto flagtree = observers[member]["flags"];
 					sflags.identifier = ProcessFlag(flagtree, "identifier", member, err);
-					sflags.iterations = ProcessFlag(flagtree, "iterations", member, err);
+					sflags.iterations = ProcessFlag(flagtree, "sweeps", member, err);
 					sflags.energy = ProcessFlag(flagtree, "energy", member, err);
 					sflags.temperature = ProcessFlag(flagtree, "temperature", member, err);
 					sflags.pressure = ProcessFlag(flagtree, "pressure", member, err);
@@ -951,6 +951,7 @@ namespace SAPHRON
 					sflags.particle_species = ProcessFlag(flagtree, "particle_species", member, err);
 					sflags.particle_species_id = ProcessFlag(flagtree, "particle_species_id", member, err);
 					sflags.particle_neighbors = ProcessFlag(flagtree, "particle_neighbors", member, err);
+					obs.flags = sflags;
 				}
 
 				_observers.push_back(obs);
@@ -1420,6 +1421,8 @@ namespace SAPHRON
 	{
 		assert(_errors == false);
 
+		World* world = nullptr;
+
 		if(_worldprops.type == "Simple")
 		{
 			_nmsgs.push_back("Setting size to [" +  
@@ -1428,21 +1431,20 @@ namespace SAPHRON
 				std::to_string(_worldprops.zlength) + "] \u212B.");
 			_nmsgs.push_back("Setting cutoff radius to " + std::to_string(_worldprops.rcutoff) + " \u212B.");
 			_nmsgs.push_back("Setting seed to " + std::to_string(_worldprops.seed) + ".");
-			return new SimpleWorld(_worldprops.xlength, 
+			world = new SimpleWorld(_worldprops.xlength, 
 								   _worldprops.ylength, 
 								   _worldprops.zlength, 
 								   _worldprops.rcutoff,
 								   _worldprops.seed);
 		}
 
-		return nullptr;
+		return world;
 	}
 
 	void SimBuilder::BuildParticles(World* world, std::vector<Connectivity*>& connectivities)
 	{
 		assert(_errors == false);
 		
-
 		// Initialize connectivities. 
 		for(auto& connectivity : _connectivities)
 		{
@@ -1496,6 +1498,9 @@ namespace SAPHRON
 		for(auto& count : ccounts)
 			_nmsgs.push_back("Added " + std::to_string(count.second) + 
 				" particle(s) to " + count.first + " connectivity.");
+
+		_nmsgs.push_back("Building neighbor lists.");
+		world->UpdateNeighborList();
 
 		assert(_particles.size() == _ppointers.size());
 	}
@@ -1608,7 +1613,7 @@ namespace SAPHRON
 										ForceFieldManager& ffm, 
 										MoveManager& mm, 
 										std::vector<SimObserver*>& observers, 
-										DOSOrderParameter*& dosop)
+										DOSOrderParameter*& dosop, int& sweeps)
 	{
 		assert(_errors == false);
 
@@ -1691,6 +1696,7 @@ namespace SAPHRON
 			ensemble->AddObserver(observer);
 
 		_nmsgs.push_back("Added " + std::to_string(observers.size()) + " observers.");
+		sweeps = _ensemble.sweeps;
 
 		return ensemble;
 	}

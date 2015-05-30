@@ -209,8 +209,9 @@ int main(int argc, char const* argv[])
 
 	Ensemble* ensemble = nullptr; 
 	DOSOrderParameter* op = nullptr;
+	int sweeps = 0;
 	std::cout << std::setw(msgw) << std::left << " > Initializing Ensemble...";
-	ensemble = builder.BuildEnsemble(*world, ffm, mm, observers, op);
+	ensemble = builder.BuildEnsemble(*world, ffm, mm, observers, op, sweeps);
 	if(ensemble == nullptr)
 	{
 		for ( auto& cc : connectivities ) delete cc;
@@ -234,6 +235,9 @@ int main(int argc, char const* argv[])
 	//             END INITIALIZATION          *
 	//                                         *
 	//******************************************
+
+	// Run simulation.
+	ensemble->Run(sweeps);
 
 	// Cleanup.
 	for ( auto& ff : forcefields ) delete ff;
