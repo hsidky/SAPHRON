@@ -26,7 +26,7 @@ namespace SAPHRON
 			_coeff(coeff), _dir({0.0, 0.0, 0.0}), _func(func){}
 			
 			// Evaluate Hamiltonian.
-			virtual double EvaluateHamiltonian(Particle* p) override
+			virtual double EvaluateEnergy(Particle* p) override
 			{
 				auto& dir = p->GetDirectorRef();
 				

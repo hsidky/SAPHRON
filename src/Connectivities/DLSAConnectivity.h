@@ -75,7 +75,7 @@ namespace SAPHRON
 			}
 
 			// Evaluate Hamiltonian.
-			inline virtual double EvaluateHamiltonian(Particle* p) override
+			inline virtual double EvaluateEnergy(Particle* p) override
 			{
 				int id = p->GetGlobalIdentifier();
 				auto loc = _groupMap.find(id);

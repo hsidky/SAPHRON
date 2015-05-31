@@ -11,8 +11,8 @@ namespace SAPHRON
 	class Connectivity
 	{
 		public:
-			// Evaluate the Hamiltonian of the connectivity.
-			virtual double EvaluateHamiltonian(Particle* p) = 0;
+			// Evaluate the energy of the connectivity.
+			virtual double EvaluateEnergy(Particle* p) = 0;
 
 			virtual ~Connectivity(){}
 	};

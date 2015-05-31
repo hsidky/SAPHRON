@@ -19,7 +19,7 @@ namespace SAPHRON
 			P2SAConnectivity(double coeff, Director dir) : _coeff(coeff), _dir(dir){}
 			
 			// Evaluate Hamiltonian.
-			virtual double EvaluateHamiltonian(Particle* p) override
+			virtual double EvaluateEnergy(Particle* p) override
 			{
 				auto& dir = p->GetDirectorRef();
 				double dot = _dir[0]*dir[0] + _dir[1]*dir[1] + _dir[2]*dir[2];

@@ -42,7 +42,7 @@ namespace SAPHRON
 
 				// Calculate connectivity energy 
 				for(auto &connectivity : particle.GetConnectivities())
-					h+= connectivity->EvaluateHamiltonian(&particle);
+					h+= connectivity->EvaluateEnergy(&particle);
 
 				// Calculate energy of children.
 				for(auto &child : particle.GetChildren())
