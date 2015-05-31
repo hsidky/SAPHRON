@@ -20,7 +20,7 @@ namespace SAPHRON
 		private: 
 
 			// Total system energy.
-			double _energy;
+			Energy _energy;
 
 			// Energy interval.
 			Interval _interval;
@@ -74,7 +74,7 @@ namespace SAPHRON
 			DOSEnsemble(DOSOrderParameter& orderp, World& world, 
 						ForceFieldManager& ffmanager, 
 					    MoveManager& mmanager, Interval interval, int binCount, int seed = 1) : 
-				_energy(0), _interval(interval), _acceptedCount(0), _hist(interval.first, interval.second, binCount), 
+				_energy(0,0), _interval(interval), _acceptedCount(0), _hist(interval.first, interval.second, binCount), 
 				_sf(1.0), _flatness(0), _world(world), _ffmanager(ffmanager), _mmanager(mmanager), 
 				_orderp(orderp), _rand(seed), _particles(0), _targetFlatness(0.80)
 			{
@@ -85,7 +85,7 @@ namespace SAPHRON
 			DOSEnsemble(DOSOrderParameter& orderp, World& world, 
 						ForceFieldManager& ffmanager, 
 					    MoveManager& mmanager, Interval interval, double binWidth, int seed = 1) : 
-				_energy(0), _interval(interval), _acceptedCount(0), _hist(interval.first, interval.second, binWidth), 
+				_energy(0,0), _interval(interval), _acceptedCount(0), _hist(interval.first, interval.second, binWidth), 
 				_sf(1.0), _flatness(0), _world(world), _ffmanager(ffmanager), _mmanager(mmanager), 
 				_orderp(orderp), _rand(seed), _particles(0), _targetFlatness(0.80)
 			{
@@ -95,7 +95,7 @@ namespace SAPHRON
 
 			virtual void Run(int iterations) override;
 
-			virtual double GetEnergy() override
+			virtual Energy GetEnergy() override
 			{
 				return _energy;
 			}

@@ -20,7 +20,7 @@ namespace SAPHRON
 			double _temperature;
 
 			// System energy
-			double _energy;
+			Energy _energy;
 
 			// Accepted moves count.
 			int _acceptedCount; 
@@ -62,7 +62,7 @@ namespace SAPHRON
 			            MoveManager& mmanager,
 			            double temperature,
 			            int seed = 1) :
-				_temperature(temperature), _energy(0.0), _acceptedCount(0), _world(world),
+				_temperature(temperature), _energy(0.0, 0.0), _acceptedCount(0), _world(world),
 				_ffmanager(ffmanager), _mmanager(mmanager), _rand(seed),
 				_particles(0)
 			{
@@ -80,7 +80,7 @@ namespace SAPHRON
 			}
 
 			// Get energy.
-			virtual double GetEnergy() override
+			virtual Energy GetEnergy() override
 			{
 				return _energy;
 			}

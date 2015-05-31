@@ -33,18 +33,18 @@ namespace SAPHRON
 	
 				// Draw sample, evaluate energy.
 				_world.DrawRandomParticles(_particles, move->RequiredParticles());
-				double prevH = _ffmanager.EvaluateHamiltonian(_particles);
-				double prevOP = _orderp.EvaluateParameter(_energy);
+				auto prevH = _ffmanager.EvaluateHamiltonian(_particles);
+				double prevOP = _orderp.EvaluateParameter(_energy.total());
 
 				// Perform move.
 				move->Perform(_particles);
 	
 				// Evaluate new energy and accept/reject.
-				double currH = _ffmanager.EvaluateHamiltonian(_particles);
-				double newE = _energy + (currH - prevH);
-				double newOP = _orderp.EvaluateParameter(newE);
+				auto currH = _ffmanager.EvaluateHamiltonian(_particles);
+				auto newE = _energy + (currH - prevH);
+				double newOP = _orderp.EvaluateParameter(newE.total());
 
-				if(AcceptanceProbability(_energy, prevOP, newE, newOP) < _rand.doub())
+				if(AcceptanceProbability(_energy.total(), prevOP, newE.total(), newOP) < _rand.doub())
 				{
 					move->Undo();
 					newOP = prevOP;

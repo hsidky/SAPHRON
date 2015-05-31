@@ -13,15 +13,15 @@ namespace SAPHRON
 
 			// Draw sample, evaluate energy.
 			_world.DrawRandomParticles(_particles, move->RequiredParticles());
-			double prevH = _ffmanager.EvaluateHamiltonian(_particles);
+			auto prevH = _ffmanager.EvaluateHamiltonian(_particles);
 
 			// Perform move.
 			move->Perform(_particles);
 
 			// Evaluate energy and accept/reject.
-			double currH = _ffmanager.EvaluateHamiltonian(_particles);
+			auto currH = _ffmanager.EvaluateHamiltonian(_particles);
 
-			if(AcceptanceProbability(prevH, currH) < _rand.doub())
+			if(AcceptanceProbability(prevH.total(), currH.total()) < _rand.doub())
 				move->Undo();
 			else
 			{

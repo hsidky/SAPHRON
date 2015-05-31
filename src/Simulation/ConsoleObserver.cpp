@@ -17,7 +17,11 @@ namespace SAPHRON
 		if (this->Flags.iterations)
 			cout << setw(20) << left << "Iteration";
 		if (this->Flags.energy)
-			cout << setw(20) << left << "Energy";
+		{
+			cout << setw(20) << left << "Non-bonded E";
+			cout << setw(20) << left << "Connectivity E";
+			cout << setw(20) << left << "Total E";
+		}
 		if (this->Flags.temperature)
 			cout << setw(20) << left << "Temperature";
 		if (this->Flags.acceptance)
@@ -28,7 +32,12 @@ namespace SAPHRON
 		if (this->Flags.iterations)
 			cout << setw(20) << left << e->GetIteration();
 		if (this->Flags.energy)
-			cout << setw(20) << setprecision(5) << left << scientific << e->GetEnergy();
+		{
+			auto energy = e->GetEnergy();
+			cout << setw(20) << setprecision(5) << left << scientific << energy.nonbonded;
+			cout << setw(20) << setprecision(5) << left << scientific << energy.connectivity;
+			cout << setw(20) << setprecision(5) << left << scientific << energy.total();
+		}
 		if (this->Flags.temperature)
 			cout << setw(20) << left << e->GetTemperature();
 		if(this->Flags.acceptance)

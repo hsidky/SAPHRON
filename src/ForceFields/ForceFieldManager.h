@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Particles/Particle.h"
+#include "../Properties/Energy.h"
 #include "../Worlds/World.h"
 #include "ForceField.h"
 
@@ -15,8 +16,8 @@ namespace SAPHRON
 			// Resize Forcefield vector.
 			void ResizeFF(int n);
 
-			// Evaluate the only two body interactions of a particle.
-			inline double EvaluateTwoBodyHamiltonian(Particle& particle)
+			// Evaluate non-bonded interactions of a particle.
+			inline double EvaluateNonBondedEnergy(Particle& particle)
 			{
 				double h = 0;
 				
@@ -31,12 +32,12 @@ namespace SAPHRON
 
 				// Calculate energy of children.
 				for(auto &child : particle.GetChildren())
-					h += EvaluateTwoBodyHamiltonian(*child);
+					h += EvaluateNonBondedEnergy(*child);
 
 				return h;
 			}
 
-			inline double EvaluateConnectivityHamiltonian(Particle& particle)
+			inline double EvaluateConnectivityEnergy(Particle& particle)
 			{
 				double h = 0;
 
@@ -46,7 +47,7 @@ namespace SAPHRON
 
 				// Calculate energy of children.
 				for(auto &child : particle.GetChildren())
-					h += EvaluateConnectivityHamiltonian(*child);
+					h += EvaluateConnectivityEnergy(*child);
 
 				return h;
 			}
@@ -68,44 +69,40 @@ namespace SAPHRON
 			void RemoveForceField(int p1type, int p2type);
 
 			// Evaluate the Hamiltonian of the entire world.
-			inline double EvaluateHamiltonian(World& world)
+			inline Energy EvaluateHamiltonian(World& world)
 			{
-				// Two body interactions.
-				double h1 = 0;
-
-				// Connectivity.
-				double h2 = 0;
+				Energy e(0, 0);
 
 				for (int i = 0; i < world.GetParticleCount(); ++i)
 				{
 					auto* particle = world.SelectParticle(i);
 					
-					h1 += EvaluateTwoBodyHamiltonian(*particle);
-					h2 += EvaluateConnectivityHamiltonian(*particle);
+					e.nonbonded += EvaluateNonBondedEnergy(*particle);
+					e.connectivity += EvaluateConnectivityEnergy(*particle);
 				}
 
-				return 0.5*h1 + h2;
+				e.nonbonded *= 0.5;
+				return e;
 			}
 
 			// Evaluate the Hamiltonian of the particle.
-			inline double EvaluateHamiltonian(Particle& particle)
+			inline Energy EvaluateHamiltonian(Particle& particle)
 			{
-				double h = 0;
-				
-				h+= EvaluateTwoBodyHamiltonian(particle);
-				h+= EvaluateConnectivityHamiltonian(particle);
-
-				return h;
+				Energy e(0, 0);
+					
+				e.nonbonded = EvaluateNonBondedEnergy(particle);
+				e.connectivity = EvaluateConnectivityEnergy(particle);
+				return e;
 			}
 
 			// Evaluate the Hamiltonian of a list of particles.
-			inline double EvaluateHamiltonian(const ParticleList& particles)
+			inline Energy EvaluateHamiltonian(const ParticleList& particles)
 			{
-				double h = 0.0; 
+				Energy e(0,0);
 				for(auto& particle : particles)
-					h += EvaluateHamiltonian(*particle);
+					e += EvaluateHamiltonian(*particle);
 
-				return h;
+				return e;
 			}
 	};
 }

@@ -28,5 +28,5 @@ TEST(ForceFieldManager, DefaultBehavior)
 	ffm.AddForceField("L1", "L1", ff);
 	ffm.AddForceField("L1", "L2", ff2);
 
-	ASSERT_EQ(-4.0, ffm.EvaluateHamiltonian(s1));
+	ASSERT_EQ(-4.0, ffm.EvaluateHamiltonian(s1).total());
 }

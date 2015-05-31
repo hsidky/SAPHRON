@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Simulation/SimObservable.h"
+#include "../Properties/Energy.h"
 #include <vector>
 
 namespace SAPHRON
@@ -67,7 +68,7 @@ namespace SAPHRON
 
 			/* Properties */
 			virtual double GetTemperature() { return 0.0; }
-			virtual double GetEnergy() { return 0.0; }
+			virtual Energy GetEnergy() { return Energy(0,0); }
 			virtual double GetPressure() { return 0.0; }
 			virtual double GetAcceptanceRatio() { return 0.0; }
 

@@ -23,7 +23,7 @@ namespace SAPHRON
 			if(flags.iterations)
 				*_ensemblefs << "Iterations,";
 			if(flags.energy)
-				*_ensemblefs << "Energy,";
+				*_ensemblefs << "Non-bonded Energy,Connectivity Energy,Total Energy,";
 			if(flags.temperature)
 				*_ensemblefs << "Temperature,";
 			if(flags.pressure)
@@ -96,7 +96,12 @@ namespace SAPHRON
 		if(this->Flags.iterations)
 			*_ensemblefs << this->GetIteration() << ",";
 		if(this->Flags.energy)
-			*_ensemblefs << e->GetEnergy() << ",";
+		{
+			auto energy = e->GetEnergy();
+			*_ensemblefs << energy.nonbonded << "," 
+						 << energy.connectivity << ","
+						 << energy.total();
+		}
 		if(this->Flags.temperature)
 			*_ensemblefs << e->GetTemperature() << ",";
 		if(this->Flags.pressure)
@@ -116,7 +121,7 @@ namespace SAPHRON
 				*_dosfs << this->GetObservableID() << ",";
 		if(this->Flags.iterations)
 			*_dosfs << this->GetIteration() << ",";
-		if(this->Flags.dos_walker)
+		if(this->Flags.dos_walker) // Temporary until walkers are implemented.
 			*_dosfs << "Walker ID,";
 		if(this->Flags.dos_scale_factor)
 			*_dosfs << e->GetScaleFactor() << ",";
