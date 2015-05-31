@@ -12,6 +12,8 @@ namespace SAPHRON
 		private:
 			int _prevA, _prevB;
 			std::pair<Particle*, Particle*> _particlePair;
+			int _rejected;
+			int _performed;
 
 		public:
 			SpeciesSwapMove() : _prevA(0), _prevB(0), _particlePair{nullptr, nullptr} {} 
@@ -28,14 +30,30 @@ namespace SAPHRON
 				_prevB = particles[1]->GetSpeciesID();
 				particles[0]->SetSpecies(_prevB);
 				particles[1]->SetSpecies(_prevA);
+				++_performed;
 			};
+
+			virtual double GetAcceptanceRatio() override
+			{
+				return 1.0-(double)_rejected/_performed;
+			};
+
+			virtual void ResetAcceptanceRatio() override
+			{
+				_performed = 0;
+				_rejected = 0;
+			}
 
 			// Undo move.
 			virtual void Undo() override
 			{
 				_particlePair.first->SetSpecies(_prevA);
 				_particlePair.second->SetSpecies(_prevB);
+				++_rejected;
 			}
+			
+			virtual std::string GetName() override { return "SpeciesSwap";	}
+
 
 			virtual Move* Clone() const override
 			{

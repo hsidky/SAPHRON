@@ -4,7 +4,7 @@ namespace SAPHRON
 {
 	inline void NVTEnsemble::Iterate()
 	{
-		_acceptedCount = 0;
+		_mmanager.ResetMoveAcceptances();
 		for (int i = 0; i < _world.GetParticleCount(); ++i)
 		{
 
@@ -24,12 +24,10 @@ namespace SAPHRON
 			if(AcceptanceProbability(prevH.total(), currH.total()) < _rand.doub())
 				move->Undo();
 			else
-			{
 				_energy += (currH - prevH);
-				++_acceptedCount;
-			}
 		}
 
+		UpdateAcceptances();
 		this->IncrementIterations();
 		this->NotifyObservers(SimEvent(this, this->GetIteration()));
 	}

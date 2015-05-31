@@ -1,8 +1,3 @@
-// This example is a demonstration of Semi-grand Density of States Sampling
-// of a Lebwhol-Lasher binary mixture
-
-// Include header files
-// Include for parsing using stringstream
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -39,9 +34,6 @@ void DumpNoticesToConsole(std::vector<std::string> msgs, std::string prefix, int
 		std::cout << prefix << " * " << msg << "\n";
 }
 
-// The main program expects a user to input the lattice size, number of EXEDOS
-// iterations, minimum and maximum mole fractions, number of bins for density-of-states
-// histogram and model, sites and vector file outputs.
 int main(int argc, char const* argv[])
 {
 	std::cout << "                                                                         \n" << 
@@ -122,7 +114,6 @@ int main(int argc, char const* argv[])
 		return DumpErrorsToConsole(builder.GetErrorMessages(), notw);
 	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
 	builder.ResetNotices();
-
 
 	//******************************************
 	//                                         *
@@ -228,7 +219,6 @@ int main(int argc, char const* argv[])
 	}
 	DumpNoticesToConsole(builder.GetNotices(), "  ", notw);
 	builder.ResetNotices();
-
 
 	//******************************************
 	//                                         *

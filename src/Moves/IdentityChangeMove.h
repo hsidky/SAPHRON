@@ -18,10 +18,13 @@ namespace SAPHRON
 			Rand _rand;
 
 			int _speciesCount;
+			int _rejected;
+			int _performed;
 
 		public:
 			IdentityChangeMove(int speciesCount, int seed = 1337) :
-				_particle(nullptr), _prevSpecies(0), _rand(seed), _speciesCount(speciesCount) {}
+				_particle(nullptr), _prevSpecies(0), _rand(seed), _speciesCount(speciesCount),
+				_rejected(0), _performed(0) {}
 
 			// Reassigns the species of a site with a new random one.
 			virtual void Perform(const ParticleList& particles) override
@@ -32,13 +35,28 @@ namespace SAPHRON
 				_prevSpecies = _particle->GetSpeciesID();
 
 				_particle->SetSpecies(_rand.int32() % _speciesCount);
+				++_performed;
+			}
+
+			virtual double GetAcceptanceRatio() override
+			{
+				return 1.0-(double)_rejected/_performed;
+			};
+
+			virtual void ResetAcceptanceRatio() override
+			{
+				_performed = 0;
+				_rejected = 0;
 			}
 
 			// Undo the move on a site.
 			void Undo() override
 			{
 				_particle->SetSpecies(_prevSpecies);
+				++_rejected;
 			}
+
+			virtual std::string GetName() override { return "IdentityChange";	}
 
 			// Clone move.
 			virtual Move* Clone() const override

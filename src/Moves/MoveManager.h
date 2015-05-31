@@ -9,10 +9,14 @@ namespace SAPHRON
 	class MoveManager
 	{
 		private:
+			typedef std::vector<Move*> MoveList;
 			Rand _rand;
-			std::vector<Move*> _moves;
+			MoveList _moves;
 
 		public:
+			typedef MoveList::iterator iterator;
+			typedef MoveList::const_iterator const_iterator;
+
 			MoveManager(int seed = 1) : _rand(seed){}
 
 			// Add a move to the move queue.
@@ -45,6 +49,13 @@ namespace SAPHRON
 				return (int)_moves.size();
 			}
 
+			// Reset acceptance ratio on moves.
+			void ResetMoveAcceptances()
+			{
+				for(auto& move : _moves)
+					move->ResetAcceptanceRatio();
+			}
+
 			// Select a random move.
 			inline Move* SelectRandomMove()
 			{
@@ -56,5 +67,9 @@ namespace SAPHRON
 			{
 				_rand.seed(seed);
 			}
+
+			// Iterators.
+			iterator begin() { return _moves.begin(); }
+  			iterator end() { return _moves.end(); }
 	};
 }

@@ -24,7 +24,7 @@ namespace SAPHRON
 		_flatness = _hist.CalculateFlatness();
 		while(_flatness < GetTargetFlatness())
 		{
-			_acceptedCount = 0;
+			_mmanager.ResetMoveAcceptances();
 			for (int i = 0; i < _world.GetParticleCount(); ++i)
 			{
 			
@@ -50,16 +50,14 @@ namespace SAPHRON
 					newOP = prevOP;
 				}
 				else
-				{
 					_energy = newE;
-					++_acceptedCount;
-				}
 				
 				// Update bins and energy (log DOS).
 				int bin = _hist.Record(newOP);
 				_hist.UpdateValue(bin, _hist.GetValue(bin) + _sf);	
 			}
 
+			UpdateAcceptances();
 			_flatness = _hist.CalculateFlatness();
 			this->IncrementIterations();
 			this->NotifyObservers(SimEvent(this, this->GetIteration()));

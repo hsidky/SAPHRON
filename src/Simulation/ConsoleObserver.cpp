@@ -24,8 +24,9 @@ namespace SAPHRON
 		}
 		if (this->Flags.temperature)
 			cout << setw(20) << left << "Temperature";
-		if (this->Flags.acceptance)
-			cout << setw(20) << left << "Acceptance";
+		if(this->Flags.acceptance)
+			for(auto& acceptance : e->GetAcceptanceRatio())
+				cout << setw(20) << left << acceptance.first + " Acc.";
 		cout << endl;
 		
 		
@@ -41,7 +42,8 @@ namespace SAPHRON
 		if (this->Flags.temperature)
 			cout << setw(20) << left << e->GetTemperature();
 		if(this->Flags.acceptance)
-			cout << setw(20) << left << e->GetAcceptanceRatio();
+			for(auto& acceptance : e->GetAcceptanceRatio())
+				cout << setw(20) << left << acceptance.second;
 					 
 		cout << endl;
 	}

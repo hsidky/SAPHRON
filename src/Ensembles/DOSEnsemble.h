@@ -25,8 +25,8 @@ namespace SAPHRON
 			// Energy interval.
 			Interval _interval;
 
-			// Accepted moves count.
-			int _acceptedCount;
+			// Acceptance map.
+			AcceptanceMap _accmap;
 
 			// Histogram
 			Histogram _hist;
@@ -62,6 +62,12 @@ namespace SAPHRON
 		
 			void Iterate();
 
+			inline void UpdateAcceptances()
+			{
+				for(auto& move : _mmanager)
+					_accmap[move->GetName()] = move->GetAcceptanceRatio();
+			}
+
 		protected:
 
 			// Visit children.
@@ -74,23 +80,25 @@ namespace SAPHRON
 			DOSEnsemble(DOSOrderParameter& orderp, World& world, 
 						ForceFieldManager& ffmanager, 
 					    MoveManager& mmanager, Interval interval, int binCount, int seed = 1) : 
-				_energy(0,0), _interval(interval), _acceptedCount(0), _hist(interval.first, interval.second, binCount), 
+				_energy(0,0), _interval(interval), _accmap(), _hist(interval.first, interval.second, binCount), 
 				_sf(1.0), _flatness(0), _world(world), _ffmanager(ffmanager), _mmanager(mmanager), 
 				_orderp(orderp), _rand(seed), _particles(0), _targetFlatness(0.80)
 			{
 				_particles.reserve(10);
 				_energy = ffmanager.EvaluateHamiltonian(world);
+				UpdateAcceptances();
 			}
 
 			DOSEnsemble(DOSOrderParameter& orderp, World& world, 
 						ForceFieldManager& ffmanager, 
 					    MoveManager& mmanager, Interval interval, double binWidth, int seed = 1) : 
-				_energy(0,0), _interval(interval), _acceptedCount(0), _hist(interval.first, interval.second, binWidth), 
+				_energy(0,0), _interval(interval), _accmap(), _hist(interval.first, interval.second, binWidth), 
 				_sf(1.0), _flatness(0), _world(world), _ffmanager(ffmanager), _mmanager(mmanager), 
 				_orderp(orderp), _rand(seed), _particles(0), _targetFlatness(0.80)
 			{
 				_particles.reserve(10);
 				_energy = ffmanager.EvaluateHamiltonian(world);
+				UpdateAcceptances();
 			}
 
 			virtual void Run(int iterations) override;
@@ -106,9 +114,9 @@ namespace SAPHRON
 			}
 
 			// Get ratio of accepted moves.
-			virtual double GetAcceptanceRatio() override
+			virtual AcceptanceMap GetAcceptanceRatio() override
 			{
-				return (double)_acceptedCount/(double)_world.GetParticleCount();
+				return _accmap;
 			}
 
 			virtual double GetFlatness()

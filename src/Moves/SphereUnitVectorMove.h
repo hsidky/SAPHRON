@@ -13,9 +13,12 @@ namespace SAPHRON
 			Director _prevD;
 			Rand _rand;
 			Particle* _particle;
+			int _rejected;
+			int _performed;
 
 		public:
-			SphereUnitVectorMove (int seed = 3) : _prevD({0.0, 0.0, 0.0}), _rand(seed) {}
+			SphereUnitVectorMove (int seed = 3) : _prevD({0.0, 0.0, 0.0}), _rand(seed),
+			 _rejected(0), _performed(0) {}
 
 			// Select a new random unit vector on a sphere.
 			inline virtual void Perform(const ParticleList& particles) override
@@ -37,13 +40,29 @@ namespace SAPHRON
 					if(v3 < 1)
 						_particle->SetDirector(2.0*v1*sqrt(1 - v3), 2.0*v2*sqrt(1 - v3), 1.0-2.0*v3);
 				} while(v3 > 1);
+
+				++_performed;
+			}
+
+			virtual double GetAcceptanceRatio() override
+			{
+				return 1.0-(double)_rejected/_performed;
+			};
+
+			virtual void ResetAcceptanceRatio() override
+			{
+				_performed = 0;
+				_rejected = 0;
 			}
 
 			// Undo move.
 			virtual void Undo() override
 			{
 				_particle->SetDirector(_prevD);
+				++_rejected;
 			}
+
+			virtual std::string GetName() override { return "SphereUV";	}
 
 			// Clone move.
 			Move* Clone() const override

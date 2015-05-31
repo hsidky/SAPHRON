@@ -9,7 +9,7 @@ namespace SAPHRON
 {
 
 	CSVObserver::CSVObserver(std::string prefix, SimFlags flags, unsigned int frequency) : 
-		SimObserver(flags, frequency)
+		SimObserver(flags, frequency), _printedE(0)
 	{
 		if(flags.ensemble)
 		{
@@ -17,21 +17,6 @@ namespace SAPHRON
 				new std::ofstream(prefix + ".ensemble.csv")
 				);
 			_ensemblefs->precision(20);
-
-			if(flags.identifier)
-				*_ensemblefs << "Identifier,";
-			if(flags.iterations)
-				*_ensemblefs << "Iterations,";
-			if(flags.energy)
-				*_ensemblefs << "Non-bonded Energy,Connectivity Energy,Total Energy,";
-			if(flags.temperature)
-				*_ensemblefs << "Temperature,";
-			if(flags.pressure)
-				*_ensemblefs << "Pressure,";
-			if(flags.acceptance)
-				*_ensemblefs << "Acceptance,";
-
-			*_ensemblefs << std::endl;
 		}
 
 		if(flags.dos)
@@ -89,8 +74,34 @@ namespace SAPHRON
 		}
 	}
 
+	void CSVObserver::PrintEnsembleHeader(Ensemble* e)
+	{
+		if(this->Flags.identifier)
+			*_ensemblefs << "Identifier,";
+		if(this->Flags.iterations)
+			*_ensemblefs << "Iterations,";
+		if(this->Flags.energy)
+			*_ensemblefs << "Non-bonded Energy,Connectivity Energy,Total Energy,";
+		if(this->Flags.temperature)
+			*_ensemblefs << "Temperature,";
+		if(this->Flags.pressure)
+			*_ensemblefs << "Pressure,";
+		if(this->Flags.acceptance)
+			for(auto& acceptance : e->GetAcceptanceRatio())
+				*_ensemblefs << acceptance.first + " Acceptance,";
+
+		*_ensemblefs << std::endl;
+	}
+
 	void CSVObserver::Visit(Ensemble *e)
 	{
+		// Write header.
+		if(!_printedE)
+		{
+			PrintEnsembleHeader(e);
+			_printedE = true;
+		}
+
 		if(this->Flags.identifier)
 			*_ensemblefs << this->GetObservableID() << ",";
 		if(this->Flags.iterations)
@@ -100,14 +111,15 @@ namespace SAPHRON
 			auto energy = e->GetEnergy();
 			*_ensemblefs << energy.nonbonded << "," 
 						 << energy.connectivity << ","
-						 << energy.total();
+						 << energy.total() << ",";
 		}
 		if(this->Flags.temperature)
 			*_ensemblefs << e->GetTemperature() << ",";
 		if(this->Flags.pressure)
 			*_ensemblefs << e->GetPressure() << ",";
 		if(this->Flags.acceptance)
-			*_ensemblefs << e->GetAcceptanceRatio() << ",";
+			for(auto& acceptance : e->GetAcceptanceRatio())
+				*_ensemblefs << acceptance.second << ",";
 
 		*_ensemblefs << std::endl;
 	}

@@ -16,7 +16,11 @@ namespace SAPHRON
 	        std::unique_ptr<std::ofstream> _particlefs;
 	        std::unique_ptr<std::ofstream> _dosfs;
 	        std::unique_ptr<std::ofstream> _histfs;
-		
+			
+			bool _printedE;
+
+			void PrintEnsembleHeader(Ensemble* e);
+
 		public:
 			CSVObserver(std::string prefix, SimFlags flags, unsigned int frequency = 1);
 
