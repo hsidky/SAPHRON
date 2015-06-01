@@ -439,15 +439,11 @@ namespace SAPHRON
 			}
 
 			// Check norm.
-			double norm = sqrt(director[0]*director[0] + 
-							   director[1]*director[1] + 
-							   director[2]*director[2]);
+			double norm = director.norm();
 			if(std::abs(norm - 1.0) > 1e-7 && norm != 0)
 			{
 				_nmsgs.push_back("Particle " + istr + " norm is not equal to 1. Normalizing vector.");
-				director[0] /= norm;
-				director[1] /= norm;
-				director[2] /= norm;
+				director.normalize();
 			}
 
 			// Push back struct 
@@ -698,19 +694,15 @@ namespace SAPHRON
 						}
 
 						// Check norm.
-						double norm = sqrt(director[0]*director[0] + 
-										   director[1]*director[1] + 
-										   director[2]*director[2]);
+						double norm = director.norm();
 						if(std::abs(norm - 1.0) > 1e-7 && norm != 0)
 						{
 							_nmsgs.push_back(type + " norm is not equal to 1. Normalizing vector.");
-							director[0] /= norm;
-							director[1] /= norm;
-							director[2] /= norm;
+							director.normalize();
 						}
 
 						cprops.parameters.push_back(coefficient);
-						cprops.vparameters.push_back(director);
+						cprops.vparameters.push_back((std::vector<double>)director);
 					} // end P2SA
 
 					// General selector parsing for particles.
@@ -1451,7 +1443,7 @@ namespace SAPHRON
 			if(connectivity.type == "P2SA")
 			{
 				connectivities.push_back(
-					new P2SAConnectivity(connectivity.parameters[0],connectivity.vparameters[0])
+					new P2SAConnectivity(connectivity.parameters[0],Director(connectivity.vparameters[0]))
 				);
 			}
 		}

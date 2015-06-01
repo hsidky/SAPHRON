@@ -12,16 +12,15 @@ TEST(Site, DefaultConstructor)
 	ASSERT_EQ(0.0, pos.y);
 	ASSERT_EQ(0.0, pos.z);
 
-	for(auto& dir : s.GetDirector())
-		ASSERT_EQ(0.0, dir);
-
+	Director d1 {0.0, 0.0, 0.0};
+	ASSERT_EQ(d1, s.GetDirector());
 	ASSERT_EQ("L1", s.GetSpecies());
 
 	// Set a few things
 	Director d {0.1, 0.2, 0.4};
 	s.SetDirector(d);
 	ASSERT_EQ(d, s.GetDirector());
-	d[0] = 1.0;
+	d.x = 1.0;
 	ASSERT_NE(d, s.GetDirector());
 }
 

@@ -62,7 +62,10 @@ namespace SAPHRON
 					// Get director and build up Q matrix.
 					int index = loc - _groupVec.begin();
 					auto& dir = particle->GetDirectorRef();
-					_tmpVec = dir;
+					_tmpVec[0] = dir.x;
+					_tmpVec[1] = dir.y;
+					_tmpVec[2] = dir.z;
+
 					_Qmats[index] += arma::kron(_tmpVec.t(), _tmpVec) - 1.0/3.0*arma::eye(3,3);
 					_groupCounts[index]++;
 					_groupMap.insert(std::pair<int,int>(id, index));
@@ -96,7 +99,7 @@ namespace SAPHRON
 				double d2 = _eigvec(1, _imax).real();
 				double d3 = _eigvec(2, _imax).real();
 
-				double dot = d1*_dir[0] + d2*_dir[1] + d3*_dir[2];
+				double dot = d1*_dir.x + d2*_dir.y + d3*_dir.z;
 				return -1.0*_coeff*(1.5*dot*dot-0.5);
 			}
 
@@ -117,7 +120,10 @@ namespace SAPHRON
 				auto& dir = p->GetDirectorRef();
 				arma::vec& prevDir = _idmap[id];
 
-				_tmpVec = dir;
+				_tmpVec[0] = dir.x;
+				_tmpVec[1] = dir.y;
+				_tmpVec[2] = dir.z;
+				
 				_Qmats[index] += 3.0 / (2.0*_groupCounts[index])*(arma::kron(_tmpVec.t(), _tmpVec) - arma::kron(prevDir.t(), prevDir));
 				prevDir = _tmpVec;
 			}

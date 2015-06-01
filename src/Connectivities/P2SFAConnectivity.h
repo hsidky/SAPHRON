@@ -33,7 +33,7 @@ namespace SAPHRON
 				// Calculate dir based on user supplied func.
 				_func(p, _dir);
 
-				double dot = _dir[0]*dir[0] + _dir[1]*dir[1] + _dir[2]*dir[2];
+				double dot = _dir.dot(dir);
 				return -1.0*_coeff*(1.5*dot*dot - 0.5);
 			}
 	};

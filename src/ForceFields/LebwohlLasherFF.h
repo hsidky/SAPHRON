@@ -25,7 +25,7 @@ namespace SAPHRON
 				auto& n2 = p2.GetDirectorRef();
 
 				// Dot product (hard coded to avoid expensive cache misses).
-				double dot = n1[0]*n2[0] + n1[1]*n2[1] + n1[2]*n2[2];
+				double dot = n1.dot(n2);
 
 				return -1.0*(_eps*(1.5*dot*dot - 0.5) + _gamma);
 			}

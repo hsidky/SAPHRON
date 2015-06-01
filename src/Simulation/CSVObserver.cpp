@@ -183,7 +183,7 @@ namespace SAPHRON
 		if (this->Flags.particle_director)
 	    {
 	    	auto& dir = p->GetDirectorRef();
-	    	*_particlefs << dir[0] << "," << dir[1] << "," << dir[2] << ",";
+	    	*_particlefs << dir.x << "," << dir.y << "," << dir.z << ",";
 	    }
 	    if (this->Flags.particle_neighbors)
 	    {

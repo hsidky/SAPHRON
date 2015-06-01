@@ -32,8 +32,8 @@ TEST(SimpleWorld, DefaultConstructor)
 	world.UpdateNeighborList();
 	for(int i = 0; i < world.GetParticleCount(); ++i)
 	{
-		auto particle = world.SelectParticle(i);
-		Position coords = particle->GetPositionRef();
+		auto* particle = world.SelectParticle(i);
+		const Position& coords = particle->GetPositionRef();
 
 		// Check neighbors
 		Position n1 =
@@ -54,7 +54,7 @@ TEST(SimpleWorld, DefaultConstructor)
 
 		for(auto& neighbor : neighbors)
 		{
-			auto np = neighbor->GetPositionRef();
+			auto& np = neighbor->GetPositionRef();
 			ASSERT_TRUE(
 			        np == n1 ||
 			        np == n2 ||
@@ -70,8 +70,8 @@ TEST(SimpleWorld, DefaultConstructor)
 	world.UpdateNeighborList();
 	for(int i = 0; i < world.GetParticleCount(); ++i)
 	{
-		auto particle = world.SelectParticle(i);
-		Position coords = particle->GetPositionRef();
+		auto* particle = world.SelectParticle(i);
+		const Position& coords = particle->GetPositionRef();
 
 		// Check neighbors
 		Position n1 =
@@ -92,7 +92,7 @@ TEST(SimpleWorld, DefaultConstructor)
 
 		for(auto& neighbor : neighbors)
 		{
-			auto np = neighbor->GetPositionRef();
+			auto& np = neighbor->GetPositionRef();
 			ASSERT_TRUE(
 			        np == n1 ||
 			        np == n2 ||

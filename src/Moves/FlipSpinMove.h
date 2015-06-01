@@ -22,7 +22,7 @@ namespace SAPHRON
 			{
 				_particle = *particles.begin();
 				_prevD = _particle->GetDirector();
-				_particle->SetDirector({-1.0*_prevD[0], -1.0*_prevD[1], -1.0*_prevD[2]});
+				_particle->SetDirector(-1.0*_prevD);
 				++_performed;
 			}
 

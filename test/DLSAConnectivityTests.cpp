@@ -14,9 +14,9 @@ TEST(DLSAConnectivity, DefaultBehavior)
 
 	// Initialize connectivity.
 	DLSAConnectivity connectivity(world, 1.0, [](Particle*, Director& dir){
-		dir[0] = 1.0;
-		dir[1] = 0.0;
-		dir[2] = 0.0;
+		dir.x = 1.0;
+		dir.y = 0.0;
+		dir.z = 0.0;
 	},
 	[](const Particle* p){
 		return (int)p->GetPositionRef().x;

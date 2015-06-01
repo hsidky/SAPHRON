@@ -57,7 +57,9 @@ namespace SAPHRON
 						int id = p->GetGlobalIdentifier();
 						auto& dir = p->GetDirectorRef();
 
-						_tmpVec = dir;
+						_tmpVec[0] = dir.x;
+						_tmpVec[1] = dir.y;
+						_tmpVec[2] = dir.z;
 						_Q += arma::kron(_tmpVec.t(), _tmpVec) - 1.0/3.0*arma::eye(3,3);
 						_idmap.insert(std::pair<int, arma::vec>(id, _tmpVec));
 					}
@@ -99,7 +101,10 @@ namespace SAPHRON
 				auto& dir = p->GetDirectorRef();
 				arma::vec& prevDir = _idmap[id];
 
-				_tmpVec = dir;
+				_tmpVec[0] = dir.x;
+				_tmpVec[1] = dir.y;
+				_tmpVec[2] = dir.z;
+				
 				_Q += 3.0/(2.0*_pcount)*(arma::kron(_tmpVec.t(), _tmpVec) - arma::kron(prevDir.t(), prevDir));
 				prevDir = _tmpVec;
 

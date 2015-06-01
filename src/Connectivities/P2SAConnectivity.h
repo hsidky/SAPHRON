@@ -22,7 +22,7 @@ namespace SAPHRON
 			virtual double EvaluateEnergy(Particle* p) override
 			{
 				auto& dir = p->GetDirectorRef();
-				double dot = _dir[0]*dir[0] + _dir[1]*dir[1] + _dir[2]*dir[2];
+				double dot = _dir.dot(dir);
 				return -1*_coeff*(1.5*dot*dot - 0.5);
 			}
 			

@@ -3,6 +3,8 @@
 #include "../Visitors/Visitable.h"
 #include "../Connectivities/Connectivity.h"
 #include "ParticleObserver.h"
+#include "Position.h"
+#include "Director.h"
 #include <algorithm>
 #include <cassert>
 #include <iostream>
@@ -15,41 +17,6 @@
 
 namespace SAPHRON
 {
-	// Particle position.
-	struct Position
-	{
-		double x;
-		double y;
-		double z;
-
-		inline bool operator==(const Position& rhs) const
-		{
-			return this->x == rhs.x && this->y == rhs.y && this->z == rhs.z;
-		}
-
-		inline double norm()
-		{
-			return sqrt(x*x + y*y + z*z);
-		}
-	};
-
-	inline Position operator+(Position lhs, const Position& rhs)
-	{
-		lhs.x += rhs.x;
-		lhs.y += rhs.y;
-		lhs.z += rhs.z;
-		return lhs;
-	} 
-
-
-	inline Position operator-(Position lhs, const Position& rhs)
-	{
-		lhs.x -= rhs.x;
-		lhs.y -= rhs.y;
-		lhs.z -= rhs.z;
-		return lhs;
-	} 
-
 	inline double anint( const double &x )
 	{
 		return ( x >= 0 ) ? floor( x + 0.5 ) : ceil( x - 0.5 );
@@ -82,7 +49,6 @@ namespace SAPHRON
 			}
 	};
 
-	typedef std::vector<double> Director;
 	typedef std::list<Particle*> NeighborList;
 	typedef std::list<Particle*>::iterator NeighborIterator;
 	typedef std::vector<std::string> SpeciesList;
@@ -324,7 +290,7 @@ namespace SAPHRON
 			}
 
 			// Gets all descendants of a particle.
-			virtual std::vector<Particle*> GetChildren() = 0;
+			virtual ParticleList& GetChildren() = 0;
 
 			// Clone particle.
 			virtual Particle* Clone() const = 0;
