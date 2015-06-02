@@ -18,8 +18,6 @@ namespace SAPHRON
 	{
 		private:
 			arma::mat _Q;
-			std::map<int, arma::vec> _idmap;
-			arma::vec _tmpVec;
 			EFilterFunc _efunc;
 			arma::cx_vec _eigval;
 			arma::cx_mat _eigvec;
@@ -40,7 +38,7 @@ namespace SAPHRON
 			// particles will contribute to the elastic order parameter (true for include, false otherwise).
 			// The value h represents the length over which to compute the derivative (dni/dxj).
 			ElasticCoeffOP(const World& world, double temperature, double dxj, EFilterFunc efunc) : 
-				_Q(3,3,arma::fill::zeros), _idmap(), _tmpVec(3, arma::fill::zeros), 
+				_Q(3,3,arma::fill::zeros), 
 				_efunc(efunc), _eigval(3, arma::fill::zeros), _eigvec(3,3,arma::fill::zeros), 
 				_imax(0), _pcount(0), _dxj(dxj), _temperature(temperature)
 			{
@@ -53,15 +51,9 @@ namespace SAPHRON
 					if(_efunc(p))
 					{
 						++_pcount;
-
-						int id = p->GetGlobalIdentifier();
 						auto& dir = p->GetDirectorRef();
-
-						_tmpVec[0] = dir.x;
-						_tmpVec[1] = dir.y;
-						_tmpVec[2] = dir.z;
-						_Q += arma::kron(_tmpVec.t(), _tmpVec) - 1.0/3.0*arma::eye(3,3);
-						_idmap.insert(std::pair<int, arma::vec>(id, _tmpVec));
+						arma::vec tmpv{dir.x, dir.y, dir.z};
+						_Q += arma::kron(tmpv.t(), tmpv) - 1.0/3.0*arma::eye(3,3);
 					}
 				}
 
@@ -97,16 +89,12 @@ namespace SAPHRON
 				if(!_efunc(p))
 					return;
 
-				int id = p->GetGlobalIdentifier();
+				const auto& pdir = pEvent.GetOldDirector();
 				auto& dir = p->GetDirectorRef();
-				arma::vec& prevDir = _idmap[id];
+				arma::vec prevDir{pdir.x, pdir.y, pdir.z};
+				arma::vec currDir{dir.x, dir.y, dir.z};
 
-				_tmpVec[0] = dir.x;
-				_tmpVec[1] = dir.y;
-				_tmpVec[2] = dir.z;
-				
-				_Q += 3.0/(2.0*_pcount)*(arma::kron(_tmpVec.t(), _tmpVec) - arma::kron(prevDir.t(), prevDir));
-				prevDir = _tmpVec;
+				_Q += 3.0/(2.0*_pcount)*(arma::kron(currDir.t(), currDir) - arma::kron(prevDir.t(), prevDir));
 
 				// Eager decomposition. Only on appropriate update.
 				if(!arma::eig_gen(_eigval, _eigvec, _Q))

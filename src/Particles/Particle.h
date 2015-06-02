@@ -3,6 +3,7 @@
 #include "../Visitors/Visitable.h"
 #include "../Connectivities/Connectivity.h"
 #include "ParticleObserver.h"
+#include "ParticleEvent.h"
 #include "Position.h"
 #include "Director.h"
 #include <algorithm>
@@ -13,7 +14,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <exception>
 
 namespace SAPHRON
 {
@@ -21,33 +21,6 @@ namespace SAPHRON
 	{
 		return ( x >= 0 ) ? floor( x + 0.5 ) : ceil( x - 0.5 );
 	}
-
-	// Particle event class.
-	class ParticleEvent
-	{
-		private:
-			Particle* _particle;
-
-		public:
-			ParticleEvent(Particle* particle) : _particle(particle), mask(0) {}
-
-			union
-			{
-				struct
-				{
-					unsigned int position : 1;
-					unsigned int director : 1;
-					unsigned int species : 1;
-					unsigned int neighbors : 1;
-				};
-				bool mask;
-			};
-
-			inline Particle* GetParticle() const
-			{
-				return _particle;
-			}
-	};
 
 	typedef std::list<Particle*> NeighborList;
 	typedef std::list<Particle*>::iterator NeighborIterator;
@@ -143,13 +116,13 @@ namespace SAPHRON
 					neighbor->RemoveNeighbor(this);
 			}
 
-			// Get global particle species.
+			// Get global particle ID.
 			inline int GetGlobalIdentifier() const
 			{
 				return _globalID;
 			}
 
-			// Set global particle species. If ID is taken, returns an alternative ID that is unique.
+			// Set global particle ID. If ID is taken, returns an alternative ID that is unique.
 			inline int SetGlobalIdentifier(int id)
 			{
 				// ID MUST be unique. But make sure we are not re-assigning the same value.
@@ -182,7 +155,7 @@ namespace SAPHRON
 				return _species;
 			}
 
-			// Get identity list.
+			// Get species list.
 			static SpeciesList GetSpeciesList()
 			{
 				return _speciesList;

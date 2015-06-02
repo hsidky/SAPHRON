@@ -33,6 +33,7 @@ namespace SAPHRON
 			// Sets site position.
 			inline virtual void SetPosition(const Position& position) override
 			{
+				this->_pEvent.SetOldPosition(_position);
 				_position = position;
 				this->_pEvent.position = 1; 
 				this->NotifyObservers();
@@ -41,6 +42,7 @@ namespace SAPHRON
 			// Sets site position.
 			inline virtual void SetPosition(Position && position) override
 			{
+				this->_pEvent.SetOldPosition(_position);
 				_position = position;
 				this->_pEvent.position = 1;
 				this->NotifyObservers();
@@ -61,6 +63,7 @@ namespace SAPHRON
 			// Sets site director.
 			inline virtual void SetDirector(const Director& director) override
 			{
+				this->_pEvent.SetOldDirector(_director);
 				_director = director;
 				this->_pEvent.director = 1;
 				this->NotifyObservers();
@@ -69,6 +72,7 @@ namespace SAPHRON
 			// Sets site director.
 			inline virtual void SetDirector(Director&& director) override
 			{
+				this->_pEvent.SetOldDirector(_director);
 				_director = director;
 				this->_pEvent.director = 1;
 				this->NotifyObservers();
@@ -77,6 +81,7 @@ namespace SAPHRON
 			// Sets site director.
 			inline virtual void SetDirector(double ux, double uy, double uz) override
 			{
+				this->_pEvent.SetOldDirector(_director);
 				_director.x = ux;
 				_director.y = uy;
 				_director.z = uz;

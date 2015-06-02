@@ -5,6 +5,7 @@ namespace SAPHRON
 	// Set the species of a particle.
 	void Particle::SetSpecies(std::string species)
 	{
+		_pEvent.SetOldSpecies(_speciesID);
 		auto search = std::find(_speciesList.begin(), _speciesList.end(), species);
 		if (search != _speciesList.end())
 			_speciesID = search - _speciesList.begin();
@@ -23,6 +24,7 @@ namespace SAPHRON
 	void Particle::SetSpecies(int speciesID)
 	{
 		assert(speciesID < (int)_speciesList.size());
+		_pEvent.SetOldSpecies(_speciesID);
 		_speciesID = speciesID;
 		_species = _speciesList[speciesID];
 		_pEvent.species = 1;
