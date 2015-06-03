@@ -20,6 +20,11 @@ namespace SAPHRON
 		{
 			return sqrt(x*x + y*y + z*z);
 		}
+
+		inline double norm2()
+		{
+			return (x*x + y*y + z*z);
+		}
 	};
 
 	inline Position operator+(Position lhs, const Position& rhs)

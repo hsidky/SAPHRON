@@ -60,6 +60,8 @@ namespace SAPHRON
 				VisitChildren(v);
 			}
 
+			// Get system volume.
+			virtual double GetVolume() = 0;
 
 			virtual ~World (){}
 	};

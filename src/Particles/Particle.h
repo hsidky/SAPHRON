@@ -200,6 +200,12 @@ namespace SAPHRON
 				return _neighbors;
 			}
 
+			// Gets neighbor list iterator.
+			inline const NeighborList& GetNeighbors() const
+			{
+				return _neighbors;
+			}
+
 			// Add a neighbor to neighbor list.
 			void AddNeighbor(Particle* particle)
 			{

@@ -121,7 +121,13 @@ namespace SAPHRON
 			}
 
 			// Update the neighbor list for all particles in the world.
-			virtual void UpdateNeighborList() override;			
+			virtual void UpdateNeighborList() override;		
+
+			// Get system volume.
+			virtual double GetVolume() override
+			{
+				return _xlength*_ylength*_zlength;
+			}	
 
 			~SimpleWorld()
 			{
