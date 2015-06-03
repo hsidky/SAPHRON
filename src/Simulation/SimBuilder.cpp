@@ -242,31 +242,31 @@ namespace SAPHRON
 			_worldprops.zlength = zlength;
 		}
 
-		double rcutoff = [&]()-> double { 
+		double neighbor_list = [&]()-> double { 
 			try {	
-				return world.get("cutoff_radius", 0).asDouble(); 
+				return world.get("neighbor_list", 0).asDouble(); 
 			} catch(std::exception& e) {
-				_emsgs.push_back("Cutoff radius unserialization error : " + std::string(e.what()));
+				_emsgs.push_back("Neighbor list radius unserialization error : " + std::string(e.what()));
 				err = true;
 				return 0;
 			}
 		}();
 		
-		if(!rcutoff)
+		if(!neighbor_list)
 		{
-			_emsgs.push_back("A positive cutoff radius must be specified.");
+			_emsgs.push_back("A positive neighbor list radius must be specified.");
 			err = true;
 		}
-		if(rcutoff > wsize[0].asDouble()/2.0 || 
-		   rcutoff > wsize[1].asDouble()/2.0 || 
-		   rcutoff > wsize[2].asDouble()/2.0)
+		if(neighbor_list > wsize[0].asDouble()/2.0 || 
+		   neighbor_list > wsize[1].asDouble()/2.0 || 
+		   neighbor_list > wsize[2].asDouble()/2.0)
 		{
-			_emsgs.push_back("The cutoff radius cannot exceed half the shortest world size vector.");
+			_emsgs.push_back("The neighbor list radius cannot exceed half the shortest world size vector.");
 			err = true;
 		}
 
-		// Assign cutoff radius. 
-		_worldprops.rcutoff = rcutoff;
+		// Assign neighbor list cutoff radius. 
+		_worldprops.neighbor_list = neighbor_list;
 
 		int seed = [&]()-> int { 
 			try {	
@@ -1421,12 +1421,12 @@ namespace SAPHRON
 				std::to_string(_worldprops.xlength) + ", " + 
 				std::to_string(_worldprops.ylength) + ", " + 
 				std::to_string(_worldprops.zlength) + "] \u212B.");
-			_nmsgs.push_back("Setting cutoff radius to " + std::to_string(_worldprops.rcutoff) + " \u212B.");
+			_nmsgs.push_back("Setting neighbor list radius to " + std::to_string(_worldprops.neighbor_list) + " \u212B.");
 			_nmsgs.push_back("Setting seed to " + std::to_string(_worldprops.seed) + ".");
 			world = new SimpleWorld(_worldprops.xlength, 
 								   _worldprops.ylength, 
 								   _worldprops.zlength, 
-								   _worldprops.rcutoff,
+								   _worldprops.neighbor_list,
 								   _worldprops.seed);
 		}
 

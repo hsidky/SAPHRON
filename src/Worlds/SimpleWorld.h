@@ -17,8 +17,8 @@ namespace SAPHRON
 			std::vector<Particle*> _particles;
 			Rand _rand;
 
-			// Cutoff radius.
-			double _rcut;
+			// Neighbor list cutoff radius.
+			double _ncut;
 
 		protected:
 			// Visit children.
@@ -29,8 +29,8 @@ namespace SAPHRON
 			}
 
 		public:
-			SimpleWorld(double xlength, double ylength, double zlength, double rcut, int seed = 1)
-				: _xlength(xlength), _ylength(ylength), _zlength(zlength), _rand(seed), _rcut(rcut)
+			SimpleWorld(double xlength, double ylength, double zlength, double ncut, int seed = 1)
+				: _xlength(xlength), _ylength(ylength), _zlength(zlength), _rand(seed), _ncut(ncut)
 			{
 			}
 
@@ -103,16 +103,16 @@ namespace SAPHRON
 								_particles.end());
 			}
 
-			// Sets the cutoff radius.
-			virtual void SetCutoffRadius(double rcut) override
+			// Sets the neighbor list cutoff radius.
+			virtual void SetNeighborRadius(double ncut) override
 			{
-				_rcut = rcut;
+				_ncut = ncut;
 			}
 
-			// Gets the cutoff radius.
-			virtual double GetCutoffRadius() override
+			// Gets the neighbor list cutoff radius.
+			virtual double GetNeighborRadius() override
 			{
-				return _rcut; 
+				return _ncut; 
 			}
 
 			int GetLatticeSize()

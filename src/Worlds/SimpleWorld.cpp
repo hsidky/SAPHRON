@@ -86,7 +86,7 @@ namespace SAPHRON
 				dist.y -= _ylength*anint(dist.y/_ylength);
 				dist.z -= _zlength*anint(dist.z/_zlength);
 
-				if(dist.norm() <= _rcut)
+				if(dist.norm() <= _ncut)
 				{
 					pi->AddNeighbor(pj);
 					pj->AddNeighbor(pi);

@@ -29,7 +29,7 @@ namespace SAPHRON
 				double ylength;
 				double zlength;
 				int seed;
-				double rcutoff;
+				double neighbor_list;
 			} _worldprops;
 
 			struct ParticleProps

@@ -36,7 +36,7 @@
 		"type" : "Simple",
 		"size" : [32, 32, 32],
 		"seed" : 300, 
-		"cutoff_radius" : 10
+		"neighbor_list" : 10
 	},
 
 	"components" : {
