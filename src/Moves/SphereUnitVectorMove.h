@@ -21,12 +21,11 @@ namespace SAPHRON
 			 _rejected(0), _performed(0) {}
 
 			// Select a new random unit vector on a sphere.
-			inline virtual void Perform(const ParticleList& particles) override
+			inline void Perform(Particle* particle)
 			{
-				_particle = *particles.begin();
-
+				_particle = particle;
 				// Record prev director.
-				_prevD = _particle->GetDirectorRef();
+				_prevD = particle->GetDirectorRef();
 
 				// Get new unit vector.
 				double v3 = 0;
@@ -38,10 +37,22 @@ namespace SAPHRON
 					v2 = 1 - 2 * v2;
 					v3 = v1*v1 + v2*v2;
 					if(v3 < 1)
-						_particle->SetDirector(2.0*v1*sqrt(1 - v3), 2.0*v2*sqrt(1 - v3), 1.0-2.0*v3);
+						particle->SetDirector(2.0*v1*sqrt(1 - v3), 2.0*v2*sqrt(1 - v3), 1.0-2.0*v3);
 				} while(v3 > 1);
 
 				++_performed;
+			}
+
+			virtual bool Perform(World&, ParticleList& particles) override
+			{
+				Perform(particles[0]);
+				return false;
+			}
+
+			virtual void Draw(World& world, ParticleList& particles) override
+			{
+				particles.resize(1);
+				particles[0] = world.DrawRandomParticle();;
 			}
 
 			virtual double GetAcceptanceRatio() override

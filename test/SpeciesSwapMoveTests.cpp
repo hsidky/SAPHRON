@@ -13,7 +13,7 @@ TEST(SpeciesSwapMove, DefaultBehavior)
 	ASSERT_EQ("T1", s.GetSpecies());
 	ASSERT_EQ("T2", s2.GetSpecies());
 
-	m.Perform({&s, &s2});
+	m.Perform(&s, &s2);
 
 	ASSERT_EQ("T2", s.GetSpecies());
 	ASSERT_EQ("T1", s2.GetSpecies());

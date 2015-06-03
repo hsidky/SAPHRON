@@ -27,15 +27,26 @@ namespace SAPHRON
 				_rejected(0), _performed(0) {}
 
 			// Reassigns the species of a site with a new random one.
-			virtual void Perform(const ParticleList& particles) override
+			inline void Perform(Particle* particle)
 			{
-				_particle = *particles.begin();
-
+				_particle = particle;
 				// Record previous species
-				_prevSpecies = _particle->GetSpeciesID();
+				_prevSpecies = particle->GetSpeciesID();
 
-				_particle->SetSpecies(_rand.int32() % _speciesCount);
+				particle->SetSpecies(_rand.int32() % _speciesCount);
 				++_performed;
+			}
+
+			virtual bool Perform(World&, ParticleList& particles) override
+			{
+				Perform(particles[0]);
+				return false;
+			}
+
+			virtual void Draw(World& world, ParticleList& particles) override
+			{
+				particles.resize(1);
+				particles[0] = world.DrawRandomParticle();;
 			}
 
 			virtual double GetAcceptanceRatio() override

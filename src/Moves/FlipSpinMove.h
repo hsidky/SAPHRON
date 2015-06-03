@@ -18,12 +18,24 @@ namespace SAPHRON
 			FlipSpinMove() : _rejected(0), _performed(0){} 
 
 			// Perform the flip spin move on a particle.
-			virtual void Perform(const ParticleList& particles) override
+			inline void Perform(Particle* particle)
 			{
-				_particle = *particles.begin();
-				_prevD = _particle->GetDirector();
-				_particle->SetDirector(-1.0*_prevD);
+				_particle = particle;
+				_prevD = particle->GetDirector();
+				particle->SetDirector(-1.0*_prevD);
 				++_performed;
+			}
+			
+			virtual bool Perform(World&, ParticleList& particles) override
+			{
+				Perform(particles[0]);
+				return false;
+			}
+
+			virtual void Draw(World& world, ParticleList& particles) override
+			{
+				particles.resize(1);
+				particles[0] = world.DrawRandomParticle();
 			}
 
 			virtual double GetAcceptanceRatio() override

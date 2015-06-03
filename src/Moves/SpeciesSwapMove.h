@@ -18,20 +18,30 @@ namespace SAPHRON
 		public:
 			SpeciesSwapMove() : _prevA(0), _prevB(0), _particlePair{nullptr, nullptr} {} 
 
-			virtual unsigned int RequiredParticles() override { return 2; }
-
 			// Perform move.
-			virtual void Perform(const ParticleList& particles) override
+			inline void Perform(Particle* p1, Particle* p2)
 			{
-				_particlePair.first = particles[0];
-				_particlePair.second = particles[1];
-
-				_prevA = particles[0]->GetSpeciesID();
-				_prevB = particles[1]->GetSpeciesID();
-				particles[0]->SetSpecies(_prevB);
-				particles[1]->SetSpecies(_prevA);
+				_particlePair.first = p1;
+				_particlePair.second = p2;
+				_prevA = p1->GetSpeciesID();
+				_prevB = p2->GetSpeciesID();
+				p1->SetSpecies(_prevB);
+				p2->SetSpecies(_prevA);
 				++_performed;
 			};
+
+			virtual bool Perform(World&, ParticleList& particles) override
+			{
+				Perform(particles[0], particles[1]);
+				return false;
+			}
+
+			virtual void Draw(World& world, ParticleList& particles) override
+			{
+				particles.resize(2);
+				particles[0] = world.DrawRandomParticle();
+				particles[1] = world.DrawRandomParticle();
+			}
 
 			virtual double GetAcceptanceRatio() override
 			{
