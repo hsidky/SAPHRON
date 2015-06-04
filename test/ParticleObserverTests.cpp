@@ -13,7 +13,7 @@ namespace SAPHRON
 
 			MockParticleObserver() : director({ 0.0, 0.0, 0.0 }), position({ 0.0, 0.0, 0.0 }), species("foo") {}
 
-			virtual void Update(const ParticleEvent& pEvent) override
+			virtual void ParticleUpdate(const ParticleEvent& pEvent) override
 			{
 				auto* p = pEvent.GetParticle();
 				if (pEvent.director)

@@ -122,7 +122,7 @@ namespace SAPHRON
 				return ep;
 			}
 
-			// Evaluate the Hamiltonian of the particle.
+			// Evaluate the energy and virial contribution of the particle.
 			inline EPTuple EvaluateHamiltonian(Particle& particle)
 			{
 				EPTuple ep;
@@ -131,7 +131,7 @@ namespace SAPHRON
 				return ep;
 			}
 
-			// Evaluate the Hamiltonian of a list of particles.
+			// Evaluate the energy and virial contribution of a list of particles.
 			inline EPTuple EvaluateHamiltonian(const ParticleList& particles)
 			{
 				EPTuple ep;

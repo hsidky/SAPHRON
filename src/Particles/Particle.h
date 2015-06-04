@@ -113,7 +113,10 @@ namespace SAPHRON
 			{
 				// Remove particle from neighbor list. 
 				for(auto& neighbor : _neighbors)
-					neighbor->RemoveNeighbor(this);
+				{
+					if(neighbor != NULL && neighbor != nullptr)
+						neighbor->RemoveNeighbor(this);
+				}
 			}
 
 			// Get global particle ID.
@@ -209,7 +212,8 @@ namespace SAPHRON
 			// Add a neighbor to neighbor list.
 			void AddNeighbor(Particle* particle)
 			{
-				_neighbors.push_back(particle);
+				if(std::find(_neighbors.begin(), _neighbors.end(), particle) == _neighbors.end())
+					_neighbors.push_back(particle);
 			}
 
 			// Remove a neighbor from the neighbor list.
@@ -258,7 +262,7 @@ namespace SAPHRON
 			void NotifyObservers()
 			{
 				for (auto observer : _observers)
-					observer->Update(_pEvent);
+					observer->ParticleUpdate(_pEvent);
 
 				_pEvent.mask = false;
 			}

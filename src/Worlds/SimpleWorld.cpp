@@ -2,6 +2,47 @@
 
 namespace SAPHRON
 {
+	void SimpleWorld::AddParticleComposition(Particle* particle)
+	{
+		int id = particle->GetSpeciesID();
+		if(_composition.find(id) == _composition.end())
+			_composition[id] = 1;
+		else
+			++_composition[id];
+
+		for(auto& child : particle->GetChildren())
+			AddParticleComposition(child);
+	}
+
+	void SimpleWorld::RemoveParticleComposition(Particle* particle)
+	{
+		int id = particle->GetSpeciesID();
+		assert(_composition.find(id) != _composition.end());
+		--_composition[id];
+
+		for(auto& child : particle->GetChildren())
+			RemoveParticleComposition(child);
+	}
+
+	void SimpleWorld::ModifyParticleComposition(const ParticleEvent& pEvent)
+	{
+		int oldID = pEvent.GetOldSpecies();
+		int id = pEvent.GetParticle()->GetSpeciesID();
+		assert(_composition.find(oldID) != _composition.end());
+		--_composition[oldID];
+
+		if(_composition.find(id) == _composition.end())
+			_composition[id] = 1;
+		else
+			++_composition[id];
+	}
+
+	void SimpleWorld::BuildCompositionList()
+	{
+		for(auto& particle: _particles)
+			AddParticleComposition(particle);
+	}
+
 	// Configure Particles in the lattice. For n particles and n fractions, the lattice will be
 	// initialized with the appropriate composition.
 	void SimpleWorld::ConfigureParticles(const std::vector<Particle*> particles,
@@ -49,9 +90,9 @@ namespace SAPHRON
 			for(int j = 0; j < cnt; j++)
 				if(counts[j] > 0 )
 				{
-					_particles.emplace_back(particles[j]->Clone());
+					AddParticle(particles[j]->Clone());
 					_particles[i]->SetPosition({x,y,z});
-					counts[j]--;
+					--counts[j];
 					break;
 				}
 

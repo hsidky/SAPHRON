@@ -4,13 +4,18 @@
 #include "../Visitors/Visitable.h"
 #include <memory>
 #include <functional>
+#include <map>
 
 namespace SAPHRON
 {
+	typedef std::map<int, int> CompositionList; 
+
 	// Public interface representing the "World" in which particles live. A World object is
 	// responsible for setting up the "box" and associated geometry, handling boundary conditions and
-	// updating negihbor lists on particles.
-	class World : public Visitable
+	// updating negihbor lists on particles. World implements ParticleObserver so it can "listen in" 
+	// on it's particles if it needs it. Note: it is the World implementation's responsibility to register 
+	// itself with particles if it needs it, and to remove this when a particle is removed.
+	class World : public Visitable, public ParticleObserver
 	{
 		protected:
 			// Visit children.
@@ -44,6 +49,8 @@ namespace SAPHRON
 			// Remove a specific particle based on location.
 			virtual void RemoveParticle(int location) = 0;
 
+			virtual void RemoveParticle(Particle* p) = 0;
+
 			// Remove particle(s) based on a supplied filter.
 			virtual void RemoveParticle(std::function<bool(Particle*)> filter) = 0;
 
@@ -59,6 +66,12 @@ namespace SAPHRON
 				v.Visit(this);
 				VisitChildren(v);
 			}
+
+			// Particle observer.
+			virtual void ParticleUpdate(const ParticleEvent& pEvent) override = 0;
+
+			// Get system composition.
+			virtual const CompositionList& GetComposition() const = 0;
 
 			// Get system volume.
 			virtual double GetVolume() = 0;

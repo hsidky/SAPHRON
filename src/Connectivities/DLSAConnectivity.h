@@ -104,7 +104,7 @@ namespace SAPHRON
 			}
 
 			// Update delocalized director on particle director change.
-			virtual void Update(const ParticleEvent& pEvent) override
+			virtual void ParticleUpdate(const ParticleEvent& pEvent) override
 			{
 				if (!pEvent.director)
 					return;

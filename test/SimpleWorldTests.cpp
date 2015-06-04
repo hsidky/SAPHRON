@@ -6,7 +6,7 @@
 
 using namespace SAPHRON;
 
-TEST(SimpleWorld, DefaultConstructor)
+TEST(SimpleWorld, DefaultBehavior)
 {
 	int n = 30;
 	SimpleWorld world(n, n, n, 1.0);
@@ -28,7 +28,7 @@ TEST(SimpleWorld, DefaultConstructor)
 	ASSERT_EQ(9000, counts["E1"]);
 	ASSERT_EQ(9000, counts["E2"]);
 	ASSERT_EQ(9000, counts["E3"]);
-
+	
 	world.UpdateNeighborList();
 	for(int i = 0; i < world.GetParticleCount(); ++i)
 	{
@@ -103,7 +103,28 @@ TEST(SimpleWorld, DefaultConstructor)
 			        );
 		}
 	}
-}
+	
+	// Check the composition of the world to make sure it's correct.
+	auto& composition = world.GetComposition();
+
+	ASSERT_EQ(9000, composition.at(site1.GetSpeciesID()));
+	ASSERT_EQ(9000, composition.at(site2.GetSpeciesID()));
+	ASSERT_EQ(9000, composition.at(site3.GetSpeciesID()));
+
+	// Test changing species, adding particle, removing particle. 
+	Particle* pr = world.DrawRandomParticle();
+	world.RemoveParticle(pr);
+	ASSERT_EQ(8999, composition.at(pr->GetSpeciesID()));
+
+	world.AddParticle(pr);
+	ASSERT_EQ(9000, composition.at(pr->GetSpeciesID()));
+
+	int previd = pr->GetSpeciesID();
+	int newid = (previd == 0) ? 1 : 0;
+	pr->SetSpecies(newid);
+	ASSERT_EQ(9001, composition.at(newid));
+	ASSERT_EQ(8999, composition.at(previd));
+}	
 
 TEST(SimpleWorld, MoveParticleSemantics)
 {

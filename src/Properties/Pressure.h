@@ -14,7 +14,7 @@ namespace SAPHRON
 		// Calculate isotropic pressure.
 		double isotropic()
 		{
-			return pxx + pyy + pzz;
+			return (pxx + pyy + pzz)/3.0;
 		}
 
 		inline Pressure& operator+=(const Pressure& rhs)

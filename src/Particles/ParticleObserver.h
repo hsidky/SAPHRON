@@ -10,7 +10,7 @@ namespace SAPHRON
 	{
 		public:
 			// Update observer.
-			virtual void Update(const ParticleEvent& pEvent) = 0;
+			virtual void ParticleUpdate(const ParticleEvent& pEvent) = 0;
 
 			virtual ~ParticleObserver() {}
 	};

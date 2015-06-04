@@ -20,6 +20,14 @@ namespace SAPHRON
 			// Neighbor list cutoff radius.
 			double _ncut;
 
+			// Composition of the system.
+			CompositionList _composition;
+
+			void AddParticleComposition(Particle* particle);
+			void RemoveParticleComposition(Particle* particle);
+			void ModifyParticleComposition(const ParticleEvent& pEvent);
+			void BuildCompositionList();
+
 		protected:
 			// Visit children.
 			virtual void VisitChildren(class Visitor &v) override
@@ -63,6 +71,12 @@ namespace SAPHRON
 				return (int)_particles.size();
 			}
 
+			// Get system composition.
+			virtual const CompositionList& GetComposition() const
+			{
+				return _composition;
+			}
+
 			// Get a particle by index.
 			virtual Particle* SelectParticle(int location) override
 			{
@@ -79,12 +93,18 @@ namespace SAPHRON
 			// Need to visit this further.
 			virtual void AddParticle(Particle&& particle) override
 			{
+				particle.AddObserver(this);
+				AddParticleComposition(&particle);
 				_particles.push_back(std::move(&particle));
 			}
 
-			// Add particle.
+			// Add particle. Re-connect neighbors if they exist.
 			virtual void AddParticle(Particle* particle) override
 			{
+				particle->AddObserver(this);
+				for(auto& neighbor : particle->GetNeighbors())
+					neighbor->AddNeighbor(particle);
+				AddParticleComposition(particle);
 				_particles.push_back(particle);
 			}
 
@@ -93,14 +113,39 @@ namespace SAPHRON
 			{
 				Particle* p = _particles[location];
 				p->RemoveFromNeighbors();
+				p->RemoveObserver(this);
+				RemoveParticleComposition(p);
 				_particles.erase(_particles.begin() + location);
 			}
 
+			// Remove particle by value.
+			virtual void RemoveParticle(Particle* particle) override 
+			{
+				auto it = std::find(_particles.begin(), _particles.end(), particle);
+				if(it != _particles.end())
+				{
+					particle->RemoveFromNeighbors();
+					particle->RemoveObserver(this);
+					RemoveParticleComposition(particle);
+					_particles.erase(it);
+				}
+			}
+
 			// Remove particle(s) based on a supplied filter.
+			// TODO: NEEDS UPDATING TO CARRY OUT IMPORTANT OPERATIONS. SEE ABOVE!
 			virtual void RemoveParticle(std::function<bool(Particle*)> filter) override
 			{
 				_particles.erase(std::remove_if(_particles.begin(), _particles.end(), filter), 
 								_particles.end());
+			}
+
+			// Particle observer to update world composition.
+			virtual void ParticleUpdate(const ParticleEvent& pEvent) override
+			{
+				if(!pEvent.species)
+					return;
+				
+				ModifyParticleComposition(pEvent);
 			}
 
 			// Sets the neighbor list cutoff radius.
