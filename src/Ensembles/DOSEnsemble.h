@@ -19,8 +19,8 @@ namespace SAPHRON
 	{
 		private: 
 
-			// Total system energy.
-			Energy _energy;
+			// Total system energy and pressure.
+			EPTuple _eptuple;
 
 			// Energy interval.
 			Interval _interval;
@@ -80,24 +80,24 @@ namespace SAPHRON
 			DOSEnsemble(DOSOrderParameter& orderp, World& world, 
 						ForceFieldManager& ffmanager, 
 					    MoveManager& mmanager, Interval interval, int binCount, int seed = 1) : 
-				_energy(0,0), _interval(interval), _accmap(), _hist(interval.first, interval.second, binCount), 
+				_eptuple(), _interval(interval), _accmap(), _hist(interval.first, interval.second, binCount), 
 				_sf(1.0), _flatness(0), _world(world), _ffmanager(ffmanager), _mmanager(mmanager), 
 				_orderp(orderp), _rand(seed), _particles(0), _targetFlatness(0.80)
 			{
 				_particles.reserve(10);
-				_energy = ffmanager.EvaluateHamiltonian(world);
+				_eptuple = ffmanager.EvaluateHamiltonian(world);
 				UpdateAcceptances();
 			}
 
 			DOSEnsemble(DOSOrderParameter& orderp, World& world, 
 						ForceFieldManager& ffmanager, 
 					    MoveManager& mmanager, Interval interval, double binWidth, int seed = 1) : 
-				_energy(0,0), _interval(interval), _accmap(), _hist(interval.first, interval.second, binWidth), 
+				_eptuple(), _interval(interval), _accmap(), _hist(interval.first, interval.second, binWidth), 
 				_sf(1.0), _flatness(0), _world(world), _ffmanager(ffmanager), _mmanager(mmanager), 
 				_orderp(orderp), _rand(seed), _particles(0), _targetFlatness(0.80)
 			{
 				_particles.reserve(10);
-				_energy = ffmanager.EvaluateHamiltonian(world);
+				_eptuple = ffmanager.EvaluateHamiltonian(world);
 				UpdateAcceptances();
 			}
 
@@ -105,7 +105,7 @@ namespace SAPHRON
 
 			virtual Energy GetEnergy() override
 			{
-				return _energy;
+				return _eptuple.energy;
 			}
 
 			virtual double GetTemperature() override 

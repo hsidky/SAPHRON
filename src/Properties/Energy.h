@@ -6,12 +6,14 @@ namespace SAPHRON
 	// interface.
 	struct Energy
 	{
+		double nonbonded;
+		double connectivity;
+		
+		Energy() : nonbonded(0.0), connectivity(0.0){}
+
 		Energy(double nonbondedE, double connectivityE) : 
 			nonbonded(nonbondedE), connectivity(connectivityE){}
 		
-		double nonbonded;
-		double connectivity;
-
 		double total()
 		{
 			return nonbonded + connectivity;

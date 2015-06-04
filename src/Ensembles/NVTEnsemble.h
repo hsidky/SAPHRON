@@ -19,8 +19,8 @@ namespace SAPHRON
 			// System temperature.
 			double _temperature;
 
-			// System energy
-			Energy _energy;
+			// System energy and pressure.
+			EPTuple _eptuple;
 
 			// Reference to world.
 			World& _world;
@@ -68,13 +68,13 @@ namespace SAPHRON
 			            MoveManager& mmanager,
 			            double temperature,
 			            int seed = 1) :
-				_temperature(temperature), _energy(0.0, 0.0), _world(world),
+				_temperature(temperature), _eptuple(), _world(world),
 				_ffmanager(ffmanager), _mmanager(mmanager), _rand(seed),
 				_particles(0), _accmap()
 			{
 
 				_particles.reserve(10);
-				_energy = ffmanager.EvaluateHamiltonian(world);
+				_eptuple = ffmanager.EvaluateHamiltonian(world);
 				UpdateAcceptances();
 			}
 
@@ -90,7 +90,7 @@ namespace SAPHRON
 			// Get energy.
 			virtual Energy GetEnergy() override
 			{
-				return _energy;
+				return _eptuple.energy;
 			}
 
 			// Get ratio of accepted moves.

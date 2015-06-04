@@ -27,34 +27,32 @@ namespace SAPHRON
 			_mmanager.ResetMoveAcceptances();
 			for (int i = 0; i < _world.GetParticleCount(); ++i)
 			{
-			
 				// Select random move.
 				auto move = _mmanager.SelectRandomMove();
 	
 				// Draw sample, evaluate energy.
 				move->Draw(_world, _particles);
 				auto prevH = _ffmanager.EvaluateHamiltonian(_particles);
-				double prevOP = _orderp.EvaluateParameter(_energy.total());
-
+				double prevOP = _orderp.EvaluateParameter(_eptuple.energy.total());
 
 				// Perform move and re-evaluate energy.
-				Energy currH(0,0);
+				EPTuple currH;
 				if(move->Perform(_world, _particles))
 					currH = _ffmanager.EvaluateHamiltonian(_world);
 				else
 					currH = _ffmanager.EvaluateHamiltonian(_particles);
 	
 				//Accept/reject.
-				auto newE = _energy + (currH - prevH);
-				double newOP = _orderp.EvaluateParameter(newE.total());
+				auto newE = _eptuple + (currH - prevH);
+				double newOP = _orderp.EvaluateParameter(newE.energy.total());
 
-				if(AcceptanceProbability(_energy.total(), prevOP, newE.total(), newOP) < _rand.doub())
+				if(AcceptanceProbability(_eptuple.energy.total(), prevOP, newE.energy.total(), newOP) < _rand.doub())
 				{
 					move->Undo();
 					newOP = prevOP;
 				}
 				else
-					_energy = newE;
+					_eptuple = newE;
 				
 				// Update bins and energy (log DOS).
 				int bin = _hist.Record(newOP);

@@ -4,7 +4,7 @@
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
 #include "../src/Particles/Site.h"
-#include "../src/Simulation/CSVObserver.h"
+#include "../src/Simulation/ConsoleObserver.h"
 #include "../src/Worlds/SimpleWorld.h"
 #include "gtest/gtest.h"
 
@@ -38,7 +38,7 @@ TEST(NVTEnsemble, DefaultBehavior)
 	// flags.particle_director = 1;
 	// flags.particle_neighbors = 1;
 	// flags.particle_position = 1;
-	CSVObserver co("test", flags, 100);
+	ConsoleObserver co(flags, 100);
 
 	// Initialize ensemble.
 	NVTEnsemble ensemble(world, ffm, mm, 1.0, 45);

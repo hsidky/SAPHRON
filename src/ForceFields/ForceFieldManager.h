@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Particles/Particle.h"
-#include "../Properties/Energy.h"
 #include "../Worlds/World.h"
 #include "ForceField.h"
 
@@ -17,27 +16,64 @@ namespace SAPHRON
 			void ResizeFF(int n);
 
 			// Evaluate non-bonded interactions of a particle.
-			inline double EvaluateNonBondedEnergy(Particle& particle)
+			// Requires particle and distance between C.O.M of parent.
+			inline EPTuple EvaluateNonBonded(Particle& particle)
 			{
-				double h = 0;
+				EPTuple ep;				
 				
 				// Calculate energy with neighbors.
 				auto& neighbors = particle.GetNeighbors();
 				for(auto& neighbor : neighbors)
 				{
 					auto* ff = _forcefields[particle.GetSpeciesID()][neighbor->GetSpeciesID()];
+					Position rij = particle.GetPositionRef() - neighbor->GetPositionRef();
 					if(ff != nullptr)
-						h += ff->Evaluate(particle, *neighbor);
+					{
+						// Interaction containing energy and virial.
+						auto ij = ff->Evaluate(particle, *neighbor);
+						ep.energy.nonbonded += ij.energy; // Sum nonbonded energy.
+
+						// Sum pressure terms.
+						ep.pressure.pxx += ij.virial * rij.x * rij.x;
+						ep.pressure.pxy += ij.virial * rij.x * rij.y;
+						ep.pressure.pxz += ij.virial * rij.x * rij.z;
+						ep.pressure.pyy += ij.virial * rij.y * rij.y;
+						ep.pressure.pyz += ij.virial * rij.y * rij.z;
+						ep.pressure.pyz += ij.virial * rij.z * rij.z;
+					}
+
+					// Iterate children with neighbor's children.
+					for(auto& child : particle.GetChildren())
+					{
+						for(auto& nchild : neighbor->GetChildren())
+						{
+							Position nrij = child->GetPositionRef() - neighbor->GetPositionRef();
+							ff = _forcefields[child->GetSpeciesID()][nchild->GetSpeciesID()];
+							if(ff != nullptr)
+							{
+								// Interaction containing energy and virial.
+								auto ij = ff->Evaluate(*child, *nchild);
+								ep.energy.nonbonded += ij.energy; // Sum nonbonded energy.
+								
+								// Sum pressure terms. Average non-diagonal elements.
+								// We are assuming it's symmetric.
+								ep.pressure.pxx += ij.virial * nrij.x * rij.x;
+								ep.pressure.pyy += ij.virial * nrij.y * rij.y;
+								ep.pressure.pyz += ij.virial * nrij.z * rij.z;
+								ep.pressure.pxy += ij.virial * 0.5*(nrij.x * rij.y + nrij.y * rij.x);
+								ep.pressure.pxz += ij.virial * 0.5*(nrij.x * rij.z + nrij.z * rij.x);
+								ep.pressure.pyz += ij.virial * 0.5*(nrij.y * rij.z + nrij.z * rij.y);
+							}
+						}
+					}
 				}
-
-				// Calculate energy of children.
-				for(auto &child : particle.GetChildren())
-					h += EvaluateNonBondedEnergy(*child);
-
-				return h;
+	
+				for(auto& child : particle.GetChildren())
+					ep += EvaluateNonBonded(*child);	
+				return ep;
 			}
 
-			inline double EvaluateConnectivityEnergy(Particle& particle)
+			inline double EvaluateConnectivity(Particle& particle)
 			{
 				double h = 0;
 
@@ -47,7 +83,7 @@ namespace SAPHRON
 
 				// Calculate energy of children.
 				for(auto &child : particle.GetChildren())
-					h += EvaluateConnectivityEnergy(*child);
+					h += EvaluateConnectivity(*child);
 
 				return h;
 			}
@@ -69,40 +105,40 @@ namespace SAPHRON
 			void RemoveForceField(int p1type, int p2type);
 
 			// Evaluate the Hamiltonian of the entire world.
-			inline Energy EvaluateHamiltonian(World& world)
+			inline EPTuple EvaluateHamiltonian(World& world)
 			{
-				Energy e(0, 0);
+				EPTuple ep;
 
 				for (int i = 0; i < world.GetParticleCount(); ++i)
 				{
 					auto* particle = world.SelectParticle(i);
 					
-					e.nonbonded += EvaluateNonBondedEnergy(*particle);
-					e.connectivity += EvaluateConnectivityEnergy(*particle);
+					ep += EvaluateNonBonded(*particle);
+					ep.energy.connectivity += EvaluateConnectivity(*particle);
 				}
 
-				e.nonbonded *= 0.5;
-				return e;
+				ep.energy.nonbonded *= 0.5;
+				ep.pressure *= 0.5;
+				return ep;
 			}
 
 			// Evaluate the Hamiltonian of the particle.
-			inline Energy EvaluateHamiltonian(Particle& particle)
+			inline EPTuple EvaluateHamiltonian(Particle& particle)
 			{
-				Energy e(0, 0);
-					
-				e.nonbonded = EvaluateNonBondedEnergy(particle);
-				e.connectivity = EvaluateConnectivityEnergy(particle);
-				return e;
+				EPTuple ep;
+				ep += EvaluateNonBonded(particle);
+				ep.energy.connectivity = EvaluateConnectivity(particle);
+				return ep;
 			}
 
 			// Evaluate the Hamiltonian of a list of particles.
-			inline Energy EvaluateHamiltonian(const ParticleList& particles)
+			inline EPTuple EvaluateHamiltonian(const ParticleList& particles)
 			{
-				Energy e(0,0);
+				EPTuple ep;
 				for(auto& particle : particles)
-					e += EvaluateHamiltonian(*particle);
+					ep += EvaluateHamiltonian(*particle);
 
-				return e;
+				return ep;
 			}
 	};
 }

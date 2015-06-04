@@ -16,16 +16,16 @@ namespace SAPHRON
 			auto prevH = _ffmanager.EvaluateHamiltonian(_particles);
 
 			// Perform move.
-			Energy currH(0,0);
+			EPTuple currH;
 			if(move->Perform(_world, _particles))
 				currH = _ffmanager.EvaluateHamiltonian(_world);
 			else
 				currH = _ffmanager.EvaluateHamiltonian(_particles);
 
-			if(AcceptanceProbability(prevH.total(), currH.total()) < _rand.doub())
+			if(AcceptanceProbability(prevH.energy.total(), currH.energy.total()) < _rand.doub())
 				move->Undo();
 			else
-				_energy += (currH - prevH);
+				_eptuple += (currH - prevH);
 		}
 
 		UpdateAcceptances();

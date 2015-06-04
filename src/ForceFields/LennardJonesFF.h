@@ -18,20 +18,20 @@ namespace SAPHRON
 
 			}
 
-			virtual double Evaluate(const Particle& p1, const Particle& p2) override
+			inline virtual Interaction Evaluate(const Particle& p1, const Particle& p2) override
 			{
-				double E = 0;
-				for(auto& neighbor : p1.GetNeighbors())
+				Interaction ep;
+
+				double rij = (p1.GetPositionRef() - p2.GetPositionRef()).norm();
+				if(rij < _rcut)
 				{
-					double rij = (p1.GetPositionRef() - neighbor->GetPositionRef()).norm();
-					if(rij <= _rcut)
-					{
-						double r6 = pow(_sigma/rij,6);
-						E += 4*_epsilon*(r6*r6-r6);
-					}
+					double sr6 = pow(_sigma/rij,6);
+					ep.energy += 4*_epsilon*(sr6*sr6-sr6);
+					ep.virial += 24*_epsilon*(sr6-2*sr6*sr6)/rij;
 				}
 
-				return E;
+				return ep;
 			}
+
 	};
 }
