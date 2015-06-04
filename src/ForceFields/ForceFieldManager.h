@@ -2,7 +2,9 @@
 
 #include "../Particles/Particle.h"
 #include "../Worlds/World.h"
+#include "../Ensembles/Ensemble.h"
 #include "ForceField.h"
+#include <math.h>
 
 namespace SAPHRON
 {
@@ -15,9 +17,10 @@ namespace SAPHRON
 			// Resize Forcefield vector.
 			void ResizeFF(int n);
 
-			// Evaluate non-bonded interactions of a particle.
-			// Requires particle and distance between C.O.M of parent.
-			inline EPTuple EvaluateNonBonded(Particle& particle)
+			// Evaluate non-bonded interactions of a particle including energy and virial pressure contribution.
+			// Implementation follows Allan and Tildesley. See Forcefield.h. Tail corrections are also summed in.
+			// Pressure tail contribution is added to isotropic pressure parts only!
+			inline EPTuple EvaluateNonBonded(Particle& particle, const CompositionList& compositions, double volume)
 			{
 				EPTuple ep;				
 				
@@ -26,20 +29,27 @@ namespace SAPHRON
 				for(auto& neighbor : neighbors)
 				{
 					auto* ff = _forcefields[particle.GetSpeciesID()][neighbor->GetSpeciesID()];
-					Position rij = particle.GetPositionRef() - neighbor->GetPositionRef();
+					Position rij = particle.GetPosition() - neighbor->GetPosition();
 					if(ff != nullptr)
 					{
 						// Interaction containing energy and virial.
 						auto ij = ff->Evaluate(particle, *neighbor);
 						ep.energy.nonbonded += ij.energy; // Sum nonbonded energy.
+						double rho = 0;
+						
+						if(!compositions.empty())
+							 rho = (compositions.at(neighbor->GetSpeciesID())/volume);
 
+						ep.energy.nonbonded += 2.0*M_PI*rho*ff->EnergyTailCorrection();
+						
 						// Sum pressure terms.
-						ep.pressure.pxx += ij.virial * rij.x * rij.x;
+						double pcorrect = 2.0*M_PI*rho*rho*ff->PressureTailCorrection();
+						ep.pressure.pxx += ij.virial * rij.x * rij.x + pcorrect;
+						ep.pressure.pyy += ij.virial * rij.y * rij.y + pcorrect;
+						ep.pressure.pyz += ij.virial * rij.z * rij.z + pcorrect;
 						ep.pressure.pxy += ij.virial * rij.x * rij.y;
 						ep.pressure.pxz += ij.virial * rij.x * rij.z;
-						ep.pressure.pyy += ij.virial * rij.y * rij.y;
 						ep.pressure.pyz += ij.virial * rij.y * rij.z;
-						ep.pressure.pyz += ij.virial * rij.z * rij.z;
 					}
 
 					// Iterate children with neighbor's children.
@@ -47,19 +57,27 @@ namespace SAPHRON
 					{
 						for(auto& nchild : neighbor->GetChildren())
 						{
-							Position nrij = child->GetPositionRef() - neighbor->GetPositionRef();
+							Position nrij = child->GetPosition() - neighbor->GetPosition();
 							ff = _forcefields[child->GetSpeciesID()][nchild->GetSpeciesID()];
 							if(ff != nullptr)
 							{
 								// Interaction containing energy and virial.
 								auto ij = ff->Evaluate(*child, *nchild);
 								ep.energy.nonbonded += ij.energy; // Sum nonbonded energy.
-								
+								double rho = 0;
+
+								if(!compositions.empty())
+									rho = (compositions.at(neighbor->GetSpeciesID())/volume);
+
+								ep.energy.nonbonded += 2.0*M_PI*rho*ff->EnergyTailCorrection();
+
+
 								// Sum pressure terms. Average non-diagonal elements.
 								// We are assuming it's symmetric.
-								ep.pressure.pxx += ij.virial * nrij.x * rij.x;
-								ep.pressure.pyy += ij.virial * nrij.y * rij.y;
-								ep.pressure.pyz += ij.virial * nrij.z * rij.z;
+								double pcorrect = 2.0*M_PI*rho*rho*ff->PressureTailCorrection();
+								ep.pressure.pxx += ij.virial * nrij.x * rij.x + pcorrect;
+								ep.pressure.pyy += ij.virial * nrij.y * rij.y + pcorrect;
+								ep.pressure.pyz += ij.virial * nrij.z * rij.z + pcorrect;
 								ep.pressure.pxy += ij.virial * 0.5*(nrij.x * rij.y + nrij.y * rij.x);
 								ep.pressure.pxz += ij.virial * 0.5*(nrij.x * rij.z + nrij.z * rij.x);
 								ep.pressure.pyz += ij.virial * 0.5*(nrij.y * rij.z + nrij.z * rij.y);
@@ -69,7 +87,7 @@ namespace SAPHRON
 				}
 	
 				for(auto& child : particle.GetChildren())
-					ep += EvaluateNonBonded(*child);	
+					ep += EvaluateNonBonded(*child, compositions, volume);	
 				return ep;
 			}
 
@@ -104,7 +122,7 @@ namespace SAPHRON
 			// Removes a forcefield from the manager.
 			void RemoveForceField(int p1type, int p2type);
 
-			// Evaluate the Hamiltonian of the entire world.
+			// Evaluate the energy and virial contribution of the entire world.
 			inline EPTuple EvaluateHamiltonian(World& world)
 			{
 				EPTuple ep;
@@ -112,32 +130,34 @@ namespace SAPHRON
 				for (int i = 0; i < world.GetParticleCount(); ++i)
 				{
 					auto* particle = world.SelectParticle(i);
-					
-					ep += EvaluateNonBonded(*particle);
+					ep += EvaluateHamiltonian(*particle, world.GetComposition(), world.GetVolume());	
 					ep.energy.connectivity += EvaluateConnectivity(*particle);
 				}
 
 				ep.energy.nonbonded *= 0.5;
 				ep.pressure *= 0.5;
-				return ep;
-			}
 
-			// Evaluate the energy and virial contribution of the particle.
-			inline EPTuple EvaluateHamiltonian(Particle& particle)
-			{
-				EPTuple ep;
-				ep += EvaluateNonBonded(particle);
-				ep.energy.connectivity = EvaluateConnectivity(particle);
 				return ep;
 			}
 
 			// Evaluate the energy and virial contribution of a list of particles.
-			inline EPTuple EvaluateHamiltonian(const ParticleList& particles)
+			inline EPTuple EvaluateHamiltonian(const ParticleList& particles, const CompositionList& compositions, double volume)
 			{
 				EPTuple ep;
 				for(auto& particle : particles)
-					ep += EvaluateHamiltonian(*particle);
+					ep += EvaluateHamiltonian(*particle, compositions, volume);
 
+				return ep;
+			}
+
+			// Evaluate the energy and virial contribution of the particle.
+			inline EPTuple EvaluateHamiltonian(Particle& particle, const CompositionList& compositions, double volume)
+			{
+				EPTuple ep = EvaluateNonBonded(particle, compositions, volume);
+				ep.energy.connectivity = EvaluateConnectivity(particle);
+
+				// Divide virial by volume to get pressure. 
+				ep.pressure /= volume;
 				return ep;
 			}
 	};

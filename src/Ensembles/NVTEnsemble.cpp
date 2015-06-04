@@ -13,14 +13,14 @@ namespace SAPHRON
 
 			// Draw sample, evaluate energy.
 			move->Draw(_world, _particles);
-			auto prevH = _ffmanager.EvaluateHamiltonian(_particles);
+			auto prevH = _ffmanager.EvaluateHamiltonian(_particles, _world.GetComposition(), _world.GetVolume());
 
 			// Perform move.
 			EPTuple currH;
 			if(move->Perform(_world, _particles))
 				currH = _ffmanager.EvaluateHamiltonian(_world);
 			else
-				currH = _ffmanager.EvaluateHamiltonian(_particles);
+				currH = _ffmanager.EvaluateHamiltonian(_particles, _world.GetComposition(), _world.GetVolume());
 
 			if(AcceptanceProbability(prevH.energy.total(), currH.energy.total()) < _rand.doub())
 				move->Undo();

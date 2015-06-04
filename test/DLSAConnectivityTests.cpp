@@ -29,7 +29,8 @@ TEST(DLSAConnectivity, DefaultBehavior)
 		auto* particle = world.SelectParticle(i);
 		particle->AddConnectivity(&connectivity);
 		particle->AddObserver(&connectivity);
-		ASSERT_EQ(-1.0, ffm.EvaluateHamiltonian(*particle).energy.connectivity);
+		auto H = ffm.EvaluateHamiltonian(*particle, world.GetComposition(), world.GetVolume());
+		ASSERT_EQ(-1.0, H.energy.connectivity);
 	}
 
 	// Loop though, change directors.
@@ -44,6 +45,7 @@ TEST(DLSAConnectivity, DefaultBehavior)
 	for (int i = 0; i < world.GetParticleCount(); ++i)
 	{
 		auto* particle = world.SelectParticle(i);
-		ASSERT_EQ(0.5, ffm.EvaluateHamiltonian(*particle).energy.connectivity);
+		auto H = ffm.EvaluateHamiltonian(*particle, world.GetComposition(), world.GetVolume());
+		ASSERT_EQ(0.5, H.energy.connectivity);
 	}
 }

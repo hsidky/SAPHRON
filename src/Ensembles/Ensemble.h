@@ -14,7 +14,7 @@ namespace SAPHRON
 	{
 		private:
 			// Boltzmann constant.
-			double _kb = 1.0;
+			static double _kb;
 
 			// Iteration counter.
 			int _iterations = 0;
@@ -37,13 +37,13 @@ namespace SAPHRON
 			virtual void Run(int iterations) = 0;
 
 			// Sets the Boltzmann constant.
-			void SetBoltzmannConstant(double kb)
+			static void SetBoltzmannConstant(double kb)
 			{
 				_kb = kb;
 			}
 
 			// Gets the Boltzmann constant.
-			inline double GetBoltzmannConstant()
+			inline static double GetBoltzmannConstant()
 			{
 				return _kb;
 			}

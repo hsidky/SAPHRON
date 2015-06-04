@@ -4,6 +4,7 @@ namespace SAPHRON
 {
 	struct Pressure
 	{
+		double ideal = 0;
 		double pxx = 0;
 		double pxy = 0;
 		double pxz = 0;
@@ -14,7 +15,7 @@ namespace SAPHRON
 		// Calculate isotropic pressure.
 		double isotropic()
 		{
-			return (pxx + pyy + pzz)/3.0;
+			return (pxx + pyy + pzz)/3.0 + ideal;
 		}
 
 		inline Pressure& operator+=(const Pressure& rhs)
@@ -25,6 +26,7 @@ namespace SAPHRON
 			pyy += rhs.pyy;
 			pyz += rhs.pyz;
 			pzz += rhs.pzz;
+			ideal += rhs.ideal;
 			return *this;
 		}
 
@@ -36,6 +38,7 @@ namespace SAPHRON
 			pyy -= rhs.pyy;
 			pyz -= rhs.pyz;
 			pzz -= rhs.pzz;
+			ideal -= rhs.ideal;
 			return *this;
 		}
 
@@ -47,6 +50,19 @@ namespace SAPHRON
 			pyy *= rhs;
 			pyz *= rhs;
 			pzz *= rhs;
+			ideal *= rhs;
+			return *this;
+		}
+
+		inline Pressure& operator/=(const double& rhs)
+		{
+			pxx /= rhs;
+			pxy /= rhs;
+			pxz /= rhs;
+			pyy /= rhs;
+			pyz /= rhs;
+			pzz /= rhs;
+			ideal /= rhs;
 			return *this;
 		}
 	};
@@ -59,6 +75,7 @@ namespace SAPHRON
 		lhs.pyy += rhs.pyy;
 		lhs.pyz += rhs.pyz;
 		lhs.pzz += rhs.pzz;
+		lhs.ideal += rhs.ideal;
 		return lhs;
 	}
 
@@ -70,6 +87,7 @@ namespace SAPHRON
 		lhs.pyy -= rhs.pyy;
 		lhs.pyz -= rhs.pyz;
 		lhs.pzz -= rhs.pzz;
+		lhs.ideal -= rhs.ideal;
 		return lhs;
 	}
 }

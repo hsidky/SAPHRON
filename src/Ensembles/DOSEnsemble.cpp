@@ -32,7 +32,7 @@ namespace SAPHRON
 	
 				// Draw sample, evaluate energy.
 				move->Draw(_world, _particles);
-				auto prevH = _ffmanager.EvaluateHamiltonian(_particles);
+				auto prevH = _ffmanager.EvaluateHamiltonian(_particles, _world.GetComposition(), _world.GetVolume());
 				double prevOP = _orderp.EvaluateParameter(_eptuple.energy.total());
 
 				// Perform move and re-evaluate energy.
@@ -40,7 +40,7 @@ namespace SAPHRON
 				if(move->Perform(_world, _particles))
 					currH = _ffmanager.EvaluateHamiltonian(_world);
 				else
-					currH = _ffmanager.EvaluateHamiltonian(_particles);
+					currH = _ffmanager.EvaluateHamiltonian(_particles, _world.GetComposition(), _world.GetVolume());
 	
 				//Accept/reject.
 				auto newE = _eptuple + (currH - prevH);

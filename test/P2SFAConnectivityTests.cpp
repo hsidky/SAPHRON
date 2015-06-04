@@ -19,5 +19,5 @@ TEST(P2SFAConnectivity, DefaultBehavior)
 
 	ForceFieldManager ffm;
 
-	ASSERT_EQ(-1.0, ffm.EvaluateHamiltonian(site1).energy.connectivity);
+	ASSERT_EQ(-1.0, ffm.EvaluateHamiltonian(site1, {}, 0).energy.connectivity);
 }
