@@ -43,13 +43,13 @@ namespace SAPHRON
 						ep.energy.nonbonded += 2.0*M_PI*rho*ff->EnergyTailCorrection();
 						
 						// Sum pressure terms.
-						double pcorrect = 2.0*M_PI*rho*rho*ff->PressureTailCorrection();
-						ep.pressure.pxx += ij.virial * rij.x * rij.x + pcorrect;
-						ep.pressure.pyy += ij.virial * rij.y * rij.y + pcorrect;
-						ep.pressure.pyz += ij.virial * rij.z * rij.z + pcorrect;
-						ep.pressure.pxy += ij.virial * rij.x * rij.y;
-						ep.pressure.pxz += ij.virial * rij.x * rij.z;
-						ep.pressure.pyz += ij.virial * rij.y * rij.z;
+						double pcorrect = 2.0/3.0*M_PI*rho*rho*ff->PressureTailCorrection();
+						ep.pressure.pxx -= ij.virial * rij.x * rij.x + pcorrect;
+						ep.pressure.pyy -= ij.virial * rij.y * rij.y + pcorrect;
+						ep.pressure.pyz -= ij.virial * rij.z * rij.z + pcorrect;
+						ep.pressure.pxy -= ij.virial * rij.x * rij.y;
+						ep.pressure.pxz -= ij.virial * rij.x * rij.z;
+						ep.pressure.pyz -= ij.virial * rij.y * rij.z;
 					}
 
 					// Iterate children with neighbor's children.
@@ -75,12 +75,12 @@ namespace SAPHRON
 								// Sum pressure terms. Average non-diagonal elements.
 								// We are assuming it's symmetric.
 								double pcorrect = 2.0*M_PI*rho*rho*ff->PressureTailCorrection();
-								ep.pressure.pxx += ij.virial * nrij.x * rij.x + pcorrect;
-								ep.pressure.pyy += ij.virial * nrij.y * rij.y + pcorrect;
-								ep.pressure.pyz += ij.virial * nrij.z * rij.z + pcorrect;
-								ep.pressure.pxy += ij.virial * 0.5*(nrij.x * rij.y + nrij.y * rij.x);
-								ep.pressure.pxz += ij.virial * 0.5*(nrij.x * rij.z + nrij.z * rij.x);
-								ep.pressure.pyz += ij.virial * 0.5*(nrij.y * rij.z + nrij.z * rij.y);
+								ep.pressure.pxx -= ij.virial * nrij.x * rij.x + pcorrect;
+								ep.pressure.pyy -= ij.virial * nrij.y * rij.y + pcorrect;
+								ep.pressure.pyz -= ij.virial * nrij.z * rij.z + pcorrect;
+								ep.pressure.pxy -= ij.virial * 0.5*(nrij.x * rij.y + nrij.y * rij.x);
+								ep.pressure.pxz -= ij.virial * 0.5*(nrij.x * rij.z + nrij.z * rij.x);
+								ep.pressure.pyz -= ij.virial * 0.5*(nrij.y * rij.z + nrij.z * rij.y);
 							}
 						}
 					}

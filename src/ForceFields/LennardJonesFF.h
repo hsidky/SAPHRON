@@ -43,7 +43,7 @@ namespace SAPHRON
 			inline virtual double PressureTailCorrection() override 
 			{
 				double sig3 = pow(_sigma, 3);
-				return 8.0/3.0*_epsilon*sig3*(2.0/3.0*pow(sig3,3)/pow(_rcut,9)-sig3/pow(_rcut,3)); 
+				return 8.0*_epsilon*sig3*(2.0/3.0*pow(sig3,3)/pow(_rcut,9)-sig3/pow(_rcut,3)); 
 			}
 
 	};
