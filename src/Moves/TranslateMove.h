@@ -25,7 +25,7 @@ namespace SAPHRON
 			inline void Perform(Particle* particle)
 			{
 				_particle = particle;
-				_prevPos = particle->GetPositionRef();
+				_prevPos = particle->GetPosition();
 				_particle->SetPosition(_prevPos.x + _dx*(_rand.doub()-0.5), 
 									   _prevPos.y + _dx*(_rand.doub()-0.5), 
 									   _prevPos.z + _dx*(_rand.doub()-0.5));

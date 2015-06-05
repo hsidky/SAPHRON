@@ -22,6 +22,16 @@ TEST(Site, DefaultConstructor)
 	ASSERT_EQ(d, s.GetDirector());
 	d.x = 1.0;
 	ASSERT_NE(d, s.GetDirector());
+
+	// Test checkpoint 
+	s.SetCheckpoint();
+	ASSERT_EQ(Position({0.0, 0.0, 0.0}), s.GetCheckpoint());
+	s.SetPosition({2.0, 0, 0});
+	ASSERT_EQ(Position({2.0, 0.0, 0.0}), s.GetPosition());
+	ASSERT_EQ(Position({0.0, 0.0, 0.0}), s.GetCheckpoint());
+	ASSERT_EQ(2.0, (s.GetCheckpoint() - s.GetPosition()).norm());
+	s.SetCheckpoint();
+	ASSERT_EQ(Position({2.0, 0.0, 0.0}), s.GetCheckpoint());
 }
 
 TEST(Site, Identifiers)

@@ -11,12 +11,13 @@ namespace SAPHRON
 			Position _position;
 			Director _director;
 			ParticleList _children;
+			Position _checkpoint;
 
 		public:
 
 			// Initializes a site at a given position with a given director and species.
 			Site(Position position, Director director, std::string species)
-				: Particle(species), _position(position), _director(director), _children(0){}
+				: Particle(species), _position(position), _director(director), _children(0), _checkpoint(){}
 
 			// Gets site position.
 			inline virtual Position GetPosition() const override
@@ -57,6 +58,18 @@ namespace SAPHRON
 				_position.z = z;
 				this->_pEvent.position = 1;
 				this->NotifyObservers();
+			}
+
+			// Set position checkpoint.
+			inline virtual void SetCheckpoint() override
+			{
+				_checkpoint = _position;
+			}
+
+			// Get position checkpoint.
+			inline virtual const Position& GetCheckpoint() const override
+			{
+				return _checkpoint;
 			}
 
 			// Gets site director.

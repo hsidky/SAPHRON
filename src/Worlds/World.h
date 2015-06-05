@@ -60,6 +60,12 @@ namespace SAPHRON
 			// Set neighbor list radius cutoff.
 			virtual void SetNeighborRadius(double ncut) = 0;
 
+			// Set skin thickness for neighbor list re-generation.
+			virtual void SetSkinThickness(double x) = 0;
+
+			// Get skin thickness for neighbor list re-generation.
+			virtual double GetSkinThickness() = 0;
+
 			// Apply minimum image convention to a particle's position.
 			virtual void ApplyPeriodicBoundaries(Particle* particle) = 0;
 

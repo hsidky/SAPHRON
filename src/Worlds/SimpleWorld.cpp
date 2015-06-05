@@ -46,7 +46,7 @@ namespace SAPHRON
 	// Configure Particles in the lattice. For n particles and n fractions, the lattice will be
 	// initialized with the appropriate composition.
 	void SimpleWorld::ConfigureParticles(const std::vector<Particle*> particles,
-	                        const std::vector<double> fractions)
+	                        const std::vector<double> fractions, int max)
 	{
 		if(particles.size() != fractions.size())
 		{
@@ -90,16 +90,20 @@ namespace SAPHRON
 			for(int j = 0; j < cnt; j++)
 				if(counts[j] > 0 )
 				{
-					AddParticle(particles[j]->Clone());
-					_particles[i]->SetPosition({x,y,z});
+					Particle* pnew = particles[j]->Clone();
+					pnew->SetPosition({x,y,z});
+					AddParticle(pnew);
 					--counts[j];
 					break;
 				}
 
 			// Increment counters.
-			x += floor((y + z) / (_zlength + _ylength));
-			y += floor(z / _zlength);
+			x += floor((y + z) / (round(_zlength) + round(_ylength)));
+			y += floor(z / round(_zlength));
 			z += 1.0;
+
+			if(max != 0 && i >= max - 1)
+				return;
 		}
 	}
 
@@ -109,7 +113,10 @@ namespace SAPHRON
 
 		// Clear neighbor list before repopulating.
 		for(int i = 0; i < n; ++i)
+		{
 			_particles[i]->ClearNeighborList();
+			_particles[i]->SetCheckpoint();
+		}
 
 		for(int i = 0; i < n - 1; ++i)
 		{

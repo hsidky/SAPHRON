@@ -17,9 +17,16 @@
 
 namespace SAPHRON
 {
+	// Minimum image convention.
 	inline double anint( const double &x )
 	{
 		return ( x >= 0 ) ? floor( x + 0.5 ) : ceil( x - 0.5 );
+	}
+
+	// Periodic boundary conditions.
+	inline double bnint( const double &x )
+	{
+		return ( x >= 0 ) ? floor( x ) : ceil( x );
 	}
 
 	typedef std::list<Particle*> NeighborList;
@@ -185,6 +192,12 @@ namespace SAPHRON
 			// Set a particle position.
 			virtual void SetPosition(double x, double y, double z) = 0;
 
+			// Sets a checkpoint where the particle records its position at that moment. 
+			virtual void SetCheckpoint() = 0;
+
+			// Gets a particle's position at the checkpoint.
+			virtual const Position& GetCheckpoint() const = 0;
+
 			// Get the particle director.
 			virtual Director GetDirector() const = 0;
 
@@ -250,24 +263,29 @@ namespace SAPHRON
 			}
 
 			// Add particle observer.
-			void AddObserver(ParticleObserver* observer)
+			inline void AddObserver(ParticleObserver* observer)
 			{
 				_observers.push_back(observer);
 			}
 
 			// Remove particle observer.
-			void RemoveObserver(ParticleObserver* observer)
+			inline void RemoveObserver(ParticleObserver* observer)
 			{
 				_observers.remove(observer);
 			}
 
 			// Notify registered particle observers of a change.
-			void NotifyObservers()
+			inline void NotifyObservers()
 			{
 				for (auto observer : _observers)
 					observer->ParticleUpdate(_pEvent);
 
 				_pEvent.mask = false;
+			}
+
+			inline int ObserverCount()
+			{	
+				return (int)_observers.size();
 			}
 
 			virtual void AcceptVisitor(Visitor &v) override

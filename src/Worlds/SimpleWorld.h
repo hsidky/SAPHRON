@@ -20,6 +20,9 @@ namespace SAPHRON
 			// Neighbor list cutoff radius.
 			double _ncut;
 
+			// Skin thickness.
+			double _rskin; 
+
 			// Composition of the system.
 			CompositionList _composition;
 
@@ -27,6 +30,24 @@ namespace SAPHRON
 			void RemoveParticleComposition(Particle* particle);
 			void ModifyParticleComposition(const ParticleEvent& pEvent);
 			void BuildCompositionList();
+
+			// Perform all the appropriate configuration for a new particle.
+			inline void ConfigureParticle(Particle* particle)
+			{
+				// Add this world as an observer.
+				particle->AddObserver(this);
+
+				// If particle has preexisiting neighbors, add it to them 
+				// to maintain symmetry. 
+				for(auto& neighbor : particle->GetNeighbors())
+					neighbor->AddNeighbor(particle);
+
+				// Add particle to the composition list.
+				AddParticleComposition(particle);
+
+				// Set particle checkpoint for neighbor lists.
+				particle->SetCheckpoint();
+			}
 
 		protected:
 			// Visit children.
@@ -37,15 +58,16 @@ namespace SAPHRON
 			}
 
 		public:
-			SimpleWorld(double xlength, double ylength, double zlength, double ncut, int seed = 1)
-				: _xlength(xlength), _ylength(ylength), _zlength(zlength), _rand(seed), _ncut(ncut)
+			SimpleWorld(double xlength, double ylength, double zlength, double ncut, int seed = 1) : 
+			_xlength(xlength), _ylength(ylength), _zlength(zlength), _particles(0), 
+			_rand(seed), _ncut(ncut), _rskin(1.0)
 			{
 			}
 
 			// Configure Particles in the lattice. For n particles and n fractions, the lattice will be
-			// initialized with the appropriate composition.
+			// initialized with the appropriate composition.  If max is set, it will stop at that number.
 			void ConfigureParticles(const std::vector<Particle*> particles,
-			                        const std::vector<double> fractions);
+			                        const std::vector<double> fractions, int max = 0);
 			
 
 			// Draw a random particle from the world.
@@ -93,18 +115,14 @@ namespace SAPHRON
 			// Need to visit this further.
 			virtual void AddParticle(Particle&& particle) override
 			{
-				particle.AddObserver(this);
-				AddParticleComposition(&particle);
 				_particles.push_back(std::move(&particle));
+				ConfigureParticle(_particles.back()); // Do this after since we are moving.
 			}
 
 			// Add particle. Re-connect neighbors if they exist.
 			virtual void AddParticle(Particle* particle) override
 			{
-				particle->AddObserver(this);
-				for(auto& neighbor : particle->GetNeighbors())
-					neighbor->AddNeighbor(particle);
-				AddParticleComposition(particle);
+				ConfigureParticle(particle);
 				_particles.push_back(particle);
 			}
 
@@ -140,23 +158,29 @@ namespace SAPHRON
 			}
 
 			// Particle observer to update world composition.
-			virtual void ParticleUpdate(const ParticleEvent& pEvent) override
+			inline virtual void ParticleUpdate(const ParticleEvent& pEvent) override
 			{
-				if(!pEvent.species)
-					return;
-				
-				ModifyParticleComposition(pEvent);
+				if(pEvent.species)
+					ModifyParticleComposition(pEvent);
+
+				if(pEvent.position)
+				{
+					// Check if we need to perform a neighbor list update.
+					auto* p = pEvent.GetParticle();
+					if((p->GetPosition() - p->GetCheckpoint()).norm() > _rskin/2.0)
+						UpdateNeighborList();				
+				}
+
 			}
 
 			// Apply periodic boundary conditions to particle position.
 			virtual void ApplyPeriodicBoundaries(Particle* particle)
 			{
 				auto& prevP = particle->GetPositionRef();
-				particle->SetPosition(prevP.x - _xlength*anint(prevP.x/_xlength),
-									  prevP.y - _ylength*anint(prevP.y/_ylength),
-									  prevP.z - _zlength*anint(prevP.z/_zlength));
+				particle->SetPosition(prevP.x - _xlength*bnint(prevP.x/_xlength),
+									  prevP.y - _ylength*bnint(prevP.y/_ylength),
+									  prevP.z - _zlength*bnint(prevP.z/_zlength));
 			}
-
 
 			// Sets the neighbor list cutoff radius.
 			virtual void SetNeighborRadius(double ncut) override
@@ -168,6 +192,18 @@ namespace SAPHRON
 			virtual double GetNeighborRadius() override
 			{
 				return _ncut; 
+			}
+
+			// Set skin thickness for neighbor list re-generation.
+			virtual void SetSkinThickness(double x)
+			{
+				_rskin = x;
+			}
+
+			// Get skin thickness for neighbor list re-generation.
+			virtual double GetSkinThickness()
+			{
+				return _rskin;
 			}
 
 			int GetLatticeSize()

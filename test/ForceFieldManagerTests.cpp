@@ -28,6 +28,7 @@ TEST(ForceFieldManager, DefaultBehavior)
 	ffm.AddForceField("L1", "L1", ff);
 	ffm.AddForceField("L1", "L2", ff2);
 
-	ASSERT_EQ(-4.0, ffm.EvaluateHamiltonian(s1, {}, 0).energy.total());
-	ASSERT_EQ(0.0, ffm.EvaluateHamiltonian(s1, {}, 0).pressure.isotropic());
+	// Note: cannot set volume to zero (or else D.B.Z).
+	ASSERT_EQ(-4.0, ffm.EvaluateHamiltonian(s1, {}, 10).energy.total());
+	ASSERT_EQ(0.0, ffm.EvaluateHamiltonian(s1, {}, 10).pressure.isotropic());
 }
