@@ -54,11 +54,14 @@ namespace SAPHRON
 			// Remove particle(s) based on a supplied filter.
 			virtual void RemoveParticle(std::function<bool(Particle*)> filter) = 0;
 
+			// Get neighbor list cutoff radius.
 			virtual double GetNeighborRadius() = 0;
 
+			// Set neighbor list radius cutoff.
 			virtual void SetNeighborRadius(double ncut) = 0;
 
-			//virtual int GetWorldParticleCount() = 0;
+			// Apply minimum image convention to a particle's position.
+			virtual void ApplyPeriodicBoundaries(Particle* particle) = 0;
 
 			// Accept a visitor.
 			virtual void AcceptVisitor(class Visitor &v) override

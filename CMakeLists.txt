@@ -238,6 +238,12 @@ target_include_directories(LennardJonesFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(LennardJonesFFTests googletest) 
 add_test(LennardJonesFFTests LennardJonesFFTests)
 
+add_executable(TranslateMoveTests test/TranslateMoveTests.cpp)
+target_link_libraries(TranslateMoveTests ${TEST_DEPS})
+target_include_directories(TranslateMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(TranslateMoveTests googletest) 
+add_test(TranslateMoveTests TranslateMoveTests)
+
 # end add testing 
 
 install(TARGETS saphron libsaphron 

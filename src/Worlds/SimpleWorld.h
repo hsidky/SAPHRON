@@ -148,6 +148,16 @@ namespace SAPHRON
 				ModifyParticleComposition(pEvent);
 			}
 
+			// Apply periodic boundary conditions to particle position.
+			virtual void ApplyPeriodicBoundaries(Particle* particle)
+			{
+				auto& prevP = particle->GetPositionRef();
+				particle->SetPosition(prevP.x - _xlength*anint(prevP.x/_xlength),
+									  prevP.y - _ylength*anint(prevP.y/_ylength),
+									  prevP.z - _zlength*anint(prevP.z/_zlength));
+			}
+
+
 			// Sets the neighbor list cutoff radius.
 			virtual void SetNeighborRadius(double ncut) override
 			{

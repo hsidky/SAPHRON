@@ -182,6 +182,9 @@ namespace SAPHRON
 			// Move a particle to a new set of coordinates.
 			virtual void SetPosition(Position && position) = 0;
 
+			// Set a particle position.
+			virtual void SetPosition(double x, double y, double z) = 0;
+
 			// Get the particle director.
 			virtual Director GetDirector() const = 0;
 

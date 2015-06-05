@@ -97,7 +97,8 @@ namespace SAPHRON
 			// Returns the potential and virial contribution between two particle.
 			virtual Interaction Evaluate(const Particle& p1, const Particle& p2) = 0;
 
-			// Evaluates the energy tail correction term.
+			// Evaluates the energy tail correction term. This is precisely integral(u(r)*r^2,rc,inf). The 
+			// remainder is taken care of by the forcefield manager.
 			virtual double EnergyTailCorrection() { return 0.0; }
 
 			// Evalutes the pressure tail correction term.

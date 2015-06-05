@@ -48,6 +48,17 @@ namespace SAPHRON
 				this->NotifyObservers();
 			}
 
+			// Sets site position
+			inline virtual void SetPosition(double x, double y, double z) override
+			{
+				this->_pEvent.SetOldPosition(_position);
+				_position.x = x;
+				_position.y = y;
+				_position.z = z;
+				this->_pEvent.position = 1;
+				this->NotifyObservers();
+			}
+
 			// Gets site director.
 			inline virtual Director GetDirector() const override
 			{
