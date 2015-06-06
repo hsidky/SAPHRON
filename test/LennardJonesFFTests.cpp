@@ -92,7 +92,7 @@ TEST(LennardJonesFF, ReducedProperties)
 	NVTEnsemble ensemble(world, ffm, mm, T, 34435);
 	ensemble.SetBoltzmannConstant(kb);
 	ensemble.AddObserver(&observer);
-	ensemble.AddObserver(&csv);
+	//ensemble.AddObserver(&csv);
 	// Run 
-	ensemble.Run(100000);
+	//ensemble.Run(100000);
 }

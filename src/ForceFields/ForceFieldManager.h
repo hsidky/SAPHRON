@@ -46,7 +46,7 @@ namespace SAPHRON
 						if(!compositions.empty())
 							 rho = (compositions.at(neighbor->GetSpeciesID())/volume);
 
-						//ep.energy.nonbonded += 2.0*M_PI*rho*ff->EnergyTailCorrection();
+						ep.energy.nonbonded += 2.0*M_PI*rho*ff->EnergyTailCorrection();
 						
 						// Sum pressure terms.
 						double pcorrect = 2.0/3.0*M_PI*rho*rho*ff->PressureTailCorrection();

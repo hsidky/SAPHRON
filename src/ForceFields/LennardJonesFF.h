@@ -10,14 +10,17 @@ namespace SAPHRON
 	{
 		private:
 			double _epsilon;
-			double _sigma;
-			double _rcut;
+			double _sigmasq;
+			double _sigma3;
+			double _rcutsq;
+			double _rcut3;
 
 		public:
 
 			LennardJonesFF(double epsilon, double sigma, double rcut) : 
-				_epsilon(epsilon), _sigma(sigma), _rcut(rcut)
-			{
+			_epsilon(epsilon), _sigmasq(sigma*sigma), _sigma3(_sigmasq*sigma), 
+			_rcutsq(rcut*rcut), _rcut3(_rcutsq*rcut)
+			{ 
 			}
 
 			inline virtual Interaction Evaluate(const Particle& p1, const Particle& p2) override
@@ -29,13 +32,13 @@ namespace SAPHRON
 				if(world != nullptr)
 					world->ApplyMinimumImage(rij);
 
-				double r = rij.norm();
+				double rsq = rij.norm2();
 
-				if(r < _rcut)
+				if(rsq < _rcutsq)
 				{
-					double sr6 = pow(_sigma/r,6);
+					double sr6 = pow(_sigmasq/rsq,3);
 					ep.energy = 4*_epsilon*(sr6*sr6-sr6);
-					ep.virial = 24*_epsilon*(sr6-2*sr6*sr6)/(r*r);
+					ep.virial = 24*_epsilon*(sr6-2*sr6*sr6)/rsq;
 				}
 
 				return ep;
@@ -43,14 +46,12 @@ namespace SAPHRON
 
 			inline virtual double EnergyTailCorrection() override
 			{
-				double sig3 = pow(_sigma, 3);
-				return 4.0/3.0*_epsilon*sig3*(1.0/3.0*pow(sig3,3)/pow(_rcut,9)-sig3/pow(_rcut,3)); 
+				return 4.0/3.0*_epsilon*_sigma3*(1.0/3.0*pow(_sigma3,3)/pow(_rcut3,3)-_sigma3/_rcut3); 
 			}
 
 			inline virtual double PressureTailCorrection() override 
 			{
-				double sig3 = pow(_sigma, 3);
-				return 8.0*_epsilon*sig3*(2.0/3.0*pow(sig3,3)/pow(_rcut,9)-sig3/pow(_rcut,3)); 
+				return 8.0*_epsilon*_sigma3*(2.0/3.0*pow(_sigma3,3)/pow(_rcut3,3)-_sigma3/_rcut3); 
 			}
 
 	};
