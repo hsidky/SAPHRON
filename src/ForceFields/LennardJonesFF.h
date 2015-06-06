@@ -1,5 +1,6 @@
 #pragma once 
 
+#include "../Worlds/World.h"
 #include "ForceField.h"
 
 namespace SAPHRON
@@ -23,12 +24,18 @@ namespace SAPHRON
 			{
 				Interaction ep;
 
-				double rij = (p1.GetPositionRef() - p2.GetPositionRef()).norm();
-				if(rij < _rcut)
+				Position rij =  p1.GetPositionRef() - p2.GetPositionRef();
+				World* world = p1.GetWorld();
+				if(world != nullptr)
+					world->ApplyMinimumImage(rij);
+
+				double r = rij.norm();
+
+				if(r < _rcut)
 				{
-					double sr6 = pow(_sigma/rij,6);
+					double sr6 = pow(_sigma/r,6);
 					ep.energy = 4*_epsilon*(sr6*sr6-sr6);
-					ep.virial = 24*_epsilon*(sr6-2*sr6*sr6)/(rij*rij);
+					ep.virial = 24*_epsilon*(sr6-2*sr6*sr6)/(r*r);
 				}
 
 				return ep;

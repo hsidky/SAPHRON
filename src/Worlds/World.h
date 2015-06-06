@@ -66,8 +66,11 @@ namespace SAPHRON
 			// Get skin thickness for neighbor list re-generation.
 			virtual double GetSkinThickness() = 0;
 
-			// Apply minimum image convention to a particle's position.
-			virtual void ApplyPeriodicBoundaries(Particle* particle) = 0;
+			// Applies minimum image convention to distances. 
+			virtual void ApplyMinimumImage(Position& position) = 0;
+
+			// Applies periodic boundaries to positions.
+			virtual void ApplyPeriodicBoundaries(Position& position) = 0;
 
 			// Accept a visitor.
 			virtual void AcceptVisitor(class Visitor &v) override

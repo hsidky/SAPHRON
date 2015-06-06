@@ -123,10 +123,7 @@ namespace SAPHRON
 				auto posj = pj->GetPositionRef();
 
 				Position dist = posi - posj;
-
-				dist.x -= _xlength*anint(dist.x/_xlength);
-				dist.y -= _ylength*anint(dist.y/_ylength);
-				dist.z -= _zlength*anint(dist.z/_zlength);
+				ApplyMinimumImage(dist);
 
 				if(dist.norm() <= _ncut)
 				{

@@ -151,7 +151,7 @@ namespace SAPHRON
 			}
 
 			// Get the associated world.
-			inline World* GetWorld()
+			inline World* GetWorld() const
 			{
 				return _world;
 			}

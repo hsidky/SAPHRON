@@ -5,6 +5,7 @@
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Particles/Site.h"
 #include "../src/Simulation/ConsoleObserver.h"
+#include "../src/Simulation/CSVObserver.h"
 #include "../src/Worlds/SimpleWorld.h"
 #include "gtest/gtest.h"
 
@@ -73,7 +74,7 @@ TEST(LennardJonesFF, ReducedProperties)
 	ffm.AddForceField("LJ", "LJ", ff);
 
 	// Initialize moves. 
-	TranslateMove move(0.3);
+	TranslateMove move(0.7);
 	MoveManager mm;
 	mm.PushMove(move);
 
@@ -85,10 +86,13 @@ TEST(LennardJonesFF, ReducedProperties)
 	flags.acceptance = 1;
 	ConsoleObserver observer(flags, 100);
 
+	CSVObserver csv("test", flags, 100);
+
 	// Initialize ensemble. 
 	NVTEnsemble ensemble(world, ffm, mm, T, 34435);
 	ensemble.SetBoltzmannConstant(kb);
 	ensemble.AddObserver(&observer);
+	ensemble.AddObserver(&csv);
 	// Run 
-	ensemble.Run(2000);
+	ensemble.Run(100000);
 }

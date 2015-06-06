@@ -22,10 +22,11 @@ namespace SAPHRON
 			{
 			}
 
+			// This is for unit testing convenience. It is not part of the interface.
 			inline void Perform(Particle* particle)
 			{
 				_particle = particle;
-				_prevPos = particle->GetPosition();
+				_prevPos = particle->GetPositionRef();
 				_particle->SetPosition(_prevPos.x + _dx*(_rand.doub()-0.5), 
 									   _prevPos.y + _dx*(_rand.doub()-0.5), 
 									   _prevPos.z + _dx*(_rand.doub()-0.5));
@@ -34,8 +35,17 @@ namespace SAPHRON
 
 			virtual bool Perform(World& world, ParticleList& particles) override
 			{
-				Perform(particles[0]);
-				world.ApplyPeriodicBoundaries(particles[0]);
+				_particle = particles[0];
+				_prevPos = _particle->GetPositionRef();
+				
+				Position newPos({_prevPos.x + _dx*(_rand.doub()-0.5), 
+								 _prevPos.y + _dx*(_rand.doub()-0.5), 
+								 _prevPos.z + _dx*(_rand.doub()-0.5)});
+				
+				world.ApplyPeriodicBoundaries(newPos);
+				_particle->SetPosition(newPos);
+				++_performed;						
+				
 				return false;
 			}
 

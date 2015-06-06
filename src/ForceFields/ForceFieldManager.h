@@ -30,6 +30,12 @@ namespace SAPHRON
 				{
 					auto* ff = _forcefields[particle.GetSpeciesID()][neighbor->GetSpeciesID()];
 					Position rij = particle.GetPosition() - neighbor->GetPosition();
+					
+					// Minimum image convention.
+					World* world = particle.GetWorld();
+					if(world != nullptr)
+						world->ApplyMinimumImage(rij);
+
 					if(ff != nullptr)
 					{
 						// Interaction containing energy and virial.

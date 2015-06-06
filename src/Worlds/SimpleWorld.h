@@ -170,19 +170,28 @@ namespace SAPHRON
 				{
 					// Check if we need to perform a neighbor list update.
 					auto* p = pEvent.GetParticle();
-					if((p->GetPosition() - p->GetCheckpoint()).norm() > _rskin/2.0)
+					auto dist = p->GetPosition() - p->GetCheckpoint();
+					ApplyMinimumImage(dist);
+					if(dist.norm() > _rskin/2.0)	
 						UpdateNeighborList();				
 				}
 
 			}
 
-			// Apply periodic boundary conditions to particle position.
-			virtual void ApplyPeriodicBoundaries(Particle* particle) override
+			// Applies periodic boundaries to positions.
+			virtual void ApplyPeriodicBoundaries(Position& position) override
 			{
-				auto& prevP = particle->GetPositionRef();
-				particle->SetPosition(prevP.x - _xlength*floor(prevP.x/_xlength),
-									  prevP.y - _ylength*floor(prevP.y/_ylength),
-									  prevP.z - _zlength*floor(prevP.z/_zlength));
+				position.x -= _xlength*floor(position.x/_xlength);
+				position.y -= _ylength*floor(position.y/_ylength);
+				position.z -= _zlength*floor(position.z/_zlength);
+			}
+
+			// Applies minimum image convention to distances.
+			virtual void ApplyMinimumImage(Position& position) override
+			{
+				position.x -= _xlength*anint(position.x/_xlength);
+				position.y -= _ylength*anint(position.y/_ylength);
+				position.z -= _zlength*anint(position.z/_zlength);
 			}
 
 			// Sets the neighbor list cutoff radius.
