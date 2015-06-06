@@ -23,12 +23,6 @@ namespace SAPHRON
 		return ( x >= 0 ) ? floor( x + 0.5 ) : ceil( x - 0.5 );
 	}
 
-	// Periodic boundary conditions.
-	inline double bnint( const double &x )
-	{
-		return ( x >= 0 ) ? floor( x ) : ceil( x );
-	}
-
 	typedef std::list<Particle*> NeighborList;
 	typedef std::list<Particle*>::iterator NeighborIterator;
 	typedef std::vector<std::string> SpeciesList;
@@ -58,6 +52,9 @@ namespace SAPHRON
 
 			// Global identifier.
 			int _globalID;
+
+			// Associated world.
+			World* _world;
 
 			// Next ID counter for unique global species.
 			static int _nextID;
@@ -92,7 +89,7 @@ namespace SAPHRON
 			// species for this particle.
 			Particle(std::string species) : 
 			_species(species), _speciesID(0), _neighbors(), _observers(), 
-			_globalID(-1), _connectivities(0), _pEvent(this)
+			_globalID(-1), _world(nullptr), _connectivities(0), _pEvent(this)
 			{
 				_globalID = SetGlobalIdentifier(GetNextGlobalID());
 				SetSpecies(species);
@@ -145,6 +142,18 @@ namespace SAPHRON
 				_identityList[id] = this;
 				_globalID = id;
 				return id;
+			}
+
+			// Set associated world. This should not be used except by the world itself!
+			void SetWorld(World* world)
+			{
+				_world = world;
+			}
+
+			// Get the associated world.
+			inline World* GetWorld()
+			{
+				return _world;
 			}
 
 			// Get reference to global particle map.
@@ -226,20 +235,20 @@ namespace SAPHRON
 			}
 
 			// Add a neighbor to neighbor list.
-			void AddNeighbor(Particle* particle)
+			inline void AddNeighbor(Particle* particle)
 			{
 				if(std::find(_neighbors.begin(), _neighbors.end(), particle) == _neighbors.end())
 					_neighbors.push_back(particle);
 			}
 
 			// Remove a neighbor from the neighbor list.
-			void RemoveNeighbor(Particle* particle)
+			inline void RemoveNeighbor(Particle* particle)
 			{
 				_neighbors.remove(particle);
 			}
 
 			// Clear the neighbor list.
-			void ClearNeighborList()
+			inline void ClearNeighborList()
 			{
 				_neighbors.clear();
 			}
@@ -283,6 +292,7 @@ namespace SAPHRON
 				_pEvent.mask = false;
 			}
 
+			// Get the number of observers.
 			inline int ObserverCount()
 			{	
 				return (int)_observers.size();

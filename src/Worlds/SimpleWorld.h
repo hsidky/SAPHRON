@@ -29,13 +29,15 @@ namespace SAPHRON
 			void AddParticleComposition(Particle* particle);
 			void RemoveParticleComposition(Particle* particle);
 			void ModifyParticleComposition(const ParticleEvent& pEvent);
-			void BuildCompositionList();
 
 			// Perform all the appropriate configuration for a new particle.
 			inline void ConfigureParticle(Particle* particle)
 			{
 				// Add this world as an observer.
 				particle->AddObserver(this);
+
+				// Associate this world with particle.
+				particle->SetWorld(this);
 
 				// If particle has preexisiting neighbors, add it to them 
 				// to maintain symmetry. 
@@ -94,7 +96,7 @@ namespace SAPHRON
 			}
 
 			// Get system composition.
-			virtual const CompositionList& GetComposition() const
+			virtual const CompositionList& GetComposition() const override
 			{
 				return _composition;
 			}
@@ -144,6 +146,7 @@ namespace SAPHRON
 				{
 					particle->RemoveFromNeighbors();
 					particle->RemoveObserver(this);
+					particle->SetWorld(nullptr);
 					RemoveParticleComposition(particle);
 					_particles.erase(it);
 				}
@@ -174,12 +177,12 @@ namespace SAPHRON
 			}
 
 			// Apply periodic boundary conditions to particle position.
-			virtual void ApplyPeriodicBoundaries(Particle* particle)
+			virtual void ApplyPeriodicBoundaries(Particle* particle) override
 			{
 				auto& prevP = particle->GetPositionRef();
-				particle->SetPosition(prevP.x - _xlength*bnint(prevP.x/_xlength),
-									  prevP.y - _ylength*bnint(prevP.y/_ylength),
-									  prevP.z - _zlength*bnint(prevP.z/_zlength));
+				particle->SetPosition(prevP.x - _xlength*floor(prevP.x/_xlength),
+									  prevP.y - _ylength*floor(prevP.y/_ylength),
+									  prevP.z - _zlength*floor(prevP.z/_zlength));
 			}
 
 			// Sets the neighbor list cutoff radius.
@@ -195,13 +198,13 @@ namespace SAPHRON
 			}
 
 			// Set skin thickness for neighbor list re-generation.
-			virtual void SetSkinThickness(double x)
+			virtual void SetSkinThickness(double x) override
 			{
 				_rskin = x;
 			}
 
 			// Get skin thickness for neighbor list re-generation.
-			virtual double GetSkinThickness()
+			virtual double GetSkinThickness() override
 			{
 				return _rskin;
 			}

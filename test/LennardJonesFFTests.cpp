@@ -73,7 +73,7 @@ TEST(LennardJonesFF, ReducedProperties)
 	ffm.AddForceField("LJ", "LJ", ff);
 
 	// Initialize moves. 
-	TranslateMove move(1.0);
+	TranslateMove move(0.3);
 	MoveManager mm;
 	mm.PushMove(move);
 
@@ -90,5 +90,5 @@ TEST(LennardJonesFF, ReducedProperties)
 	ensemble.SetBoltzmannConstant(kb);
 	ensemble.AddObserver(&observer);
 	// Run 
-	ensemble.Run(100000);
+	ensemble.Run(2000);
 }

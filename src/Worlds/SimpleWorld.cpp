@@ -37,12 +37,6 @@ namespace SAPHRON
 			++_composition[id];
 	}
 
-	void SimpleWorld::BuildCompositionList()
-	{
-		for(auto& particle: _particles)
-			AddParticleComposition(particle);
-	}
-
 	// Configure Particles in the lattice. For n particles and n fractions, the lattice will be
 	// initialized with the appropriate composition.
 	void SimpleWorld::ConfigureParticles(const std::vector<Particle*> particles,
