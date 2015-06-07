@@ -41,24 +41,20 @@ namespace SAPHRON
 						// Interaction containing energy and virial.
 						auto ij = ff->Evaluate(particle, *neighbor);
 						ep.energy.nonbonded += ij.energy; // Sum nonbonded energy.
-						double rho = 0;
 						
-						if(!compositions.empty())
-							 rho = (compositions.at(neighbor->GetSpeciesID())/volume);
-
-						ep.energy.nonbonded += 2.0*M_PI*rho*ff->EnergyTailCorrection();
-						
-						// Sum pressure terms.
-						double pcorrect = 2.0/3.0*M_PI*rho*rho*ff->PressureTailCorrection();
-						ep.pressure.pxx -= ij.virial * rij.x * rij.x + pcorrect;
-						ep.pressure.pyy -= ij.virial * rij.y * rij.y + pcorrect;
-						ep.pressure.pyz -= ij.virial * rij.z * rij.z + pcorrect;
+						ep.pressure.pxx -= ij.virial * rij.x * rij.x;
+						ep.pressure.pyy -= ij.virial * rij.y * rij.y;
+						ep.pressure.pyz -= ij.virial * rij.z * rij.z;
 						ep.pressure.pxy -= ij.virial * rij.x * rij.y;
 						ep.pressure.pxz -= ij.virial * rij.x * rij.z;
 						ep.pressure.pyz -= ij.virial * rij.y * rij.z;
 					}
 
 					// Iterate children with neighbor's children.
+					// TODO: needs cleanup to eliminate redundant inner child loop.
+					// The subtlety arises in that the parent holds the neighbor list rather
+					// than the child. We keep the final call for children below in case for some 
+					// implementation they do - in which case it's taken care of.
 					for(auto& child : particle.GetChildren())
 					{
 						for(auto& nchild : neighbor->GetChildren())
@@ -70,25 +66,56 @@ namespace SAPHRON
 								// Interaction containing energy and virial.
 								auto ij = ff->Evaluate(*child, *nchild);
 								ep.energy.nonbonded += ij.energy; // Sum nonbonded energy.
-								double rho = 0;
-
-								if(!compositions.empty())
-									rho = (compositions.at(neighbor->GetSpeciesID())/volume);
-
-								ep.energy.nonbonded += 2.0*M_PI*rho*ff->EnergyTailCorrection();
-
-
+							
 								// Sum pressure terms. Average non-diagonal elements.
 								// We are assuming it's symmetric.
-								double pcorrect = 2.0*M_PI*rho*rho*ff->PressureTailCorrection();
-								ep.pressure.pxx -= ij.virial * nrij.x * rij.x + pcorrect;
-								ep.pressure.pyy -= ij.virial * nrij.y * rij.y + pcorrect;
-								ep.pressure.pyz -= ij.virial * nrij.z * rij.z + pcorrect;
+								ep.pressure.pxx -= ij.virial * nrij.x * rij.x;
+								ep.pressure.pyy -= ij.virial * nrij.y * rij.y;
+								ep.pressure.pyz -= ij.virial * nrij.z * rij.z;
 								ep.pressure.pxy -= ij.virial * 0.5*(nrij.x * rij.y + nrij.y * rij.x);
 								ep.pressure.pxz -= ij.virial * 0.5*(nrij.x * rij.z + nrij.z * rij.x);
 								ep.pressure.pyz -= ij.virial * 0.5*(nrij.y * rij.z + nrij.z * rij.y);
 							}
 						}
+
+						// Sum in child energy and pressure tail corrections.
+						if(!compositions.empty())
+						{
+							int i = 0; 
+							for(auto& forcefield : _forcefields[child->GetSpeciesID()])
+							{
+								if(forcefield != nullptr)
+								{
+									double rho = (compositions.at(i))/volume;
+									ep.energy.nonbonded += 2.0*M_PI*rho*forcefield->EnergyTailCorrection();
+									double pcorrect = 2.0*M_PI*rho*rho*forcefield->PressureTailCorrection();
+									ep.pressure.pxx -= pcorrect;
+									ep.pressure.pyy -= pcorrect;
+									ep.pressure.pyz -= pcorrect;
+								}
+								++i;
+							}
+						}
+					}
+				}
+
+				// Sum in energy and pressure tail corrections.
+				// Sum in child energy and pressure tail corrections.
+				if(!compositions.empty())
+				{
+					int i = 0; 
+					for(auto& forcefield : _forcefields[particle.GetSpeciesID()])
+					{
+						if(forcefield != nullptr)
+						{
+							double rho = (compositions.at(i))/volume;
+							ep.energy.nonbonded += 2.0*M_PI*rho*forcefield->EnergyTailCorrection();
+							double pcorrect = 2.0*M_PI*rho*rho*forcefield->PressureTailCorrection();
+							ep.pressure.pxx -= pcorrect;
+							ep.pressure.pyy -= pcorrect;
+							ep.pressure.pyz -= pcorrect;
+						}
+						++i;
 					}
 				}
 	
