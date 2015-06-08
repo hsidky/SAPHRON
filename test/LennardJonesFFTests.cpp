@@ -45,28 +45,26 @@ TEST(LennardJonesFF, DefaultBehavior)
 TEST(LennardJonesFF, ReducedProperties)
 {
 	// Target reduced density to validate.
-	double rdensity = 9.00E-03;
+	double rdensity = 7.76E-01;
 	int N = 500; // Number of LJ particles per NIST.
 	double sigma = 1.0; 
 	double eps   = 1.0; 
 	double kb = 1.0;
 	double T = 0.85;
-
-	double volume = (double)N*pow(sigma,3)/rdensity;
-	double side = pow(volume, 1.0/3.0);
 	double rcut = 3.0*sigma;
 
 	// Prototype particle.
 	Site ljatom({0,0,0}, {0,0,0}, "LJ");
 
 	// Add lj atom to world and initialize in simple lattice configuration.
-	SimpleWorld world(side, side, side, rcut + 5.0);
-	world.SetSkinThickness(5.0);
-	world.ConfigureParticles({&ljatom}, {1.0}, N);
+	// World volume is adjusted by packworld.
+	SimpleWorld world(1, 1, 1, rcut + 15.0);
+	world.SetSkinThickness(15.0);
+	world.PackWorld({&ljatom}, {1.0}, N, rdensity);
 	world.UpdateNeighborList();
 
 	ASSERT_EQ(N, world.GetParticleCount());
-	ASSERT_NEAR(volume, world.GetVolume(), 1e-10);
+	ASSERT_NEAR((double)N*pow(sigma,3)/rdensity, world.GetVolume(), 1e-10);
 
 	// Initialize LJ forcefield.
 	LennardJonesFF ff(eps, sigma, rcut);
@@ -74,7 +72,7 @@ TEST(LennardJonesFF, ReducedProperties)
 	ffm.AddForceField("LJ", "LJ", ff);
 
 	// Initialize moves. 
-	TranslateMove move(0.7);
+	TranslateMove move(0.3);
 	MoveManager mm;
 	mm.PushMove(move);
 
@@ -84,15 +82,16 @@ TEST(LennardJonesFF, ReducedProperties)
 	flags.energy = 1;
 	flags.iterations = 1;
 	flags.acceptance = 1;
-	ConsoleObserver observer(flags, 100);
+	ConsoleObserver observer(flags, 1000);
 
-	CSVObserver csv("test", flags, 100);
+	CSVObserver csv("test", flags, 500);
 
 	// Initialize ensemble. 
 	NVTEnsemble ensemble(world, ffm, mm, T, 34435);
 	ensemble.SetBoltzmannConstant(kb);
 	ensemble.AddObserver(&observer);
 	ensemble.AddObserver(&csv);
+	
 	// Run 
-	ensemble.Run(10000);
+	ensemble.Run(1000000);
 }
