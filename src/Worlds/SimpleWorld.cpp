@@ -37,6 +37,83 @@ namespace SAPHRON
 			++_composition[id];
 	}
 
+	void SimpleWorld::PackWorld(const std::vector<Particle*> particles,
+		                       	  const std::vector<double> fractions, 
+		                       	  int n, double density)
+	{
+
+		if(particles.size() != fractions.size())
+		{
+			std::cerr << "ERROR: Particle and fraction count mismatch." << std::endl;
+			exit(-1);
+		}
+
+		auto fracs = fractions;
+		int nspecies = (int)particles.size();
+
+		// Normalize
+		double norm = 0;
+		for(int i = 0; i < nspecies; i++)
+			norm += fracs[i];
+
+		for(int i = 0; i < nspecies; i++)
+			fracs[i] /= norm;
+
+		// Initialize counts.
+		std::vector<int> counts(nspecies);
+		for(int i = 0; i < nspecies-1; i++)
+			counts[i] = (int)std::round(fracs[i]*n);
+
+		// Make sure rounding above works out to perfect numbers.
+		counts[nspecies-1] = n;
+		for(int i = 0; i < nspecies-1; i++)
+			counts[nspecies-1] -= counts[i];
+
+		// Get corresponding box size.
+		double L = pow((double)n/density, 1.0/3.0);
+
+		// Set box vectors.
+		_xlength = L;
+		_ylength = L;
+		_zlength = L;
+
+		// Find the lowest perfect cube greater than or equal to the number of particles.
+		int nCube = 2;
+		while(pow(nCube, 3) < n)
+			++nCube;
+
+		// Coordinates.
+		int x = 0;
+		int y = 0;
+		int z = 0;
+
+		// Assign particle positions.
+		for (int i = 0; i < n; ++i)
+		{
+			for(int j = 0; j < nspecies; j++)
+				if(counts[j] > 0 )
+				{
+					Particle* pnew = particles[j]->Clone();
+					double mult = (L/nCube);
+					Position pos = {mult*(x+0.5),mult*(y+0.5),mult*(z+0.5)};
+					pnew->SetPosition(pos);
+					AddParticle(pnew);
+					--counts[j];
+					break;
+				}
+
+			if(++x == nCube)
+			{	
+				x = 0;
+				if(++y == nCube)
+				{
+					y = 0;
+					++z;
+				}
+			}
+		}
+	}
+
 	// Configure Particles in the lattice. For n particles and n fractions, the lattice will be
 	// initialized with the appropriate composition.
 	void SimpleWorld::ConfigureParticles(const std::vector<Particle*> particles,

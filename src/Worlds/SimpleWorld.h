@@ -66,6 +66,12 @@ namespace SAPHRON
 			{
 			}
 
+			// Packs a SimpleWorld with the given particle blueprints and 
+			// compositions to with "count" total particles and a specified density.
+			void PackWorld(const std::vector<Particle*> particles,
+			                      		  const std::vector<double> fractions, 
+			                      		  int count, double density);
+
 			// Configure Particles in the lattice. For n particles and n fractions, the lattice will be
 			// initialized with the appropriate composition.  If max is set, it will stop at that number.
 			void ConfigureParticles(const std::vector<Particle*> particles,
