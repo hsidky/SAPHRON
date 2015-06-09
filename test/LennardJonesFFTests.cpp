@@ -28,7 +28,7 @@ TEST(LennardJonesFF, DefaultBehavior)
 	};
 
 	// Validate invidual components first.
-	auto NB = ff.Evaluate(s1, s2);
+	auto NB = ff.Evaluate(s1, s2, s1.GetPosition() - s2.GetPosition());
 	ASSERT_NEAR(-0.320336594278575, NB.energy, 1e-10);
 	ASSERT_NEAR(-4.859086276627293e-04, ff.EnergyTailCorrection(), 1e-10);
 	ASSERT_NEAR(-0.002915451636909, ff.PressureTailCorrection(), 1e-10);
@@ -58,8 +58,8 @@ TEST(LennardJonesFF, ReducedProperties)
 
 	// Add lj atom to world and initialize in simple lattice configuration.
 	// World volume is adjusted by packworld.
-	SimpleWorld world(1, 1, 1, rcut + 15.0);
-	world.SetSkinThickness(15.0);
+	SimpleWorld world(1, 1, 1, rcut + 2.0);
+	world.SetSkinThickness(2.0);
 	world.PackWorld({&ljatom}, {1.0}, N, rdensity);
 	world.UpdateNeighborList();
 
@@ -84,14 +84,14 @@ TEST(LennardJonesFF, ReducedProperties)
 	flags.acceptance = 1;
 	ConsoleObserver observer(flags, 1000);
 
-	CSVObserver csv("test", flags, 500);
+	CSVObserver csv("test", flags, 1000);
 
 	// Initialize ensemble. 
 	NVTEnsemble ensemble(world, ffm, mm, T, 34435);
 	ensemble.SetBoltzmannConstant(kb);
 	ensemble.AddObserver(&observer);
-	ensemble.AddObserver(&csv);
+	//ensemble.AddObserver(&csv);
 	
 	// Run 
-	ensemble.Run(1000000);
+	ensemble.Run(5000);
 }

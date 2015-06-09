@@ -52,7 +52,7 @@ namespace SAPHRON
 			virtual void Draw(World& world, ParticleList& particles) override
 			{
 				particles.resize(1);
-				particles[0] = world.DrawRandomParticle();;
+				particles[0] = world.DrawRandomParticle();
 			}
 
 			virtual double GetAcceptanceRatio() override

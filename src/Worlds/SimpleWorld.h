@@ -18,10 +18,10 @@ namespace SAPHRON
 			Rand _rand;
 
 			// Neighbor list cutoff radius.
-			double _ncut;
+			double _ncut, _ncutsq;
 
 			// Skin thickness.
-			double _rskin; 
+			double _rskin, _rskinsq; 
 
 			// Composition of the system.
 			CompositionList _composition;
@@ -62,7 +62,7 @@ namespace SAPHRON
 		public:
 			SimpleWorld(double xlength, double ylength, double zlength, double ncut, int seed = 1) : 
 			_xlength(xlength), _ylength(ylength), _zlength(zlength), _particles(0), 
-			_rand(seed), _ncut(ncut), _rskin(1.0)
+			_rand(seed), _ncut(ncut), _ncutsq(ncut*ncut), _rskin(1.0), _rskinsq(1.0)
 			{
 			}
 
@@ -172,37 +172,64 @@ namespace SAPHRON
 				if(pEvent.species)
 					ModifyParticleComposition(pEvent);
 
-				if(pEvent.position)
+				/*if(pEvent.position)
 				{
 					// Check if we need to perform a neighbor list update.
 					auto* p = pEvent.GetParticle();
-					auto dist = p->GetPosition() - p->GetCheckpoint();
+					auto dist = p->GetCheckpointDist();
 					ApplyMinimumImage(dist);
-					if(dist.norm() > _rskin/2.0)	
+					if(dist.norm2() > _rskinsq/4.0)	
 						UpdateNeighborList();				
-				}
+				}*/
 
+			}
+
+			// Checks particles and updates neighborlist if necessary.
+			inline virtual void CheckNeighborListUpdate(const ParticleList& particles) override
+			{
+				for(auto& particle : particles)
+				{
+					auto dist = particle->GetCheckpointDist();
+					ApplyMinimumImage(dist);
+					if(dist.norm2() > _rskinsq/4.0)	
+						UpdateNeighborList();
+				}
 			}
 
 			// Applies periodic boundaries to positions.
-			virtual void ApplyPeriodicBoundaries(Position& position) override
+			inline virtual void ApplyPeriodicBoundaries(Position& position) override
 			{
-				position.x -= _xlength*floor(position.x/_xlength);
-				position.y -= _ylength*floor(position.y/_ylength);
-				position.z -= _zlength*floor(position.z/_zlength);
+				position.x -= _xlength*ffloor(position.x/_xlength);
+				position.y -= _ylength*ffloor(position.y/_ylength);
+				position.z -= _zlength*ffloor(position.z/_zlength);
 			}
 
 			// Applies minimum image convention to distances.
-			virtual void ApplyMinimumImage(Position& position) override
+			inline virtual void ApplyMinimumImage(Position& position) override
 			{
-				position.x -= _xlength*anint(position.x/_xlength);
+				if(position.x > _xlength/2.0)
+					position.x -= _xlength;
+				else if(position.x < -_xlength/2.0)
+					position.x += _xlength;
+				
+				if(position.y > _ylength/2.0)
+					position.y -= _ylength;
+				else if(position.y < -_ylength/2.0)
+					position.y += _ylength;
+
+				if(position.z > _zlength/2.0)
+					position.z -= _zlength;
+				else if(position.z < -_zlength/2.0)
+					position.z += _zlength;
+				/*position.x -= _xlength*anint(position.x/_xlength);
 				position.y -= _ylength*anint(position.y/_ylength);
-				position.z -= _zlength*anint(position.z/_zlength);
+				position.z -= _zlength*anint(position.z/_zlength);*/
 			}
 
 			// Sets the neighbor list cutoff radius.
 			virtual void SetNeighborRadius(double ncut) override
 			{
+				_ncutsq = ncut*ncut;
 				_ncut = ncut;
 			}
 
@@ -216,6 +243,7 @@ namespace SAPHRON
 			virtual void SetSkinThickness(double x) override
 			{
 				_rskin = x;
+				_rskinsq = x*x;
 			}
 
 			// Get skin thickness for neighbor list re-generation.

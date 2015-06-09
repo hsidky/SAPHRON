@@ -17,14 +17,23 @@
 
 namespace SAPHRON
 {
-	// Minimum image convention.
-	inline double anint( const double &x )
+	inline int ffloor(const double& x)
 	{
-		return ( x >= 0 ) ? floor( x + 0.5 ) : ceil( x - 0.5 );
+	    return (int) x - (x<0); 
 	}
 
-	typedef std::list<Particle*> NeighborList;
-	typedef std::list<Particle*>::iterator NeighborIterator;
+	inline int fceil(const double& x)
+	{
+	    return (int) x + (x>0);
+	}
+	// Minimum image convention.
+	inline double anint(const double& x)
+	{
+		return ( x >= 0 ) ? ffloor( x + 0.5 ) : fceil( x - 0.5 );
+	}
+
+	typedef std::vector<Particle*> NeighborList;
+	typedef std::vector<Particle*>::iterator NeighborIterator;
 	typedef std::vector<std::string> SpeciesList;
 	typedef std::list<Connectivity*> ConnectivityList;
 	typedef std::list<Connectivity*>::iterator ConnectivityIterator;
@@ -93,6 +102,7 @@ namespace SAPHRON
 			{
 				_globalID = SetGlobalIdentifier(GetNextGlobalID());
 				SetSpecies(species);
+				_neighbors.reserve(30);
 			}
 
 			// Copy constructor.
@@ -102,6 +112,7 @@ namespace SAPHRON
 			_pEvent(this)
 			{
 				_globalID = SetGlobalIdentifier(GetNextGlobalID());
+				_neighbors.reserve(30);
 			}
 
 			virtual ~Particle() 
@@ -207,6 +218,9 @@ namespace SAPHRON
 			// Gets a particle's position at the checkpoint.
 			virtual const Position& GetCheckpoint() const = 0;
 
+			// Get distance from checkpoint.
+			virtual Position GetCheckpointDist() const = 0;
+
 			// Get the particle director.
 			virtual Director GetDirector() const = 0;
 
@@ -235,16 +249,17 @@ namespace SAPHRON
 			}
 
 			// Add a neighbor to neighbor list.
+			// TODO: figure out an efficient mechanism to check for duplicates other than std::find.
 			inline void AddNeighbor(Particle* particle)
 			{
-				if(std::find(_neighbors.begin(), _neighbors.end(), particle) == _neighbors.end())
-					_neighbors.push_back(particle);
+				//if(std::find(_neighbors.begin(), _neighbors.end(), particle) == _neighbors.end())
+				_neighbors.push_back(particle);
 			}
 
 			// Remove a neighbor from the neighbor list.
 			inline void RemoveNeighbor(Particle* particle)
 			{
-				_neighbors.remove(particle);
+				_neighbors.erase(std::remove(_neighbors.begin(), _neighbors.end(), particle), _neighbors.end());
 			}
 
 			// Clear the neighbor list.

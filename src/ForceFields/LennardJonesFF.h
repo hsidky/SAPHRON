@@ -23,20 +23,15 @@ namespace SAPHRON
 			{ 
 			}
 
-			inline virtual Interaction Evaluate(const Particle& p1, const Particle& p2) override
+			inline virtual Interaction Evaluate(const Particle&, const Particle&, const Position& rij) override
 			{
 				Interaction ep;
-
-				Position rij =  p1.GetPositionRef() - p2.GetPositionRef();
-				World* world = p1.GetWorld();
-				if(world != nullptr)
-					world->ApplyMinimumImage(rij);
 
 				double rsq = rij.norm2();
 
 				if(rsq < _rcutsq)
 				{
-					double sr6 = pow(_sigmasq/rsq,3);
+					double sr6 = _sigma3*_sigma3/(rsq*rsq*rsq);
 					ep.energy = 4*_epsilon*(sr6*sr6-sr6);
 					ep.virial = 24*_epsilon*(sr6-2*sr6*sr6)/rsq;
 				}
@@ -46,12 +41,12 @@ namespace SAPHRON
 
 			inline virtual double EnergyTailCorrection() override
 			{
-				return 4.0/3.0*_epsilon*_sigma3*(1.0/3.0*pow(_sigma3,3)/pow(_rcut3,3)-_sigma3/_rcut3); 
+				return 4.0/3.0*_epsilon*_sigma3*(1.0/3.0*(_sigma3*_sigma3*_sigma3)/(_rcut3*_rcut3*_rcut3)-_sigma3/_rcut3); 
 			}
 
 			inline virtual double PressureTailCorrection() override 
 			{
-				return 8.0*_epsilon*_sigma3*(2.0/3.0*pow(_sigma3,3)/pow(_rcut3,3)-_sigma3/_rcut3); 
+				return 8.0*_epsilon*_sigma3*(2.0/3.0*(_sigma3*_sigma3*_sigma3)/(_rcut3*_rcut3*_rcut3)-_sigma3/_rcut3); 
 			}
 
 	};

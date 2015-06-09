@@ -18,7 +18,7 @@ namespace SAPHRON
 			// Inistantiate Lebwohl-Lasher force field.
 			LebwohlLasherFF(double eps, double gamma) : _eps(eps), _gamma(gamma) {}
 
-			inline virtual Interaction Evaluate(const Particle& p1, const Particle& p2) override
+			inline virtual Interaction Evaluate(const Particle& p1, const Particle& p2, const Position&) override
 			{
 				auto& n1 = p1.GetDirectorRef();
 				auto& n2 = p2.GetDirectorRef();

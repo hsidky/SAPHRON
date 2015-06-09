@@ -29,7 +29,7 @@ namespace SAPHRON
 				for(auto& neighbor : neighbors)
 				{
 					auto* ff = _forcefields[particle.GetSpeciesID()][neighbor->GetSpeciesID()];
-					Position rij = particle.GetPosition() - neighbor->GetPosition();
+					Position rij = particle.GetPositionRef() - neighbor->GetPositionRef();
 					
 					// Minimum image convention.
 					World* world = particle.GetWorld();
@@ -39,7 +39,7 @@ namespace SAPHRON
 					if(ff != nullptr)
 					{
 						// Interaction containing energy and virial.
-						auto ij = ff->Evaluate(particle, *neighbor);
+						auto ij = ff->Evaluate(particle, *neighbor, rij);
 						ep.energy.nonbonded += ij.energy; // Sum nonbonded energy.
 						
 						ep.pressure.pxx -= ij.virial * rij.x * rij.x;
@@ -64,7 +64,7 @@ namespace SAPHRON
 							if(ff != nullptr)
 							{
 								// Interaction containing energy and virial.
-								auto ij = ff->Evaluate(*child, *nchild);
+								auto ij = ff->Evaluate(*child, *nchild, nrij);
 								ep.energy.nonbonded += ij.energy; // Sum nonbonded energy.
 							
 								// Sum pressure terms. Average non-diagonal elements.

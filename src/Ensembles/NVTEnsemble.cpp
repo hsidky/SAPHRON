@@ -22,6 +22,10 @@ namespace SAPHRON
 			else
 				currH = _ffmanager.EvaluateHamiltonian(_particles, _world.GetComposition(), _world.GetVolume());
 
+			// Check for neighborlist updates.
+			_world.CheckNeighborListUpdate(_particles);
+
+			// Acceptance probability.
 			if(AcceptanceProbability(prevH.energy.total(), currH.energy.total()) < _rand.doub())
 				move->Undo();
 			else

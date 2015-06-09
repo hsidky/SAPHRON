@@ -94,8 +94,9 @@ namespace SAPHRON
 	class ForceField
 	{
 		public:
-			// Returns the potential and virial contribution between two particle.
-			virtual Interaction Evaluate(const Particle& p1, const Particle& p2) = 0;
+			// Returns the potential and virial contribution between two particle. The distance vector 
+			// between the two particles is provided by the FFManager with minimum image applied.
+			virtual Interaction Evaluate(const Particle& p1, const Particle& p2, const Position& rij) = 0;
 
 			// Evaluates the energy tail correction term. This is precisely integral(u(r)*r^2,rc,inf). The 
 			// remainder is taken care of by the forcefield manager.

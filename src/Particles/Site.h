@@ -72,6 +72,12 @@ namespace SAPHRON
 				return _checkpoint;
 			}
 
+			// Get distance from checkpoint.
+			inline virtual Position GetCheckpointDist() const override
+			{
+				return _position - _checkpoint;
+			}
+
 			// Gets site director.
 			inline virtual Director GetDirector() const override
 			{

@@ -16,12 +16,12 @@ namespace SAPHRON
 			return this->x == rhs.x && this->y == rhs.y && this->z == rhs.z;
 		}
 
-		inline double norm()
+		inline double norm() const
 		{
 			return sqrt(x*x + y*y + z*z);
 		}
 
-		inline double norm2()
+		inline double norm2() const
 		{
 			return (x*x + y*y + z*z);
 		}

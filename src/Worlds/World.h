@@ -30,6 +30,9 @@ namespace SAPHRON
 
 			// Update the neighbor list for all particles in the world.
 			virtual void UpdateNeighborList() = 0;
+			
+			// Checks list of particles, and if needed updates neighbor list.
+			virtual void CheckNeighborListUpdate(const ParticleList& particles) = 0;
 
 			// Get number of high level particles in the world.
 			virtual int GetParticleCount() const = 0;
