@@ -18,10 +18,17 @@ namespace SAPHRON
 	class World : public Visitable, public ParticleObserver
 	{
 		protected:
+
+			// Box vectors.
+			double _xlength, _ylength, _zlength;
+
 			// Visit children.
 			virtual void VisitChildren(class Visitor &v) = 0;
 
 		public:
+			World(double xlength, double ylength, double zlength) : 
+			_xlength(xlength), _ylength(ylength), _zlength(zlength){}
+
 			// Draw a random particle from the world.
 			virtual Particle* DrawRandomParticle() = 0;
 
@@ -69,11 +76,35 @@ namespace SAPHRON
 			// Get skin thickness for neighbor list re-generation.
 			virtual double GetSkinThickness() = 0;
 
-			// Applies minimum image convention to distances. 
-			virtual void ApplyMinimumImage(Position& position) = 0;
-
 			// Applies periodic boundaries to positions.
-			virtual void ApplyPeriodicBoundaries(Position& position) = 0;
+			inline void ApplyPeriodicBoundaries(Position& position)
+			{
+				position.x -= _xlength*ffloor(position.x/_xlength);
+				position.y -= _ylength*ffloor(position.y/_ylength);
+				position.z -= _zlength*ffloor(position.z/_zlength);
+			}
+
+			// Applies minimum image convention to distances. 
+			inline void ApplyMinimumImage(Position& position)
+			{
+				if(position.x > _xlength/2.0)
+					position.x -= _xlength;
+				else if(position.x < -_xlength/2.0)
+					position.x += _xlength;
+				
+				if(position.y > _ylength/2.0)
+					position.y -= _ylength;
+				else if(position.y < -_ylength/2.0)
+					position.y += _ylength;
+
+				if(position.z > _zlength/2.0)
+					position.z -= _zlength;
+				else if(position.z < -_zlength/2.0)
+					position.z += _zlength;
+				/*position.x -= _xlength*anint(position.x/_xlength);
+				position.y -= _ylength*anint(position.y/_ylength);
+				position.z -= _zlength*anint(position.z/_zlength);*/
+			}
 
 			// Accept a visitor.
 			virtual void AcceptVisitor(class Visitor &v) override
@@ -89,7 +120,11 @@ namespace SAPHRON
 			virtual const CompositionList& GetComposition() const = 0;
 
 			// Get system volume.
-			virtual double GetVolume() = 0;
+			inline double GetVolume()
+			{
+				return _xlength*_ylength*_zlength;
+			}	
+
 
 			virtual ~World (){}
 	};

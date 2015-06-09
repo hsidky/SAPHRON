@@ -183,6 +183,7 @@ namespace SAPHRON
 		int n = this->GetParticleCount();
 
 		// Clear neighbor list before repopulating.
+		#pragma omp parallel for
 		for(int i = 0; i < n; ++i)
 		{
 			_particles[i]->ClearNeighborList();
@@ -193,7 +194,7 @@ namespace SAPHRON
 		{
 			auto* pi = _particles[i];
 			auto posi = pi->GetPositionRef();
-
+			
 			for(int j = i + 1; j < n; ++j)
 			{
 				auto pj = _particles[j];
@@ -204,8 +205,8 @@ namespace SAPHRON
 
 				if(dist.norm2() <= _ncutsq)
 				{
-					pi->AddNeighbor(pj);
 					pj->AddNeighbor(pi);
+					pi->AddNeighbor(pj);
 				}
 			}
 		}

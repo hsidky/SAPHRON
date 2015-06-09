@@ -13,7 +13,6 @@ namespace SAPHRON
 	class SimpleWorld : public World
 	{
 		private:
-			double _xlength, _ylength, _zlength;
 			std::vector<Particle*> _particles;
 			Rand _rand;
 
@@ -61,8 +60,8 @@ namespace SAPHRON
 
 		public:
 			SimpleWorld(double xlength, double ylength, double zlength, double ncut, int seed = 1) : 
-			_xlength(xlength), _ylength(ylength), _zlength(zlength), _particles(0), 
-			_rand(seed), _ncut(ncut), _ncutsq(ncut*ncut), _rskin(1.0), _rskinsq(1.0)
+			World(xlength, ylength, zlength), _particles(0), _rand(seed), _ncut(ncut), _ncutsq(ncut*ncut), 
+			_rskin(1.0), _rskinsq(1.0)
 			{
 			}
 
@@ -196,35 +195,6 @@ namespace SAPHRON
 				}
 			}
 
-			// Applies periodic boundaries to positions.
-			inline virtual void ApplyPeriodicBoundaries(Position& position) override
-			{
-				position.x -= _xlength*ffloor(position.x/_xlength);
-				position.y -= _ylength*ffloor(position.y/_ylength);
-				position.z -= _zlength*ffloor(position.z/_zlength);
-			}
-
-			// Applies minimum image convention to distances.
-			inline virtual void ApplyMinimumImage(Position& position) override
-			{
-				if(position.x > _xlength/2.0)
-					position.x -= _xlength;
-				else if(position.x < -_xlength/2.0)
-					position.x += _xlength;
-				
-				if(position.y > _ylength/2.0)
-					position.y -= _ylength;
-				else if(position.y < -_ylength/2.0)
-					position.y += _ylength;
-
-				if(position.z > _zlength/2.0)
-					position.z -= _zlength;
-				else if(position.z < -_zlength/2.0)
-					position.z += _zlength;
-				/*position.x -= _xlength*anint(position.x/_xlength);
-				position.y -= _ylength*anint(position.y/_ylength);
-				position.z -= _zlength*anint(position.z/_zlength);*/
-			}
 
 			// Sets the neighbor list cutoff radius.
 			virtual void SetNeighborRadius(double ncut) override
@@ -259,12 +229,6 @@ namespace SAPHRON
 
 			// Update the neighbor list for all particles in the world.
 			virtual void UpdateNeighborList() override;		
-
-			// Get system volume.
-			virtual double GetVolume() override
-			{
-				return _xlength*_ylength*_zlength;
-			}	
 
 			~SimpleWorld()
 			{

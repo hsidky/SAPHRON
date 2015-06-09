@@ -112,9 +112,9 @@ target_link_libraries(saphron ${SAPH_LIBS} libsaphron)
 
 # Configure flags 
 # - Globals 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -std=c++11 -include ${PROJECT_SOURCE_DIR}/include/gcc-preinclude.h")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math -D_GLIBCXX_PARALLEL -fopenmp -pthread -std=c++11 -include ${PROJECT_SOURCE_DIR}/include/gcc-preinclude.h")
 set_target_properties(libsaphron saphron PROPERTIES COMPILE_FLAGS "-Wall -Wextra")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-as-needed")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-as-needed -fopenmp -D_GLIBCXX_PARALLEL")
 
 # Add testing 
 enable_testing()

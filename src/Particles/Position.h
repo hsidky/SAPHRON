@@ -7,13 +7,19 @@ namespace SAPHRON
 	// Particle position.
 	struct Position
 	{
-		double x;
-		double y;
-		double z;
+		double x, y, z;
 
 		inline bool operator==(const Position& rhs) const
 		{
 			return this->x == rhs.x && this->y == rhs.y && this->z == rhs.z;
+		}
+
+		inline Position& operator=(const Position& rhs)
+		{
+			x = rhs.x;
+			y = rhs.y;
+			z = rhs.z;
+			return *this;
 		}
 
 		inline double norm() const

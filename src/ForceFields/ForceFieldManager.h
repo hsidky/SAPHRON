@@ -22,12 +22,14 @@ namespace SAPHRON
 			// Pressure tail contribution is added to isotropic pressure parts only!
 			inline EPTuple EvaluateNonBonded(Particle& particle, const CompositionList& compositions, double volume)
 			{
-				EPTuple ep;				
-				
+				double e = 0, pxx = 0, pxy = 0, pxz = 0, pyy = 0, pyz = 0, pzz = 0;
+
 				// Calculate energy with neighbors.
 				auto& neighbors = particle.GetNeighbors();
-				for(auto& neighbor : neighbors)
+				#pragma omp parallel for reduction(+:e,pxx,pxy,pxz,pyy,pyz,pzz)
+				for(size_t k = 0; k < neighbors.size(); ++k)
 				{
+					auto* neighbor = neighbors[k];
 					auto* ff = _forcefields[particle.GetSpeciesID()][neighbor->GetSpeciesID()];
 					Position rij = particle.GetPositionRef() - neighbor->GetPositionRef();
 					
@@ -40,14 +42,14 @@ namespace SAPHRON
 					{
 						// Interaction containing energy and virial.
 						auto ij = ff->Evaluate(particle, *neighbor, rij);
-						ep.energy.nonbonded += ij.energy; // Sum nonbonded energy.
+						e += ij.energy; // Sum nonbonded energy.
 						
-						ep.pressure.pxx -= ij.virial * rij.x * rij.x;
-						ep.pressure.pyy -= ij.virial * rij.y * rij.y;
-						ep.pressure.pyz -= ij.virial * rij.z * rij.z;
-						ep.pressure.pxy -= ij.virial * rij.x * rij.y;
-						ep.pressure.pxz -= ij.virial * rij.x * rij.z;
-						ep.pressure.pyz -= ij.virial * rij.y * rij.z;
+						pxx -= ij.virial * rij.x * rij.x;
+						pyy -= ij.virial * rij.y * rij.y;
+						pzz -= ij.virial * rij.z * rij.z;
+						pxy -= ij.virial * rij.x * rij.y;
+						pxz -= ij.virial * rij.x * rij.z;
+						pyz -= ij.virial * rij.y * rij.z;
 					}
 
 					// Iterate children with neighbor's children.
@@ -65,16 +67,16 @@ namespace SAPHRON
 							{
 								// Interaction containing energy and virial.
 								auto ij = ff->Evaluate(*child, *nchild, nrij);
-								ep.energy.nonbonded += ij.energy; // Sum nonbonded energy.
+								e += ij.energy; // Sum nonbonded energy.
 							
 								// Sum pressure terms. Average non-diagonal elements.
 								// We are assuming it's symmetric.
-								ep.pressure.pxx -= ij.virial * nrij.x * rij.x;
-								ep.pressure.pyy -= ij.virial * nrij.y * rij.y;
-								ep.pressure.pyz -= ij.virial * nrij.z * rij.z;
-								ep.pressure.pxy -= ij.virial * 0.5*(nrij.x * rij.y + nrij.y * rij.x);
-								ep.pressure.pxz -= ij.virial * 0.5*(nrij.x * rij.z + nrij.z * rij.x);
-								ep.pressure.pyz -= ij.virial * 0.5*(nrij.y * rij.z + nrij.z * rij.y);
+								pxx -= ij.virial * nrij.x * rij.x;
+								pyy -= ij.virial * nrij.y * rij.y;
+								pzz -= ij.virial * nrij.z * rij.z;
+								pxy -= ij.virial * 0.5*(nrij.x * rij.y + nrij.y * rij.x);
+								pxz -= ij.virial * 0.5*(nrij.x * rij.z + nrij.z * rij.x);
+								pyz -= ij.virial * 0.5*(nrij.y * rij.z + nrij.z * rij.y);
 							}
 						}
 
@@ -87,17 +89,19 @@ namespace SAPHRON
 								if(forcefield != nullptr)
 								{
 									double rho = (compositions.at(i))/volume;
-									ep.energy.nonbonded += 2.0*M_PI*rho*forcefield->EnergyTailCorrection();
+									e += 2.0*M_PI*rho*forcefield->EnergyTailCorrection();
 									double pcorrect = 2.0*M_PI*rho*rho*forcefield->PressureTailCorrection();
-									ep.pressure.pxx -= pcorrect;
-									ep.pressure.pyy -= pcorrect;
-									ep.pressure.pyz -= pcorrect;
+									pxx -= pcorrect;
+									pyy -= pcorrect;
+									pzz -= pcorrect;
 								}
 								++i;
 							}
 						}
 					}
 				}
+				
+				EPTuple ep{e, 0, 0, pxx, pxy, pxz, pyy, pyz, pzz};				
 
 				// Sum in energy and pressure tail corrections.
 				// Sum in child energy and pressure tail corrections.
@@ -118,7 +122,7 @@ namespace SAPHRON
 						++i;
 					}
 				}
-	
+				
 				for(auto& child : particle.GetChildren())
 					ep += EvaluateNonBonded(*child, compositions, volume);	
 				return ep;
@@ -141,7 +145,12 @@ namespace SAPHRON
 
 		public:
 
-			ForceFieldManager() : _forcefields(1,std::vector<ForceField*>(1, nullptr)) {}
+			ForceFieldManager() : _forcefields(1,std::vector<ForceField*>(1, nullptr))
+			{
+				//__gnu_parallel::_Settings s;
+  				//s.algorithm_strategy = __gnu_parallel::force_parallel;
+  				//__gnu_parallel::_Settings::set(s);
+			}
 
 			// Adds a forcefield to the manager.
 			void AddForceField(std::string p1type, std::string p2type, ForceField& ff);
