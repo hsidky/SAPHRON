@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Visitors/Visitable.h"
+#include "../Observers/Visitable.h"
 #include "../Connectivities/Connectivity.h"
 #include "ParticleObserver.h"
 #include "ParticleEvent.h"

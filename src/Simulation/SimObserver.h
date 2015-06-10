@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Visitors/Visitor.h"
+#include "../Observers/Visitor.h"
 #include "SimEvent.h"
 #include <mutex>
 

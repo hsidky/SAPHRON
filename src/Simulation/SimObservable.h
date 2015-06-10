@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Visitors/Visitable.h"
+#include "../Observers/Visitable.h"
 #include "SimEvent.h"
 #include "SimObserver.h"
 #include <list>

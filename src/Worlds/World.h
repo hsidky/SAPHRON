@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Particles/Particle.h"
-#include "../Visitors/Visitable.h"
+#include "../Observers/Visitable.h"
 #include <memory>
 #include <functional>
 #include <map>

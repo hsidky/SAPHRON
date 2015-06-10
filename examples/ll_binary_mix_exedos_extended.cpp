@@ -7,8 +7,8 @@
 // #include "../src/Models/LebwohlLasherModel.h"
 // #include "../src/Moves/SpeciesSwapMove.h"
 // #include "../src/Moves/SphereUnitVectorMove.h"
-// #include "../src/Simulation/CSVObserver.h"
-// #include "../src/Simulation/ConsoleObserver.h"
+// #include "../src/Observers/CSVObserver.h"
+// #include "../src/Observers/ConsoleObserver.h"
 
 // // Include for parsing using stringstream
 // #include <cmath>

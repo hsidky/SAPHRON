@@ -9,8 +9,8 @@
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
 #include "../src/Particles/Site.h"
-#include "../src/Simulation/CSVObserver.h"
-#include "../src/Simulation/ConsoleObserver.h"
+#include "../src/Observers/CSVObserver.h"
+#include "../src/Observers/ConsoleObserver.h"
 #include "../src/Worlds/SimpleWorld.h"
 
 // Includes for parsing using stringstream.

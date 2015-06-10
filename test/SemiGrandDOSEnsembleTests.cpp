@@ -2,7 +2,7 @@
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SpeciesSwapMove.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
-#include "../src/Simulation/ConsoleObserver.h"
+#include "../src/Observers/ConsoleObserver.h"
 #include "../src/Site.h"
 #include "gtest/gtest.h"
 

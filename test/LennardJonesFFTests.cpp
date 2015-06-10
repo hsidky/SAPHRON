@@ -4,7 +4,7 @@
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Particles/Site.h"
-#include "../src/Simulation/ConsoleObserver.h"
+#include "../src/Observers/ConsoleObserver.h"
 #include "TestAccumulator.h"
 #include "../src/Worlds/SimpleWorld.h"
 #include "gtest/gtest.h"
@@ -98,5 +98,5 @@ TEST(LennardJonesFF, ReducedProperties)
 	ensemble.Run(10000);
 
 	ASSERT_NEAR(-5.5121, accumulator.GetAverageEnergy().total()/(double)N, 1e-2);
-	ASSERT_NEAR(6.7714E-03, accumulator.GetAveragePressure()/(double)N, 1.77E-03);
+	ASSERT_NEAR(6.7714E-03, accumulator.GetAveragePressure(), 1.77E-03);
 }

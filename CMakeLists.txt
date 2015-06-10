@@ -93,8 +93,8 @@ set(SOURCE
 	src/Ensembles/NVTEnsemble.cpp
 	src/ForceFields/ForceFieldManager.cpp
 	src/Particles/Particle.cpp
-	src/Simulation/CSVObserver.cpp
-	src/Simulation/ConsoleObserver.cpp
+	src/Observers/CSVObserver.cpp
+	src/Observers/ConsoleObserver.cpp
 	src/Simulation/SimObservable.cpp
 	src/Simulation/SimObserver.cpp
 	src/Worlds/SimpleWorld.cpp
