@@ -116,7 +116,7 @@ namespace SAPHRON
 		if(this->Flags.temperature)
 			*_ensemblefs << e->GetTemperature() << ",";
 		if(this->Flags.pressure)
-			*_ensemblefs << e->GetPressure() << ",";
+			*_ensemblefs << e->GetPressure().isotropic() << ",";
 		if(this->Flags.acceptance)
 			for(auto& acceptance : e->GetAcceptanceRatio())
 				*_ensemblefs << acceptance.second << ",";

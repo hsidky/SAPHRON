@@ -5,7 +5,7 @@
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Particles/Site.h"
 #include "../src/Simulation/ConsoleObserver.h"
-#include "../src/Simulation/CSVObserver.h"
+#include "TestAccumulator.h"
 #include "../src/Worlds/SimpleWorld.h"
 #include "gtest/gtest.h"
 
@@ -36,8 +36,8 @@ TEST(LennardJonesFF, DefaultBehavior)
 
 	auto H = ffm.EvaluateHamiltonian(s2, compositions, 30*30*30);
 
-	ASSERT_NEAR(-0.320449670350796, H.energy.nonbonded, 1e-10);
-	ASSERT_NEAR(-2.144487494523771e-05, H.pressure.isotropic(), 1e-9);
+	ASSERT_NEAR(-0.3205627464230163, H.energy.nonbonded, 1e-10);
+	ASSERT_NEAR(-2.144435790789334e-05, H.pressure.isotropic(), 1e-9);
 }
 
 // Validate results from NIST MC LJ standards page.
@@ -78,20 +78,25 @@ TEST(LennardJonesFF, ReducedProperties)
 
 	// Initialize observer.
 	SimFlags flags;
-	flags.temperature = 1;
+	//flags.temperature = 1;
 	flags.energy = 1;
 	flags.iterations = 1;
 	flags.acceptance = 1;
+	flags.pressure = 1;
 	ConsoleObserver observer(flags, 1000);
 
-	//CSVObserver csv("test", flags, 1000);
+	// Initialize accumulator. 
+	TestAccumulator accumulator(flags, 100, 5000);
 
 	// Initialize ensemble. 
 	NVTEnsemble ensemble(world, ffm, mm, T, 34435);
 	ensemble.SetBoltzmannConstant(kb);
 	ensemble.AddObserver(&observer);
-	//ensemble.AddObserver(&csv);
+	ensemble.AddObserver(&accumulator);
 	
 	// Run 
-	ensemble.Run(5000);
+	ensemble.Run(10000);
+
+	ASSERT_NEAR(-5.5121, accumulator.GetAverageEnergy().total()/(double)N, 1e-2);
+	ASSERT_NEAR(6.7714E-03, accumulator.GetAveragePressure()/(double)N, 1.77E-03);
 }

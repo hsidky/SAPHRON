@@ -105,6 +105,9 @@ namespace SAPHRON
 
 				// Sum in energy and pressure tail corrections.
 				// Sum in child energy and pressure tail corrections.
+				// Note: we multiply the tail correction expressions by 2.0 because they are on a per-particle
+				// basis, but we divide non-bonded energy contributions by 2.0 to avoid double counting. So 
+				// this is a correction.
 				if(!compositions.empty())
 				{
 					int i = 0; 
@@ -112,8 +115,9 @@ namespace SAPHRON
 					{
 						if(forcefield != nullptr)
 						{
-							double rho = (compositions.at(i))/volume;
-							ep.energy.nonbonded += 2.0*M_PI*rho*forcefield->EnergyTailCorrection();
+							double N = compositions.at(i);
+							double rho = N/volume;
+							ep.energy.nonbonded += 2.0*2.0*M_PI*rho*forcefield->EnergyTailCorrection();
 							double pcorrect = 2.0*M_PI*rho*rho*forcefield->PressureTailCorrection();
 							ep.pressure.pxx -= pcorrect;
 							ep.pressure.pyy -= pcorrect;

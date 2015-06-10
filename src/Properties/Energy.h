@@ -37,6 +37,13 @@ namespace SAPHRON
 			connectivity -= rhs.connectivity;
 			return *this;
 		}
+
+		inline Energy& operator/=(const double& rhs)
+		{
+			nonbonded /= rhs; 
+			connectivity /= rhs;
+			return *this;
+		}
 	};
 
 	inline Energy operator+(Energy lhs, const Energy& rhs)
@@ -50,6 +57,13 @@ namespace SAPHRON
 	{
 		lhs.nonbonded -= rhs.nonbonded;
 		lhs.connectivity -= rhs.connectivity;
+		return lhs;
+	}
+
+	inline Energy operator/(Energy lhs, const double& rhs)
+	{
+		lhs.nonbonded /= rhs;
+		lhs.connectivity /= rhs;
 		return lhs;
 	}
 }

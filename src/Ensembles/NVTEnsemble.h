@@ -87,6 +87,13 @@ namespace SAPHRON
 				return _temperature;
 			}
 
+			virtual Pressure GetPressure() override
+			{
+				Pressure p = _eptuple.pressure;
+				p.ideal = (double)_world.GetParticleCount()*GetBoltzmannConstant()*_temperature/_world.GetVolume();
+				return p;
+			}
+
 			// Get energy.
 			virtual Energy GetEnergy() override
 			{

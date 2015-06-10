@@ -2,6 +2,7 @@
 
 #include "../Simulation/SimObservable.h"
 #include "../Properties/Energy.h"
+#include "../Properties/Pressure.h"
 #include <map>
 #include <vector>
 
@@ -70,7 +71,7 @@ namespace SAPHRON
 			/* Properties */
 			virtual double GetTemperature() { return 0.0; }
 			virtual Energy GetEnergy() { return Energy(0,0); }
-			virtual double GetPressure() { return 0.0; }
+			virtual Pressure GetPressure() { return Pressure(); }
 			virtual AcceptanceMap GetAcceptanceRatio() { return {}; }
 
 			virtual ~Ensemble(){}

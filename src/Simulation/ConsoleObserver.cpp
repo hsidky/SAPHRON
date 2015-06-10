@@ -24,6 +24,8 @@ namespace SAPHRON
 		}
 		if (this->Flags.temperature)
 			cout << setw(20) << left << "Temperature";
+		if(this->Flags.pressure)
+			cout << setw(20) << left << "Pressure";
 		if(this->Flags.acceptance)
 			for(auto& acceptance : e->GetAcceptanceRatio())
 				cout << setw(20) << left << acceptance.first + " Acc.";
@@ -41,6 +43,8 @@ namespace SAPHRON
 		}
 		if (this->Flags.temperature)
 			cout << setw(20) << left << e->GetTemperature();
+		if(this->Flags.pressure)
+			cout << setw(20) << left << e->GetPressure().isotropic();
 		if(this->Flags.acceptance)
 			for(auto& acceptance : e->GetAcceptanceRatio())
 				cout << setw(20) << left << acceptance.second;
