@@ -189,7 +189,7 @@ namespace SAPHRON
 			_particles[i]->ClearNeighborList();
 			_particles[i]->SetCheckpoint();
 		}
-
+		
 		for(int i = 0; i < n - 1; ++i)
 		{
 			auto* pi = _particles[i];

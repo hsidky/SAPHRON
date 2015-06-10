@@ -12,7 +12,7 @@
 # also defined, but not for general use are
 #  LAPACK_LIBRARY, where to find the LAPACK library.
 
-SET(LAPACK_NAMES ${LAPACK_NAMES} lapack)
+SET(LAPACK_NAMES ${LAPACK_NAMES} liblapack.so lapack)
 FIND_LIBRARY(LAPACK_LIBRARY
   NAMES ${LAPACK_NAMES}
   PATHS /usr/lib64/atlas /usr/lib/atlas /usr/lib64 /usr/lib /usr/local/lib64 /usr/local/lib

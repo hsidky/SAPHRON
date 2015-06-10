@@ -5,7 +5,7 @@
 # also defined, but not for general use are
 #  BLAS_LIBRARY, where to find the BLAS library.
 
-SET(BLAS_NAMES ${BLAS_NAMES} blas)
+SET(BLAS_NAMES ${BLAS_NAMES} libblas.so blas)
 FIND_LIBRARY(BLAS_LIBRARY
   NAMES ${BLAS_NAMES}
   PATHS /usr/lib64/atlas /usr/lib/atlas /usr/lib64 /usr/lib /usr/local/lib64 /usr/local/lib

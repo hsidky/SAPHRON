@@ -58,8 +58,8 @@ TEST(LennardJonesFF, ReducedProperties)
 
 	// Add lj atom to world and initialize in simple lattice configuration.
 	// World volume is adjusted by packworld.
-	SimpleWorld world(1, 1, 1, rcut + 3.0);
-	world.SetSkinThickness(3.0);
+	SimpleWorld world(1, 1, 1, rcut + 1.0);
+	world.SetSkinThickness(1.0);
 	world.PackWorld({&ljatom}, {1.0}, N, rdensity);
 	world.UpdateNeighborList();
 
@@ -72,7 +72,7 @@ TEST(LennardJonesFF, ReducedProperties)
 	ffm.AddForceField("LJ", "LJ", ff);
 
 	// Initialize moves. 
-	TranslateMove move(0.23);
+	TranslateMove move(0.22);
 	MoveManager mm;
 	mm.PushMove(move);
 
@@ -84,7 +84,7 @@ TEST(LennardJonesFF, ReducedProperties)
 	flags.acceptance = 1;
 	ConsoleObserver observer(flags, 1000);
 
-	CSVObserver csv("test", flags, 1000);
+	//CSVObserver csv("test", flags, 1000);
 
 	// Initialize ensemble. 
 	NVTEnsemble ensemble(world, ffm, mm, T, 34435);

@@ -145,12 +145,7 @@ namespace SAPHRON
 
 		public:
 
-			ForceFieldManager() : _forcefields(1,std::vector<ForceField*>(1, nullptr))
-			{
-				//__gnu_parallel::_Settings s;
-  				//s.algorithm_strategy = __gnu_parallel::force_parallel;
-  				//__gnu_parallel::_Settings::set(s);
-			}
+			ForceFieldManager() : _forcefields(1,std::vector<ForceField*>(1, nullptr)) {}
 
 			// Adds a forcefield to the manager.
 			void AddForceField(std::string p1type, std::string p2type, ForceField& ff);
