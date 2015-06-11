@@ -4,7 +4,6 @@
 #include <memory>
 #include <iostream>
 #include <fstream>
-#include <iostream>
 
 namespace SAPHRON 
 {
@@ -28,6 +27,7 @@ namespace SAPHRON
 			virtual void Visit(DOSEnsemble* e) override;
 			virtual void Visit(World* w) override;
 			virtual void Visit(Particle* p) override;
+			virtual void Visit(MoveManager* mm) override;
 
 			~CSVObserver()
 			{

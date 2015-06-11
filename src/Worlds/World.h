@@ -125,6 +125,14 @@ namespace SAPHRON
 				return _xlength*_ylength*_zlength;
 			}	
 
+			// Get box vectors.
+			inline Position GetBoxVectors() const 
+			{
+				return Position{_xlength, _ylength, _zlength};
+			}
+
+			// Get seed.
+			virtual int GetSeed() const = 0;
 
 			virtual ~World (){}
 	};

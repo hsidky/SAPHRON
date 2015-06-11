@@ -95,9 +95,11 @@ set(SOURCE
 	src/Particles/Particle.cpp
 	src/Observers/CSVObserver.cpp
 	src/Observers/ConsoleObserver.cpp
+	src/Observers/JSONObserver.cpp
 	src/Simulation/SimObservable.cpp
 	src/Simulation/SimObserver.cpp
 	src/Worlds/SimpleWorld.cpp
+	src/jsoncpp.cpp 
 )
 
 add_library(libsaphron ${SOURCE})
@@ -106,7 +108,6 @@ target_link_libraries(libsaphron ${SAPH_LIBS})
 
 add_executable(saphron 
 	src/main.cpp 
-	src/jsoncpp.cpp 
 	src/Simulation/SimBuilder.cpp
 )
 target_link_libraries(saphron ${SAPH_LIBS} libsaphron)

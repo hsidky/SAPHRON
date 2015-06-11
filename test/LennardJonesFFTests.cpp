@@ -6,6 +6,7 @@
 #include "../src/Particles/Site.h"
 #include "../src/Observers/ConsoleObserver.h"
 #include "../src/Observers/CSVObserver.h"
+#include "../src/Observers/JSONObserver.h"
 #include "TestAccumulator.h"
 #include "../src/Worlds/SimpleWorld.h"
 #include "gtest/gtest.h"
@@ -91,12 +92,15 @@ TEST(LennardJonesFF, ReducedProperties)
 
 	CSVObserver csv("test", flags, 100);
 
+	JSONObserver json("test", flags, 1000);
+
 	// Initialize ensemble. 
 	NVTEnsemble ensemble(world, ffm, mm, T, 34435);
 	ensemble.SetBoltzmannConstant(kb);
 	ensemble.AddObserver(&observer);
 	ensemble.AddObserver(&accumulator);
 	ensemble.AddObserver(&csv);
+	ensemble.AddObserver(&json);
 	
 	// Run 
 	ensemble.Run(20000);

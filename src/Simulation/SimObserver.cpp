@@ -10,7 +10,9 @@ namespace SAPHRON
 		{
 			_mutex.lock();
 			_event = e;
+			PreVisit();
 			_event.GetObservable()->AcceptVisitor(*this);
+			PostVisit();
 			_mutex.unlock();
 		}
 	};

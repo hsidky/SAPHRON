@@ -37,17 +37,19 @@ namespace SAPHRON
 			// Run the Ensemble simulation for a specified number of iterations.
 			virtual void Run(int iterations) = 0;
 
+			/* Getters and setters */
+
 			// Sets the Boltzmann constant.
-			static void SetBoltzmannConstant(double kb)
-			{
-				_kb = kb;
-			}
+			static void SetBoltzmannConstant(double kb)	{ _kb = kb;	}
 
 			// Gets the Boltzmann constant.
-			inline static double GetBoltzmannConstant()
-			{
-				return _kb;
-			}
+			inline static double GetBoltzmannConstant()	{ return _kb; }
+
+			// Get seed.
+			virtual int GetSeed() = 0;
+
+			// Set seed.
+			virtual void SetSeed(int seed) = 0;
 
 			// Gets the current iteration count.
 			inline int GetIteration()
@@ -69,6 +71,7 @@ namespace SAPHRON
 			}
 
 			/* Properties */
+			virtual std::string GetName() = 0;
 			virtual double GetTemperature() { return 0.0; }
 			virtual Energy GetEnergy() { return Energy(0,0); }
 			virtual Pressure GetPressure() { return Pressure(); }

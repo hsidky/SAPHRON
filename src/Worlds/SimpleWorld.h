@@ -25,6 +25,9 @@ namespace SAPHRON
 			// Composition of the system.
 			CompositionList _composition;
 
+			// Seed.
+			int _seed;
+
 			void AddParticleComposition(Particle* particle);
 			void RemoveParticleComposition(Particle* particle);
 			void ModifyParticleComposition(const ParticleEvent& pEvent);
@@ -61,7 +64,7 @@ namespace SAPHRON
 		public:
 			SimpleWorld(double xlength, double ylength, double zlength, double ncut, int seed = 1) : 
 			World(xlength, ylength, zlength), _particles(0), _rand(seed), _ncut(ncut), _ncutsq(ncut*ncut), 
-			_rskin(1.0), _rskinsq(1.0)
+			_rskin(1.0), _rskinsq(1.0), _seed(seed)
 			{
 			}
 
@@ -170,17 +173,6 @@ namespace SAPHRON
 			{
 				if(pEvent.species)
 					ModifyParticleComposition(pEvent);
-
-				/*if(pEvent.position)
-				{
-					// Check if we need to perform a neighbor list update.
-					auto* p = pEvent.GetParticle();
-					auto dist = p->GetCheckpointDist();
-					ApplyMinimumImage(dist);
-					if(dist.norm2() > _rskinsq/4.0)	
-						UpdateNeighborList();				
-				}*/
-
 			}
 
 			// Checks particles and updates neighborlist if necessary.
@@ -194,7 +186,6 @@ namespace SAPHRON
 						UpdateNeighborList();
 				}
 			}
-
 
 			// Sets the neighbor list cutoff radius.
 			virtual void SetNeighborRadius(double ncut) override
@@ -220,6 +211,12 @@ namespace SAPHRON
 			virtual double GetSkinThickness() override
 			{
 				return _rskin;
+			}
+
+			// Get seed.
+			virtual int GetSeed() const override
+			{
+				return _seed;
 			}
 
 			int GetLatticeSize()

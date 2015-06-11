@@ -15,10 +15,11 @@ namespace SAPHRON
 			Particle* _particle;
 			int _rejected;
 			int _performed;
+			int _seed;
 
 		public:
 			SphereUnitVectorMove (int seed = 3) : _prevD({0.0, 0.0, 0.0}), _rand(seed),
-			 _rejected(0), _performed(0) {}
+			 _rejected(0), _performed(0), _seed(seed) {}
 
 			// Select a new random unit vector on a sphere.
 			inline void Perform(Particle* particle)
@@ -72,6 +73,9 @@ namespace SAPHRON
 				_particle->SetDirector(_prevD);
 				++_rejected;
 			}
+
+			// Get seed.
+			virtual int GetSeed() override { return _seed; }
 
 			virtual std::string GetName() override { return "SphereUV";	}
 

@@ -90,10 +90,14 @@ namespace SAPHRON
 		cout << endl;
 	}
 
-	void ConsoleObserver::Visit(World*)
+	void ConsoleObserver::Visit(MoveManager*)
 	{
 	}
 
+	void ConsoleObserver::Visit(World*)
+	{
+	}
+	
 	void ConsoleObserver::Visit(Particle* p)
 	{
  		if(!this->Flags.particle)

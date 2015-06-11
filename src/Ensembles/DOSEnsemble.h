@@ -58,6 +58,9 @@ namespace SAPHRON
 			// Target flatness.
 			double _targetFlatness;
 
+			// Seed.
+			int _seed;
+
 			double AcceptanceProbability(double prevE, double prevO, double newE, double newO);
 		
 			void Iterate();
@@ -82,7 +85,7 @@ namespace SAPHRON
 					    MoveManager& mmanager, Interval interval, int binCount, int seed = 1) : 
 				_eptuple(), _interval(interval), _accmap(), _hist(interval.first, interval.second, binCount), 
 				_sf(1.0), _flatness(0), _world(world), _ffmanager(ffmanager), _mmanager(mmanager), 
-				_orderp(orderp), _rand(seed), _particles(0), _targetFlatness(0.80)
+				_orderp(orderp), _rand(seed), _particles(0), _targetFlatness(0.80), _seed(seed)
 			{
 				_particles.reserve(10);
 				_eptuple = ffmanager.EvaluateHamiltonian(world);
@@ -173,10 +176,18 @@ namespace SAPHRON
          	}
 
          	// Gets the scale factor.
-         	virtual double GetScaleFactor()
+         	double GetScaleFactor()
          	{
          		return _sf;
          	}
+
+         	// Get seed.
+			virtual int GetSeed() override { return _seed; }
+			
+			// Set seed.
+			virtual void SetSeed(int seed) override { _rand.seed(seed); _seed = seed; }
+
+			virtual std::string GetName() override { return "DOS"; }
 
          	// Accept a visitor.
 			virtual void AcceptVisitor(class Visitor &v) override

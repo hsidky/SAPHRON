@@ -7,6 +7,7 @@ namespace SAPHRON
 	class DOSEnsemble;
 	class World;
 	class Particle;
+	class MoveManager;
 
 	class Visitor
 	{
@@ -16,5 +17,6 @@ namespace SAPHRON
 			virtual void Visit(DOSEnsemble* e) = 0;
 			virtual void Visit(World* w) = 0;
 			virtual void Visit(Particle* p) = 0;
+			virtual void Visit(MoveManager* mm) = 0;
 	};
 }
