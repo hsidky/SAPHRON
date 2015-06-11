@@ -11,6 +11,9 @@
 *.psess
 *.vspx
 
+# Build directory
+build/
+
 # Sublime project 
 *.sublime-workspace
 
