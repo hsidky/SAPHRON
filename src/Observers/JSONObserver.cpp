@@ -36,7 +36,7 @@ namespace SAPHRON
 		_root["ensemble"]["pressure"] = ensemble->GetPressure().isotropic();
 	}
 
-	void JSONObserver::Visit(SAPHRON::DOSEnsemble *e)
+	void JSONObserver::Visit(SAPHRON::DOSEnsemble*)
 	{
 	}
 

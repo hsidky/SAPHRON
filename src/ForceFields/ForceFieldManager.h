@@ -160,6 +160,18 @@ namespace SAPHRON
 			// Removes a forcefield from the manager.
 			void RemoveForceField(int p1type, int p2type);
 
+			// Get the number of registered forcefields.
+			int ForceFieldCount();
+
+			// Get a forcefield by index.
+			// ex. 11, 12, 13, 22, 23, 33, etc...
+			ForceField* GetForceField(unsigned int n);
+
+			// Get species associated with forcefield by index.
+			// If no forcefield is registered for the index or the index is out of range 
+			// the pair will contain {-1, -1}.
+			std::pair<int, int> GetForceFieldTypes(unsigned int n);
+
 			// Evaluate the energy and virial contribution of the entire world.
 			inline EPTuple EvaluateHamiltonian(World& world)
 			{
