@@ -15,10 +15,12 @@ namespace SAPHRON
 			Particle* _particle;
 			int _rejected;
 			int _performed;
+			int _seed;
 
 		public: 
 			TranslateMove(double dx, int seed = 2496) : 
-			_prevPos({0.0, 0.0, 0.0}), _dx(dx), _rand(seed), _rejected(0), _performed(0)
+			_prevPos({0.0, 0.0, 0.0}), _dx(dx), _rand(seed), _rejected(0), 
+			_performed(0), _seed(seed)
 			{
 			}
 
@@ -55,6 +57,12 @@ namespace SAPHRON
 				particles[0] = world.DrawRandomParticle();
 			}
 
+			// Returns maximum displacement.
+			double GetMaxDisplacement()
+			{
+				return _dx;
+			}
+
 			virtual double GetAcceptanceRatio() override
 			{
 				return 1.0-(double)_rejected/_performed;
@@ -72,6 +80,9 @@ namespace SAPHRON
 				_particle->SetPosition(_prevPos);
 				++_rejected;
 			}
+
+			// Get seed.
+			virtual int GetSeed() override { return _seed; }
 
 			virtual std::string GetName() override { return "Translate"; }
 

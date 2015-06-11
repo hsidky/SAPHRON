@@ -11,16 +11,17 @@ namespace SAPHRON
 		double pyy;
 		double pyz;
 		double pzz;
+		double ptail; 
 
-		Pressure() : ideal(0), pxx(0), pxy(0), pxz(0), pyy(0), pyz(0), pzz(0) {}
+		Pressure() : ideal(0), pxx(0), pxy(0), pxz(0), pyy(0), pyz(0), pzz(0), ptail(0){}
 		Pressure(double idealp, double pxxp, double pxyp, 
-				 double pxzp, double pyyp, double pyzp, double pzzp) : 
-		ideal(idealp), pxx(pxxp), pxy(pxyp), pxz(pxzp), pyy(pyyp), pyz(pyzp), pzz(pzzp) {}
+				 double pxzp, double pyyp, double pyzp, double pzzp, double ptailp) : 
+		ideal(idealp), pxx(pxxp), pxy(pxyp), pxz(pxzp), pyy(pyyp), pyz(pyzp), pzz(pzzp), ptail(ptailp) {}
 
 		// Calculate isotropic pressure.
 		double isotropic()
 		{
-			return (pxx + pyy + pzz)/3.0 + ideal;
+			return (pxx + pyy + pzz)/3.0 + ideal + ptail;
 		}
 
 		inline Pressure& operator+=(const Pressure& rhs)
@@ -32,6 +33,7 @@ namespace SAPHRON
 			pyz += rhs.pyz;
 			pzz += rhs.pzz;
 			ideal += rhs.ideal;
+			ptail += rhs.ptail;
 			return *this;
 		}
 
@@ -44,6 +46,7 @@ namespace SAPHRON
 			pyz -= rhs.pyz;
 			pzz -= rhs.pzz;
 			ideal -= rhs.ideal;
+			ptail -= rhs.ptail;
 			return *this;
 		}
 
@@ -56,6 +59,7 @@ namespace SAPHRON
 			pyz *= rhs;
 			pzz *= rhs;
 			ideal *= rhs;
+			ptail *= rhs;
 			return *this;
 		}
 
@@ -68,6 +72,7 @@ namespace SAPHRON
 			pyz /= rhs;
 			pzz /= rhs;
 			ideal /= rhs;
+			ptail /= rhs;
 			return *this;
 		}
 	};
@@ -81,6 +86,7 @@ namespace SAPHRON
 		lhs.pyz += rhs.pyz;
 		lhs.pzz += rhs.pzz;
 		lhs.ideal += rhs.ideal;
+		lhs.ptail += rhs.ptail;
 		return lhs;
 	}
 
@@ -93,6 +99,7 @@ namespace SAPHRON
 		lhs.pyz -= rhs.pyz;
 		lhs.pzz -= rhs.pzz;
 		lhs.ideal -= rhs.ideal;
+		lhs.ptail -= rhs.ptail;
 		return lhs;
 	}
 }

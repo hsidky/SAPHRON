@@ -49,5 +49,8 @@ namespace SAPHRON
 				return 8.0*_epsilon*_sigma3*(2.0/3.0*(_sigma3*_sigma3*_sigma3)/(_rcut3*_rcut3*_rcut3)-_sigma3/_rcut3); 
 			}
 
+			double GetEpsilon() { return _epsilon; }
+			double GetSigma() { return sqrt(_sigmasq); }
+			double GetCutoffRadius() { return sqrt(_rcutsq); }
 	};
 }

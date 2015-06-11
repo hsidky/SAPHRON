@@ -157,7 +157,14 @@ namespace SAPHRON
 
 	void CSVObserver::Visit(World*)
 	{
+	}
 
+	void CSVObserver::Visit(MoveManager*)
+	{
+	}
+
+	void CSVObserver::Visit(ForceFieldManager*)
+	{
 	}
 
 	void CSVObserver::Visit(Particle *p)

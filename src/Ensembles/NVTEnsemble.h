@@ -40,6 +40,9 @@ namespace SAPHRON
 			// Acceptance map.
 			AcceptanceMap _accmap;
 
+			// Rand seed.
+			int _seed;
+
 			inline double AcceptanceProbability(double prevH, double currH)
 			{
 				double p = exp(-(currH - prevH) / (_temperature*this->GetBoltzmannConstant()));
@@ -59,6 +62,8 @@ namespace SAPHRON
 			// Visit children.
 			virtual void VisitChildren(Visitor& v) override
 			{
+				_mmanager.AcceptVisitor(v);
+				_ffmanager.AcceptVisitor(v);
 				_world.AcceptVisitor(v);
 			}
 
@@ -70,7 +75,7 @@ namespace SAPHRON
 			            int seed = 1) :
 				_temperature(temperature), _eptuple(), _world(world),
 				_ffmanager(ffmanager), _mmanager(mmanager), _rand(seed),
-				_particles(0), _accmap()
+				_particles(0), _accmap(), _seed(seed)
 			{
 
 				_particles.reserve(10);
@@ -105,5 +110,13 @@ namespace SAPHRON
 			{
 				return _accmap;
 			}
+
+			// Get seed.
+			virtual int GetSeed() override { return _seed; }
+			
+			// Set seed.
+			virtual void SetSeed(int seed) override { _rand.seed(seed); _seed = seed; }
+
+			virtual std::string GetName() {	return "NVT"; }
 	};
 }

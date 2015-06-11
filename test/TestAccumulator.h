@@ -49,6 +49,17 @@ namespace SAPHRON
 
 			}
 
+			virtual void Visit(MoveManager*) override
+			{
+				
+			}
+
+			virtual void Visit(ForceFieldManager*) override
+			{
+				
+			}
+
+
 			Energy GetAverageEnergy()
 			{
 				return _energy / (double)_counter;

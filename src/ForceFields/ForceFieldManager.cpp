@@ -5,6 +5,14 @@
 
 namespace SAPHRON
 {
+	// Helper functions.
+	unsigned int factorial(unsigned int n) 
+	{
+	    if (n == 0)
+	       return 1;
+	    return n * factorial(n - 1);
+	}
+
 	// Resize Forcefield vector.
 	void ForceFieldManager::ResizeFF(int n)
 	{
@@ -63,5 +71,44 @@ namespace SAPHRON
 	{
 		(_forcefields.at(p1type)).at(p2type) = nullptr;
 		(_forcefields.at(p2type)).at(p1type) = nullptr;
+	}
+
+	// Get the number of registered forcefields.
+	int ForceFieldManager::ForceFieldCount()
+	{
+		return factorial(_forcefields.size());
+	}
+
+	// Get forcefield by index in lower packed triangular form.
+	// ex. 11, 12, 13, 22, 23, 33, etc...
+	ForceField* ForceFieldManager::GetForceField(unsigned int n)
+	{
+		std::cout << "Forcefield requested " << n << " size: " << _forcefields.size() << std::endl;
+
+		unsigned int k = 0;
+		for(size_t i = 0; i < _forcefields.size(); ++i)
+			for(size_t j = i; j < _forcefields.size(); ++j) // Assume symmetric matrix.
+			{
+				if(n == k++)
+					return _forcefields[i][j];
+			}
+
+		return nullptr;
+	}
+
+	// Get species associated with forcefield by index.
+	// If no forcefield is registered for the index or the index is out of range 
+	// the pair will contain {-1, -1}.
+	std::pair<int, int> ForceFieldManager::GetForceFieldTypes(unsigned int n)
+	{
+		unsigned int k = 0;
+		for(size_t i = 0; i < _forcefields.size(); ++i)
+			for(size_t j = i; j < _forcefields.size(); ++j) // Assume symmetric matrix.
+			{
+				if(n == k++ && _forcefields[i][j] != nullptr)
+					return {i, j};
+			}
+
+		return {-1, -1};
 	}
 }

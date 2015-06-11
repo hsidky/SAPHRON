@@ -56,6 +56,12 @@ namespace SAPHRON
 			// Update observer when simulation has changed.
 			void Update(SimEvent& e);
 
+			// Called before visitors invokes.
+			virtual void PreVisit(){}
+
+			// Called after visitors complete.
+			virtual void PostVisit(){}
+
 			virtual ~SimObserver(){}
 
 	};
