@@ -44,12 +44,12 @@ namespace SAPHRON
 						auto ij = ff->Evaluate(particle, *neighbor, rij);
 						e += ij.energy; // Sum nonbonded energy.
 						
-						pxx -= ij.virial * rij.x * rij.x;
-						pyy -= ij.virial * rij.y * rij.y;
-						pzz -= ij.virial * rij.z * rij.z;
-						pxy -= ij.virial * rij.x * rij.y;
-						pxz -= ij.virial * rij.x * rij.z;
-						pyz -= ij.virial * rij.y * rij.z;
+						pxx += ij.virial * rij.x * rij.x;
+						pyy += ij.virial * rij.y * rij.y;
+						pzz += ij.virial * rij.z * rij.z;
+						pxy += ij.virial * rij.x * rij.y;
+						pxz += ij.virial * rij.x * rij.z;
+						pyz += ij.virial * rij.y * rij.z;
 					}
 
 					// Iterate children with neighbor's children.
@@ -57,7 +57,7 @@ namespace SAPHRON
 					// The subtlety arises in that the parent holds the neighbor list rather
 					// than the child. We keep the final call for children below in case for some 
 					// implementation they do - in which case it's taken care of.
-					for(auto& child : particle.GetChildren())
+					/*for(auto& child : particle.GetChildren())
 					{
 						for(auto& nchild : neighbor->GetChildren())
 						{
@@ -98,16 +98,16 @@ namespace SAPHRON
 								++i;
 							}
 						}
-					}
+					}*/
 				}
 				
-				EPTuple ep{e, 0, 0, pxx, pxy, pxz, pyy, pyz, pzz};				
+				EPTuple ep{e, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
 
 				// Sum in energy and pressure tail corrections.
-				// Sum in child energy and pressure tail corrections.
 				// Note: we multiply the tail correction expressions by 2.0 because they are on a per-particle
 				// basis, but we divide non-bonded energy contributions by 2.0 to avoid double counting. So 
-				// this is a correction.
+				// this is a correction. Also the pressure tail correction does not contain another "rho" term. 
+				// This is because it is summed over all particles and divided by volume. Effectively another "rho".
 				if(!compositions.empty())
 				{
 					int i = 0; 
@@ -118,10 +118,7 @@ namespace SAPHRON
 							double N = compositions.at(i);
 							double rho = N/volume;
 							ep.energy.nonbonded += 2.0*2.0*M_PI*rho*forcefield->EnergyTailCorrection();
-							double pcorrect = 2.0*M_PI*rho*rho*forcefield->PressureTailCorrection();
-							ep.pressure.pxx -= pcorrect;
-							ep.pressure.pyy -= pcorrect;
-							ep.pressure.pyz -= pcorrect;
+							ep.pressure.ptail = 2.0/3.0*2.0*M_PI*rho*forcefield->PressureTailCorrection();
 						}
 						++i;
 					}
@@ -172,7 +169,6 @@ namespace SAPHRON
 				{
 					auto* particle = world.SelectParticle(i);
 					ep += EvaluateHamiltonian(*particle, world.GetComposition(), world.GetVolume());	
-					ep.energy.connectivity += EvaluateConnectivity(*particle);
 				}
 
 				ep.energy.nonbonded *= 0.5;
