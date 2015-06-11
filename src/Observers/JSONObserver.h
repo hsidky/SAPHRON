@@ -25,6 +25,7 @@ namespace SAPHRON
 			virtual void Visit(World* w) override;
 			virtual void Visit(Particle* p) override;
 			virtual void Visit(MoveManager* mm) override;
+			virtual void Visit(ForceFieldManager* fmm) override;
 
 			virtual void PreVisit() override;
 			virtual void PostVisit() override;

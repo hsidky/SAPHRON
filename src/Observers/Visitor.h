@@ -8,6 +8,7 @@ namespace SAPHRON
 	class World;
 	class Particle;
 	class MoveManager;
+	class ForceFieldManager;
 
 	class Visitor
 	{
@@ -18,5 +19,6 @@ namespace SAPHRON
 			virtual void Visit(World* w) = 0;
 			virtual void Visit(Particle* p) = 0;
 			virtual void Visit(MoveManager* mm) = 0;
+			virtual void Visit(ForceFieldManager* ffm) = 0;
 	};
 }

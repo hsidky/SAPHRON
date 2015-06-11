@@ -163,6 +163,10 @@ namespace SAPHRON
 	{
 	}
 
+	void CSVObserver::Visit(ForceFieldManager*)
+	{
+	}
+
 	void CSVObserver::Visit(Particle *p)
 	{
 		if(!this->Flags.particle)

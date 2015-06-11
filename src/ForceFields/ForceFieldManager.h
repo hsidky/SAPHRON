@@ -3,13 +3,14 @@
 #include "../Particles/Particle.h"
 #include "../Worlds/World.h"
 #include "../Ensembles/Ensemble.h"
+#include "../Observers/Visitable.h"
 #include "ForceField.h"
 #include <math.h>
 
 namespace SAPHRON
 {
 	// Class responsible for managing forcefields and evaluating energies of particles.
-	class ForceFieldManager
+	class ForceFieldManager : public Visitable
 	{
 		private:
 			std::vector<std::vector<ForceField*> > _forcefields;
@@ -208,6 +209,12 @@ namespace SAPHRON
 				// Divide virial by volume to get pressure. 
 				ep.pressure /= volume;
 				return ep;
+			}
+
+			// Accept a visitor.
+			virtual void AcceptVisitor(class Visitor &v) override
+			{
+				v.Visit(this);
 			}
 	};
 }

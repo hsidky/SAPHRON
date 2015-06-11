@@ -35,10 +35,10 @@ TEST(ForceFieldManager, DefaultBehavior)
 
 TEST(ForceFieldManager, FFIterator)
 {
-	Site s1({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "L1");
-	Site s2({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "L1");
-	Site s3({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "L1");
-	Site s4({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "L2");
+	Site s1({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "J1");
+	Site s2({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "J1");
+	Site s3({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "J1");
+	Site s4({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "J2");
 
 	// Define force field.
 	LebwohlLasherFF ff(1.0, 0);
@@ -46,31 +46,29 @@ TEST(ForceFieldManager, FFIterator)
 
 	// Define ff manager.
 	ForceFieldManager ffm;
-
-	ffm.AddForceField("L1", "L1", ff);
-	ffm.AddForceField("L1", "L2", ff2);
+	ffm.AddForceField("J1", "J1", ff);
+	ffm.AddForceField("J1", "J2", ff2);
 
 	ASSERT_EQ(2, ffm.ForceFieldCount());
 
 	// Pull both forcefields and verify.
-	ASSERT_EQ(&ff, ffm.GetForceField(1));
-	ASSERT_EQ(&ff2, ffm.GetForceField(2));
-	ASSERT_EQ(nullptr, ffm.GetForceField(3));
+	ASSERT_EQ(&ff, ffm.GetForceField(0));
+	ASSERT_EQ(&ff2, ffm.GetForceField(1));
+	ASSERT_EQ(nullptr, ffm.GetForceField(2));
 
 	// Check registered species types.
 	std::pair<int, int> type = {s1.GetSpeciesID(), s1.GetSpeciesID()};
-	ASSERT_EQ(type, ffm.GetForceFieldTypes(1));
+	ASSERT_EQ(type, ffm.GetForceFieldTypes(0));
 	type.first = 0;
 	type.second = 1;
-	ASSERT_EQ(type, ffm.GetForceFieldTypes(2));
+	ASSERT_EQ(type, ffm.GetForceFieldTypes(1));
 
 	// Verify string types
-	ASSERT_EQ("L1", Particle::GetSpeciesList()[type.first]);
-	ASSERT_EQ("L2", Particle::GetSpeciesList()[type.second]);
-	
+	ASSERT_EQ("J1", Particle::GetSpeciesList()[type.first]);
+	ASSERT_EQ("J2", Particle::GetSpeciesList()[type.second]);
+
 	// Check invalid case.
 	type.first = -1;
 	type.second = -1;
-	ASSERT_EQ(type, ffm.GetForceFieldTypes(3));
-
+	ASSERT_EQ(type, ffm.GetForceFieldTypes(2));
 }

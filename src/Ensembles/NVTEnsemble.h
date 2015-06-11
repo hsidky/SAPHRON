@@ -63,6 +63,7 @@ namespace SAPHRON
 			virtual void VisitChildren(Visitor& v) override
 			{
 				_mmanager.AcceptVisitor(v);
+				_ffmanager.AcceptVisitor(v);
 				_world.AcceptVisitor(v);
 			}
 

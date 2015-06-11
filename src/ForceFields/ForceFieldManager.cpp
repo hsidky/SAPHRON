@@ -83,11 +83,13 @@ namespace SAPHRON
 	// ex. 11, 12, 13, 22, 23, 33, etc...
 	ForceField* ForceFieldManager::GetForceField(unsigned int n)
 	{
+		std::cout << "Forcefield requested " << n << " size: " << _forcefields.size() << std::endl;
+
 		unsigned int k = 0;
 		for(size_t i = 0; i < _forcefields.size(); ++i)
 			for(size_t j = i; j < _forcefields.size(); ++j) // Assume symmetric matrix.
 			{
-				if(n == ++k)
+				if(n == k++)
 					return _forcefields[i][j];
 			}
 
@@ -103,7 +105,7 @@ namespace SAPHRON
 		for(size_t i = 0; i < _forcefields.size(); ++i)
 			for(size_t j = i; j < _forcefields.size(); ++j) // Assume symmetric matrix.
 			{
-				if(n == ++k && _forcefields[i][j] != nullptr)
+				if(n == k++ && _forcefields[i][j] != nullptr)
 					return {i, j};
 			}
 

@@ -94,6 +94,9 @@ namespace SAPHRON
 	{
 	}
 
+	void ConsoleObserver::Visit(ForceFieldManager*)
+	{}
+
 	void ConsoleObserver::Visit(World*)
 	{
 	}

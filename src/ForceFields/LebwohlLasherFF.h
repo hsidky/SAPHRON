@@ -27,5 +27,9 @@ namespace SAPHRON
 
 				return {-1.0*(_eps*(1.5*dot*dot - 0.5) + _gamma), 0.0};
 			}
+
+			double GetEpsilon() { return _eps; }
+			double GetGamma() { return _gamma; }
+
 	};
 }

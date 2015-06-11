@@ -3,6 +3,10 @@
 #include "../Ensembles/DOSEnsemble.h"
 #include "../Moves/TranslateMove.h"
 #include "../Worlds/World.h"
+#include "../ForceFields/ForceFieldManager.h"
+#include "../ForceFields/LebwohlLasherFF.h"
+#include "../ForceFields/LennardJonesFF.h"
+#include "../Particles/Site.h"
 
 namespace SAPHRON
 {
@@ -52,6 +56,41 @@ namespace SAPHRON
 			if(auto* m = dynamic_cast<TranslateMove*>(move))
 			{
 				_root["moves"][move->GetName()]["dx"] = m->GetMaxDisplacement();
+			}
+		}
+	}
+
+	void JSONObserver::Visit(ForceFieldManager *ffm)
+	{
+		for(int i = 0; i < ffm->ForceFieldCount(); ++i)
+		{
+			auto* forcefield = ffm->GetForceField(i);
+			auto types = ffm->GetForceFieldTypes(i);
+			if(auto* ff = dynamic_cast<LebwohlLasherFF*>(forcefield))
+			{
+				auto& ll = _root["forcefields"][i]["LebwohlLasher"];
+				ll["epsilon"] = ff->GetEpsilon();
+				ll["gamma"] = ff->GetGamma();
+				if(types.first != -1 && types.second != -1)
+				{
+					ll["species"][0] = Particle::GetSpeciesList()[types.first];
+					ll["species"][1] = Particle::GetSpeciesList()[types.second];
+				}
+			}
+			else if(auto* ff = dynamic_cast<LennardJonesFF*>(forcefield))
+			{
+				auto& ll = _root["forcefields"][i]["LennardJones"];
+				ll["epsilon"] = ff->GetEpsilon();
+				ll["sigma"] = ff->GetSigma();
+				ll["rcut"] = ff->GetCutoffRadius();
+				if(types.first != -1 && types.second != -1)
+				{
+					ll["species"][0] = Particle::GetSpeciesList()[types.first];
+					ll["species"][1] = Particle::GetSpeciesList()[types.second];
+				}
+			}
+			else if(forcefield == nullptr)
+			{
 			}
 		}
 	}
