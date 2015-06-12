@@ -138,3 +138,19 @@ TEST(SimpleWorld, MoveParticleSemantics)
 	Director d {1, 0, 0};
 	ASSERT_EQ(d, p->GetDirector());
 }
+
+TEST(SimpleWorld, VolumeScaling)
+{
+	int n = 30;
+	SimpleWorld world(n, n, n, 1);
+	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
+	world.PackWorld({&site1}, {1.0}, 500, 1.0);
+	ASSERT_EQ(500, world.GetParticleCount());
+
+	// Get random coordinate and check it afterwards.
+	auto box = world.GetBoxVectors();
+	Particle* p = world.DrawRandomParticle();
+	Position newpos = 2.0*p->GetPosition(); // we will scale by 2
+	world.SetBoxVectors(2.0*box.x, 2.0*box.y, 2.0*box.z, true);
+	ASSERT_EQ(newpos, p->GetPosition());
+}

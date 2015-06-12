@@ -131,6 +131,12 @@ namespace SAPHRON
 				return Position{_xlength, _ylength, _zlength};
 			}
 
+			// Sets the box vectors (box volume) and if scale is true, scale the coordinates of the 
+			// particles in the system. Energy recalculation after this procedure is recommended.
+			// If scaling is not applied, periodic boundary conditions are applied to all particles.
+			// The neighbor list is auto regenerated.
+			virtual void SetBoxVectors(double x, double y, double z, bool scale) = 0;
+
 			// Get seed.
 			virtual int GetSeed() const = 0;
 

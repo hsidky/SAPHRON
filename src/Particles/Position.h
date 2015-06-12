@@ -22,6 +22,16 @@ namespace SAPHRON
 			return *this;
 		}
 
+		inline Position operator*(const double& rhs) const
+		{
+			Position lhs;
+			lhs.x = x*rhs;
+			lhs.y = y*rhs;
+			lhs.z = z*rhs;
+
+			return lhs;
+		}
+
 		inline double norm() const
 		{
 			return sqrt(x*x + y*y + z*z);
@@ -41,7 +51,6 @@ namespace SAPHRON
 		return lhs;
 	} 
 
-
 	inline Position operator-(Position lhs, const Position& rhs)
 	{
 		lhs.x -= rhs.x;
@@ -49,4 +58,9 @@ namespace SAPHRON
 		lhs.z -= rhs.z;
 		return lhs;
 	} 
+
+	inline Position operator*(double lhs, const Position& rhs)
+	{
+		return rhs*lhs;
+	}
 }

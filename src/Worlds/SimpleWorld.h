@@ -225,7 +225,49 @@ namespace SAPHRON
 			}
 
 			// Update the neighbor list for all particles in the world.
-			virtual void UpdateNeighborList() override;		
+			virtual void UpdateNeighborList() override;	
+
+			// Sets the box vectors (box volume) and if scale is true, scale the coordinates of the 
+			// particles in the system. Energy recalculation after this procedure is recommended.
+			// The neighbor list is auto regenerated.
+			virtual void SetBoxVectors(double x, double y, double z, bool scale) override
+			{
+				if(scale)
+				{
+					// First we scale particle positions, then we shrink the box.
+					// Calculate scale factor.
+					double xs = x/_xlength;
+					double ys = y/_ylength;
+					double zs = z/_zlength;
+					for(auto& particle : _particles)
+					{
+						const auto& pos = particle->GetPositionRef();
+						particle->SetPosition(xs*pos.x, ys*pos.y, zs*pos.z);
+					}
+
+					_xlength = x;
+					_ylength = y;
+					_zlength = z;
+				}
+				else
+				{
+					// Change volume first, then apply PBC.
+					_xlength = x;
+					_ylength = y;
+					_zlength = z;
+
+					for(auto& particle: _particles)
+					{
+						auto pos = particle->GetPosition();
+						ApplyPeriodicBoundaries(pos);
+						particle->SetPosition(pos);
+					}
+				}
+
+				// Regenerate neighbor list.
+				UpdateNeighborList();
+			}
+	
 
 			~SimpleWorld()
 			{
