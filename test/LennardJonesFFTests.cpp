@@ -99,11 +99,11 @@ TEST(LennardJonesFF, ReducedProperties)
 	ensemble.SetBoltzmannConstant(kb);
 	ensemble.AddObserver(&observer);
 	ensemble.AddObserver(&accumulator);
-	ensemble.AddObserver(&csv);
-	ensemble.AddObserver(&json);
+	//ensemble.AddObserver(&csv);
+	//ensemble.AddObserver(&json);
 	
 	// Run 
-	ensemble.Run(20000);
+	ensemble.Run(5000);
 
 	ASSERT_NEAR(-5.5121, accumulator.GetAverageEnergy().total()/(double)N, 1e-2);
 	ASSERT_NEAR(6.7714E-03, accumulator.GetAveragePressure(), 2.0E-03);

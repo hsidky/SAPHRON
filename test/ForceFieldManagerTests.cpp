@@ -51,24 +51,11 @@ TEST(ForceFieldManager, FFIterator)
 
 	ASSERT_EQ(2, ffm.ForceFieldCount());
 
-	// Pull both forcefields and verify.
-	ASSERT_EQ(&ff, ffm.GetForceField(0));
-	ASSERT_EQ(&ff2, ffm.GetForceField(1));
-	ASSERT_EQ(nullptr, ffm.GetForceField(2));
+	int i = 0;
+	for(auto forcefield : ffm){
+		if(forcefield.second != nullptr)
+			++i;
+	}
 
-	// Check registered species types.
-	std::pair<int, int> type = {s1.GetSpeciesID(), s1.GetSpeciesID()};
-	ASSERT_EQ(type, ffm.GetForceFieldTypes(0));
-	type.first = 0;
-	type.second = 1;
-	ASSERT_EQ(type, ffm.GetForceFieldTypes(1));
-
-	// Verify string types
-	ASSERT_EQ("J1", Particle::GetSpeciesList()[type.first]);
-	ASSERT_EQ("J2", Particle::GetSpeciesList()[type.second]);
-
-	// Check invalid case.
-	type.first = -1;
-	type.second = -1;
-	ASSERT_EQ(type, ffm.GetForceFieldTypes(2));
+	ASSERT_EQ(2, i);
 }

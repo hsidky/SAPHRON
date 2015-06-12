@@ -62,20 +62,18 @@ namespace SAPHRON
 
 	void JSONObserver::Visit(ForceFieldManager *ffm)
 	{
-		for(int i = 0; i < ffm->ForceFieldCount(); ++i)
+		int i = 0;
+		for(auto& ffmap : *ffm)
 		{
-			auto* forcefield = ffm->GetForceField(i);
-			auto types = ffm->GetForceFieldTypes(i);
+			const SpeciesPair& types = ffmap.first;
+			ForceField* forcefield = ffmap.second;
 			if(auto* ff = dynamic_cast<LebwohlLasherFF*>(forcefield))
 			{
 				auto& ll = _root["forcefields"][i]["LebwohlLasher"];
 				ll["epsilon"] = ff->GetEpsilon();
 				ll["gamma"] = ff->GetGamma();
-				if(types.first != -1 && types.second != -1)
-				{
-					ll["species"][0] = Particle::GetSpeciesList()[types.first];
-					ll["species"][1] = Particle::GetSpeciesList()[types.second];
-				}
+				ll["species"][0] = Particle::GetSpeciesList()[types.first];
+				ll["species"][1] = Particle::GetSpeciesList()[types.second];
 			}
 			else if(auto* ff = dynamic_cast<LennardJonesFF*>(forcefield))
 			{
@@ -83,14 +81,8 @@ namespace SAPHRON
 				ll["epsilon"] = ff->GetEpsilon();
 				ll["sigma"] = ff->GetSigma();
 				ll["rcut"] = ff->GetCutoffRadius();
-				if(types.first != -1 && types.second != -1)
-				{
-					ll["species"][0] = Particle::GetSpeciesList()[types.first];
-					ll["species"][1] = Particle::GetSpeciesList()[types.second];
-				}
-			}
-			else if(forcefield == nullptr)
-			{
+				ll["species"][0] = Particle::GetSpeciesList()[types.first];
+				ll["species"][1] = Particle::GetSpeciesList()[types.second];
 			}
 		}
 	}

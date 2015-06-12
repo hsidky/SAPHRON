@@ -117,6 +117,6 @@ namespace SAPHRON
 			// Set seed.
 			virtual void SetSeed(int seed) override { _rand.seed(seed); _seed = seed; }
 
-			virtual std::string GetName() {	return "NVT"; }
+			virtual std::string GetName() override { return "NVT"; }
 	};
 }
