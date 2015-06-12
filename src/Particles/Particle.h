@@ -186,7 +186,7 @@ namespace SAPHRON
 			}
 
 			// Get species list.
-			static SpeciesList GetSpeciesList()
+			static SpeciesList& GetSpeciesList()
 			{
 				return _speciesList;
 			}
@@ -317,6 +317,9 @@ namespace SAPHRON
 			{
 				v.Visit(this);
 			}
+
+			// Check if particle has children.
+			virtual bool HasChildren() { return false; }
 
 			// Gets all descendants of a particle.
 			virtual ParticleList& GetChildren() = 0;

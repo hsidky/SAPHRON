@@ -7,11 +7,26 @@
 #include "../ForceFields/LebwohlLasherFF.h"
 #include "../ForceFields/LennardJonesFF.h"
 #include "../Particles/Site.h"
+#include <ctime>
+#include <iomanip>
 
 namespace SAPHRON
 {
+	std::string GetTimestamp()
+	{
+		time_t rawtime;
+		struct tm * timeinfo;
+		char buffer[80];
+
+		time (&rawtime);
+		timeinfo = localtime(&rawtime);
+
+  		strftime(buffer,80,"%d-%m-%Y %r",timeinfo);
+  		return std::string(buffer);
+	}
+
 	JSONObserver::JSONObserver(std::string prefix, SimFlags flags, unsigned int frequency) : 
-	SimObserver(flags, frequency), _counter(0), _prefix(prefix)
+	SimObserver(flags, frequency), _counter(0), _prefix(prefix), _root(), _cspecies(0)
 	{
 	}
 
@@ -26,8 +41,22 @@ namespace SAPHRON
 
 	void JSONObserver::PostVisit()
 	{
-		*_jsonfs << _root << std::endl;
+		*_jsonfs 
+		<< "/**********************************************\n"
+		<< " *           SAPHRON JSON Snapshot            *\n"
+		<< " *      Generated " << GetTimestamp() << "      *\n"
+		<< " **********************************************/\n";
+
+		Json::StreamWriterBuilder builder;
+		builder["commentStyle"] = "None";
+		builder["indentation"] = "   "; // or whatever you like
+		std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
+		writer->write(_root, &*_jsonfs);
+		*_jsonfs << std::endl; // add lf and flush
+
 		_jsonfs->close();
+		_root.clear();
+		_cspecies.clear();
 	}
 
 	void JSONObserver::Visit(Ensemble* ensemble)
@@ -100,8 +129,54 @@ namespace SAPHRON
 		_root["world"]["skin_thickness"] = world->GetSkinThickness();
 	}
 
-	void JSONObserver::Visit(Particle*)
+	void JSONObserver::Visit(Particle* p)
 	{
+		auto species = p->GetSpecies();
 
+		// Write blueprint if it doesn't exist.
+		if(std::find(_cspecies.begin(), _cspecies.end(), p->GetSpeciesID()) == _cspecies.end())
+		{
+			_cspecies.push_back(p->GetSpeciesID());
+			_root["components"][species] = Json::Value(Json::objectValue);
+			int i = 0;
+			for(auto& child : p->GetChildren())
+			{
+				_root["components"][species]["children"][i][child->GetSpecies()]["index"] = i+1;
+				++i;
+			}
+		}
+
+		// If particle has children, write them to particles. If not, skip.
+		if(p->HasChildren())
+		{
+			for(auto& child : p->GetChildren())
+			{
+				auto cspecies = child->GetSpecies();
+				auto& pos = child->GetPositionRef();
+				auto& dir = child->GetDirectorRef();
+				Json::Value particle; 
+				particle[cspecies]["parent"] = species;
+				particle[cspecies]["position"][0] = pos.x;
+				particle[cspecies]["position"][1] = pos.y;
+				particle[cspecies]["position"][2] = pos.z;
+				particle[cspecies]["director"][0] = dir.x;
+				particle[cspecies]["director"][1] = dir.y;
+				particle[cspecies]["director"][2] = dir.z;
+				_root["particles"].append(particle);
+			}
+		}
+		else
+		{
+			auto& pos = p->GetPositionRef();
+			auto& dir = p->GetDirectorRef();
+			Json::Value particle; 
+			particle[species]["position"][0] = pos.x;
+			particle[species]["position"][1] = pos.y;
+			particle[species]["position"][2] = pos.z;
+			particle[species]["director"][0] = dir.x;
+			particle[species]["director"][1] = dir.y;
+			particle[species]["director"][2] = dir.z;
+			_root["particles"].append(particle);
+		}
 	}
 }
