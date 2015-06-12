@@ -9,7 +9,8 @@
 namespace SAPHRON
 {
 	typedef std::map<int, int> CompositionList; 
-
+	typedef std::vector<World*> WorldList;
+	
 	// Public interface representing the "World" in which particles live. A World object is
 	// responsible for setting up the "box" and associated geometry, handling boundary conditions and
 	// updating negihbor lists on particles. World implements ParticleObserver so it can "listen in" 

@@ -1,21 +1,14 @@
-#pragma once
+#pragma once 
 
-#include "../Particles/Particle.h"
-#include "../Worlds/World.h"
+#include "Move.h"
 
 namespace SAPHRON
 {
-	// Abstract base class for a Monte Carlo move.
-	class Move
+	// Abstract base class that extends move for Gibbs ensemble moves where 
+	// moves may happen on multiple worlds.
+	class GibbsMove : public Move
 	{
 	public:
-		virtual ~Move(){}
-
-		// Get acceptance ratio. 
-		virtual double GetAcceptanceRatio() = 0;
-
-		// Reset acceptance ratio.
-		virtual void ResetAcceptanceRatio() = 0;
 
 		// Perform the required draw for the move. This involved drawing particles if necessary.
 		// If moves are performed on particles, pointers are pushed to the particles 
@@ -28,16 +21,10 @@ namespace SAPHRON
 		// returns false.
 		virtual bool Perform(World& world, ParticleList& particles) = 0;
 
-		// Undo a move.
-		virtual void Undo() = 0;
+		// Similar to Draw above except that it operates on multiple worlds. 
+		virtual void Draw(const WorldList& worlds, ParticleList& particles) = 0;
 
-		// Get move name. 
-		virtual std::string GetName() = 0;
-
-		// Get seed.
-		virtual int GetSeed() { return 0; }
-
-		// Clone a move.
-		virtual Move* Clone() const = 0;
+		// Similar to perform above except that it operates on multiple worlds.
+		virtual bool Perform(const WorldList& worlds, ParticleList& particles) = 0;
 	};
 }

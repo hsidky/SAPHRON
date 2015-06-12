@@ -246,6 +246,12 @@ target_include_directories(TranslateMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(TranslateMoveTests googletest) 
 add_test(TranslateMoveTests TranslateMoveTests)
 
+add_executable(VolumeScaleMoveTests test/VolumeScaleMoveTests.cpp)
+target_link_libraries(VolumeScaleMoveTests ${TEST_DEPS})
+target_include_directories(VolumeScaleMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(VolumeScaleMoveTests googletest) 
+add_test(VolumeScaleMoveTests VolumeScaleMoveTests)
+
 # end add testing 
 
 install(TARGETS saphron libsaphron 
