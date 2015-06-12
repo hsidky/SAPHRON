@@ -5,14 +5,6 @@
 
 namespace SAPHRON
 {
-	// Helper functions.
-	unsigned int factorial(unsigned int n) 
-	{
-	    if (n == 0)
-	       return 1;
-	    return n * factorial(n - 1);
-	}
-
 	// Adds a forcefield to the manager.
 	void ForceFieldManager::AddForceField(std::string p1type, std::string p2type, ForceField& ff)
 	{
@@ -36,6 +28,11 @@ namespace SAPHRON
 	{
 		_forcefields.insert(std::pair<SpeciesPair, ForceField*>({p1type, p2type}, &ff));
 		_forcefields.insert(std::pair<SpeciesPair, ForceField*>({p2type, p1type}, &ff));
+
+		// Must be unique.
+		if(_uniqueffs.find({p1type, p2type}) == _uniqueffs.end() && 
+			_uniqueffs.find({p2type, p1type}) == _uniqueffs.end())
+			_uniqueffs.insert(std::pair<SpeciesPair, ForceField*>({p1type, p2type}, &ff));
 	}
 
 	// Removes a forcefield from the manager.
@@ -60,11 +57,15 @@ namespace SAPHRON
 	{
 		_forcefields.erase({p1type, p2type});
 		_forcefields.erase({p2type, p1type});
+
+		_uniqueffs.erase({p1type, p2type});
+		_uniqueffs.erase({p2type, p1type});
+
 	}
 
 	// Get the number of registered forcefields.
 	int ForceFieldManager::ForceFieldCount()
 	{
-		return _forcefields.size()/2.0; // It contains double.
+		return _uniqueffs.size();
 	}
 }

@@ -20,6 +20,9 @@ namespace SAPHRON
 	private:
 		FFMap _forcefields;
 
+		// Hold unique instances of forcefield pointers.
+		FFMap _uniqueffs;
+
 		// Evaluate non-bonded interactions of a particle including energy and virial pressure contribution.
 		// Implementation follows Allan and Tildesley. See Forcefield.h. Tail corrections are also summed in.
 		// Pressure tail contribution is added to isotropic pressure parts only!
@@ -212,13 +215,9 @@ namespace SAPHRON
 			v.Visit(this);
 		}
 
-		// Iterators.
-		iterator begin() { return _forcefields.begin(); }
-		iterator end() 
-		{ 
-			auto it = _forcefields.begin(); 
-			std::advance(it, ForceFieldCount());
-			return it;
-		}
+		// Iterators. TODO: Fix iterator such that only unique instances of 
+		// forcefields get returned. 
+		iterator begin() { return _uniqueffs.begin(); }
+		iterator end() { return _uniqueffs.end(); }
 	};
 }

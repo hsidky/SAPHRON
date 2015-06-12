@@ -58,4 +58,10 @@ TEST(ForceFieldManager, FFIterator)
 	}
 
 	ASSERT_EQ(2, i);
+
+	// Remove forcefield. Check count. 
+	ffm.RemoveForceField("J1", "J1");
+	ASSERT_EQ(1, ffm.ForceFieldCount());
+	ffm.AddForceField("J1", "J1", ff);
+	ASSERT_EQ(2, ffm.ForceFieldCount());
 }
