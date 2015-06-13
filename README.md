@@ -50,7 +50,7 @@ $ git clone https://github.com/hsidky/SAPHRON.git
 
 ```bash
 $ cd SAPHRON
-$ mkdir build
+$ mkdir build && cd build
 $ cmake .. 
 $ make
 $ sudo make install
