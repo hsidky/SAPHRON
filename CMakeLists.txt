@@ -252,6 +252,12 @@ target_include_directories(VolumeScaleMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(VolumeScaleMoveTests googletest) 
 add_test(VolumeScaleMoveTests VolumeScaleMoveTests)
 
+add_executable(ParticleSwapMoveTests test/ParticleSwapMoveTests.cpp)
+target_link_libraries(ParticleSwapMoveTests ${TEST_DEPS})
+target_include_directories(ParticleSwapMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(ParticleSwapMoveTests googletest) 
+add_test(ParticleSwapMoveTests ParticleSwapMoveTests)
+
 # end add testing 
 
 install(TARGETS saphron libsaphron 

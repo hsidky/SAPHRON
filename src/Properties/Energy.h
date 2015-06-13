@@ -24,6 +24,11 @@ namespace SAPHRON
 			return nonbonded == rhs.nonbonded && connectivity == rhs.connectivity;
 		}
 
+		inline bool operator!=(const Energy& rhs) const
+		{
+			return nonbonded != rhs.nonbonded || connectivity != rhs.connectivity;
+		}
+
 		inline Energy& operator+=(const Energy& rhs)
 		{
 			nonbonded += rhs.nonbonded; 

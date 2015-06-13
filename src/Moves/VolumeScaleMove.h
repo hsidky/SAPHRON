@@ -31,7 +31,7 @@ namespace SAPHRON
 		}
 
 		// Nothing happens on the draw since we are scaling world volume.
-		virtual void Draw(World& world, ParticleList&) override {}
+		virtual void Draw(World&, ParticleList&) override {}
 
 		// Perform volume scaling move.
 		virtual bool Perform(World& world, ParticleList&) override
@@ -97,7 +97,7 @@ namespace SAPHRON
 		// Undo move.
 		virtual void Undo() override
 		{
-			for(int i = 0; i < _worlds.size(); ++i)
+			for(size_t i = 0; i < _worlds.size(); ++i)
 			{
 				double len = pow(_oldv[i], 1.0/3.0);
 				_worlds[i]->SetBoxVectors(len, len, len, true);

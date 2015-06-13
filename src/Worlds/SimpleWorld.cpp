@@ -200,14 +200,39 @@ namespace SAPHRON
 				auto pj = _particles[j];
 				auto posj = pj->GetPositionRef();
 
-				Position dist = posi - posj;
-				ApplyMinimumImage(dist);
+				Position rij = posi - posj;
+				ApplyMinimumImage(rij);
 
-				if(dist.norm2() <= _ncutsq)
+				if(rij.normsq() <= _ncutsq)
 				{
 					pj->AddNeighbor(pi);
 					pi->AddNeighbor(pj);
 				}
+			}
+		}
+	}
+
+	void SimpleWorld::UpdateNeighborList(Particle* particle)
+	{
+		particle->ClearNeighborList();
+		particle->SetCheckpoint();
+		
+		const auto& posi = particle->GetPositionRef();
+		for(const auto& p : _particles)
+		{
+			// Don't count self...
+			if(p == particle)
+				continue;
+
+			const auto& posj = p->GetPositionRef();
+
+			Position rij = posi - posj;
+			ApplyMinimumImage(rij);
+
+			if(rij.normsq() <= _ncutsq)
+			{
+				particle->AddNeighbor(p);
+				p->AddNeighbor(particle);
 			}
 		}
 	}

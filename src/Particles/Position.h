@@ -37,7 +37,7 @@ namespace SAPHRON
 			return sqrt(x*x + y*y + z*z);
 		}
 
-		inline double norm2() const
+		inline double normsq() const
 		{
 			return (x*x + y*y + z*z);
 		}

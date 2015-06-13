@@ -63,7 +63,7 @@ namespace SAPHRON
 		}
 
 		// Get the norm sqaured of the director.
-		inline double norm2()
+		inline double normsq()
 		{
 			return x*x + y*y + z*z;
 		}

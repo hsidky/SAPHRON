@@ -83,7 +83,11 @@ namespace SAPHRON
 			// Draw a random particle from the world.
 			inline virtual Particle* DrawRandomParticle() override
 			{
-				return _particles[_rand.int32() % this->_particles.size()];
+				int n = _particles.size();
+				if(n == 0)
+					return nullptr;
+
+				return _particles[_rand.int32() % n];
 			}
 
 			// Draw random particles from the world and inserts them into particles. NOTE: this method 
@@ -182,7 +186,7 @@ namespace SAPHRON
 				{
 					auto dist = particle->GetCheckpointDist();
 					ApplyMinimumImage(dist);
-					if(dist.norm2() > _rskinsq/4.0)	
+					if(dist.normsq() > _rskinsq/4.0)	
 						UpdateNeighborList();
 				}
 			}
@@ -226,6 +230,9 @@ namespace SAPHRON
 
 			// Update the neighbor list for all particles in the world.
 			virtual void UpdateNeighborList() override;	
+
+			// Update neighbor list for a single particle.
+			virtual void UpdateNeighborList(Particle* particle) override;
 
 			// Sets the box vectors (box volume) and if scale is true, scale the coordinates of the 
 			// particles in the system. Energy recalculation after this procedure is recommended.

@@ -38,6 +38,9 @@ namespace SAPHRON
 
 			// Update the neighbor list for all particles in the world.
 			virtual void UpdateNeighborList() = 0;
+
+			// Update neighbor list for a particle.
+			virtual void UpdateNeighborList(Particle* particle) = 0;
 			
 			// Checks list of particles, and if needed updates neighbor list.
 			virtual void CheckNeighborListUpdate(const ParticleList& particles) = 0;

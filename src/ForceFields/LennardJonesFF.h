@@ -27,7 +27,7 @@ namespace SAPHRON
 			{
 				Interaction ep;
 
-				double rsq = rij.norm2();
+				double rsq = rij.normsq();
 
 				if(rsq < _rcutsq)
 				{
