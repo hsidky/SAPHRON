@@ -25,7 +25,7 @@ BLAS and LAPACK are the default linear algebra providers, though **SAPHRON** sup
 
 ##### To get SAPHRON to compile it is crucial that you perform the following step
 
-By default, Armadillo assumes you want to link against it's shared library. SAPHRON does not do this, but instead links directly to BLAS and LAPACK or MKL as mentioned above. To fix this, use your editor of choice (here we use vim) to modify the Armadillo config header
+By default, Armadillo assumes you want to link against its shared library. SAPHRON does not do this, but instead links directly to BLAS and LAPACK or MKL as mentioned above. To fix this, use your editor of choice (here we use vim) to modify the Armadillo config header
 
 ```bash
 $ vim /usr/include/armadillo_bits/config.hpp
@@ -34,9 +34,11 @@ $ vim /usr/include/armadillo_bits/config.hpp
 Simply comment out the line that says `#define ARMA_USE_WRAPPER` and you're good to go!
 
 ##### OpenMP 
+
 SAPHRON uses OpenMP to parallelize energy and neighbor list calculations. It relies on compilers that support the `-fopenmp` flag. Any recent C++11 compatible compiler should support this, including GCC 4.9.x and Clang 3.4+.
 
 ##### Additional information
+
 If you wish to link **SAPHRON** against the static BLAS/LAPACK libraries you can install those instead. However, you will also need to install `libgfortran` and `libquadmath`. **SAPHRON** will look for and link against them as well.
 
 <a id="installation"></a>
@@ -71,10 +73,12 @@ $ make test
 **SAPHRON** utilizes the following packages: 
 
 Armadillo (http://arma.sourceforge.net/)
+
 JSONCpp (https://github.com/open-source-parsers/jsoncpp)
+
 Sitmo Random Number Generator (http://www.sitmo.com/article/multi-threaded-random-number-generation-in-c11/)
 
-**SAPHRON** would also not be possible without the support and expertise of [Eliseo Marin-Rimoldi](https://github.com/emarinri), developer of a mature sophisticated Montre Carlo package [Cassandra](http://cassandra.nd.edu/).
+**SAPHRON** would also not be possible without the support and expertise of [Eliseo Marin-Rimoldi](https://github.com/emarinri), developer of [Cassandra](http://cassandra.nd.edu/).
 
 <a id="contributing"></a>
 ## Contributing
