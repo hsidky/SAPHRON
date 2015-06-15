@@ -36,14 +36,16 @@ TEST(ParticleSwapMove, DefaultBehavior)
 	ParticleSwapMove move;
 	ParticleList plist;
 
+	WorldIndexList windex;
+
 	// Particle swap move. 
-	move.Draw({&liquid, &vapor}, plist);
+	move.Draw({&liquid, &vapor}, windex, plist);
 	
 	World* world = plist[0]->GetWorld();
 	Position pos = plist[0]->GetPosition();
 	NeighborList nlist = plist[0]->GetNeighbors();
 
-	move.Perform({&liquid, &vapor}, plist);
+	move.Perform({&liquid, &vapor}, windex, plist);
 
 	World* newworld = plist[0]->GetWorld();
 	ASSERT_EQ(199, world->GetParticleCount());

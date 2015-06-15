@@ -21,10 +21,14 @@ namespace SAPHRON
 		// returns false.
 		virtual bool Perform(World& world, ParticleList& particles) = 0;
 
-		// Similar to Draw above except that it operates on multiple worlds. 
-		virtual void Draw(const WorldList& worlds, ParticleList& particles) = 0;
+		// Similar to Draw above except that it operates on multiple worlds.
+		// The vector windex holds the index (from WorldList) of the world(s) 
+		// upon which changes will be made.
+		virtual void Draw(const WorldList& worlds, WorldIndexList& windex, ParticleList& particles) = 0;
 
 		// Similar to perform above except that it operates on multiple worlds.
-		virtual bool Perform(const WorldList& worlds, ParticleList& particles) = 0;
+		// The vector windex holds the index (from WorldList) of the world(s) 
+		// upon which changes will be made.
+		virtual bool Perform(const WorldList& worlds, WorldIndexList& windex, ParticleList& particles) = 0;
 	};
 }

@@ -91,6 +91,7 @@ set(SOURCE
 	src/Ensembles/Ensemble.cpp
 	src/Ensembles/DOSEnsemble.cpp
 	src/Ensembles/NVTEnsemble.cpp
+	src/Ensembles/GibbsNVTEnsemble.cpp
 	src/ForceFields/ForceFieldManager.cpp
 	src/Particles/Particle.cpp
 	src/Observers/CSVObserver.cpp

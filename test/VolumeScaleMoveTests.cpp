@@ -30,7 +30,8 @@ TEST(VolumeScaleMove, DefaultBehavior)
 	ASSERT_DOUBLE_EQ(v1, world1.GetVolume());
 
 	// Test move on both worlds. 
-	move.Perform({&world1, &world2}, pl);
+	WorldIndexList windex = {0, 1};
+	move.Perform({&world1, &world2}, windex, pl);
 	ASSERT_DOUBLE_EQ(v1 + v2, world1.GetVolume() + world2.GetVolume());
 	ASSERT_LE(world1.GetVolume()/v1 , exp(2.0));
 	ASSERT_GE(world1.GetVolume()/v1 , exp(-2.0));

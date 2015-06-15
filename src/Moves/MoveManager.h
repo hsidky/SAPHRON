@@ -39,6 +39,13 @@ namespace SAPHRON
 				_moves.pop_back();
 			}
 
+			// Removes a move.
+			void RemoveMove(Move* move)
+			{
+				_moves.erase(std::remove(_moves.begin(), _moves.end(), move), _moves.end());
+
+			}
+
 			// Select a move by index.
 			Move* SelectMove(int i)
 			{

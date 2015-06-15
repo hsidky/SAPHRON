@@ -35,20 +35,29 @@ namespace SAPHRON
 		// Unimplemented for single world.
 		virtual bool Perform(World&, ParticleList&) override { return false; }
 
-		// Draws a particle from a random world.
-		virtual void Draw(const WorldList& worlds, ParticleList& particles) override
+		// Draws a particle from a random world and the world its going to.
+		virtual void Draw(const WorldList& worlds, WorldIndexList& windex, ParticleList& particles) override
 		{
-			if(Particle* particle = worlds[_rand.int32() % worlds.size()]->DrawRandomParticle())
+			int index = _rand.int32() % worlds.size();
+			if(Particle* particle = worlds[index]->DrawRandomParticle())
 			{
 				particles.resize(1);
 				particles[0] = particle;
+				windex.resize(2);
+				windex[0] = index;
+				
+				int index2 = _rand.int32() % worlds.size();		
+				while(index2 == index)
+					index2 = _rand.int32() % worlds.size();
+
+				windex[1] = index2;
 			}
 			else
 				particles.resize(0);
 		}
 
 		// Swaps a particle from its world to another random world.
-		virtual bool Perform(const WorldList& worlds, ParticleList& particles) override
+		virtual bool Perform(const WorldList& worlds, WorldIndexList& windex, ParticleList& particles) override
 		{
 			// There must be more than one world in the list.
 			assert(worlds.size() != 1);
@@ -57,7 +66,7 @@ namespace SAPHRON
 				return false;
 
 			_particle = particles[0];
-			_prevWorld = _particle->GetWorld();
+			_prevWorld = worlds[windex[0]];
 
 			// Backup particle's neighbor list and position.
 			_prevList = _particle->GetNeighbors();
@@ -67,12 +76,9 @@ namespace SAPHRON
 			_prevWorld->RemoveParticle(_particle);
 			_particle->ClearNeighborList();
 
-			// Insert into new random world.
-			World* newworld = worlds[_rand.int32() % worlds.size()];
+			// Insert into new world.
+			World* newworld = worlds[windex[1]];
 				
-			while(newworld == _prevWorld)
-				newworld = worlds[_rand.int32() % worlds.size()];
-
 			// Generate random new coordinates for new particle.
 			Position pos = newworld->GetBoxVectors();
 			pos.x *= _rand.doub();

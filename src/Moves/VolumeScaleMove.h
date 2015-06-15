@@ -51,18 +51,31 @@ namespace SAPHRON
 			return true;
 		}
 
-		virtual void Draw(const WorldList&, ParticleList&) override {}
+		virtual void Draw(const WorldList& worlds, WorldIndexList& windex, ParticleList&) override 
+		{
+			windex.resize(2);
+			int w1 = _rand.int32() % worlds.size();
+			int w2 = _rand.int32() % worlds.size();
+			while(w2 == w1)
+				w2 = _rand.int32() % worlds.size();
+
+			windex[0] = w1;
+			windex[1] = w2;
+		}
 
 		// TODO: currently only implemented for two worlds. Generalize to multiple.
-		virtual bool Perform(const WorldList& worlds, ParticleList&) override
+		virtual bool Perform(const WorldList& worlds, WorldIndexList& windex, ParticleList&) override
 		{
+			World* w1 = worlds[windex[0]];
+			World* w2 = worlds[windex[1]];
+			
 			_worlds.resize(2);
-			_worlds[0] = worlds[0];
-			_worlds[1] = worlds[1];
+			_worlds[0] = w1;
+			_worlds[1] = w2;
 
 			_oldv.resize(2);
-			_oldv[0] = _worlds[0]->GetVolume();
-			_oldv[1] = _worlds[1]->GetVolume();
+			_oldv[0] = w1->GetVolume();
+			_oldv[1] = w2->GetVolume();
 
 			double v = (_oldv[0] + _oldv[1]);
 			double lnvn = log(_oldv[0]/_oldv[1]) + (_rand.doub() - 0.5)*_vmax;
@@ -71,8 +84,8 @@ namespace SAPHRON
 			
 			double b1 = pow(v1n, 1.0/3.0);
 			double b2 = pow(v2n, 1.0/3.0);
-			_worlds[0]->SetBoxVectors(b1, b1, b1, true);
-			_worlds[1]->SetBoxVectors(b2, b2, b2, true);
+			w1->SetBoxVectors(b1, b1, b1, true);
+			w2->SetBoxVectors(b2, b2, b2, true);
 
 			return true;
 		}

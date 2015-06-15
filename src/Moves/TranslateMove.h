@@ -1,12 +1,12 @@
 #pragma once 
 
 #include "../Rand.h"
-#include "Move.h"
+#include "GibbsMove.h"
 
 namespace SAPHRON
 {
 	// Class for translating a random particle a maximum of "dx" distance.
-	class TranslateMove : public Move
+	class TranslateMove : public GibbsMove
 	{
 		private: 
 			Position _prevPos;
@@ -19,8 +19,8 @@ namespace SAPHRON
 
 		public: 
 			TranslateMove(double dx, int seed = 2496) : 
-			_prevPos({0.0, 0.0, 0.0}), _dx(dx), _rand(seed), _rejected(0), 
-			_performed(0), _seed(seed)
+			_prevPos({0.0, 0.0, 0.0}), _dx(dx), _rand(seed), _particle(nullptr), 
+			_rejected(0), _performed(0), _seed(seed)
 			{
 			}
 
@@ -35,7 +35,13 @@ namespace SAPHRON
 				++_performed;			
 			}
 
-			virtual bool Perform(World& world, ParticleList& particles) override
+			inline virtual void Draw(World& world, ParticleList& particles) override
+			{
+				particles.resize(1);
+				particles[0] = world.DrawRandomParticle();
+			}
+
+			inline virtual bool Perform(World& world, ParticleList& particles) override
 			{
 				_particle = particles[0];
 				_prevPos = _particle->GetPositionRef();
@@ -51,12 +57,20 @@ namespace SAPHRON
 				return false;
 			}
 
-			virtual void Draw(World& world, ParticleList& particles) override
+			// Gibbs move interface. We add the condition of selecting a random world.
+			virtual void Draw(const WorldList& worlds, WorldIndexList& windex, ParticleList& particles) override
 			{
-				particles.resize(1);
-				particles[0] = world.DrawRandomParticle();
+				windex.resize(1);
+				int index = _rand.int32() % worlds.size();
+				windex[0] = index;				
+				Draw(*worlds[index], particles);
 			}
 
+			virtual bool Perform(const WorldList& worlds, WorldIndexList& windex, ParticleList& particles) override
+			{
+				return Perform(*worlds[windex[0]], particles);
+			}
+		
 			// Returns maximum displacement.
 			double GetMaxDisplacement()
 			{
