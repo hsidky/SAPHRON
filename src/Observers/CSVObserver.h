@@ -16,6 +16,11 @@ namespace SAPHRON
         std::unique_ptr<std::ofstream> _dosfs;
         std::unique_ptr<std::ofstream> _histfs;
 		
+        // Delimiter 
+        std::string _dlm;
+        std::string _ext;
+        bool _fixl;
+
 		bool _printedE;
 		bool _printedW;
 

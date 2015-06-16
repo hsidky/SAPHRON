@@ -16,7 +16,7 @@ namespace SAPHRON
 			double _binWidth;
 
 			// Number of bins.
-			unsigned int _binCount;
+			int _binCount;
 
 			// Min and max values of bins.
 			double _min, _max;
@@ -31,7 +31,7 @@ namespace SAPHRON
 			std::vector<double> _values;
 
 		public:
-			Histogram(double min, double max, unsigned int numberOfBins) :
+			Histogram(double min, double max, int numberOfBins) :
 				_binCount(numberOfBins), _min(min), _max(max)
 			{
 				_binWidth = (max-min)/numberOfBins;
