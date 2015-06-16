@@ -3,6 +3,7 @@
 #include "../src/Ensembles/Ensemble.h"
 #include "../src/Properties/Pressure.h"
 #include "../src/Properties/Energy.h"
+#include "../src/Worlds/World.h"
 
 namespace SAPHRON
 {
@@ -15,6 +16,8 @@ namespace SAPHRON
 			Pressure _pressure;
 			int _counter;
 			int _start;
+			std::map<World*, double> _density;
+
 		public: 
 			TestAccumulator(SimFlags flags, unsigned int frequency, unsigned int start) : 
 			SimObserver(flags, frequency), _temperature(0), _energy(), _pressure(), 
@@ -39,9 +42,15 @@ namespace SAPHRON
 
 			}
 
-			virtual void Visit(World*) override
+			virtual void Visit(World* world) override
 			{
-
+				if(this->GetIteration() < _start)
+					return;
+				
+				if(_density.find(world) == _density.end())
+					_density[world]  = world->GetDensity();
+				else
+					_density[world] += world->GetDensity();
 			}
 
 			virtual void Visit(Particle*) override
@@ -73,6 +82,15 @@ namespace SAPHRON
 			double GetAverageTemperature()
 			{
 				return _temperature / (double)_counter;
+			}
+
+			std::map<World*, double> GetAverageDensities()
+			{
+				auto dmap = _density;
+				for(auto& world : dmap)
+					world.second /= (double)_counter;
+
+				return dmap;
 			}
 	};
 }

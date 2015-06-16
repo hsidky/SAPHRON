@@ -24,8 +24,6 @@ namespace SAPHRON
 
 				_vsmove->Perform(_worlds, _windex, _particles);
 				
-				_worlds[w1]->UpdateNeighborList();
-				_worlds[w2]->UpdateNeighborList();
 				auto currH1 = _ffmanagers[w1]->EvaluateHamiltonian(*_worlds[w1]);
 				auto currH2 = _ffmanagers[w2]->EvaluateHamiltonian(*_worlds[w2]);
 
@@ -35,11 +33,7 @@ namespace SAPHRON
 										 currH2.energy.total(), _worlds[w2]->GetVolume(),
 										 _worlds[w1]->GetParticleCount(), _worlds[w2]->GetParticleCount())
 					< _rand.doub())
-				{
-					_vsmove->Undo();
-					_worlds[w1]->UpdateNeighborList();
-					_worlds[w2]->UpdateNeighborList();
-				}
+					_vsmove->Undo();		
 				else
 				{
 					_eptuple[w1] = currH1;

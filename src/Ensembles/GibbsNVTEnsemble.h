@@ -84,8 +84,8 @@ namespace SAPHRON
 											int N1, int N2)
 		{
 			double beta = 1.0/(GetBoltzmannConstant()*_temperature);
-			double arg1 = -beta*((currH1 - prevH1) + (N1 + 1)*log(currV1/prevV1)/beta);
-			double arg2 = -beta*((currH2 - prevH2) + (N2 + 1)*log(currV2/prevV2)/beta);
+			double arg1 = -beta*((currH1 - prevH1) - (N1 + 1)*log(currV1/prevV1)/beta);
+			double arg2 = -beta*((currH2 - prevH2) - (N2 + 1)*log(currV2/prevV2)/beta);
 			double p = exp(arg1+arg2);
 			return p > 1.0 ? 1.0 : p;
 		}

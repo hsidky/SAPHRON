@@ -14,7 +14,7 @@
 
 using namespace SAPHRON;
 
-TEST(GibbsNVTEnsemble, ReducedProperties)
+TEST(GibbsNVTEnsemble, LJNISTValidation1)
 {
 	int N = 256; // Number of LJ particles per NIST.
 	double sigma = 1.0; 
@@ -67,7 +67,7 @@ TEST(GibbsNVTEnsemble, ReducedProperties)
 	ConsoleObserver observer(flags, 1000);
 
 	// Initialize accumulator. 
-	TestAccumulator accumulator(flags, 10, 5000);
+	TestAccumulator accumulator(flags, 10, 20000);
 	CSVObserver csv("test", flags, 100);
 
 	// Initialize ensemble. 
@@ -88,4 +88,8 @@ TEST(GibbsNVTEnsemble, ReducedProperties)
 	double esum = (H1 + H2).energy.total();
 	ASSERT_NEAR(esum, ensemble.GetEnergy().total(), 1e-9);
 
+	// Check values (from NIST)
+	auto density = accumulator.GetAverageDensities();
+	ASSERT_NEAR(5.63158E-01, density[&liquid], 3e-3);
+	ASSERT_NEAR(1.00339E-01, density[&vapor], 1.1e-2);
 }

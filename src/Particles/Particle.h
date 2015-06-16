@@ -252,8 +252,8 @@ namespace SAPHRON
 			// TODO: figure out an efficient mechanism to check for duplicates other than std::find.
 			inline void AddNeighbor(Particle* particle)
 			{
-				//if(std::find(_neighbors.begin(), _neighbors.end(), particle) == _neighbors.end())
-				_neighbors.push_back(particle);
+				if(std::find(_neighbors.begin(), _neighbors.end(), particle) == _neighbors.end())
+					_neighbors.push_back(particle);
 			}
 
 			// Remove a neighbor from the neighbor list.
