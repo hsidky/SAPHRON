@@ -5,12 +5,14 @@ namespace SAPHRON
 	inline void GibbsNVTEnsemble::Iterate()
 	{
 		_mmanager.ResetMoveAcceptances();
+		_psmove->ResetAcceptanceRatio();
+		_vsmove->ResetAcceptanceRatio();
 		for (unsigned int i = 0; i < _ntotal; ++i)
 		{
 			double rnd = _rand.doub();
 
 			// Volume scaling move.
-			if(rnd < 0.01)
+			if(rnd < 0.005)
 			{
 				_vsmove->Draw(_worlds, _windex, _particles);
 				
@@ -45,9 +47,11 @@ namespace SAPHRON
 				}
 			} 
 			// Particle swap move.
-			else if(rnd < 0.20)
+			else if(rnd < 0.015)
 			{
 				_psmove->Draw(_worlds, _windex, _particles);
+				if(_windex.size() == 0)
+					continue;
 				int w1 = _windex[0];
 				int w2 = _windex[1];
 
@@ -67,7 +71,7 @@ namespace SAPHRON
 				else
 				{
 					_eptuple[w1] -= prevH;
-					_eptuple[w2] -= currH;
+					_eptuple[w2] += currH;
 				}
 			}
 			// Move manager.

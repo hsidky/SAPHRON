@@ -43,6 +43,7 @@ namespace SAPHRON
 			{
 				particles.resize(1);
 				particles[0] = particle;
+
 				windex.resize(2);
 				windex[0] = index;
 				
@@ -53,17 +54,23 @@ namespace SAPHRON
 				windex[1] = index2;
 			}
 			else
+			{
+				windex.resize(0);
 				particles.resize(0);
+			}
 		}
 
 		// Swaps a particle from its world to another random world.
 		virtual bool Perform(const WorldList& worlds, WorldIndexList& windex, ParticleList& particles) override
 		{
 			// There must be more than one world in the list.
-			assert(worlds.size() != 1);
+			assert(worlds.size() > 1);
 
 			if(!particles.size())
+			{
+				_particle = nullptr;
 				return false;
+			}
 
 			_particle = particles[0];
 			_prevWorld = worlds[windex[0]];
@@ -107,6 +114,9 @@ namespace SAPHRON
 		// Undo move.
 		virtual void Undo() override
 		{
+			if(_particle == nullptr)
+				return;
+			
 			World* newworld = _particle->GetWorld();
 			newworld->RemoveParticle(_particle);
 			auto& neighbors = _particle->GetNeighbors();

@@ -7,7 +7,7 @@ namespace SAPHRON
 	class SimFlags
 	{
 		public:
-			SimFlags() : ensemble(0), dos(0), histogram(0), particle(0) {}
+			SimFlags() : ensemble(0), world(0), dos(0), histogram(0), particle(0) {}
 			union
 			{
 				struct
@@ -22,6 +22,18 @@ namespace SAPHRON
 				};
 
 				unsigned int ensemble;
+			};
+
+			union
+			{
+				struct
+				{
+					unsigned int world_volume : 1;
+					unsigned int world_density : 1;
+					unsigned int world_count : 1;
+				};
+
+				unsigned int world;
 			};
 
 			union

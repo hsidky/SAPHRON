@@ -30,7 +30,7 @@ namespace SAPHRON
 		std::vector<EPTuple> _eptuple;
 
 		// List of worlds.
-		WorldList& _worlds;
+		const WorldList& _worlds;
 
 		// Particle Swap move. 
 		ParticleSwapMove* _psmove;
@@ -39,7 +39,7 @@ namespace SAPHRON
 		VolumeScaleMove* _vsmove;
 
 		// List of forcefield managers.
-		FFManagerList& _ffmanagers;
+		const FFManagerList& _ffmanagers;
 
 		// Move manager.
 		MoveManager& _mmanager;
@@ -63,6 +63,9 @@ namespace SAPHRON
 		{
 			for(auto& move : _mmanager)
 				_accmap[move->GetName()] = move->GetAcceptanceRatio();
+
+			_accmap[_psmove->GetName()] = _psmove->GetAcceptanceRatio();
+			_accmap[_vsmove->GetName()] = _vsmove->GetAcceptanceRatio();
 		}
 	
 		// Cannonical acceptance probability.
@@ -95,7 +98,7 @@ namespace SAPHRON
 											 int N1, int N2)
 		{
 			double beta = 1.0/(GetBoltzmannConstant()*_temperature);
-			double p = (N1-1)*V2/(N2*V1)*exp(-beta*(currH - prevH));
+			double p = (N1-1.0)*V2/(N2*V1)*exp(-beta*(currH - prevH));
 			return p > 1.0 ? 1.0 : p;
 		}
 
@@ -106,7 +109,7 @@ namespace SAPHRON
 			// Visit children.
 			virtual void VisitChildren(Visitor& v) override
 			{
-				_mmanager.AcceptVisitor(v);
+				_mmanager.AcceptVisitor(v);			
 				for(auto& ffmanager : _ffmanagers)
 					ffmanager->AcceptVisitor(v);
 				for(auto& world : _worlds)
@@ -114,8 +117,8 @@ namespace SAPHRON
 			}
 
 	public:
-		GibbsNVTEnsemble(WorldList& worlds, 
-						 FFManagerList& ffmanagers,
+		GibbsNVTEnsemble(const WorldList& worlds, 
+						 const FFManagerList& ffmanagers,
 						 MoveManager& mmanager,
 						 double temperature, 
 						 int seed = 1) : 
@@ -170,6 +173,16 @@ namespace SAPHRON
 		virtual double GetTemperature() override 
 		{
 			return _temperature;
+		}
+
+		// Get energy.
+		virtual Energy GetEnergy() override
+		{
+			EPTuple sum;
+			for(auto& ep : _eptuple)
+				sum += ep;
+			
+			return sum.energy;
 		}
 
 		// Get ratio of accepted moves.

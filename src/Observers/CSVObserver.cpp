@@ -46,6 +46,23 @@ namespace SAPHRON
 			*_dosfs << std::endl;
 		}
 
+		if(flags.world)
+		{
+			_worldfs = std::unique_ptr<std::ofstream>(
+                new std::ofstream(prefix + ".world.csv")
+                );
+			_worldfs->precision(20);
+
+			if(flags.world_count)
+				*_worldfs << "Particle Count,";
+			if(flags.world_density)
+				*_worldfs << "Density,";
+			if(flags.world_volume)
+				*_worldfs << "Volume,";
+
+			*_worldfs << std::endl;
+		}
+
 		if(flags.particle)
 		{
 			_particlefs = std::unique_ptr<std::ofstream>(
@@ -97,10 +114,7 @@ namespace SAPHRON
 	{
 		// Write header.
 		if(!_printedE)
-		{
 			PrintEnsembleHeader(e);
-			_printedE = true;
-		}
 
 		if(this->Flags.identifier)
 			*_ensemblefs << this->GetObservableID() << ",";
@@ -155,8 +169,14 @@ namespace SAPHRON
 		*_dosfs << std::endl;
 	}
 
-	void CSVObserver::Visit(World*)
+	void CSVObserver::Visit(World* world)
 	{
+		if(this->Flags.world_count)
+			*_worldfs << world->GetParticleCount() << ",";
+		if(this->Flags.world_density)
+			*_worldfs << world->GetDensity() << ",";
+		if(this->Flags.world_volume)
+			*_worldfs << world->GetVolume() << ",";
 	}
 
 	void CSVObserver::Visit(MoveManager*)

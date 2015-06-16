@@ -97,8 +97,30 @@ namespace SAPHRON
 	void ConsoleObserver::Visit(ForceFieldManager*)
 	{}
 
-	void ConsoleObserver::Visit(World*)
+	void ConsoleObserver::Visit(World* world)
 	{
+		if(!this->Flags.world)
+			return;
+
+		cout << endl;
+		cout << setw(20) << "";
+		if(this->Flags.world_count)
+			cout << setw(20) << left << "Particle Count";
+		if(this->Flags.world_density)
+			cout << setw(20) << left << "Density";
+		if(this->Flags.world_volume)
+			cout << setw(20) << left << "Volume";
+		cout << endl;
+		
+		cout << setw(20) << "";
+		if(this->Flags.world_count)
+			cout << setw(20) << left << world->GetParticleCount();
+		if(this->Flags.world_density)
+			cout << setw(20) << left << setprecision(5) << scientific << world->GetDensity();
+		if(this->Flags.world_volume)
+			cout << setw(20) << left << setprecision(5) << scientific << world->GetVolume();
+
+		cout << endl;
 	}
 	
 	void ConsoleObserver::Visit(Particle* p)

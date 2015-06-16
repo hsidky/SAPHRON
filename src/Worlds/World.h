@@ -130,6 +130,11 @@ namespace SAPHRON
 				return _xlength*_ylength*_zlength;
 			}	
 
+			double GetDensity() 
+			{
+				return (double)GetParticleCount()/GetVolume();
+			}
+
 			// Get box vectors.
 			inline Position GetBoxVectors() const 
 			{

@@ -86,7 +86,8 @@ namespace SAPHRON
 			double b2 = pow(v2n, 1.0/3.0);
 			w1->SetBoxVectors(b1, b1, b1, true);
 			w2->SetBoxVectors(b2, b2, b2, true);
-
+			++_performed;
+			
 			return true;
 		}
 

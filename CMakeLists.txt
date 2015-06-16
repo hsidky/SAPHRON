@@ -259,6 +259,12 @@ target_include_directories(ParticleSwapMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(ParticleSwapMoveTests googletest) 
 add_test(ParticleSwapMoveTests ParticleSwapMoveTests)
 
+add_executable(GibbsNVTEnsembleTests test/GibbsNVTEnsembleTests.cpp)
+target_link_libraries(GibbsNVTEnsembleTests ${TEST_DEPS})
+target_include_directories(GibbsNVTEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(GibbsNVTEnsembleTests googletest) 
+add_test(GibbsNVTEnsembleTests GibbsNVTEnsembleTests)
+
 # end add testing 
 
 install(TARGETS saphron libsaphron 
