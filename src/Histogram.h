@@ -16,22 +16,22 @@ namespace SAPHRON
 			double _binWidth;
 
 			// Number of bins.
-			int _binCount;
+			unsigned int _binCount;
 
 			// Min and max values of bins.
 			double _min, _max;
 
 			// Count of histogram outliers.
-			int _lowerOutlierCount = 0, _upperOutlierCount = 0;
+			unsigned int _lowerOutlierCount = 0, _upperOutlierCount = 0;
 
 			// Histogram counts.
-			std::vector<int> _counts;
+			std::vector<unsigned int> _counts;
 
 			// Histogram values.
 			std::vector<double> _values;
 
 		public:
-			Histogram(double min, double max, int numberOfBins) :
+			Histogram(double min, double max, unsigned int numberOfBins) :
 				_binCount(numberOfBins), _min(min), _max(max)
 			{
 				_binWidth = (max-min)/numberOfBins;
@@ -107,12 +107,12 @@ namespace SAPHRON
 				return &_values;
 			}
 
-			std::vector<int> GetHistogram()
+			std::vector<unsigned int> GetHistogram()
 			{
 				return _counts;
 			}
 
-			std::vector<int>* GetHistogramPointer()
+			std::vector<unsigned int>* GetHistogramPointer()
 			{
 				return &_counts;
 			}
