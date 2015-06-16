@@ -55,7 +55,7 @@ namespace SAPHRON
 				auto prevH = _ffmanagers[w1]->EvaluateHamiltonian(_particles, _worlds[w1]->GetComposition(), V1);
 				_psmove->Perform(_worlds, _windex, _particles);
 				auto currH = _ffmanagers[w2]->EvaluateHamiltonian(_particles, _worlds[w2]->GetComposition(), V2);
-
+				
 				int N1 = _worlds[w1]->GetParticleCount();
 				int N2 = _worlds[w2]->GetParticleCount();
 
