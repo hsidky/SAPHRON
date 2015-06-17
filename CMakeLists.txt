@@ -100,6 +100,7 @@ set(SOURCE
 	src/Simulation/SimObservable.cpp
 	src/Simulation/SimObserver.cpp
 	src/Worlds/SimpleWorld.cpp
+	src/Moves/MoveBuilder.cpp
 	src/jsoncpp.cpp 
 )
 
@@ -264,6 +265,18 @@ target_link_libraries(GibbsNVTEnsembleTests ${TEST_DEPS})
 target_include_directories(GibbsNVTEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(GibbsNVTEnsembleTests googletest) 
 add_test(GibbsNVTEnsembleTests GibbsNVTEnsembleTests)
+
+add_executable(MoveBuilderTests test/MoveBuilderTests.cpp)
+target_link_libraries(MoveBuilderTests ${TEST_DEPS})
+target_include_directories(MoveBuilderTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(MoveBuilderTests googletest) 
+add_test(MoveBuilderTests MoveBuilderTests)
+
+add_executable(ValidatorTests test/ValidatorTests.cpp)
+target_link_libraries(ValidatorTests ${TEST_DEPS})
+target_include_directories(ValidatorTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(ValidatorTests googletest) 
+add_test(ValidatorTests ValidatorTests)
 
 # end add testing 
 

@@ -1,0 +1,10 @@
+{
+	"type" : "object",
+	"properties" : {
+		"type" : { 
+			"type" : "string",
+			"enum" : ["IdentityChange"]
+		}
+	},
+	"additionalProperties": false
+}
