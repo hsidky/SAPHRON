@@ -13,11 +13,12 @@ namespace Json
 		std::regex _regex;
 		std::string _expr;
 		std::string _path;
+		std::vector<std::string> _enum;
 
 	public:
 		StringRequirement() : 
 		_minSet(false), _maxSet(false), _rgxSet(false),
-		_minLength(0), _maxLength(0), _regex(), _expr(), _path()
+		_minLength(0), _maxLength(0), _regex(), _expr(), _path(), _enum(0)
 		{}
 		
 		virtual void Reset() override
@@ -30,6 +31,7 @@ namespace Json
 			_regex = "";
 			_expr = "";
 			_path  = "";
+			_enum.clear();
 			ClearErrors();
 			ClearNotices();
 		}
@@ -58,13 +60,19 @@ namespace Json
 				_expr = json["pattern"].asString();
 				_regex = std::regex(_expr, std::regex::ECMAScript);
 			}
+
+			if(json.isMember("enum") && json["enum"].isArray())
+			{
+				for(const auto& val : json["enum"])
+					_enum.push_back(val.asString());
+			}
 		}
 
 		virtual void Validate(Value json, std::string path) override
 		{
 			if(!json.isString())
 			{
-				PushError(path + ": Must be of type \"string\".");
+				PushError(path + ": Must be of type \"string\"");
 				return;
 			}
 			
@@ -76,6 +84,9 @@ namespace Json
 
 			if(_rgxSet && !std::regex_match(json.asString(), _regex))
 				PushError(path + ": String must match regular expression \"" + _expr + "\"");
+
+			if(_enum.size() && std::find(_enum.begin(),_enum.end(), json.asString()) == _enum.end())
+				PushError(path + ": String is not a valid entry");
 		}
 	};
 }

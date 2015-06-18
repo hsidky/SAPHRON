@@ -1,5 +1,6 @@
 #include "../src/Validator/StringRequirement.h"
 #include "../src/Validator/IntegerRequirement.h"
+#include "../src/Validator/ObjectRequirement.h"
 #include "gtest/gtest.h"
 
 using namespace Json;
@@ -116,6 +117,31 @@ TEST(StringRequirement, DefaultBehavior)
 
 	// Input 13.
 	reader.parse("\"(800)FLOWERS\"", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	// Parse schema. 
+	reader.parse("{ \"type\" : \"string\", \"enum\" : [\"foo\", \"bar\"]}", schema);
+	validator.Parse(schema, "");
+
+	// Input 14.
+	reader.parse("\"foo\"", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 15.
+	reader.parse("\"bar\"", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 16.
+	reader.parse("\"bla\"", input);
 	validator.Validate(input, "");
 	ASSERT_TRUE(validator.HasErrors());
 }
@@ -327,4 +353,235 @@ TEST(NumberRequirement, DefaultBehavior)
 
 	validator.ClearErrors();
 	validator.ClearNotices();
+}
+
+TEST(ObjectRequirement, DefaultBehavior)
+{
+	ObjectRequirement validator;
+	Json::Value schema;
+	Json::Value input;
+	Reader reader;
+	
+	// Parse schema.	
+	reader.parse("{ \"type\": \"object\" }", schema);
+	validator.Parse(schema, "");
+
+	// Input 1.
+	reader.parse("{\n   \"key\"         : \"value\",\n   \"another_key\" : \"another_value\"\n}\n", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 2.
+	reader.parse("{\n    \"Sun\"     : 1.9891e30,\n    \"Jupiter\" : 1.8986e27,\n"
+				 "    \"Saturn\"  : 5.6846e26,\n    \"Neptune\" : 10.243e25,\n   "
+				 " \"Uranus\"  : 8.6810e25,\n    \"Earth\"   : 5.9736e24,\n      "
+				 " \"Venus\"   : 4.8685e24,\n    \"Mars\"    : 6.4185e23,\n      "
+				 "\"Mercury\" : 3.3022e23,\n    \"Moon\"    : 7.349e22,\n        " 
+				 "\"Pluto\"   : 1.25e22\n}\n", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 3.
+	reader.parse("\"Not an object\"", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 4.
+	reader.parse("[\"An\", \"array\", \"not\", \"an\", \"object\"]", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Validate schema. 
+	reader.parse("{\n  \"type\": \"object\",\n  \"properties\": {\n   "
+				 "\"number\":      { \"type\": \"number\" },\n        "
+				 "\"street_name\": { \"type\": \"string\" },\n        "
+				 "\"street_type\": { \"type\": \"string\",\n          "
+				 "\"enum\": [\"Street\", \"Avenue\", \"Boulevard\"]\n "
+				 "}\n  }\n}\n", schema);
+	validator.Parse(schema, "");
+
+	// Input 5.
+	reader.parse("{ \"number\": 1600, \"street_name\": \"Pennsylvania\", \"street_type\": \"Avenue\" }", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 6.
+	reader.parse("{ \"number\": \"1600\", \"street_name\": \"Pennsylvania\", \"street_type\": \"Avenue\" }", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 7.
+	reader.parse("{ \"number\": 1600, \"street_name\": \"Pennsylvania\" }", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+	
+	// Input 8.
+	reader.parse("{ }", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 9.
+	reader.parse("{ \"number\": 1600, \"street_name\": \"Pennsylvania\", "
+				 " \"street_type\": \"Avenue\",\n  \"direction\": \"NW\" }", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Parse schema.
+	reader.parse("{\n  \"type\": \"object\",\n  \"properties\": {\n   "
+				 "\"number\":      { \"type\": \"number\" },\n        "
+				 "\"street_name\": { \"type\": \"string\" },\n        "
+				 "\"street_type\": { \"type\": \"string\",\n          "
+				 "\"enum\": [\"Street\", \"Avenue\", \"Boulevard\"]\n "
+				 "}\n  },\n  \"additionalProperties\": false\n}\n", schema);
+	validator.Parse(schema, "#");
+
+	// Input 10.
+	reader.parse("{ \"number\": 1600, \"street_name\": \"Pennsylvania\", \"street_type\": \"Avenue\" }", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 11.
+	reader.parse("{ \"number\": 1600, \"street_name\": \"Pennsylvania\", "
+				 " \"street_type\": \"Avenue\",\n  \"direction\": \"NW\" }", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Parse schema.
+	reader.parse("{\n  \"type\": \"object\",\n  \"properties\": {\n   "
+				 "\"number\":      { \"type\": \"number\" },\n        "
+				 "\"street_name\": { \"type\": \"string\" },\n        "
+				 "\"street_type\": { \"type\": \"string\",\n          "
+				 "\"enum\": [\"Street\", \"Avenue\", \"Boulevard\"]\n "
+				 "}\n  },\n  \"additionalProperties\": { \"type\": \"string\" }\n}\n", schema);
+	validator.Parse(schema, "");
+
+	// Input 12.
+	reader.parse("{ \"number\": 1600, \"street_name\": \"Pennsylvania\", \"street_type\": \"Avenue\" }", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 13.
+	reader.parse("{ \"number\": 1600, \"street_name\": \"Pennsylvania\", "
+				 " \"street_type\": \"Avenue\",\n  \"direction\": \"NW\" }", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 14.
+	reader.parse("{ \"number\": 1600, \"street_name\": \"Pennsylvania\", "
+				 " \"street_type\": \"Avenue\",\n  \"office_number\": 201  }", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	// Parse schema.
+	reader.parse("{\n  \"type\": \"object\",\n  \"properties\": {\n "
+				 "\"name\":      { \"type\": \"string\" },\n        "
+				 "\"email\":     { \"type\": \"string\" },\n        "
+				 "\"address\":   { \"type\": \"string\" },\n        "
+				 "\"telephone\": { \"type\": \"string\" }\n  },\n   "
+				 " \"required\": [\"name\", \"email\"]\n}", schema);
+	validator.Parse(schema, "");
+
+	// Input 15.
+	reader.parse("{\n  \"name\": \"William Shakespeare\",\n  \"email\": \"bill@stratford-upon-avon.co.uk\"\n}\n", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 16.
+	reader.parse("{\n  \"name\": \"William Shakespeare\",\n "
+				 "\"email\": \"bill@stratford-upon-avon.co.uk\",\n  "
+				 "\"address\": \"Henley Street, Stratford-upon-Avon, Warwickshire, England\",\n "
+				 "\"authorship\": \"in question\"\n}", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 17.
+	reader.parse("{\n  \"name\": \"William Shakespeare\",\n "
+				 " \"address\": \"Henley Street, Stratford-upon-Avon, Warwickshire, England\",\n}", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	reader.parse("{\n  \"type\": \"object\",\n  \"minProperties\": 2,\n  \"maxProperties\": 3\n}", schema);
+	validator.Parse(schema, "");
+
+	// Input 18.
+	reader.parse("{}", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 19.
+	reader.parse("{ \"a\": 0 }", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 20.
+	reader.parse("{ \"a\": 0, \"b\": 1 }", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 21.
+	reader.parse("{ \"a\": 0, \"b\": 1, \"c\": 2 }", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 22.
+	reader.parse("{ \"a\": 0, \"b\": 1, \"c\": 2, \"d\": 3 }", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
 }
