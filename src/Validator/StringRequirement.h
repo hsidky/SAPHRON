@@ -9,7 +9,7 @@ namespace Json
 	{
 	private: 
 		bool _minSet, _maxSet, _rgxSet;
-		int _minLength, _maxLength;
+		size_t _minLength, _maxLength;
 		std::regex _regex;
 		std::string _expr;
 		std::string _path;
@@ -36,17 +36,19 @@ namespace Json
 
 		virtual void Parse(Value json, std::string path) override
 		{
+			Reset();
+			
 			_path = path;
-			if(json.isMember("minLength") && json["minLength"].isInt())
+			if(json.isMember("minLength") && json["minLength"].isUInt())
 			{
 				_minSet = true;
-				_minLength = json["minLength"].asInt();
+				_minLength = json["minLength"].asUInt();
 			}
 			
-			if(json.isMember("maxLength") && json["maxLength"].isInt())
+			if(json.isMember("maxLength") && json["maxLength"].isUInt())
 			{
 				_maxSet = true;
-				_maxLength = json["maxLength"].asInt();
+				_maxLength = json["maxLength"].asUInt();
 			
 			}
 
@@ -61,7 +63,10 @@ namespace Json
 		virtual void Validate(Value json, std::string path) override
 		{
 			if(!json.isString())
+			{
 				PushError(path + ": Must be of type \"string\".");
+				return;
+			}
 			
 			if(_minSet && json.asString().length() < _minLength)
 				PushError(path + ": Length must be greater than " + std::to_string(_minLength));
