@@ -1,6 +1,7 @@
 #include "../src/Validator/StringRequirement.h"
 #include "../src/Validator/IntegerRequirement.h"
 #include "../src/Validator/ObjectRequirement.h"
+#include "../src/Validator/ArrayRequirement.h"
 #include "gtest/gtest.h"
 
 using namespace Json;
@@ -722,4 +723,65 @@ TEST(ObjectRequirement, DefaultBehavior)
 	reader.parse("{ \"keyword\": 42 }", input);
 	validator.Validate(input, "");
 	ASSERT_TRUE(validator.HasErrors());
+}
+
+TEST(ArrayRequirement, DefaultBehavior)
+{
+	ArrayRequirement validator;
+	Json::Value schema;
+	Json::Value input;
+	Reader reader;
+
+	// Parse schema. 
+	reader.parse("{ \"type\": \"array\" }", schema);
+	validator.Parse(schema, "");
+
+	// Input 1.
+	reader.parse("[1, 2, 3, 4, 5]", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 2.
+	reader.parse("[3, \"different\", { \"types\" : \"of values\" }]", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 3.
+	reader.parse("{\"Not\": \"an array\"}", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Parse schema.
+	reader.parse("{\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"number\"\n  }\n}", schema);
+	validator.Parse(schema, "");
+
+	// Input 4.
+	reader.parse("[1, 2, 3, 4, 5]", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 5.
+	reader.parse("[1, 2, \"3\", 4, 5]", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 6.
+	reader.parse("[]", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());	
 }
