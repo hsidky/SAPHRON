@@ -62,7 +62,7 @@ namespace Json
 			}
 		}
 
-		virtual void Validate(Value json, std::string path) override
+		virtual void Validate(const Value& json, std::string path) override
 		{
 			if(!json.isInt())
 			{

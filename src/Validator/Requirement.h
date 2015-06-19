@@ -20,7 +20,7 @@ namespace Json
 	public:
 		virtual void Parse(Value json, std::string path) = 0;
 
-		virtual void Validate(Value json, std::string path) = 0;
+		virtual void Validate(const Value& json, std::string path) = 0;
 
 		virtual void Reset() = 0;
 
