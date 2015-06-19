@@ -15,7 +15,8 @@ namespace Json
 	class ObjectRequirement : public Requirement
 	{
 	private:
-		std::map<std::string, Requirement*> _children;
+		std::map<std::string, Requirement*> _properties;
+		std::map<std::string, Requirement*> _patternProps;
 		DependencyRequirement* _dependency;
 
 		std::list<std::string> _required;
@@ -24,22 +25,29 @@ namespace Json
 
 	public:
 		ObjectRequirement() : 
-		_children(), _dependency(nullptr), _required(), _moreProps(true), 
-		_setMin(false), _setMax(false), _min(0), _max(0)
+		_properties(), _patternProps(), _dependency(nullptr), _required(),
+		_moreProps(true), _setMin(false), _setMax(false), _min(0), _max(0)
 		{}
 
 		~ObjectRequirement()
 		{
-			for(auto& c : _children)
+			for(auto& c : _properties)
 				delete c.second;
-			_children.clear();
+			_properties.clear();
+
+			for(auto& c : _patternProps)
+				delete c.second;
+			_patternProps.clear();
 
 			delete _dependency;
 		}
 
 		virtual void ClearErrors() override
 		{
-			for(auto& c : _children)
+			for(auto& c : _properties)
+				c.second->ClearErrors();
+
+			for(auto& c : _patternProps)
 				c.second->ClearErrors();
 
 			if(_dependency != nullptr)
@@ -50,7 +58,10 @@ namespace Json
 
 		virtual void ClearNotices() override
 		{
-			for(auto& c : _children)
+			for(auto& c : _properties)
+				c.second->ClearNotices();
+
+			for(auto& c : _patternProps)
 				c.second->ClearNotices();
 
 			if(_dependency != nullptr)
@@ -61,9 +72,16 @@ namespace Json
 
 		virtual void Reset() override
 		{
-			for(auto& c : _children)
+			ClearErrors();
+			ClearNotices();
+
+			for(auto& c : _properties)
 				delete c.second;
-			_children.clear();
+			_properties.clear();
+
+			for(auto& c : _patternProps)
+				delete c.second;
+			_patternProps.clear();
 
 			_moreProps = true;
 			_setMin = _setMax = false;
@@ -71,8 +89,6 @@ namespace Json
 			_required.clear();
 			delete _dependency;
 			_dependency = nullptr;
-			ClearErrors();
-			ClearNotices();
 		}
 
 		virtual void Parse(Value json, std::string path) override
@@ -100,16 +116,42 @@ namespace Json
 					{
 						// Load up appropriate requirement type.
 						if(prop["type"].asString() == "string")
-							_children.insert({names[i], new StringRequirement()});
+							_properties.insert({names[i], new StringRequirement()});
 						else if(prop["type"].asString() == "integer")
-							_children.insert({names[i], new IntegerRequirement()});
+							_properties.insert({names[i], new IntegerRequirement()});
 						else if(prop["type"].asString() == "number")
-							_children.insert({names[i], new NumberRequirement()});
+							_properties.insert({names[i], new NumberRequirement()});
 						else if(prop["type"].asString() == "object")
-							_children.insert({names[i], new ObjectRequirement()});
+							_properties.insert({names[i], new ObjectRequirement()});
 					}
 
-					_children[names[i]]->Parse(prop, path + "/" + names[i]);
+					_properties[names[i]]->Parse(prop, path + "/" + names[i]);
+					++i;
+				}
+			}
+
+			// Pattern properties. TODO: eliminate redundant code!!
+			if(json.isMember("patternProperties") && json["patternProperties"].isObject())
+			{
+				auto& props = json["patternProperties"];
+				auto names = props.getMemberNames();
+				int i = 0;
+				for(auto& prop : props)
+				{
+					if(prop.isObject())
+					{
+						// Load up appropriate requirement type.
+						if(prop["type"].asString() == "string")
+							_patternProps.insert({names[i], new StringRequirement()});
+						else if(prop["type"].asString() == "integer")
+							_patternProps.insert({names[i], new IntegerRequirement()});
+						else if(prop["type"].asString() == "number")
+							_patternProps.insert({names[i], new NumberRequirement()});
+						else if(prop["type"].asString() == "object")
+							_patternProps.insert({names[i], new ObjectRequirement()});
+					}
+
+					_patternProps[names[i]]->Parse(prop, path + "/" + names[i]);
 					++i;
 				}
 			}
@@ -178,14 +220,22 @@ namespace Json
 			for(auto& prop : json)
 			{
 				Requirement* requirement = nullptr; 
-				auto it = _children.find(names[i]);
-				if(it != _children.end())
+				auto it = _properties.find(names[i]);
+				if(it != _properties.end())
 					requirement = it->second;					
-				else if(_children.find("additionalProperties") != _children.end())
-					requirement = _children["additionalProperties"];
-				else if(!_moreProps)
-					PushError(path + ": Invalid property \"" + names[i] + "\" specified");
-
+				else if(_patternProps.size() != 0)
+				{
+					for(auto& pattern : _patternProps)
+					{
+						auto regex = std::regex(pattern.first, std::regex::ECMAScript);
+						if(std::regex_search(names[i], regex))
+							requirement = pattern.second;
+					}
+				}
+				
+				if(requirement == nullptr && _properties.find("additionalProperties") != _properties.end())
+					requirement = _properties["additionalProperties"];
+				
 				if(requirement != nullptr)
 				{
 					requirement->Validate(prop, path + "/" + names[i]);
@@ -196,6 +246,8 @@ namespace Json
 						for(const auto& notice : requirement->GetNotices())
 							PushNotice(notice);
 				}
+				else if(!_moreProps)
+					PushError(path + ": Invalid property \"" + names[i] + "\" specified");
 
 				rprops.remove(names[i]);
 				++i;

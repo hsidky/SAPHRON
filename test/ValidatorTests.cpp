@@ -627,6 +627,7 @@ TEST(ObjectRequirement, DefaultBehavior)
 	validator.ClearErrors();
 	validator.ClearNotices();
 
+	// Parse schema.
 	reader.parse("{\n  \"type\": \"object\",\n\n  \"properties\": {\n  "
 				 "\"name\": { \"type\": \"string\" },\n    \"credit_card\": "
 				 "{ \"type\": \"number\" },\n    \"billing_address\": { \"type\": "
@@ -645,6 +646,80 @@ TEST(ObjectRequirement, DefaultBehavior)
 
 	// Input 28.
 	reader.parse("{\n  \"name\": \"John Doe\",\n  \"billing_address\": \"555 Debtor's Lane\"\n}", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	// Parse schema. Pattern properties.
+	reader.parse("{\n  \"type\": \"object\",\n  \"patternProperties\": "
+				 "{\n    \"^S_\": { \"type\": \"string\" },\n    \"^I_\": "
+				 "{ \"type\": \"integer\" }\n  },\n  \"additionalProperties\": "
+				 "false\n}\n", schema);
+	validator.Parse(schema, "");
+
+	// Input 29.
+	reader.parse("{ \"S_25\": \"This is a string\" }", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 30.
+	reader.parse("{ \"I_0\": 42 }", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 31.
+	reader.parse("{ \"S_0\": 42 }", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 32.
+	reader.parse("{ \"I_42\": \"This is a string\" }", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 33.
+	reader.parse("{ \"keyword\": \"value\" }", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	// Parse schema. 
+	reader.parse("{\n  \"type\": \"object\",\n  \"properties\": "
+				 " {\n    \"builtin\": { \"type\": \"number\" }\n "
+				 " },\n  \"patternProperties\": {\n    \"^S_\": { "
+				 " \"type\": \"string\" },\n    \"^I_\": { \"type\": "
+				 " \"integer\" }\n  },\n  \"additionalProperties\": "
+				 " { \"type\": \"string\" }\n}", schema);
+	validator.Parse(schema, "");
+
+	// Input 34.
+	reader.parse("{ \"builtin\": 42 }", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 35.
+	reader.parse("{ \"keyword\": \"value\" }", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 36.
+	reader.parse("{ \"keyword\": 42 }", input);
 	validator.Validate(input, "");
 	ASSERT_TRUE(validator.HasErrors());
 }
