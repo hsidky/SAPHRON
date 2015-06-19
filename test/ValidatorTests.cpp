@@ -584,4 +584,67 @@ TEST(ObjectRequirement, DefaultBehavior)
 	reader.parse("{ \"a\": 0, \"b\": 1, \"c\": 2, \"d\": 3 }", input);
 	validator.Validate(input, "");
 	ASSERT_TRUE(validator.HasErrors());
+
+	// Parse schema. (this validates depdendencies).
+	reader.parse("{\n  \"type\": \"object\",\n\n  \"properties\": {\n "
+				 "\"name\": { \"type\": \"string\" },\n    \"credit_card\": "
+				 "{ \"type\": \"number\" },\n    \"billing_address\": " 
+				 "{ \"type\": \"string\" }\n  },\n\n  \"required\": "
+				 "[\"name\"],\n\n  \"dependencies\": {\n    \"credit_card\": "
+				 "[\"billing_address\"]\n  }\n}", schema);
+	validator.Parse(schema, "");
+
+	// Input 23.
+	reader.parse("{\n  \"name\": \"John Doe\",\n  \"credit_card\": "
+				 "5555555555555555,\n  \"billing_address\": \"555 Debtor's Lane\"\n}", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 24.
+	reader.parse("{\n  \"name\": \"John Doe\",\n  \"credit_card\": 5555555555555555\n}\n", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 25.
+	reader.parse("{\n  \"name\": \"John Doe\"\n}", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 26.
+	reader.parse("{\n  \"name\": \"John Doe\",\n  \"billing_address\": \"555 Debtor's Lane\"\n}\n", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	reader.parse("{\n  \"type\": \"object\",\n\n  \"properties\": {\n  "
+				 "\"name\": { \"type\": \"string\" },\n    \"credit_card\": "
+				 "{ \"type\": \"number\" },\n    \"billing_address\": { \"type\": "
+				 "\"string\" }\n  },\n\n  \"required\": [\"name\"],\n\n  \"dependencies\": "
+				 "{\n    \"credit_card\": [\"billing_address\"],\n    \"billing_address\": "
+				 "[\"credit_card\"]\n  }\n}\n", schema);
+	validator.Parse(schema, "");
+	
+	// Input 27.
+	reader.parse("{\n  \"name\": \"John Doe\",\n  \"credit_card\": 5555555555555555\n}\n", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 28.
+	reader.parse("{\n  \"name\": \"John Doe\",\n  \"billing_address\": \"555 Debtor's Lane\"\n}", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
 }

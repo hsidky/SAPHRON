@@ -8,6 +8,7 @@
 #include "StringRequirement.h"
 #include "IntegerRequirement.h"
 #include "NumberRequirement.h"
+#include "DependencyRequirement.h"
 
 namespace Json
 {
@@ -15,13 +16,15 @@ namespace Json
 	{
 	private:
 		std::map<std::string, Requirement*> _children;
+		DependencyRequirement* _dependency;
+
 		std::list<std::string> _required;
 		bool _moreProps, _setMin, _setMax;
 		unsigned int _min, _max;
 
 	public:
 		ObjectRequirement() : 
-		_children(), _required(), _moreProps(true), 
+		_children(), _dependency(nullptr), _required(), _moreProps(true), 
 		_setMin(false), _setMax(false), _min(0), _max(0)
 		{}
 
@@ -30,12 +33,17 @@ namespace Json
 			for(auto& c : _children)
 				delete c.second;
 			_children.clear();
+
+			delete _dependency;
 		}
 
 		virtual void ClearErrors() override
 		{
 			for(auto& c : _children)
 				c.second->ClearErrors();
+
+			if(_dependency != nullptr)
+				_dependency->ClearErrors();
 
 			Requirement::ClearErrors();
 		}
@@ -44,6 +52,9 @@ namespace Json
 		{
 			for(auto& c : _children)
 				c.second->ClearNotices();
+
+			if(_dependency != nullptr)
+				_dependency->ClearNotices();
 
 			Requirement::ClearNotices();
 		} 
@@ -58,6 +69,8 @@ namespace Json
 			_setMin = _setMax = false;
 			_min = _max = 0;
 			_required.clear();
+			delete _dependency;
+			_dependency = nullptr;
 			ClearErrors();
 			ClearNotices();
 		}
@@ -121,6 +134,13 @@ namespace Json
 				_setMax = true;
 				_max = json["maxProperties"].asInt();
 			}
+
+			// Dependencies
+			if(json.isMember("dependencies") && json["dependencies"].isObject())
+			{
+				_dependency = new DependencyRequirement();
+				_dependency->Parse(json["dependencies"], path);
+			}
 		}
 
 		virtual void Validate(Value json, std::string path) override
@@ -137,6 +157,18 @@ namespace Json
 			if(_setMax && json.size() > _max)
 				PushError(path + ": Object must contain at most " + std::to_string(_max) + " properties");
 
+
+			// Check dependencies. 
+			if(_dependency != nullptr)
+			{
+				_dependency->Validate(json, path);
+				if(_dependency->HasErrors())
+					for(const auto& error : _dependency->GetErrors())
+						PushError(error);
+				if(_dependency->HasNotices())
+					for(const auto& notice : _dependency->GetNotices())
+						PushNotice(notice);
+			}
 
 			// Copy so we can pop items off the list.
 			auto rprops = _required;
