@@ -1,7 +1,7 @@
 SAPHRON
 ==============
 
-**SAPHRON** (**S**tatistical **A**pplied **PH**ysics through **R**andomized **O**n-the-fly **N**umerics) is a modern, open-source, light-weight C++11 based Monte Carlo physics package. It is designed to be easy to use, extendable and extremely versatile. As the name suggests, one of the primary features is the inclusion of various Density-of-States (DOS) sampling algorithms. **SAPHRON** is currently in early develpoment, and as a result it currently lacks many basic features; this README is also likely to be out of date. In addition to the C++ application, a number of helper MATLAB scripts are included to assist with data analysis. 
+**SAPHRON** (**S**tatistical **A**pplied **PH**ysics through **R**andomized **O**n-the-fly **N**umerics) is a modern, open-source, light-weight C++11 based Monte Carlo physics package. It is designed to be easy to use, extendable and extremely versatile. As the name suggests, one of the primary features is the inclusion of various Density-of-States (DOS) sampling algorithms. **SAPHRON** is currently in early development, and as a result it currently lacks many basic features; this README is also likely to be out of date. In addition to the C++ application, a number of helper MATLAB scripts are included to assist with data analysis. 
 
 **A thorough documentation is in the works.**
 
