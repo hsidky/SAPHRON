@@ -14,7 +14,7 @@ SAPHRON
 
 <a id="dependencies"></a>
 ## Dependencies
-SAPHRON requires some math libraries to enable more advanced features. They are not necessary for the core functionality, but the build system in its current state requires that they be there.
+SAPHRON requires some math libraries to enable more advanced features. They are not necessary for core functionality, but the build system in its current state requires that they be there.
 
 It's easy enough to install the required packages. On any Debian-based distro simply type:
 
