@@ -784,4 +784,147 @@ TEST(ArrayRequirement, DefaultBehavior)
 	reader.parse("[]", input);
 	validator.Validate(input, "");
 	ASSERT_FALSE(validator.HasErrors());	
+
+	// Parse schema 
+	reader.parse("{\n  \"type\": \"array\",\n  \"items\": [\n  "
+				 "{\n      \"type\": \"number\"\n    },\n    {\n  "
+				 "\"type\": \"string\"\n    },\n    {\n      \"type\": \"string\",\n "
+				 "\"enum\": [\"Street\", \"Avenue\", \"Boulevard\"]\n    },\n    {\n "
+				 "\"type\": \"string\",\n      \"enum\": [\"NW\", \"NE\", \"SW\", \"SE\"]\n "
+				 "   }\n  ]\n}\n", schema);
+	validator.Parse(schema, "");
+
+	// Input 7.
+	reader.parse("[1600, \"Pennsylvania\", \"Avenue\", \"NW\"]", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();		
+
+	// Input 8.
+	reader.parse("[24, \"Sussex\", \"Drive\"]", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 9.
+	reader.parse("[\"Palais de l'Élysée\"]", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 10.
+	reader.parse("[10, \"Downing\", \"Street\"]", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 11.
+	reader.parse("[1600, \"Pennsylvania\", \"Avenue\", \"NW\", \"Washington\"]", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	// Parse schema 
+	reader.parse("{\n  \"type\": \"array\",\n  \"items\": [\n  "
+				 "{\n      \"type\": \"number\"\n    },\n    {\n  "
+				 "\"type\": \"string\"\n    },\n    {\n      \"type\": \"string\",\n "
+				 "\"enum\": [\"Street\", \"Avenue\", \"Boulevard\"]\n    },\n    {\n "
+				 "\"type\": \"string\",\n      \"enum\": [\"NW\", \"NE\", \"SW\", \"SE\"]\n "
+				 "   }\n  ],\"additionalItems\": false}\n", schema);
+	validator.Parse(schema, "");
+
+	// Input 12.
+	reader.parse("[1600, \"Pennsylvania\", \"Avenue\", \"NW\"]", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();		
+
+	// Input 13.
+	reader.parse("[1600, \"Pennsylvania\", \"Avenue\"]", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 14.
+	reader.parse("[1600, \"Pennsylvania\", \"Avenue\", \"NW\", \"Washington\"]", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	reader.parse("{\n  \"type\": \"array\",\n  \"minItems\": 2,\n  \"maxItems\": 3\n}", schema);
+	validator.Parse(schema, "");
+
+	// Input 15.
+	reader.parse("[]", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();		
+
+	// Input 16.
+	reader.parse("[1]", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();		
+
+	// Input 17.
+	reader.parse("[1, 2]", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();		
+
+	// Input 18.
+	reader.parse("[1, 2, 3]", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();		
+
+	// Input 19.
+	reader.parse("[1, 2, 3, 4]", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();		
+
+	reader.parse("{\n  \"type\": \"array\",\n  \"uniqueItems\": true\n}", schema);
+	validator.Parse(schema, "");
+
+	// Input 20.
+	reader.parse("[1, 2, 3, 4, 5]", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 21.
+	reader.parse("[1, 2, 3, 3, 4]", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();	
+
+	// Input 22.
+	reader.parse("[]", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
 }

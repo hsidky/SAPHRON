@@ -5,6 +5,9 @@
 #include "IntegerRequirement.h"
 #include "NumberRequirement.h"
 #include "ObjectRequirement.h"
+#include "RequirementLoader.h"
+#include <algorithm>
+#include <set>
 
 namespace Json
 {
@@ -14,14 +17,25 @@ namespace Json
 		std::vector<Requirement*> _items;
 		Requirement* _item;
 
-		bool _tuple;
+		bool _addItems, _setMin, _setMax, _unique;
+
+		int _min, _max;
+
+		template <class T>
+		bool IsUnique(T X) 
+		{
+		  std::set<T> Y(X.begin(), X.end());
+		  return X.size() == Y.size();
+		}
 
 	public:
 		ArrayRequirement() : 
-		_items(), _item(nullptr) {}
+		_items(0), _item(nullptr), _addItems(true),
+		_setMin(false), _setMax(false), _unique(false), 
+		_min(0), _max(0) {}
 		~ArrayRequirement() 
 		{
-			for(auto& c : _items)
+			for(auto& c : _items)	
 				delete c;
 			_items.clear();
 
@@ -57,28 +71,52 @@ namespace Json
 			_items.clear();
 
 			delete _item;
+			_item = nullptr;
+
+			_addItems = true;
+			_setMin = _setMax = _unique = false;
+			_min = _max = 0;
 		}
 
 		virtual void Parse(Value json, std::string path) override
 		{
 			Reset();
-
-			if(json.isMember("items") && json.isObject())
+			RequirementLoader loader;
+			
+			if(json.isMember("items") && json["items"].isObject())
 			{
-				auto& type = json["items"]["type"];		
-
-				// Load up apitemriate requirement type.
-				if(type.asString() == "string")
-					_item = new StringRequirement();
-				else if(type.asString() == "integer")
-					_item = new IntegerRequirement();
-				else if(type.asString() == "number")
-					_item = new NumberRequirement();
-				else if(type.asString() == "object")
-					_item = new ObjectRequirement();
-				
-				_item->Parse(json["items"], path);
+				if((_item = loader.LoadRequirement(json["items"])))
+					_item->Parse(json["items"], path);				
 			}
+			else if(json.isMember("items") && json["items"].isArray())
+			{
+				for(auto& item : json["items"])
+				{			
+					if(auto* iptr = loader.LoadRequirement(item))
+					{
+						_items.push_back(iptr);
+						_items.back()->Parse(item, path);
+					}
+				}
+			}
+
+			if(json.isMember("additionalItems") && json["additionalItems"].isBool())
+				_addItems = json["additionalItems"].asBool();
+
+			if(json.isMember("minItems") && json["minItems"].isInt())
+			{
+				_setMin = true;
+				_min = json["minItems"].asInt();
+			}
+
+			if(json.isMember("maxItems") && json["maxItems"].isInt())
+			{
+				_setMax = true;
+				_max = json["maxItems"].asInt();
+			}
+
+			if(json.isMember("uniqueItems") && json["uniqueItems"].isBool())
+				_unique = json["uniqueItems"].asBool();
 		}
 
 		virtual void Validate(const Value& json, std::string path) override
@@ -101,6 +139,37 @@ namespace Json
 				for(const auto& notice : _item->GetNotices())
 					PushNotice(notice);
 			}
+
+			if(_items.size() != 0)
+			{
+				
+				if(!_addItems && json.size() >  _items.size())
+					PushError(path + ": There cannot be any additional items in the array");
+
+				int iv = std::min((int)_items.size(), (int)json.size());
+				for(int i = 0; i < iv; ++i)
+				{
+					_items[i]->Validate(json[i], path);
+
+					// Merge errors.
+					for(const auto& error : _items[i]->GetErrors())
+						PushError(error);
+
+					for(const auto& notice : _items[i]->GetNotices())
+						PushNotice(notice);
+				}					
+			}
+
+			if(_setMin && (int)json.size() < _min)
+				PushError(path + ": There must be at least " + std::to_string(_min) + " elements in the array");
+				
+			if(_setMax && (int)json.size() > _max)
+				PushError(path + ": There must be less than " + std::to_string(_max) + " elements in the array");
+
+			if(_unique && !IsUnique(json))
+				PushError(path + ": Entries must be unique");
+
+
 		}
 	};
 }

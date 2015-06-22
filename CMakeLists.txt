@@ -102,6 +102,7 @@ set(SOURCE
 	src/Worlds/SimpleWorld.cpp
 	src/Moves/MoveBuilder.cpp
 	src/jsoncpp.cpp 
+	src/Validator/RequirementLoader.cpp
 )
 
 add_library(libsaphron ${SOURCE})

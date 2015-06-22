@@ -9,6 +9,7 @@
 #include "IntegerRequirement.h"
 #include "NumberRequirement.h"
 #include "DependencyRequirement.h"
+#include "RequirementLoader.h"
 
 namespace Json
 {
@@ -94,6 +95,7 @@ namespace Json
 		virtual void Parse(Value json, std::string path) override
 		{
 			Reset();
+			RequirementLoader loader;
 
 			// Additional properties.
 			if(json.isMember("additionalProperties"))
@@ -114,18 +116,12 @@ namespace Json
 				{
 					if(prop.isObject())
 					{
-						// Load up appropriate requirement type.
-						if(prop["type"].asString() == "string")
-							_properties.insert({names[i], new StringRequirement()});
-						else if(prop["type"].asString() == "integer")
-							_properties.insert({names[i], new IntegerRequirement()});
-						else if(prop["type"].asString() == "number")
-							_properties.insert({names[i], new NumberRequirement()});
-						else if(prop["type"].asString() == "object")
-							_properties.insert({names[i], new ObjectRequirement()});
+						if(auto* property = loader.LoadRequirement(prop))
+						{
+							_properties.insert({names[i], property});
+							_properties[names[i]]->Parse(prop, path + "/" + names[i]);
+						}
 					}
-
-					_properties[names[i]]->Parse(prop, path + "/" + names[i]);
 					++i;
 				}
 			}
@@ -140,18 +136,13 @@ namespace Json
 				{
 					if(prop.isObject())
 					{
-						// Load up appropriate requirement type.
-						if(prop["type"].asString() == "string")
-							_patternProps.insert({names[i], new StringRequirement()});
-						else if(prop["type"].asString() == "integer")
-							_patternProps.insert({names[i], new IntegerRequirement()});
-						else if(prop["type"].asString() == "number")
-							_patternProps.insert({names[i], new NumberRequirement()});
-						else if(prop["type"].asString() == "object")
-							_patternProps.insert({names[i], new ObjectRequirement()});
+						if(auto* property = loader.LoadRequirement(prop))
+						{
+							_patternProps.insert({names[i], property});
+							_patternProps[names[i]]->Parse(prop, path + "/" + names[i]);
+						}
 					}
 
-					_patternProps[names[i]]->Parse(prop, path + "/" + names[i]);
 					++i;
 				}
 			}
