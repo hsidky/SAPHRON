@@ -5,6 +5,10 @@
 #include "../src/Validator/BooleanRequirement.h"
 #include "../src/Validator/NullRequirement.h"
 #include "../src/Validator/EnumRequirement.h"
+#include "../src/Validator/AllOfRequirement.h"
+#include "../src/Validator/AnyOfRequirement.h"
+#include "../src/Validator/OneOfRequirement.h"
+#include "../src/Validator/NotRequirement.h"
 #include "gtest/gtest.h"
 
 using namespace Json;
@@ -1086,6 +1090,194 @@ TEST(EnumRequirement, DefaultBehavior)
 
 	// Input 4.
 	reader.parse("0", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+}
+
+TEST(AllOfRequirement, DefaultBehavior)
+{
+	AllOfRequirement validator;
+	Json::Value schema;
+	Json::Value input;
+	Reader reader;
+
+	reader.parse("{\"allOf\": [{ \"type\": \"string\"}, "
+				 "{\"type\": \"string\", \"maxLength\": 5 }]}", schema);
+	validator.Parse(schema, "");
+
+	// Input 1.
+	reader.parse("\"short\"", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 2.
+	reader.parse("\"too long\"", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	reader.parse("{  \"allOf\": [ { \"type\": \"string\" }, "
+				 "{ \"type\": \"number\" }  ]}", schema);
+	validator.Parse(schema, "");
+
+	// Input 3.
+	reader.parse("\"no way\"", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+	
+	// Input 4.
+	reader.parse("-1", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+}
+
+TEST(AnyOfRequirement, DefaultBehavior)
+{
+	AnyOfRequirement validator;
+	Json::Value schema;
+	Json::Value input;
+	Reader reader;
+
+	reader.parse("{\"anyOf\": [  { \"type\": \"string\", \"maxLength\": 5 }, "
+				 "{ \"type\": \"number\", \"minimum\": 0 }]\n}\n", schema);
+	validator.Parse(schema, "");
+
+	// Input 1.
+	reader.parse("\"short\"", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 2.
+	reader.parse("\"too long\"", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 3.
+	reader.parse("12", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+	
+	// Input 4.
+	reader.parse("-5", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	reader.parse("{\"anyOf\": [  { \"type\": \"string\" }, "
+				 " { \"type\": \"number\" }]\n}\n", schema);
+	validator.Parse(schema, "");
+
+	// Input 5.
+	reader.parse("\"Yes\"", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 6.
+	reader.parse("42", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 7.
+	reader.parse("{ \"Not a\": \"string or number\" }", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+}
+
+TEST(OneOfRequirement, DefaultBehavior)
+{
+	OneOfRequirement validator;
+	Json::Value schema;
+	Json::Value input;
+	Reader reader;
+
+	reader.parse("{\"oneOf\": [  { \"type\": \"number\", \"multipleOf\": 5 }, "
+				 "{ \"type\": \"number\", \"multipleOf\": 3 }]\n}", schema);
+	validator.Parse(schema, "");
+
+	// Input 1.
+	reader.parse("10", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 2.
+	reader.parse("9", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 3.
+	reader.parse("2", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 4.
+	reader.parse("15", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+}
+
+TEST(NotRequirement, DefaultBehavior)
+{
+	NotRequirement validator;
+	Json::Value schema;
+	Json::Value input;
+	Reader reader;
+
+	reader.parse("{ \"not\": { \"type\": \"string\" } }", schema);
+	validator.Parse(schema, "");
+
+	// Input 1.
+	reader.parse("42", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 2.
+	reader.parse("{ \"key\": \"value\" }", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+	
+	// Input 3.
+	reader.parse("\"I am a string\"", input);
 	validator.Validate(input, "");
 	ASSERT_TRUE(validator.HasErrors());
 }

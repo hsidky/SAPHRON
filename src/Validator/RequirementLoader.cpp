@@ -7,6 +7,10 @@
 #include "BooleanRequirement.h"
 #include "NullRequirement.h"
 #include "EnumRequirement.h"
+#include "AllOfRequirement.h"
+#include "AnyOfRequirement.h"
+#include "OneOfRequirement.h"
+#include "NotRequirement.h"
 
 namespace Json
 {
@@ -28,8 +32,16 @@ namespace Json
 			item = new BooleanRequirement();
 		else if(json["type"].asString() == "null")
 			item = new NullRequirement();
+		else if(json["allOf"].isArray())
+			item = new AllOfRequirement();
+		else if(json["anyOf"].isArray())
+			item = new AnyOfRequirement();
+		else if(json["oneOf"].isArray())
+			item = new AnyOfRequirement();
 		else if(json["enum"].isArray())
 			item = new EnumRequirement();
+		else if(json["not"].isObject())
+			item = new NotRequirement();
 
 		return item;
 	}

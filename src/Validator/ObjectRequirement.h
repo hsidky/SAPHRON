@@ -114,14 +114,12 @@ namespace Json
 				int i = 0;
 				for(auto& prop : props)
 				{
-					if(prop.isObject())
+					if(auto* property = loader.LoadRequirement(prop))
 					{
-						if(auto* property = loader.LoadRequirement(prop))
-						{
-							_properties.insert({names[i], property});
-							_properties[names[i]]->Parse(prop, path + "/" + names[i]);
-						}
+						_properties.insert({names[i], property});
+						_properties[names[i]]->Parse(prop, path + "/" + names[i]);
 					}
+
 					++i;
 				}
 			}
