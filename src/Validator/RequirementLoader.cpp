@@ -4,6 +4,8 @@
 #include "NumberRequirement.h"
 #include "ObjectRequirement.h"
 #include "ArrayRequirement.h"
+#include "BooleanRequirement.h"
+#include "NullRequirement.h"
 
 namespace Json
 {
@@ -21,6 +23,10 @@ namespace Json
 			item = new ObjectRequirement();
 		else if(json["type"].asString() == "array")
 			item = new ArrayRequirement();
+		else if(json["type"].asString() == "boolean")
+			item = new BooleanRequirement();
+		else if(json["type"].asString() == "null")
+			item = new NullRequirement();
 
 		return item;
 	}

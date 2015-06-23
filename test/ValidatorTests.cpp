@@ -2,6 +2,8 @@
 #include "../src/Validator/IntegerRequirement.h"
 #include "../src/Validator/ObjectRequirement.h"
 #include "../src/Validator/ArrayRequirement.h"
+#include "../src/Validator/BooleanRequirement.h"
+#include "../src/Validator/NullRequirement.h"
 #include "gtest/gtest.h"
 
 using namespace Json;
@@ -927,4 +929,86 @@ TEST(ArrayRequirement, DefaultBehavior)
 	reader.parse("[]", input);
 	validator.Validate(input, "");
 	ASSERT_FALSE(validator.HasErrors());
+}
+
+TEST(BooleanRequirement, DefaultBehavior)
+{
+	BooleanRequirement validator;
+	Json::Value schema;
+	Json::Value input;
+	Reader reader;
+
+	// Parse schema.
+	reader.parse("{ \"type\": \"boolean\" }", schema);
+	validator.Parse(schema, "");
+
+	// Input 1.
+	reader.parse("true", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 2.
+	reader.parse("false", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 3.
+	reader.parse("\"true\"", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 4.
+	reader.parse("0", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+}
+
+TEST(NullRequirement, DefaultBehavior)
+{
+	NullRequirement validator;
+	Json::Value schema;
+	Json::Value input;
+	Reader reader;
+
+	// Parse schema.
+	reader.parse("{ \"type\": \"null\" }", schema);
+	validator.Parse(schema, "");
+
+	// Input 1.
+	reader.parse("null", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 2.
+	reader.parse("false", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 3.
+	reader.parse("0", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+	
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 4.
+	reader.parse("", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
 }
