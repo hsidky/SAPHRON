@@ -19,7 +19,7 @@ namespace Json
 			ClearNotices();
 		}
 
-		virtual void Parse(Value json, std::string path) override
+		virtual void Parse(Value json, std::string) override
 		{
 			Reset();
 

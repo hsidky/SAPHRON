@@ -4,6 +4,7 @@
 #include "../src/Validator/ArrayRequirement.h"
 #include "../src/Validator/BooleanRequirement.h"
 #include "../src/Validator/NullRequirement.h"
+#include "../src/Validator/EnumRequirement.h"
 #include "gtest/gtest.h"
 
 using namespace Json;
@@ -145,6 +146,42 @@ TEST(StringRequirement, DefaultBehavior)
 
 	// Input 16.
 	reader.parse("\"bla\"", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	// Parse schema.
+	reader.parse("{\n  \"type\": \"string\",\n  "
+				 "\"enum\": [\"red\", \"amber\", \"green\"]\n}\n", schema);
+	validator.Parse(schema, "");
+
+	// Input 17.
+	reader.parse("\"red\"", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 18.
+	reader.parse("\"blue\"", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+
+	// Parse schema.
+	reader.parse("{\n  \"type\": \"string\",\n  "
+				 "\"enum\": [\"red\", \"amber\", \"green\", null]\n}", schema);
+	validator.Parse(schema, "");
+
+	// Input 19.
+	reader.parse("\"red\"", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 20.
+	reader.parse("null", input);
 	validator.Validate(input, "");
 	ASSERT_TRUE(validator.HasErrors());
 }
@@ -1009,6 +1046,46 @@ TEST(NullRequirement, DefaultBehavior)
 
 	// Input 4.
 	reader.parse("", input);
+	validator.Validate(input, "");
+	ASSERT_TRUE(validator.HasErrors());
+}
+
+TEST(EnumRequirement, DefaultBehavior)
+{
+	EnumRequirement validator;
+	Json::Value schema;
+	Json::Value input;
+	Reader reader;
+
+	reader.parse("[\"red\", \"amber\", \"green\", null, 42]", schema);
+	validator.Parse(schema, "");
+
+	// Input 1.
+	reader.parse("\"red\"", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 2.
+	reader.parse("null", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 3.
+	reader.parse("42", input);
+	validator.Validate(input, "");
+	ASSERT_FALSE(validator.HasErrors());
+
+	validator.ClearErrors();
+	validator.ClearNotices();
+
+	// Input 4.
+	reader.parse("0", input);
 	validator.Validate(input, "");
 	ASSERT_TRUE(validator.HasErrors());
 }

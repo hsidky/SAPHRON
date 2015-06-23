@@ -6,6 +6,7 @@
 #include "ArrayRequirement.h"
 #include "BooleanRequirement.h"
 #include "NullRequirement.h"
+#include "EnumRequirement.h"
 
 namespace Json
 {
@@ -27,6 +28,42 @@ namespace Json
 			item = new BooleanRequirement();
 		else if(json["type"].asString() == "null")
 			item = new NullRequirement();
+		else if(json["enum"].isArray())
+			item = new EnumRequirement();
+
+		return item;
+	}
+
+	Requirement* RequirementLoader::LoadRequirement(const ValueType& type)
+	{
+		Requirement* item = nullptr; 
+
+		switch(type)
+		{
+			case nullValue:
+				item = new NullRequirement();
+				break;
+			case intValue:
+				item = new IntegerRequirement();
+				break;
+			case realValue:
+				item = new NumberRequirement();
+				break;
+			case stringValue:
+				item = new StringRequirement();
+				break;
+			case booleanValue:
+				item = new BooleanRequirement();
+				break;
+			case arrayValue:
+				item = new ArrayRequirement();
+				break;
+			case objectValue:
+				item = new ObjectRequirement();
+				break;
+			default:
+				item = nullptr;
+		}
 
 		return item;
 	}
