@@ -6,5 +6,6 @@
 			"enum" : ["FlipSpin"]
 		}
 	},
+	"required" : ["type"],
 	"additionalProperties": false
 }

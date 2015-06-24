@@ -9,6 +9,8 @@ namespace Json
 	{
 	public:
 		Requirement* LoadRequirement(const Value& json);
+
+		Requirement* LoadExtended(const Value& json);
 		
 		Requirement* LoadRequirement(const ValueType& type);
 	};

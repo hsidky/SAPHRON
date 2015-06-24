@@ -1,0 +1,6 @@
+{
+	"oneOf" : [
+		"@file(nvt.ensemble.json)",
+		"@file(gibbsnvt.ensemble.json)"
+	]
+}

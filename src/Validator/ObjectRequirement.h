@@ -18,6 +18,7 @@ namespace Json
 	private:
 		std::map<std::string, Requirement*> _properties;
 		std::map<std::string, Requirement*> _patternProps;
+		std::vector<Requirement*> _extended;
 		DependencyRequirement* _dependency;
 
 		std::list<std::string> _required;
@@ -26,7 +27,7 @@ namespace Json
 
 	public:
 		ObjectRequirement() : 
-		_properties(), _patternProps(), _dependency(nullptr), _required(),
+		_properties(), _patternProps(), _extended(0), _dependency(nullptr), _required(),
 		_moreProps(true), _setMin(false), _setMax(false), _min(0), _max(0)
 		{}
 
@@ -40,6 +41,10 @@ namespace Json
 				delete c.second;
 			_patternProps.clear();
 
+			for(auto& c : _extended)
+				delete c;
+			_extended.clear();
+
 			delete _dependency;
 		}
 
@@ -50,6 +55,9 @@ namespace Json
 
 			for(auto& c : _patternProps)
 				c.second->ClearErrors();
+
+			for(auto& c : _extended)
+				c->ClearErrors();
 
 			if(_dependency != nullptr)
 				_dependency->ClearErrors();
@@ -64,6 +72,9 @@ namespace Json
 
 			for(auto& c : _patternProps)
 				c.second->ClearNotices();
+
+			for(auto& c : _extended)
+				c->ClearNotices();
 
 			if(_dependency != nullptr)
 				_dependency->ClearNotices();
@@ -83,6 +94,9 @@ namespace Json
 			for(auto& c : _patternProps)
 				delete c.second;
 			_patternProps.clear();
+
+			for(auto& c: _extended)
+				delete c;
 
 			_moreProps = true;
 			_setMin = _setMax = false;
@@ -172,6 +186,16 @@ namespace Json
 				_dependency = new DependencyRequirement();
 				_dependency->Parse(json["dependencies"], path);
 			}
+
+			// Extended properties. 
+			for(auto& prop : json)
+			{
+				if(auto* req  = loader.LoadExtended(prop))
+				{
+					_extended.push_back(req);
+					_extended.back()->Parse(prop, path);
+				}
+			}
 		}
 
 		virtual void Validate(const Value& json, std::string path) override
@@ -249,6 +273,18 @@ namespace Json
         				return a + (a.length() > 0 ? ", " : "") + b; 
     			});
 				PushError(path + ": Missing properties: " + msg);
+			}
+
+			// Validate extended.
+			for(auto& requirement : _extended)
+			{
+				requirement->Validate(json, path);
+				if(requirement->HasErrors())
+						for(const auto& error : requirement->GetErrors())
+							PushError(error);
+				if(requirement->HasNotices())
+					for(const auto& notice : requirement->GetNotices())
+						PushNotice(notice);
 			}
 		}
 	};

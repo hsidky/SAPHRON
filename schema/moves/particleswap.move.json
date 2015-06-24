@@ -10,5 +10,6 @@
 			"minimum" : 0
 		}
 	},
+	"required" : ["type"],
 	"additionalProperties": false
 }

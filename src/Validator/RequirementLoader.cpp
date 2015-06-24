@@ -42,6 +42,22 @@ namespace Json
 			item = new EnumRequirement();
 		else if(json["not"].isObject())
 			item = new NotRequirement();
+		// last resort.
+		else if(json.isObject())
+			item = new ObjectRequirement();
+
+		return item;
+	}
+
+	Requirement* RequirementLoader::LoadExtended(const Value &json)
+	{
+		Requirement* item = nullptr;
+		if(json["allOf"].isArray())
+			item = new AllOfRequirement();
+		else if(json["anyOf"].isArray())
+			item = new AnyOfRequirement();
+		else if(json["oneOf"].isArray())
+			item = new AnyOfRequirement();
 
 		return item;
 	}

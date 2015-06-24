@@ -3,6 +3,8 @@
 #include "../Simulation/SimObservable.h"
 #include "../Properties/Energy.h"
 #include "../Properties/Pressure.h"
+#include "../Worlds/World.h"
+#include "json/json.h"
 #include <map>
 #include <vector>
 

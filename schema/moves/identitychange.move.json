@@ -6,5 +6,6 @@
 			"enum" : ["IdentityChange"]
 		}
 	},
+	"required": ["type"],
 	"additionalProperties": false
 }

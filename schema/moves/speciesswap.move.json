@@ -6,5 +6,6 @@
 			"enum" : ["SpeciesSwap"]
 		}
 	},
+	"required" : ["type"],
 	"additionalProperties": false
 }

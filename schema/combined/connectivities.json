@@ -1,0 +1,38 @@
+{
+    "type": "array",
+    "items": {
+        "oneOf": [
+            {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "type",
+                    "coefficient",
+                    "director",
+                    "selector"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "P2SA"
+                        ]
+                    },
+                    "director": {
+                        "type": "array",
+                        "maxItems": 3,
+                        "additionalItems": false,
+                        "minItems": 3,
+                        "items": {
+                            "type": "numeric"
+                        }
+                    },
+                    "selector": {},
+                    "coefficient": {
+                        "type": "number"
+                    }
+                }
+            }
+        ]
+    }
+}

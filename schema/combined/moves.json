@@ -1,0 +1,138 @@
+{
+    "type": "array",
+    "items": {
+        "oneOf": [
+            {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "type"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "FlipSpin"
+                        ]
+                    }
+                }
+            },
+            {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "type"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "IdentityChange"
+                        ]
+                    }
+                }
+            },
+            {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "type"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "ParticleSwap"
+                        ]
+                    },
+                    "seed": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "type"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "SpeciesSwap"
+                        ]
+                    }
+                }
+            },
+            {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "type"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "SphereUnitVector"
+                        ]
+                    },
+                    "seed": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "type",
+                    "dx"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "Translate"
+                        ]
+                    },
+                    "seed": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "dx": {
+                        "type": "number",
+                        "minimum": 0
+                    }
+                }
+            },
+            {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "type",
+                    "dv"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "VolumeScale"
+                        ]
+                    },
+                    "dv": {
+                        "type": "number",
+                        "minimum": 0
+                    },
+                    "seed": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            }
+        ]
+    }
+}
