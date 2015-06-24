@@ -1,0 +1,25 @@
+{
+	"type" : "object",
+	"properties" : {
+		"type" : {
+			"type" : "string",
+			"enum" : ["Simple"]
+		},
+		"dimensions" : "@file(position.particle.json)",
+		"seed" : {
+			"type" : "integer",
+			"minimum" : 0
+		},
+		"nlist_cutoff" : {
+			"type" : "number",
+			"minimum" : 0,
+			"exclusiveMinimum": true
+		},
+		"skin_thickness" : {
+			"type" : "number",
+			"minimum" : 0,
+			"exclusiveMinimum" : true
+		}
+	},
+	"required" : ["type", "dimensions", "nlist_cutoff", "skin_thickness"]
+}
