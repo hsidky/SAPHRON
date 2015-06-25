@@ -1,0 +1,27 @@
+{
+	"type" : "object",
+	"patternProperties" : {
+		"^[A-z][A-z0-9]+$" : {
+			"type" : "object",
+			"properties" : {
+				"children" : {
+					"type" : "object",
+					"patternProperties" : {
+						"^[A-z][A-z0-9]+$" : {
+							"type" : "object"
+						}
+					}
+				},
+				"count" : {
+					"type" : "integer",
+					"minimum" : 1
+				}
+			},
+			"required": ["count"],
+			"minProperties" : 1,
+			"additionalProperties": false
+		}	
+	},
+	"minProperties" : 1,
+	"additionalProperties": false
+}

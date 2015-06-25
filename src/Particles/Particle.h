@@ -6,11 +6,11 @@
 #include "ParticleEvent.h"
 #include "Position.h"
 #include "Director.h"
+#include "json/json.h"
 #include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <list>
-#include <memory>
 #include <string>
 #include <vector>
 #include <map>
@@ -26,6 +26,7 @@ namespace SAPHRON
 	{
 	    return (int) x + (x>0);
 	}
+
 	// Minimum image convention.
 	inline double anint(const double& x)
 	{
@@ -326,5 +327,11 @@ namespace SAPHRON
 
 			// Clone particle.
 			virtual Particle* Clone() const = 0;
+
+			// Build a particle. This builds a particle from JSON array and the blueprint. 
+			// If the particle is a composite object, an commensurate number of particles 
+			// in a JSON array must be passed in.
+			// TODO: implement BuildParticles method.
+			static Particle* Build(const Json::Value& particles, const Json::Value& blueprint);
 	};
 }

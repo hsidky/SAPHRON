@@ -1,0 +1,22 @@
+{
+	"type" : "array",
+	"items" : [
+		{
+			"type" : "integer",
+			"minimum": 1
+		},
+		{
+			"type" : "string"
+		},
+		{
+			"type" : "string"
+		}, 
+		"@file(position.particle.json)",
+		"@file(director.particle.json)",
+		{
+			"type": "string"
+		}
+	],
+	"additionalItems" : false,
+	"minItems" : 4
+}
