@@ -11,5 +11,3 @@ namespace SAPHRON
 		
 	};
 }
-
-//INSERT_DEF_HERE

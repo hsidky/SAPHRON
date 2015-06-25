@@ -13,6 +13,7 @@ import sys
 currd = os.path.dirname(os.path.abspath(__file__))
 cdir = "combined/"
 schemah = '../include/schema.h'
+schemac = '../src/schema.cpp'
 
 # All files
 files = [
@@ -32,6 +33,8 @@ files = [
 	("observers/observer.json", "Observer"),
 	("particles/director.particle.json", "Director"),
 	("particles/selector.particle.json", "Selector"),
+	("particles/components.particle.json", "Components"),
+	("particles/site.particle.json", "Site"),
 	("worlds/simple.world.json", "SimpleWorld"),
 	("worlds/worlds.json", "Worlds")
 	]
@@ -71,16 +74,35 @@ def genheader(inputfd):
 	decl = '\t\tstatic std::string ' + inputfd[1] + ';\n'
 	defn = 'std::string SAPHRON::JsonSchema::' + inputfd[1] + ' = '
 
+	# Write header.
 	lines = []
 	with open(fin, "r") as f:
 		lines = f.readlines()
 		i = next(j for j, s in enumerate(lines) if 'INSERT_DEC_HERE' in s)
 		lines.insert(i+1, decl)
-		i = next(j for j, s in enumerate(lines) if 'INSERT_DEF_HERE' in s)
-		lines.insert(i+1, defn + '"' + json.dumps(jobj).replace('"', '\\"') + '";\n')
 
 	with open(fout, "w") as f:
 		f.writelines(lines)
+
+	# Write cpp. 
+	fout = os.path.join(currd, schemac)
+	fin = fout 
+	if not os.path.isfile(fin):
+		fin = os.path.join(currd, "sourcetemplate.cpp")
+
+	lines = []
+	with open(fin, "r") as f:
+		lines = f.readlines()
+		i = next(j for j, s in enumerate(lines) if 'INSERT_DEF_HERE' in s)
+		lines.insert(
+			i+1, 
+			"\t" + defn + '"' + json.dumps(jobj).replace('"', '\\"') + '";\n'
+		)
+
+	with open(fout, "w") as f:
+		f.writelines(lines)
+
+	print('Processed {0}'.format(inputfd[0]))
 
 if len(sys.argv) == 2 and sys.argv[1] == "clean":
 	fdir = currd + "/" + cdir
@@ -89,6 +111,9 @@ if len(sys.argv) == 2 and sys.argv[1] == "clean":
 		os.remove(fpath)
 	if os.path.isfile(os.path.join(currd, schemah)):
 		os.remove(os.path.join(currd, schemah))
+	if os.path.isfile(os.path.join(currd, schemac)):
+		os.remove(os.path.join(currd, schemac))
+
 else:
 	for f in cfiles:
 		gencombined(f)
