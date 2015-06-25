@@ -27,8 +27,8 @@ TEST(ParticleSwapMove, DefaultBehavior)
 
 	LennardJonesFF lj1(1.0, 1.0, 4.0);
 	LennardJonesFF lj2(1.0, 1.0, 20.0);
-	ffm1.AddForceField("LJ", "LJ", lj1);
-	ffm2.AddForceField("LJ", "LJ", lj2);
+	ffm1.AddNonBondedForceField("LJ", "LJ", lj1);
+	ffm2.AddNonBondedForceField("LJ", "LJ", lj2);
 
 	auto H1 = ffm1.EvaluateHamiltonian(liquid);
 	auto H2 = ffm2.EvaluateHamiltonian(vapor);

@@ -44,7 +44,7 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 	// Initialize LJ forcefield.
 	LennardJonesFF ff(eps, sigma, rcut);
 	ForceFieldManager ffm;
-	ffm.AddForceField("LJ", "LJ", ff);
+	ffm.AddNonBondedForceField("LJ", "LJ", ff);
 
 	// Initialize moves. 
 	TranslateMove translate(0.30);

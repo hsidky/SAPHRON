@@ -14,10 +14,10 @@ namespace SAPHRON
 		Pressure pressure;
 
 		EPTuple() : energy(), pressure(){}
-		EPTuple(double nonbonded, double connectivity, 
+		EPTuple(double nonbonded, double bonded, double connectivity, 
 				double pideal, double pxx, double pxy, 
 				double pxz, double pyy, double pyz, double pzz, double ptail) : 
-		energy{nonbonded, connectivity}, pressure{pideal, pxx, pxy, pxz, pyy, pyz, pzz, ptail}{}
+		energy{nonbonded, bonded, connectivity}, pressure{pideal, pxx, pxy, pxz, pyy, pyz, pzz, ptail}{}
 
 
 		inline EPTuple& operator+=(const EPTuple& rhs)

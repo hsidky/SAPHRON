@@ -22,7 +22,7 @@ TEST(LennardJonesFF, DefaultBehavior)
 	s2.AddNeighbor(&s1);
 
 	ForceFieldManager ffm;
-	ffm.AddForceField("L1", "L1", ff);
+	ffm.AddNonBondedForceField("L1", "L1", ff);
 
 	CompositionList compositions = 
 	{
@@ -71,7 +71,7 @@ TEST(LennardJonesFF, ReducedProperties)
 	// Initialize LJ forcefield.
 	LennardJonesFF ff(eps, sigma, rcut);
 	ForceFieldManager ffm;
-	ffm.AddForceField("LJ", "LJ", ff);
+	ffm.AddNonBondedForceField("LJ", "LJ", ff);
 
 	// Initialize moves. 
 	TranslateMove move(0.22);

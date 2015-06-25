@@ -69,7 +69,7 @@ int main(int argc, char const* argv[])
 	// an isotropic term as well. See header file for details.
 	LebwohlLasherFF ff(1.0, 0);
 	ForceFieldManager ffm;
-	ffm.AddForceField("E1", "E1", ff);
+	ffm.AddNonBondedForceField("E1", "E1", ff);
 
 	// Initialize the move we want to perform on our sites, then add it to an instance of the 
 	// move manager. The only argument the constructor takes is a seed for the PRNG.
