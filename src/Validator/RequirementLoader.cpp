@@ -52,11 +52,11 @@ namespace Json
 	Requirement* RequirementLoader::LoadExtended(const Value &json)
 	{
 		Requirement* item = nullptr;
-		if(json["allOf"].isArray())
+		if(json.isObject() && json.isMember("allOf") && json["allOf"].isArray())
 			item = new AllOfRequirement();
-		else if(json["anyOf"].isArray())
+		else if(json.isObject() && json.isMember("anyOf") && json["anyOf"].isArray())
 			item = new AnyOfRequirement();
-		else if(json["oneOf"].isArray())
+		else if(json.isObject() && json.isMember("oneOf") && json["oneOf"].isArray())
 			item = new AnyOfRequirement();
 
 		return item;

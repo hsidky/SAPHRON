@@ -2,6 +2,7 @@
 
 #include "../Particles/Particle.h"
 #include "../Observers/Visitable.h"
+#include "json/json.h"
 #include <memory>
 #include <functional>
 #include <map>
@@ -159,6 +160,11 @@ namespace SAPHRON
 
 		// Get seed.
 		virtual int GetSeed() const = 0;
+
+		// Builds a world from JSON value. Returns a pointer to world object, or throws a 
+		// BuildException if validation fails. Object lifetime is caller's responsibility!
+		static World* BuildWorld(const Json::Value& json);
+		static World* BuildWorld(std::istream& stream);
 
 		virtual ~World (){}
 	};

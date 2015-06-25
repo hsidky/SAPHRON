@@ -31,14 +31,17 @@ files = [
 	("observers/csv.observer.json", "CSVObserver"),
 	("observers/observer.json", "Observer"),
 	("particles/director.particle.json", "Director"),
-	("particles/selector.particle.json", "Selector")
+	("particles/selector.particle.json", "Selector"),
+	("worlds/simple.world.json", "SimpleWorld"),
+	("worlds/worlds.json", "Worlds")
 	]
 
 # Files to generate combined 
 cfiles = [
 	("connectivities/connectivities.json", cdir + "connectivities.json"),
 	("ensembles/ensembles.json", cdir + "ensembles.json"),
-	("moves/moves.json", cdir + "moves.json")
+	("moves/moves.json", cdir + "moves.json"),
+	("worlds/worlds.json", cdir + "worlds.json")
 	]
 
 def processfile(filename):
@@ -84,6 +87,8 @@ if len(sys.argv) == 2 and sys.argv[1] == "clean":
 	for f in os.listdir(fdir):
 		fpath = os.path.join(fdir, f)
 		os.remove(fpath)
+	if os.path.isfile(os.path.join(currd, schemah)):
+		os.remove(os.path.join(currd, schemah))
 else:
 	for f in cfiles:
 		gencombined(f)

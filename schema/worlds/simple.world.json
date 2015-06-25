@@ -5,7 +5,7 @@
 			"type" : "string",
 			"enum" : ["Simple"]
 		},
-		"dimensions" : "@file(position.particle.json)",
+		"dimensions" : "@file(../particles/position.particle.json)",
 		"seed" : {
 			"type" : "integer",
 			"minimum" : 0

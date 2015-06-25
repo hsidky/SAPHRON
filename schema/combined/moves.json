@@ -1,138 +1,138 @@
 {
-    "type": "array",
     "items": {
         "oneOf": [
             {
-                "type": "object",
                 "additionalProperties": false,
                 "required": [
                     "type"
                 ],
+                "type": "object",
                 "properties": {
                     "type": {
-                        "type": "string",
                         "enum": [
                             "FlipSpin"
-                        ]
+                        ],
+                        "type": "string"
                     }
                 }
             },
             {
-                "type": "object",
                 "additionalProperties": false,
                 "required": [
                     "type"
                 ],
+                "type": "object",
                 "properties": {
                     "type": {
-                        "type": "string",
                         "enum": [
                             "IdentityChange"
-                        ]
+                        ],
+                        "type": "string"
                     }
                 }
             },
             {
-                "type": "object",
                 "additionalProperties": false,
                 "required": [
                     "type"
                 ],
+                "type": "object",
                 "properties": {
+                    "seed": {
+                        "minimum": 0,
+                        "type": "integer"
+                    },
                     "type": {
-                        "type": "string",
                         "enum": [
                             "ParticleSwap"
-                        ]
-                    },
-                    "seed": {
-                        "type": "integer",
-                        "minimum": 0
+                        ],
+                        "type": "string"
                     }
                 }
             },
             {
-                "type": "object",
                 "additionalProperties": false,
                 "required": [
                     "type"
                 ],
+                "type": "object",
                 "properties": {
                     "type": {
-                        "type": "string",
                         "enum": [
                             "SpeciesSwap"
-                        ]
+                        ],
+                        "type": "string"
                     }
                 }
             },
             {
-                "type": "object",
                 "additionalProperties": false,
                 "required": [
                     "type"
                 ],
+                "type": "object",
                 "properties": {
+                    "seed": {
+                        "minimum": 0,
+                        "type": "integer"
+                    },
                     "type": {
-                        "type": "string",
                         "enum": [
                             "SphereUnitVector"
-                        ]
-                    },
-                    "seed": {
-                        "type": "integer",
-                        "minimum": 0
+                        ],
+                        "type": "string"
                     }
                 }
             },
             {
-                "type": "object",
                 "additionalProperties": false,
                 "required": [
                     "type",
                     "dx"
                 ],
+                "type": "object",
                 "properties": {
+                    "seed": {
+                        "minimum": 0,
+                        "type": "integer"
+                    },
                     "type": {
-                        "type": "string",
                         "enum": [
                             "Translate"
-                        ]
-                    },
-                    "seed": {
-                        "type": "integer",
-                        "minimum": 0
+                        ],
+                        "type": "string"
                     },
                     "dx": {
-                        "type": "number",
-                        "minimum": 0
+                        "minimum": 0,
+                        "type": "number"
                     }
                 }
             },
             {
-                "type": "object",
                 "additionalProperties": false,
                 "required": [
                     "type",
                     "dv"
                 ],
+                "type": "object",
                 "properties": {
-                    "type": {
-                        "type": "string",
-                        "enum": [
-                            "VolumeScale"
-                        ]
-                    },
                     "dv": {
-                        "type": "number",
-                        "minimum": 0
+                        "minimum": 0,
+                        "type": "number"
                     },
                     "seed": {
-                        "type": "integer",
-                        "minimum": 0
+                        "minimum": 0,
+                        "type": "integer"
+                    },
+                    "type": {
+                        "enum": [
+                            "VolumeScale"
+                        ],
+                        "type": "string"
                     }
                 }
             }
         ]
-    }
+    },
+    "type": "array"
 }

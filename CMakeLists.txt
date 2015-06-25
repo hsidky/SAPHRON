@@ -99,6 +99,7 @@ set(SOURCE
 	src/Observers/JSONObserver.cpp
 	src/Simulation/SimObservable.cpp
 	src/Simulation/SimObserver.cpp
+	src/Worlds/World.cpp
 	src/Worlds/SimpleWorld.cpp
 	src/Moves/MoveBuilder.cpp
 	src/jsoncpp.cpp 

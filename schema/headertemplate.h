@@ -8,6 +8,7 @@ namespace SAPHRON
 	{
 	public:
 		//INSERT_DEC_HERE
+		
 	};
 }
 

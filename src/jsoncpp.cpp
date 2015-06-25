@@ -1028,7 +1028,7 @@ std::string Reader::getFormattedErrorMessages() const {
        ++itError) {
     const ErrorInfo& error = *itError;
     formattedMessage +=
-        "* " + getLocationLineAndColumn(error.token_.start_) + "\n";
+      getLocationLineAndColumn(error.token_.start_) + "\n";
     formattedMessage += "  " + error.message_ + "\n";
     if (error.extra_)
       formattedMessage +=
