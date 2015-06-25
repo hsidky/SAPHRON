@@ -72,6 +72,22 @@
 		}
 	},
 
+	"components" : {
+		"water" : {
+			"children" : {
+				"Hw": {}
+			},
+			
+			"count" : 500
+		}
+	},
+
+	"particles" : [
+		{ "id": 5, "component" : "water", "type" : "Hw", "tag": "blah", "position" : [1.0, 2.0, 3.0], "director": [0.0, 1.0, 2.0] },
+		[5, "Hw", "water", [1,2,3], [4,5,6], "blah"],
+
+	],
+
 	"particles" : [
 		{ "Hw":{ "parent": "Water", "residue" : "H2O1", "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } },
 		{ "Ow":{ "parent": "Water", "residue" : "H2O1", "position" : [1.0, 3.0, 2.0], "director" : [0.0, 1.0, 0.0] } },

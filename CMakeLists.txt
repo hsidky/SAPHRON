@@ -102,7 +102,8 @@ set(SOURCE
 	src/Worlds/World.cpp
 	src/Worlds/SimpleWorld.cpp
 	src/Moves/MoveBuilder.cpp
-	src/jsoncpp.cpp 
+	src/jsoncpp.cpp
+	src/schema.cpp
 	src/Validator/RequirementLoader.cpp
 )
 
@@ -113,6 +114,7 @@ target_link_libraries(libsaphron ${SAPH_LIBS})
 add_executable(saphron 
 	src/main.cpp 
 	src/Simulation/SimBuilder.cpp
+	src/Simulation/NewSimBuilder.cpp
 )
 target_link_libraries(saphron ${SAPH_LIBS} libsaphron)
 

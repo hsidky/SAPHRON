@@ -3,28 +3,9 @@
 #include <string>
 #include <iomanip>
 
-#include "Worlds/World.h"
-#include "Simulation/SimException.h"
+#include "Simulation/NewSimBuilder.h"
 
 using namespace SAPHRON;
-
-int DumpErrorsToConsole(std::vector<std::string> msgs, int notw)
-{
-	std::cout << std::setw(notw) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
-	for(auto& msg : msgs)
-			std::cout << "   * " << msg << "\n";
-	return -1;
-}
-
-void DumpNoticesToConsole(std::vector<std::string> msgs, std::string prefix, int notw)
-{
-	std::cout << std::setw(notw) << std::right << "\033[32mOK!\033[0m\n";
-	if(msgs.size() == 0)
-		return;
-	
-	for(auto& msg : msgs)
-		std::cout << prefix << " * " << msg << "\n";
-}
 
 int main(int argc, char const* argv[])
 {
@@ -41,22 +22,8 @@ int main(int argc, char const* argv[])
 	             " ******************************************************************      \n" << 
 	             "                                                                         \n";
 
-	int ltot = 77;
-	int msgw = 47;
-	int notw = ltot - msgw;
-
-	World* world = nullptr;
-	try{
-		std::cout << std::setw(msgw) << std::left << " > Validating JSON...";
-		world = World::BuildWorld(std::cin);
-		DumpNoticesToConsole({}, "", notw);
-	} catch(BuildException& e)
-	{
-		DumpErrorsToConsole(e.GetErrors(), notw);
-		return -1;
-	}
-
-	delete world;
+	NewSimBuilder builder;
+	builder.BuildSimulation(std::cin);
 
 	return 0;
 }	

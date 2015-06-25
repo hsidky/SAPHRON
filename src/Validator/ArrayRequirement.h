@@ -129,8 +129,12 @@ namespace Json
 
 			if(_item != nullptr)
 			{
+				int i = 0;
 				for(const auto& item : json)
-					_item->Validate(item, path);
+				{
+					_item->Validate(item, path + "/" + std::to_string(i));
+					++i;
+				}
 
 				// Merge errors.
 				for(const auto& error : _item->GetErrors())
