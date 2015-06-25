@@ -1,4 +1,5 @@
 {
 	"type": "array",
-	"items" : "@file(simple.world.json)"
+	"items" : "@file(simple.world.json)",
+	"minItems" : 1
 }

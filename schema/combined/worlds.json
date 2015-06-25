@@ -1,4 +1,5 @@
 {
+    "minItems": 1,
     "items": {
         "required": [
             "type",

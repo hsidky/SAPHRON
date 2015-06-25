@@ -10,17 +10,17 @@ using namespace Json;
 
 namespace SAPHRON
 {
-	World* World::BuildWorld(std::istream& stream)
+	World* World::Build(std::istream& stream)
 	{
 		Reader reader;
 		Value root;
 		if(!reader.parse(stream, root))
 			throw BuildException({reader.getFormattedErrorMessages()});
 
-		return BuildWorld(root);
+		return Build(root);
 	}
 
-	World* World::BuildWorld(const Value& json)
+	World* World::Build(const Value& json)
 	{
 		ObjectRequirement validator;
 		Value schema;
@@ -49,12 +49,12 @@ namespace SAPHRON
 			double ncut = json["nlist_cutoff"].asDouble();
 			if(ncut > dim.x/2.0 || ncut > dim.y/2.0 || ncut > dim.z/2.0)
 				throw BuildException({"Neighbor list cutoff must not exceed "
-									  "half the shortest box vector"});
+									  "half the shortest box vector."});
 			
 			// Skin thickness check.
 			double skin = json["skin_thickness"].asDouble();
 			if(skin > ncut)
-				throw BuildException({"Skin thickness must not exceed neighbor list cutoff"});
+				throw BuildException({"Skin thickness must not exceed neighbor list cutoff."});
 
 			srand(time(NULL));
 			int seed = json.isMember("seed") ? json["seed"].asInt() : rand();
