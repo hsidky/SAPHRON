@@ -57,6 +57,9 @@ namespace SAPHRON
 			// Neighbor list.
 			NeighborList _neighbors;
 
+			// Particle children.
+			ParticleList _children;
+
 			// Observer list. 
 			std::list<ParticleObserver*> _observers;
 
@@ -94,6 +97,8 @@ namespace SAPHRON
 			ParticleEvent _pEvent;
 
 		public:
+			typedef ParticleList::iterator iterator;
+			typedef ParticleList::const_iterator const_iterator;
 
 			// Initialize a particle with a particular species. This string represents the global type
 			// species for this particle.
@@ -108,9 +113,9 @@ namespace SAPHRON
 
 			// Copy constructor.
 			Particle(const Particle& particle) : 
-			_species(particle._species), _speciesID(particle._speciesID), _neighbors(particle._neighbors),
-			_observers(particle._observers), _globalID(-1), _connectivities(particle._connectivities),
-			_pEvent(this)
+			_species(particle._species), _speciesID(particle._speciesID),
+			_neighbors(particle._neighbors), _observers(particle._observers), _globalID(-1), 
+			_connectivities(particle._connectivities), _pEvent(this)
 			{
 				_globalID = SetGlobalIdentifier(GetNextGlobalID());
 				_neighbors.reserve(30);
@@ -237,6 +242,9 @@ namespace SAPHRON
 			// Set the particle director.
 			virtual void SetDirector(double ux, double uy, double uz) = 0;
 
+			// Get the mass of a particle.
+			virtual double GetMass() = 0;
+
 			// Gets neighbor list iterator.
 			inline NeighborList& GetNeighbors()
 			{
@@ -320,10 +328,25 @@ namespace SAPHRON
 			}
 
 			// Check if particle has children.
-			virtual bool HasChildren() { return false; }
+			bool HasChildren() { return _children.size() != 0; }
+
+			// Add a child
+			void AddChild(Particle* child) 
+			{
+				_children.push_back(child);
+			}
+
+			// Remove a child 
+			void RemoveChild(Particle* particle)
+			{
+				_children.erase(std::remove(_children.begin(), _children.end(), particle), _children.end());
+			}
 
 			// Gets all descendants of a particle.
-			virtual ParticleList& GetChildren() = 0;
+			ParticleList& GetChildren()
+			{
+				return _children;
+			}
 
 			// Clone particle.
 			virtual Particle* Clone() const = 0;
@@ -333,5 +356,9 @@ namespace SAPHRON
 			// in a JSON array must be passed in.
 			// TODO: implement BuildParticles method.
 			static Particle* Build(const Json::Value& particles, const Json::Value& blueprint);
+
+			// Iterators.
+			iterator begin() { return _children.begin(); }
+			iterator end() { return _children.end(); }
 	};
 }
