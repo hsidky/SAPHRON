@@ -5,8 +5,6 @@
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Particles/Site.h"
 #include "../src/Observers/ConsoleObserver.h"
-#include "../src/Observers/CSVObserver.h"
-#include "../src/Observers/JSONObserver.h"
 #include "TestAccumulator.h"
 #include "../src/Worlds/SimpleWorld.h"
 #include "gtest/gtest.h"
@@ -90,20 +88,14 @@ TEST(LennardJonesFF, ReducedProperties)
 	// Initialize accumulator. 
 	TestAccumulator accumulator(flags, 10, 5000);
 
-	CSVObserver csv("test", flags, 100);
-
-	JSONObserver json("test", flags, 1000);
-
 	// Initialize ensemble. 
 	NVTEnsemble ensemble(world, ffm, mm, T, 34435);
 	ensemble.SetBoltzmannConstant(kb);
 	ensemble.AddObserver(&observer);
 	ensemble.AddObserver(&accumulator);
-	//ensemble.AddObserver(&csv);
-	//ensemble.AddObserver(&json);
-	
+
 	// Run 
-	ensemble.Run(5000);
+	ensemble.Run(20000);
 
 	ASSERT_NEAR(-5.5121, accumulator.GetAverageEnergy().total()/(double)N, 1e-2);
 	ASSERT_NEAR(6.7714E-03, accumulator.GetAveragePressure(), 2.0E-03);

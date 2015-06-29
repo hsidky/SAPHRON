@@ -44,7 +44,7 @@ namespace SAPHRON
 
 			virtual void Visit(World* world) override
 			{
-				if(this->GetIteration() < _start)
+				if((int)this->GetIteration() < _start)
 					return;
 				
 				if(_density.find(world) == _density.end())
