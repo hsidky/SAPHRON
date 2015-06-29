@@ -1508,7 +1508,7 @@ namespace SAPHRON
 				ForceField* ff = new LebwohlLasherFF(forcefield.parameters[0], 
 													 forcefield.parameters[1]);
 				
-				ffm.AddForceField(forcefield.species1, forcefield.species2, *ff);
+				ffm.AddNonBondedForceField(forcefield.species1, forcefield.species2, *ff);
 				forcefields.push_back(ff);
 				_nmsgs.push_back("Initialized " + forcefield.type + " force field for [" + 
 					forcefield.species1 + "," + forcefield.species2 + 

@@ -288,6 +288,12 @@ target_include_directories(MoleculeTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(MoleculeTests googletest) 
 add_test(MoleculeTests MoleculeTests)
 
+add_executable(FENEFFTests test/FENEFFTests.cpp)
+target_link_libraries(FENEFFTests ${TEST_DEPS})
+target_include_directories(FENEFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(FENEFFTests googletest) 
+add_test(FENEFFTests FENEFFTests)
+
 # end add testing 
 
 install(TARGETS saphron libsaphron 

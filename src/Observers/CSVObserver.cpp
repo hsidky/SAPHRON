@@ -110,6 +110,7 @@ namespace SAPHRON
 		if(this->Flags.energy)
 		{
 			*_ensemblefs << "Non-bonded Energy" << _dlm;
+			*_ensemblefs << "Bonded Energy" <<_dlm;
 			*_ensemblefs << "Connectivity Energy" << _dlm;
 			*_ensemblefs << "Total Energy" << _dlm;
 		}
@@ -138,6 +139,7 @@ namespace SAPHRON
 		{
 			auto energy = e->GetEnergy();
 			*_ensemblefs << energy.nonbonded << _dlm;
+			*_ensemblefs << energy.bonded << _dlm;
 			*_ensemblefs << energy.connectivity << _dlm;
 			*_ensemblefs << energy.total() << _dlm;
 		}

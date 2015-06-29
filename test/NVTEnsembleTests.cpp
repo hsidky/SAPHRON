@@ -21,7 +21,7 @@ TEST(NVTEnsemble, DefaultBehavior)
 	// Initialize forcefields.
 	LebwohlLasherFF ff(1.0, 0);
 	ForceFieldManager ffm;
-	ffm.AddForceField("E1", "E1", ff);
+	ffm.AddNonBondedForceField("E1", "E1", ff);
 
 	// Initialize moves.
 	SphereUnitVectorMove move1(33);

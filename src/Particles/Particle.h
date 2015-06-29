@@ -57,6 +57,9 @@ namespace SAPHRON
 			// Neighbor list.
 			NeighborList _neighbors;
 
+			// Bonded List.
+			NeighborList _bondedneighbors;
+
 			// Particle children.
 			ParticleList _children;
 
@@ -106,22 +109,25 @@ namespace SAPHRON
 			// Initialize a particle with a particular species. This string represents the global type
 			// species for this particle.
 			Particle(std::string species) : 
-			_species(species), _speciesID(0), _neighbors(), _observers(), 
-			_globalID(-1), _world(nullptr), _connectivities(0), _pEvent(this)
+			_species(species), _speciesID(0), _neighbors(0), _bondedneighbors(0), 
+			_children(0), _observers(), _globalID(-1), _world(nullptr), 
+			_connectivities(0), _pEvent(this)
 			{
 				_globalID = SetGlobalIdentifier(GetNextGlobalID());
 				SetSpecies(species);
 				_neighbors.reserve(30);
+				_bondedneighbors.reserve(8);
 			}
 
 			// Copy constructor.
 			Particle(const Particle& particle) : 
-			_species(particle._species), _speciesID(particle._speciesID),
-			_neighbors(particle._neighbors), _observers(particle._observers), _globalID(-1), 
+			_species(particle._species), _speciesID(particle._speciesID), _neighbors(particle._neighbors),
+			_bondedneighbors(0), _children(0), _observers(particle._observers), _globalID(-1),
 			_connectivities(particle._connectivities), _pEvent(this)
 			{
 				_globalID = SetGlobalIdentifier(GetNextGlobalID());
 				_neighbors.reserve(30);
+				_bondedneighbors.reserve(8);
 			}
 
 			virtual ~Particle() 
@@ -130,6 +136,7 @@ namespace SAPHRON
 				_identityList.erase(_globalID);
 				
 				RemoveFromNeighbors();
+				RemoveFromBondedNeighbors();
 			}
 
 			// Removes self from neighbors.
@@ -140,6 +147,16 @@ namespace SAPHRON
 				{
 					if(neighbor != NULL && neighbor != nullptr)
 						neighbor->RemoveNeighbor(this);
+				}
+			}
+
+			//Removes self from bondedneighbors list
+			void RemoveFromBondedNeighbors()
+			{
+				for(auto& neighbor : _neighbors)
+				{
+					if(neighbor != NULL && neighbor != nullptr)
+						neighbor->RemoveBondedNeighbor(this);
 				}
 			}
 
@@ -278,6 +295,38 @@ namespace SAPHRON
 			inline void ClearNeighborList()
 			{
 				_neighbors.clear();
+			}
+
+			// Gets neighbor list iterator.
+			inline NeighborList& GetBondedNeighbors()
+			{
+				return _bondedneighbors;
+			}
+
+			// Gets neighbor list iterator.
+			inline const NeighborList& GetBondedNeighbors() const
+			{
+				return _bondedneighbors;
+			}
+
+			// Add a neighbor to bonded neighbor list.
+			// TODO: figure out an efficient mechanism to check for duplicates other than std::find.
+			inline void AddBondedNeighbor(Particle* particle)
+			{
+				//if(std::find(_neighbors.begin(), _neighbors.end(), particle) == _neighbors.end())
+					_bondedneighbors.push_back(particle);
+			}
+
+			// Remove a bonded neighbor from the bonded neighbor list.
+			inline void RemoveBondedNeighbor(Particle* particle)
+			{
+				_bondedneighbors.erase(std::remove(_bondedneighbors.begin(), _bondedneighbors.end(), particle), _bondedneighbors.end());
+			}
+
+			// Clear the bonded neighbor list.
+			inline void ClearBondedNeighborList()
+			{
+				_bondedneighbors.clear();
 			}
 
 			// Add a connectivity to the particle.

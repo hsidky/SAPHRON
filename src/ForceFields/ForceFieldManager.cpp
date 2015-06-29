@@ -6,7 +6,7 @@
 namespace SAPHRON
 {
 	// Adds a forcefield to the manager.
-	void ForceFieldManager::AddForceField(std::string p1type, std::string p2type, ForceField& ff)
+	void ForceFieldManager::AddNonBondedForceField(std::string p1type, std::string p2type, ForceField& ff)
 	{
 		auto list = Particle::GetSpeciesList();
 		auto p1 = std::find(list.begin(), list.end(), p1type);
@@ -20,23 +20,23 @@ namespace SAPHRON
 			exit(-1);
 		}
 
-		AddForceField(p1-list.begin(), p2-list.begin(), ff);
+		AddNonBondedForceField(p1-list.begin(), p2-list.begin(), ff);
 	}
 
 	// Adds a forcefield to the manager.
-	void ForceFieldManager::AddForceField(int p1type, int p2type, ForceField& ff)
+	void ForceFieldManager::AddNonBondedForceField(int p1type, int p2type, ForceField& ff)
 	{
-		_forcefields.insert(std::pair<SpeciesPair, ForceField*>({p1type, p2type}, &ff));
-		_forcefields.insert(std::pair<SpeciesPair, ForceField*>({p2type, p1type}, &ff));
+		_nonbondedforcefields.insert(std::pair<SpeciesPair, ForceField*>({p1type, p2type}, &ff));
+		_nonbondedforcefields.insert(std::pair<SpeciesPair, ForceField*>({p2type, p1type}, &ff));
 
 		// Must be unique.
-		if(_uniqueffs.find({p1type, p2type}) == _uniqueffs.end() && 
-			_uniqueffs.find({p2type, p1type}) == _uniqueffs.end())
-			_uniqueffs.insert(std::pair<SpeciesPair, ForceField*>({p1type, p2type}, &ff));
+		if(_uniquenbffs.find({p1type, p2type}) == _uniquenbffs.end() && 
+			_uniquenbffs.find({p2type, p1type}) == _uniquenbffs.end())
+			_uniquenbffs.insert(std::pair<SpeciesPair, ForceField*>({p1type, p2type}, &ff));
 	}
 
 	// Removes a forcefield from the manager.
-	void ForceFieldManager::RemoveForceField(std::string p1type, std::string p2type)
+	void ForceFieldManager::RemoveNonBondedForceField(std::string p1type, std::string p2type)
 	{
 		auto list = Particle::GetSpeciesList();
 		auto p1 = std::find(list.begin(), list.end(), p1type);
@@ -49,23 +49,88 @@ namespace SAPHRON
 			exit(-1);
 		}
 
-		RemoveForceField(p1-list.begin(), p2-list.begin());
+		RemoveNonBondedForceField(p1-list.begin(), p2-list.begin());
 	}
 
 	// Removes a forcefield from the manager.
-	void ForceFieldManager::RemoveForceField(int p1type, int p2type)
+	void ForceFieldManager::RemoveNonBondedForceField(int p1type, int p2type)
 	{
-		_forcefields.erase({p1type, p2type});
-		_forcefields.erase({p2type, p1type});
+		_nonbondedforcefields.erase({p1type, p2type});
+		_nonbondedforcefields.erase({p2type, p1type});
 
-		_uniqueffs.erase({p1type, p2type});
-		_uniqueffs.erase({p2type, p1type});
+		_uniquenbffs.erase({p1type, p2type});
+		_uniquenbffs.erase({p2type, p1type});
 
 	}
 
 	// Get the number of registered forcefields.
-	int ForceFieldManager::ForceFieldCount()
+	int ForceFieldManager::NonBondedForceFieldCount()
 	{
-		return _uniqueffs.size();
+		return _uniquenbffs.size();
 	}
+
+	// Adds a forcefield to the manager.
+	void ForceFieldManager::AddBondedForceField(std::string p1type, std::string p2type, ForceField& ff)
+	{
+		auto list = Particle::GetSpeciesList();
+		auto p1 = std::find(list.begin(), list.end(), p1type);
+		auto p2 = std::find(list.begin(), list.end(), p2type);
+
+		if(p1 == list.end() || p2 == list.end())
+		{
+			std::cerr << "ERROR: Uknown particle types. "
+			          << "Make sure they have been registered with the identity map."
+			          << std::endl;
+			exit(-1);
+		}
+
+		AddBondedForceField(p1-list.begin(), p2-list.begin(), ff);
+	}
+
+	// Adds a forcefield to the manager.
+	void ForceFieldManager::AddBondedForceField(int p1type, int p2type, ForceField& ff)
+	{
+		_bondedforcefields.insert(std::pair<SpeciesPair, ForceField*>({p1type, p2type}, &ff));
+		_bondedforcefields.insert(std::pair<SpeciesPair, ForceField*>({p2type, p1type}, &ff));
+
+		// Must be unique.
+		if(_uniquebffs.find({p1type, p2type}) == _uniquebffs.end() && 
+			_uniquebffs.find({p2type, p1type}) == _uniquebffs.end())
+			_uniquebffs.insert(std::pair<SpeciesPair, ForceField*>({p1type, p2type}, &ff));
+	}
+
+	// Removes a forcefield from the manager.
+	void ForceFieldManager::RemoveBondedForceField(std::string p1type, std::string p2type)
+	{
+		auto list = Particle::GetSpeciesList();
+		auto p1 = std::find(list.begin(), list.end(), p1type);
+		auto p2 = std::find(list.begin(), list.end(), p2type);
+		if(p1 == list.end() || p2 == list.end())
+		{
+			std::cerr << "ERROR: Uknown particle types. "
+			          << "Make sure they have been registered with the identity map."
+			          << std::endl;
+			exit(-1);
+		}
+
+		RemoveBondedForceField(p1-list.begin(), p2-list.begin());
+	}
+
+	// Removes a forcefield from the manager.
+	void ForceFieldManager::RemoveBondedForceField(int p1type, int p2type)
+	{
+		_bondedforcefields.erase({p1type, p2type});
+		_bondedforcefields.erase({p2type, p1type});
+
+		_uniquebffs.erase({p1type, p2type});
+		_uniquebffs.erase({p2type, p1type});
+
+	}
+
+	// Get the number of registered forcefields.
+	int ForceFieldManager::BondedForceFieldCount()
+	{
+		return _uniquebffs.size();
+	}
+
 }
