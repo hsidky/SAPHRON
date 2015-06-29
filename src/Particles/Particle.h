@@ -96,6 +96,9 @@ namespace SAPHRON
 			// Particle event. 
 			ParticleEvent _pEvent;
 
+			// Update center of mass.
+			virtual void UpdateCenterOfMass() {}
+
 		public:
 			typedef ParticleList::iterator iterator;
 			typedef ParticleList::const_iterator const_iterator;
@@ -334,12 +337,14 @@ namespace SAPHRON
 			void AddChild(Particle* child) 
 			{
 				_children.push_back(child);
+				UpdateCenterOfMass();
 			}
 
 			// Remove a child 
 			void RemoveChild(Particle* particle)
 			{
 				_children.erase(std::remove(_children.begin(), _children.end(), particle), _children.end());
+				UpdateCenterOfMass();
 			}
 
 			// Gets all descendants of a particle.

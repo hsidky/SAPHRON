@@ -282,6 +282,12 @@ target_include_directories(ValidatorTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(ValidatorTests googletest) 
 add_test(ValidatorTests ValidatorTests)
 
+add_executable(MoleculeTests test/MoleculeTests.cpp)
+target_link_libraries(MoleculeTests ${TEST_DEPS})
+target_include_directories(MoleculeTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(MoleculeTests googletest) 
+add_test(MoleculeTests MoleculeTests)
+
 # end add testing 
 
 install(TARGETS saphron libsaphron 

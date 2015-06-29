@@ -10,12 +10,8 @@ namespace SAPHRON
 		Director _director;
 		Position _checkpoint;
 		Position _position;
-	public:
-
-		Molecule(std::string species) 
-		: Particle(species), _director{0,0,0}, _checkpoint() {}
-
-		void UpdateCenterOfMass()
+	protected:
+		virtual void UpdateCenterOfMass() override
 		{
 			_position = {0, 0, 0};
 			double m = 0; 
@@ -29,6 +25,12 @@ namespace SAPHRON
 			if(m) _position /= m;
 		}
 
+	public:
+
+		Molecule(std::string species) 
+		: Particle(species), _director{0,0,0}, _checkpoint() {}
+
+		
 		// Get molecule position based on center of mass.
 		inline virtual Position GetPosition() const override
 		{
@@ -146,6 +148,11 @@ namespace SAPHRON
 				m += child->GetMass();
 
 			return m;
+		}
+
+		virtual Particle* Clone() const override
+		{
+			return new Molecule(static_cast<const Molecule&>(*this));
 		}
 	};
 }
