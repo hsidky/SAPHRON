@@ -147,8 +147,6 @@ namespace SAPHRON
 			// Calculate energy with bonded neighbors.
 			auto& bondedneighbors = particle.GetBondedNeighbors();
 
-			// TODO: Understand #pragma omp parallel. Do we need to paralize this portion?
-			#pragma omp parallel for reduction(+:e)
 			for(size_t k = 0; k < bondedneighbors.size(); ++k)
 			{
 				auto* bondedneighbor = bondedneighbors[k];
@@ -171,7 +169,7 @@ namespace SAPHRON
 			
 			
 			for(auto& child : particle.GetChildren())
-				e += EvaluateBonded(*child);	
+				e += EvaluateBonded(*child)/2.0;	
 			return e;			
 		}
 
@@ -238,6 +236,7 @@ namespace SAPHRON
 			}
 
 			ep.energy.nonbonded *= 0.5;
+			ep.energy.bonded *=0.5;
 			ep.pressure *= 0.5;
 
 			return ep;
