@@ -38,7 +38,8 @@ namespace SAPHRON
 		if (this->Flags.energy)
 		{
 			auto energy = e->GetEnergy();
-			cout << setw(20) << setprecision(5) << left << scientific << energy.nonbonded;
+			cout << setw(20) << setprecision(5) << left << scientific << energy.inter;
+			cout << setw(20) << setprecision(5) << left << scientific << energy.intra;
 			cout << setw(20) << setprecision(5) << left << scientific << energy.bonded;
 			cout << setw(20) << setprecision(5) << left << scientific << energy.connectivity;
 			cout << setw(20) << setprecision(5) << left << scientific << energy.total();
