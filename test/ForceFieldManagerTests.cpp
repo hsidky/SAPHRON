@@ -66,7 +66,7 @@ TEST(ForceFieldManager, FFIterator)
 	ASSERT_EQ(2, ffm.BondedForceFieldCount());
 
 	int i = 0;
-	for(auto& forcefield : ffm){
+	for(auto& forcefield : ffm.GetNonBondedForceFields()){
 		if(forcefield.second != nullptr)
 			++i;
 	}

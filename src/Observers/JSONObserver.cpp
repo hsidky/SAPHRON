@@ -92,7 +92,7 @@ namespace SAPHRON
 	void JSONObserver::Visit(ForceFieldManager *ffm)
 	{
 		int i = 0;
-		for(auto& ffmap : *ffm)
+		for(auto& ffmap : ffm->GetNonBondedForceFields())
 		{
 			const SpeciesPair& types = ffmap.first;
 			ForceField* forcefield = ffmap.second;

@@ -4,6 +4,7 @@
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Particles/Site.h"
+#include "../src/Particles/Molecule.h"
 #include "../src/Observers/ConsoleObserver.h"
 #include "TestAccumulator.h"
 #include "../src/Worlds/SimpleWorld.h"
@@ -54,13 +55,15 @@ TEST(LennardJonesFF, ReducedProperties)
 	double rcut = 3.0*sigma;
 
 	// Prototype particle.
-	Site ljatom({0,0,0}, {0,0,0}, "LJ");
+	Site* ljatom = new Site({0,0,0}, {0,0,0}, "LJ");
+	Molecule ljm("LJM");
+	ljm.AddChild(ljatom);
 
 	// Add lj atom to world and initialize in simple lattice configuration.
 	// World volume is adjusted by packworld.
 	SimpleWorld world(1, 1, 1, rcut + 1.0);
 	world.SetSkinThickness(1.0);
-	world.PackWorld({&ljatom}, {1.0}, N, rdensity);
+	world.PackWorld({&ljm}, {1.0}, N, rdensity);
 	world.UpdateNeighborList();
 
 	ASSERT_EQ(N, world.GetParticleCount());

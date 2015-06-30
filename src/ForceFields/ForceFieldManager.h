@@ -42,7 +42,12 @@ namespace SAPHRON
 			for(size_t k = 0; k < neighbors.size(); ++k)
 			{
 				auto* neighbor = neighbors[k];
-				auto* ff = _nonbondedforcefields[{particle.GetSpeciesID(),neighbor->GetSpeciesID()}];
+
+				auto it = _nonbondedforcefields.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
+				if(it == _nonbondedforcefields.end())
+					continue;
+
+				auto* ff = it->second;
 				Position rij = particle.GetPositionRef() - neighbor->GetPositionRef();
 								
 				if(world != nullptr)
@@ -68,20 +73,18 @@ namespace SAPHRON
 					if(world != nullptr)
 						world->ApplyMinimumImage(rab);
 				}
-
-				if(ff != nullptr)
-				{
-					// Interaction containing energy and virial.
-					auto ij = ff->Evaluate(particle, *neighbor, rij);
-					e += ij.energy; // Sum nonbonded energy.
-					
-					pxx += ij.virial * rij.x * rab.x;
-					pyy += ij.virial * rij.y * rab.y;
-					pzz += ij.virial * rij.z * rab.z;
-					pxy += ij.virial * 0.5 * (rij.x * rab.y + rij.y * rab.x);
-					pxz += ij.virial * 0.5 * (rij.x * rab.z + rij.z * rab.x);
-					pyz += ij.virial * 0.5 * (rij.y * rab.z + rij.z * rab.y);
-				}
+			
+				// Interaction containing energy and virial.
+				auto ij = ff->Evaluate(particle, *neighbor, rij);
+				e += ij.energy; // Sum nonbonded energy.
+				
+				pxx += ij.virial * rij.x * rab.x;
+				pyy += ij.virial * rij.y * rab.y;
+				pzz += ij.virial * rij.z * rab.z;
+				pxy += ij.virial * 0.5 * (rij.x * rab.y + rij.y * rab.x);
+				pxz += ij.virial * 0.5 * (rij.x * rab.z + rij.z * rab.x);
+				pyz += ij.virial * 0.5 * (rij.y * rab.z + rij.z * rab.y);
+				
 			}
 			
 			EPTuple ep{e, 0, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
@@ -242,9 +245,10 @@ namespace SAPHRON
 			v.Visit(this);
 		}
 
-		// Iterators. TODO: Fix iterator such that only unique instances of 
-		// forcefields get returned. Also add _uniquebffs
-		iterator begin() { return _uniquenbffs.begin(); }
-		iterator end() { return _uniquenbffs.end(); }
+		// Get (unique) non-bonded forcefields.
+		const FFMap& GetNonBondedForceFields() const { return _uniquenbffs;	}
+
+		// Get (unique) bonded forcefields.
+		const FFMap& GetBondedForceFields() const { return _uniquebffs;	}
 	};
 }

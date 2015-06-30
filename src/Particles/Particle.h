@@ -223,7 +223,12 @@ namespace SAPHRON
 			void ClearParent() { _parent = nullptr; }
 
 			// Set associated world. This should not be used except by the world itself!
-			void SetWorld(World* world) { _world = world; }
+			void SetWorld(World* world) 
+			{ 
+				_world = world; 
+				for(auto& child : *this)
+					child->SetWorld(world);
+			}
 
 			// Get the associated world.
 			inline World* GetWorld() const { return _world;	}
@@ -405,6 +410,7 @@ namespace SAPHRON
 			void AddChild(Particle* child) 
 			{
 				child->SetParent(this);
+				child->SetWorld(_world);
 				_children.push_back(child);
 				UpdateCenterOfMass();
 			}
@@ -413,6 +419,7 @@ namespace SAPHRON
 			void RemoveChild(Particle* particle)
 			{
 				particle->ClearParent();
+				particle->SetWorld(nullptr);
 				_children.erase(std::remove(_children.begin(), _children.end(), particle), _children.end());
 				UpdateCenterOfMass();
 			}
