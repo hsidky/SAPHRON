@@ -157,9 +157,12 @@ namespace SAPHRON
 				_identityList.erase(_globalID);
 				
 				// Delete children.
-				/*for(auto& c : _children)
+				for(auto& c : _children)
+				{
 					delete c;
-				_children.clear();*/
+					c = nullptr;
+				}
+				_children.clear();
 
 				RemoveFromNeighbors();
 				RemoveFromBondedNeighbors();
@@ -396,7 +399,9 @@ namespace SAPHRON
 			// Check if particle has children.
 			bool HasChildren() { return _children.size() != 0; }
 
-			// Add a child
+			// Add a child. Children MUST be heap allocated! 
+			// Any child belonging to a particle at time of 
+			// destruction will be freed.
 			void AddChild(Particle* child) 
 			{
 				child->SetParent(this);
