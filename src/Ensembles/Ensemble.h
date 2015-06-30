@@ -75,7 +75,7 @@ namespace SAPHRON
 			/* Properties */
 			virtual std::string GetName() = 0;
 			virtual double GetTemperature() { return 0.0; }
-			virtual Energy GetEnergy() { return Energy(0,0,0); }
+			virtual Energy GetEnergy() { return Energy(0,0,0,0); }
 			virtual Pressure GetPressure() { return Pressure(); }
 			virtual AcceptanceMap GetAcceptanceRatio() { return {}; }
 

@@ -219,15 +219,12 @@ namespace SAPHRON
 				{
 					for(auto& cj : *pj)
 					{
-						if(!ci->IsBondedNeighbor(cj))
+						rij = ci->GetPositionRef() - cj->GetPositionRef();
+						ApplyMinimumImage(rij);
+						if(rij.normsq() < _ncutsq)
 						{
-							rij = ci->GetPositionRef() - cj->GetPositionRef();
-							ApplyMinimumImage(rij);
-							if(rij.normsq() < _ncutsq)
-							{
-								ci->AddNeighbor(cj);
-								cj->AddNeighbor(ci);
-							}
+							ci->AddNeighbor(cj);
+							cj->AddNeighbor(ci);
 						}
 					}
 				}
@@ -263,15 +260,12 @@ namespace SAPHRON
 			{
 				for(auto& cj : *p)
 				{
-					if(!ci->IsBondedNeighbor(cj))
+					rij = ci->GetPositionRef() - cj->GetPositionRef();
+					ApplyMinimumImage(rij);
+					if(rij.normsq() < _ncutsq)
 					{
-						rij = ci->GetPositionRef() - cj->GetPositionRef();
-						ApplyMinimumImage(rij);
-						if(rij.normsq() < _ncutsq)
-						{
-							ci->AddNeighbor(cj);
-							cj->AddNeighbor(ci);
-						}
+						ci->AddNeighbor(cj);
+						cj->AddNeighbor(ci);
 					}
 				}
 			}
