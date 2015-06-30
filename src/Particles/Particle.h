@@ -130,6 +130,25 @@ namespace SAPHRON
 			_pEvent(this)
 			{
 				_globalID = SetGlobalIdentifier(GetNextGlobalID());
+				for(const auto& child : particle)
+					this->AddChild(child->Clone());
+
+				// Loop through children and update bonded.
+				int i = 0;
+				for(const auto& child : particle)
+				{
+					auto& bonded = child->GetBondedNeighbors();
+					for(auto& b : bonded)
+					{
+						// Find position of bonded particle in the parent 
+						// particle and use the index to connect the copy. 
+						auto it = std::find(particle.begin(), particle.end(), b);
+						assert(it != particle.end()); // this must be true!
+						auto pos = it - particle.begin();
+						_children[i]->AddBondedNeighbor(_children[pos]);
+					}
+					++i;
+				}
 			}
 
 			virtual ~Particle() 
@@ -138,9 +157,9 @@ namespace SAPHRON
 				_identityList.erase(_globalID);
 				
 				// Delete children.
-				for(auto& c : _children)
+				/*for(auto& c : _children)
 					delete c;
-				_children.clear();
+				_children.clear();*/
 
 				RemoveFromNeighbors();
 				RemoveFromBondedNeighbors();
@@ -410,6 +429,8 @@ namespace SAPHRON
 
 			// Iterators.
 			iterator begin() { return _children.begin(); }
+			const_iterator begin() const { return _children.begin(); }
 			iterator end() { return _children.end(); }
+			const_iterator end() const { return _children.end(); }
 	};
 }
