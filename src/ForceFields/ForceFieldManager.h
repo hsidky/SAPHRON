@@ -29,13 +29,14 @@ namespace SAPHRON
 		FFMap _uniquebffs;
 
 		// Evaluate non-bonded interactions of a particle including energy and virial pressure contribution.
-		// Implementation follows Allan and Tildesley. See Forcefield.h. Tail corrections are also summed in.
+		// Implementation follows Allen and Tildesley. See Forcefield.h. Tail corrections are also summed in.
 		// Pressure tail contribution is added to isotropic pressure parts only!
 		inline EPTuple EvaluateNonBonded(Particle& particle, const CompositionList& compositions, double volume)
 		{
 			double e = 0, pxx = 0, pxy = 0, pxz = 0, pyy = 0, pyz = 0, pzz = 0;
 
 			// Calculate energy with neighbors.
+			World* world = particle.GetWorld();
 			auto& neighbors = particle.GetNeighbors();
 			#pragma omp parallel for reduction(+:e,pxx,pxy,pxz,pyy,pyz,pzz)
 			for(size_t k = 0; k < neighbors.size(); ++k)
@@ -43,11 +44,30 @@ namespace SAPHRON
 				auto* neighbor = neighbors[k];
 				auto* ff = _nonbondedforcefields[{particle.GetSpeciesID(),neighbor->GetSpeciesID()}];
 				Position rij = particle.GetPositionRef() - neighbor->GetPositionRef();
-				
-				// Minimum image convention.
-				World* world = particle.GetWorld();
+								
 				if(world != nullptr)
 					world->ApplyMinimumImage(rij);
+
+				// If particle has parent, compute vector between parent molecule(s).
+				Position rab = rij;
+				if(particle.HasParent() && neighbor->HasParent())
+				{
+					rab = particle.GetParent()->GetPositionRef() - neighbor->GetParent()->GetPositionRef();
+					if(world != nullptr)
+						world->ApplyMinimumImage(rab);
+
+				}
+				else if(neighbor->HasParent() && !particle.HasParent()) 
+				{
+					rab = particle.GetPositionRef() - neighbor->GetParent()->GetPositionRef();
+					if(world != nullptr)
+						world->ApplyMinimumImage(rab);
+				}
+				else if(!neighbor->HasParent() && particle.HasParent()) {
+					rab = particle.GetParent()->GetPositionRef() - neighbor->GetPositionRef();
+					if(world != nullptr)
+						world->ApplyMinimumImage(rab);
+				}
 
 				if(ff != nullptr)
 				{
@@ -55,61 +75,13 @@ namespace SAPHRON
 					auto ij = ff->Evaluate(particle, *neighbor, rij);
 					e += ij.energy; // Sum nonbonded energy.
 					
-					pxx += ij.virial * rij.x * rij.x;
-					pyy += ij.virial * rij.y * rij.y;
-					pzz += ij.virial * rij.z * rij.z;
-					pxy += ij.virial * rij.x * rij.y;
-					pxz += ij.virial * rij.x * rij.z;
-					pyz += ij.virial * rij.y * rij.z;
+					pxx += ij.virial * rij.x * rab.x;
+					pyy += ij.virial * rij.y * rab.y;
+					pzz += ij.virial * rij.z * rab.z;
+					pxy += ij.virial * 0.5 * (rij.x * rab.y + rij.y * rab.x);
+					pxz += ij.virial * 0.5 * (rij.x * rab.z + rij.z * rab.x);
+					pyz += ij.virial * 0.5 * (rij.y * rab.z + rij.z * rab.y);
 				}
-
-				// Iterate children with neighbor's children.
-				// TODO: needs cleanup to eliminate redundant inner child loop.
-				// The subtlety arises in that the parent holds the neighbor list rather
-				// than the child. We keep the final call for children below in case for some 
-				// implementation they do - in which case it's taken care of.
-				/*for(auto& child : particle.GetChildren())
-				{
-					for(auto& nchild : neighbor->GetChildren())
-					{
-						Position nrij = child->GetPosition() - neighbor->GetPosition();
-						ff = _nonbondedforcefields[child->GetSpeciesID()][nchild->GetSpeciesID()];
-						if(ff != nullptr)
-						{
-							// Interaction containing energy and virial.
-							auto ij = ff->Evaluate(*child, *nchild, nrij);
-							e += ij.energy; // Sum nonbonded energy.
-						
-							// Sum pressure terms. Average non-diagonal elements.
-							// We are assuming it's symmetric.
-							pxx -= ij.virial * nrij.x * rij.x;
-							pyy -= ij.virial * nrij.y * rij.y;
-							pzz -= ij.virial * nrij.z * rij.z;
-							pxy -= ij.virial * 0.5*(nrij.x * rij.y + nrij.y * rij.x);
-							pxz -= ij.virial * 0.5*(nrij.x * rij.z + nrij.z * rij.x);
-							pyz -= ij.virial * 0.5*(nrij.y * rij.z + nrij.z * rij.y);
-						}
-					}
-
-					// Sum in child energy and pressure tail corrections.
-					if(!compositions.empty())
-					{
-						int i = 0; 
-						for(auto& forcefield : _nonbondedforcefields[child->GetSpeciesID()])
-						{
-							if(forcefield != nullptr)
-							{
-								double rho = (compositions.at(i))/volume;
-								e += 2.0*M_PI*rho*forcefield->EnergyTailCorrection();
-								double pcorrect = 2.0*M_PI*rho*rho*forcefield->PressureTailCorrection();
-								pxx -= pcorrect;
-								pyy -= pcorrect;
-								pzz -= pcorrect;
-							}
-							++i;
-						}
-					}
-				}*/
 			}
 			
 			EPTuple ep{e, 0, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				

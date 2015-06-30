@@ -72,6 +72,9 @@ namespace SAPHRON
 			// Associated world.
 			World* _world;
 
+			// Parent particle.
+			Particle* _parent;
+
 			// Next ID counter for unique global species.
 			static int _nextID;
 
@@ -110,7 +113,7 @@ namespace SAPHRON
 			// species for this particle.
 			Particle(std::string species) : 
 			_species(species), _speciesID(0), _neighbors(0), _bondedneighbors(0), 
-			_children(0), _observers(), _globalID(-1), _world(nullptr), 
+			_children(0), _observers(), _globalID(-1), _world(nullptr), _parent(nullptr),
 			_connectivities(0), _pEvent(this)
 			{
 				_globalID = SetGlobalIdentifier(GetNextGlobalID());
@@ -123,11 +126,10 @@ namespace SAPHRON
 			Particle(const Particle& particle) : 
 			_species(particle._species), _speciesID(particle._speciesID), _neighbors(particle._neighbors),
 			_bondedneighbors(0), _children(0), _observers(particle._observers), _globalID(-1),
-			_connectivities(particle._connectivities), _pEvent(this)
+			_world(particle._world), _parent(particle._parent), _connectivities(particle._connectivities), 
+			_pEvent(this)
 			{
 				_globalID = SetGlobalIdentifier(GetNextGlobalID());
-				_neighbors.reserve(30);
-				_bondedneighbors.reserve(8);
 			}
 
 			virtual ~Particle() 
@@ -135,6 +137,11 @@ namespace SAPHRON
 				// Remove particle from map.
 				_identityList.erase(_globalID);
 				
+				// Delete children.
+				for(auto& c : _children)
+					delete c;
+				_children.clear();
+
 				RemoveFromNeighbors();
 				RemoveFromBondedNeighbors();
 			}
@@ -181,41 +188,35 @@ namespace SAPHRON
 				return id;
 			}
 
+			// Set particle parent.
+			void SetParent(Particle* particle) { _parent = particle; }
+
+			// Get particle parent.
+			Particle* GetParent() { return _parent;	}
+
+			// Has Parent?
+			bool HasParent() { return _parent != nullptr; }
+
+			// Clear parent particle.
+			void ClearParent() { _parent = nullptr; }
+
 			// Set associated world. This should not be used except by the world itself!
-			void SetWorld(World* world)
-			{
-				_world = world;
-			}
+			void SetWorld(World* world) { _world = world; }
 
 			// Get the associated world.
-			inline World* GetWorld() const
-			{
-				return _world;
-			}
+			inline World* GetWorld() const { return _world;	}
 
 			// Get reference to global particle map.
-			static const ParticleMap& GetParticleMap()
-			{
-				return _identityList;
-			}
+			static const ParticleMap& GetParticleMap() { return _identityList; }
 
 			// Get particle species.
-			inline int GetSpeciesID() const
-			{
-				return _speciesID;
-			}
+			inline int GetSpeciesID() const	{ return _speciesID; }
 
 			// Get particle string species.
-			inline std::string GetSpecies() const
-			{
-				return _species;
-			}
+			inline std::string GetSpecies() const {	return _species; }
 
 			// Get species list.
-			static SpeciesList& GetSpeciesList()
-			{
-				return _speciesList;
-			}
+			static SpeciesList& GetSpeciesList() { return _speciesList;	}
 
 			// Set the species of a particle.
 			void SetSpecies(std::string species);
@@ -266,16 +267,10 @@ namespace SAPHRON
 			virtual double GetMass() = 0;
 
 			// Gets neighbor list iterator.
-			inline NeighborList& GetNeighbors()
-			{
-				return _neighbors;
-			}
+			inline NeighborList& GetNeighbors()	{ return _neighbors; }
 
 			// Gets neighbor list iterator.
-			inline const NeighborList& GetNeighbors() const
-			{
-				return _neighbors;
-			}
+			inline const NeighborList& GetNeighbors() const	{ return _neighbors; }
 
 			// Add a neighbor to neighbor list.
 			// TODO: figure out an efficient mechanism to check for duplicates other than std::find.
@@ -291,23 +286,20 @@ namespace SAPHRON
 				_neighbors.erase(std::remove(_neighbors.begin(), _neighbors.end(), particle), _neighbors.end());
 			}
 
+			// Check if a particle is a neighbor.
+			inline bool IsNeighbor(Particle* particle)
+			{
+				return std::find(_neighbors.begin(), _neighbors.end(), particle) != _neighbors.end();
+			}
+
 			// Clear the neighbor list.
-			inline void ClearNeighborList()
-			{
-				_neighbors.clear();
-			}
+			inline void ClearNeighborList() { _neighbors.clear(); }
 
 			// Gets neighbor list iterator.
-			inline NeighborList& GetBondedNeighbors()
-			{
-				return _bondedneighbors;
-			}
+			inline NeighborList& GetBondedNeighbors() {	return _bondedneighbors; }
 
 			// Gets neighbor list iterator.
-			inline const NeighborList& GetBondedNeighbors() const
-			{
-				return _bondedneighbors;
-			}
+			inline const NeighborList& GetBondedNeighbors() const {	return _bondedneighbors; }
 
 			// Add a neighbor to bonded neighbor list.
 			// TODO: figure out an efficient mechanism to check for duplicates other than std::find.
@@ -324,9 +316,12 @@ namespace SAPHRON
 			}
 
 			// Clear the bonded neighbor list.
-			inline void ClearBondedNeighborList()
+			inline void ClearBondedNeighborList() { _bondedneighbors.clear(); }
+
+			// Check if a particle is a bonded neighbor.
+			inline bool IsBondedNeighbor(Particle* particle)
 			{
-				_bondedneighbors.clear();
+				return std::find(_bondedneighbors.begin(), _bondedneighbors.end(), particle) != _bondedneighbors.end();
 			}
 
 			// Add a connectivity to the particle.
@@ -385,6 +380,7 @@ namespace SAPHRON
 			// Add a child
 			void AddChild(Particle* child) 
 			{
+				child->SetParent(this);
 				_children.push_back(child);
 				UpdateCenterOfMass();
 			}
@@ -392,6 +388,7 @@ namespace SAPHRON
 			// Remove a child 
 			void RemoveChild(Particle* particle)
 			{
+				particle->ClearParent();
 				_children.erase(std::remove(_children.begin(), _children.end(), particle), _children.end());
 				UpdateCenterOfMass();
 			}

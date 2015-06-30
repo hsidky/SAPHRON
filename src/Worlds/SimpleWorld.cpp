@@ -188,6 +188,11 @@ namespace SAPHRON
 		{
 			_particles[i]->ClearNeighborList();
 			_particles[i]->SetCheckpoint();
+			for(auto& child : *_particles[i])
+			{
+				child->ClearNeighborList();
+				child->SetCheckpoint();
+			}
 		}
 		
 		for(int i = 0; i < n - 1; ++i)
@@ -207,6 +212,24 @@ namespace SAPHRON
 				{
 					pj->AddNeighbor(pi);
 					pi->AddNeighbor(pj);
+				}
+
+				// Add children.
+				for(auto& ci : *pi)
+				{
+					for(auto& cj : *pj)
+					{
+						if(!ci->IsBondedNeighbor(cj))
+						{
+							rij = ci->GetPositionRef() - cj->GetPositionRef();
+							ApplyMinimumImage(rij);
+							if(rij.normsq() < _ncutsq)
+							{
+								ci->AddNeighbor(cj);
+								cj->AddNeighbor(ci);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -233,6 +256,24 @@ namespace SAPHRON
 			{
 				particle->AddNeighbor(p);
 				p->AddNeighbor(particle);
+			}
+
+			// Add children.
+			for(auto& ci : *particle)
+			{
+				for(auto& cj : *p)
+				{
+					if(!ci->IsBondedNeighbor(cj))
+					{
+						rij = ci->GetPositionRef() - cj->GetPositionRef();
+						ApplyMinimumImage(rij);
+						if(rij.normsq() < _ncutsq)
+						{
+							ci->AddNeighbor(cj);
+							cj->AddNeighbor(ci);
+						}
+					}
+				}
 			}
 		}
 	}
