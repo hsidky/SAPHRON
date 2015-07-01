@@ -54,6 +54,9 @@ namespace SAPHRON
 			// Integer species.
 			int _speciesID;
 
+			// Particle is charged
+			bool _charge;
+
 			// Neighbor list.
 			NeighborList _neighbors;
 
@@ -112,7 +115,7 @@ namespace SAPHRON
 			// Initialize a particle with a particular species. This string represents the global type
 			// species for this particle.
 			Particle(std::string species) : 
-			_species(species), _speciesID(0), _neighbors(0), _bondedneighbors(0), 
+			_species(species), _speciesID(0), _charge(false), _neighbors(0), _bondedneighbors(0), 
 			_children(0), _observers(), _globalID(-1), _world(nullptr), _parent(nullptr),
 			_connectivities(0), _pEvent(this)
 			{
@@ -124,7 +127,7 @@ namespace SAPHRON
 
 			// Copy constructor.
 			Particle(const Particle& particle) : 
-			_species(particle._species), _speciesID(particle._speciesID), _neighbors(particle._neighbors),
+			_species(particle._species), _speciesID(particle._speciesID), _charge(particle._charge), _neighbors(particle._neighbors),
 			_bondedneighbors(0), _children(0), _observers(particle._observers), _globalID(-1),
 			_world(particle._world), _parent(particle._parent), _connectivities(particle._connectivities), 
 			_pEvent(this)
@@ -250,6 +253,12 @@ namespace SAPHRON
 
 			// Set the species of a particle.
 			void SetSpecies(int id);
+
+			// Get particle charge
+			inline bool GetCharge() const {return _charge;}
+
+			// Set particle charge
+			inline void SetCharge(bool charge) {_charge = charge;}
 
 			// Get particle position.
 			virtual Position GetPosition() const = 0;

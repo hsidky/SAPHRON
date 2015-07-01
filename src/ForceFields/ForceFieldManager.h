@@ -24,6 +24,9 @@ namespace SAPHRON
 		//bonded forcefields
 		FFMap _bondedforcefields;
 
+		//electrostatic forcefield
+		ForceField* _electrostaticforcefield = nullptr;
+
 		// Hold unique instances of non-bonded and bonded forcefield pointers.
 		FFMap _uniquenbffs;
 		FFMap _uniquebffs;
@@ -33,19 +36,19 @@ namespace SAPHRON
 		// Pressure tail contribution is added to isotropic pressure parts only!
 		inline EPTuple EvaluateInter(Particle& particle, const CompositionList& compositions, double volume)
 		{
-			double e = 0, pxx = 0, pxy = 0, pxz = 0, pyy = 0, pyz = 0, pzz = 0;
+			double intere = 0, electroe = 0, pxx = 0, pxy = 0, pxz = 0, pyy = 0, pyz = 0, pzz = 0;
 
 			// Calculate energy with neighbors.
 			World* world = particle.GetWorld();
 			auto& neighbors = particle.GetNeighbors();
-			#pragma omp parallel for reduction(+:e,pxx,pxy,pxz,pyy,pyz,pzz)
+			#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pxz,pyy,pyz,pzz)
 			for(size_t k = 0; k < neighbors.size(); ++k)
 			{
 				auto* neighbor = neighbors[k];
 
+				Interaction interij, electroij;
+
 				auto it = _nonbondedforcefields.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
-				if(it == _nonbondedforcefields.end())
-					continue;
 
 				auto* ff = it->second;
 				Position rij = particle.GetPositionRef() - neighbor->GetPositionRef();
@@ -75,19 +78,28 @@ namespace SAPHRON
 				}
 			
 				// Interaction containing energy and virial.
-				auto ij = ff->Evaluate(particle, *neighbor, rij);
-				e += ij.energy; // Sum nonbonded energy.
+				if(it != _nonbondedforcefields.end())
+					interij = ff->Evaluate(particle, *neighbor, rij);
+
+				//Electrostatics containing energy and virial
+				if(_electrostaticforcefield !=nullptr && particle.GetCharge() && neighbor->GetCharge())
+					electroij = _electrostaticforcefield->Evaluate(particle, *neighbor, rij);
 				
-				pxx += ij.virial * rij.x * rab.x;
-				pyy += ij.virial * rij.y * rab.y;
-				pzz += ij.virial * rij.z * rab.z;
-				pxy += ij.virial * 0.5 * (rij.x * rab.y + rij.y * rab.x);
-				pxz += ij.virial * 0.5 * (rij.x * rab.z + rij.z * rab.x);
-				pyz += ij.virial * 0.5 * (rij.y * rab.z + rij.z * rab.y);
+				intere += interij.energy; // Sum nonbonded van der Waal energy.
+				electroe += electroij.energy; // Sum electrostatic energy
+
+				auto totalvirial = interij.virial + electroij.virial;
+				
+				pxx += totalvirial * rij.x * rab.x;
+				pyy += totalvirial * rij.y * rab.y;
+				pzz += totalvirial * rij.z * rab.z;
+				pxy += totalvirial * 0.5 * (rij.x * rab.y + rij.y * rab.x);
+				pxz += totalvirial * 0.5 * (rij.x * rab.z + rij.z * rab.x);
+				pyz += totalvirial * 0.5 * (rij.y * rab.z + rij.z * rab.y);
 				
 			}
 			
-			EPTuple ep{e, 0, 0, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
+			EPTuple ep{intere, 0, 0, electroe, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
 
 			// Sum in energy and pressure tail corrections.
 			// Note: we multiply the tail correction expressions by 2.0 because they are on a per-particle
@@ -116,10 +128,9 @@ namespace SAPHRON
 		}
 
 		// Evaluate intramolecular interactions of a particle.
-		// TODO: Virial and tail corrections?
 		inline Energy EvaluateIntra(Particle& particle, const CompositionList& compositions, double volume)
 		{
-			EPTuple ep(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			EPTuple ep(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 			World* world = particle.GetWorld();
 
@@ -136,9 +147,18 @@ namespace SAPHRON
     					if(world != nullptr)
 							world->ApplyMinimumImage(rij);
 
+						//Electrostatics containing energy and virial
+						if(_electrostaticforcefield !=nullptr && particle.GetCharge() && sibling->GetCharge())
+						{
+							auto ij = _electrostaticforcefield->Evaluate(particle, *sibling, rij);
+
+							ep.energy.electrostatic+=ij.energy;
+						}		
+
 						if(ff != nullptr)
 						{
 							auto ij = ff->Evaluate(particle, *sibling, rij);
+
 							ep.energy.intra += ij.energy; // Sum nonbonded energy.
 							
 						}    

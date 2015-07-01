@@ -9,26 +9,29 @@ namespace SAPHRON
 		double inter;
 		double intra;
 		double bonded;
+		double electrostatic;
 		double connectivity;
 		
-		Energy() : inter(0.0), bonded(0.0), connectivity(0.0){}
+		Energy() : inter(0.0), bonded(0.0), electrostatic(0.0), connectivity(0.0){}
 
-		Energy(double interE, double intraE, double connectivityE, double bondedE) : 
-			inter(interE), intra(intraE), bonded(bondedE), connectivity(connectivityE){}
+		Energy(double interE, double intraE, double bondedE, double electrostaticE, double connectivityE ) : 
+			inter(interE), intra(intraE), bonded(bondedE), electrostatic(electrostaticE), connectivity(connectivityE){}
 		
 		double total()
 		{
-			return inter + intra + connectivity + bonded;
+			return inter + intra + electrostatic + connectivity + bonded;
 		}
 
 		inline bool operator==(const Energy& rhs) const
 		{
-			return inter == rhs.inter && intra == rhs.intra && connectivity == rhs.connectivity && bonded == rhs.bonded;
+			return inter == rhs.inter && intra == rhs.intra && electrostatic == rhs.electrostatic && 
+			connectivity == rhs.connectivity && bonded == rhs.bonded;
 		}
 
 		inline bool operator!=(const Energy& rhs) const
 		{
-			return inter != rhs.inter || intra != rhs.intra || connectivity != rhs.connectivity || bonded != rhs.bonded;
+			return inter != rhs.inter || intra != rhs.intra || electrostatic != rhs.electrostatic || 
+			connectivity != rhs.connectivity || bonded != rhs.bonded;
 		}
 
 		inline Energy& operator+=(const Energy& rhs)
@@ -37,6 +40,7 @@ namespace SAPHRON
 			intra += rhs.intra; 
 			connectivity += rhs.connectivity;
 			bonded += rhs.bonded;
+			electrostatic += rhs.electrostatic;
 			return *this;
 		}
 
@@ -46,6 +50,7 @@ namespace SAPHRON
 			intra -= rhs.intra; 
 			connectivity -= rhs.connectivity;
 			bonded -= rhs.bonded;
+			electrostatic -= rhs.electrostatic;
 			return *this;
 		}
 
@@ -54,6 +59,7 @@ namespace SAPHRON
 			inter /= rhs; 
 			intra /= rhs; 
 			bonded /= rhs; 
+			electrostatic /= rhs; 
 			connectivity /= rhs;
 			return *this;
 		}
@@ -64,6 +70,7 @@ namespace SAPHRON
 		lhs.inter += rhs.inter;
 		lhs.intra += rhs.intra;
 		lhs.bonded += rhs.bonded;
+		lhs.electrostatic += rhs.electrostatic;
 		lhs.connectivity += rhs.connectivity;
 		return lhs;
 	}
@@ -73,6 +80,7 @@ namespace SAPHRON
 		lhs.inter -= rhs.inter;
 		lhs.intra -= rhs.intra;
 		lhs.bonded -= rhs.bonded;
+		lhs.electrostatic -= rhs.electrostatic;
 		lhs.connectivity -= rhs.connectivity;
 		return lhs;
 	}
@@ -82,6 +90,7 @@ namespace SAPHRON
 		lhs.inter /= rhs;
 		lhs.intra /= rhs;
 		lhs.bonded /= rhs;
+		lhs.electrostatic /= rhs;
 		lhs.connectivity /= rhs;
 		return lhs;
 	}
