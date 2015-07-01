@@ -115,9 +115,8 @@ namespace SAPHRON
 			return ep;
 		}
 
-		// Evaluate intermolecular interactions of a particle including energy and virial pressure contribution.
-		// Implementation follows Allen and Tildesley. See Forcefield.h. Tail corrections are also summed in.
-		// Pressure tail contribution is added to isotropic pressure parts only!
+		// Evaluate intramolecular interactions of a particle.
+		// TODO: Virial and tail corrections?
 		inline Energy EvaluateIntra(Particle& particle, const CompositionList& compositions, double volume)
 		{
 			EPTuple ep(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
