@@ -7,7 +7,7 @@
 namespace SAPHRON
 {
 	// Class for FENE potential. See Kremer, Grest, J. Chem. Phys. 92, 5057 (1990)
-	class DEBYEHUCKLEFF : public ForceField
+	class DebyeHuckelFF : public ForceField
 	{
 		private:
 
@@ -22,7 +22,7 @@ namespace SAPHRON
 
 		public:
 
-			DEBYEHUCKLEFF(double kbt, double debye, double bjerrum) : 
+			DebyeHuckelFF(double kbt, double debye, double bjerrum) : 
 			_kbt(kbt), _debye(debye), _bjerrum(bjerrum)
 			{ 
 			}

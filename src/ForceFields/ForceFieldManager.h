@@ -25,11 +25,12 @@ namespace SAPHRON
 		FFMap _bondedforcefields;
 
 		//electrostatic forcefield
-		ForceField* _electrostaticforcefield = nullptr;
+		FFMap _electrostaticforcefield;
 
 		// Hold unique instances of non-bonded and bonded forcefield pointers.
 		FFMap _uniquenbffs;
 		FFMap _uniquebffs;
+		FFMap _uniqueeffs;
 
 		// Evaluate intermolecular interactions of a particle including energy and virial pressure contribution.
 		// Implementation follows Allen and Tildesley. See Forcefield.h. Tail corrections are also summed in.
@@ -49,8 +50,10 @@ namespace SAPHRON
 				Interaction interij, electroij;
 
 				auto it = _nonbondedforcefields.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
+				auto it2 = _electrostaticforcefield.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
 
 				auto* ff = it->second;
+				auto* eff = it2->second;
 				Position rij = particle.GetPositionRef() - neighbor->GetPositionRef();
 								
 				if(world != nullptr)
@@ -82,8 +85,8 @@ namespace SAPHRON
 					interij = ff->Evaluate(particle, *neighbor, rij);
 
 				//Electrostatics containing energy and virial
-				if(_electrostaticforcefield !=nullptr && particle.GetCharge() && neighbor->GetCharge())
-					electroij = _electrostaticforcefield->Evaluate(particle, *neighbor, rij);
+				if(it2 != _electrostaticforcefield.end() && particle.GetCharge() && neighbor->GetCharge())
+					electroij = eff->Evaluate(particle, *neighbor, rij);
 				
 				intere += interij.energy; // Sum nonbonded van der Waal energy.
 				electroe += electroij.energy; // Sum electrostatic energy
@@ -142,15 +145,16 @@ namespace SAPHRON
                     if(!particle.IsBondedNeighbor(sibling) && sibling != &particle)
                     {
                     	auto* ff = _nonbondedforcefields[{particle.GetSpeciesID(),sibling->GetSpeciesID()}];
+                    	auto* eff = _electrostaticforcefield[{particle.GetSpeciesID(),sibling->GetSpeciesID()}];
                     	Position rij = particle.GetPositionRef() - sibling->GetPositionRef();
     					
     					if(world != nullptr)
 							world->ApplyMinimumImage(rij);
 
 						//Electrostatics containing energy and virial
-						if(_electrostaticforcefield !=nullptr && particle.GetCharge() && sibling->GetCharge())
+						if(eff !=nullptr && particle.GetCharge() && sibling->GetCharge())
 						{
-							auto ij = _electrostaticforcefield->Evaluate(particle, *sibling, rij);
+							auto ij = eff->Evaluate(particle, *sibling, rij);
 
 							ep.energy.intraelectrostatic+=ij.energy;
 						}		
@@ -243,6 +247,21 @@ namespace SAPHRON
 
 		// Get the number of registered forcefields.
 		int BondedForceFieldCount();
+
+		// Adds a bonded forcefield to the manager.
+		void AddElectrostaticForceField(std::string p1type, std::string p2type, ForceField& ff);
+		
+		// Adds a Electrostatic forcefield to the manager.
+		void AddElectrostaticForceField(int p1type, int p2type, ForceField& ff);
+
+		// Removes a Electrostatic forcefield from the manager.
+		void RemoveElectrostaticForceField(std::string p1type, std::string p2type);
+
+		// Removes a Electrostatic forcefield from the manager.
+		void RemoveElectrostaticForceField(int p1type, int p2type);
+
+		// Get the number of registered forcefields.
+		int ElectrostaticForceFieldCount();
 
 		// Evaluate the energy and virial contribution of the entire world.
 		inline EPTuple EvaluateHamiltonian(World& world)

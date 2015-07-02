@@ -294,6 +294,12 @@ target_include_directories(FENEFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(FENEFFTests googletest) 
 add_test(FENEFFTests FENEFFTests)
 
+add_executable(DebyeHuckelChargeTests test/DebyeHuckelChargeTests.cpp)
+target_link_libraries(DebyeHuckelChargeTests ${TEST_DEPS})
+target_include_directories(DebyeHuckelChargeTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(DebyeHuckelChargeTests googletest) 
+add_test(DebyeHuckelChargeTests DebyeHuckelChargeTests)
+
 # end add testing 
 
 install(TARGETS saphron libsaphron 
