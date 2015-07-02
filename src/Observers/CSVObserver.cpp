@@ -138,9 +138,10 @@ namespace SAPHRON
 		if(this->Flags.energy)
 		{
 			auto energy = e->GetEnergy();
-			*_ensemblefs << energy.inter << _dlm;
-			*_ensemblefs << energy.intra << _dlm;
-			*_ensemblefs << energy.electrostatic << _dlm;
+			*_ensemblefs << energy.intervdw << _dlm;
+			*_ensemblefs << energy.intravdw << _dlm;
+			*_ensemblefs << energy.interelectrostatic << _dlm;
+			*_ensemblefs << energy.intraelectrostatic << _dlm;
 			*_ensemblefs << energy.bonded << _dlm;
 			*_ensemblefs << energy.connectivity << _dlm;
 			*_ensemblefs << energy.total() << _dlm;

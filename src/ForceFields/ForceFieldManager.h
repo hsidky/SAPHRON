@@ -99,7 +99,7 @@ namespace SAPHRON
 				
 			}
 			
-			EPTuple ep{intere, 0, 0, electroe, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
+			EPTuple ep{intere, 0, electroe, 0, 0, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
 
 			// Sum in energy and pressure tail corrections.
 			// Note: we multiply the tail correction expressions by 2.0 because they are on a per-particle
@@ -116,7 +116,7 @@ namespace SAPHRON
 						auto* forcefield = it.second;
 						double N = compositions.at(key.second);
 						double rho = N/volume;
-						ep.energy.inter += 2.0*2.0*M_PI*rho*forcefield->EnergyTailCorrection();
+						ep.energy.intervdw += 2.0*2.0*M_PI*rho*forcefield->EnergyTailCorrection();
 						ep.pressure.ptail = 2.0/3.0*2.0*M_PI*rho*forcefield->PressureTailCorrection();
 					}
 				}
@@ -130,7 +130,7 @@ namespace SAPHRON
 		// Evaluate intramolecular interactions of a particle.
 		inline Energy EvaluateIntra(Particle& particle, const CompositionList& compositions, double volume)
 		{
-			EPTuple ep(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			EPTuple ep(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 			World* world = particle.GetWorld();
 
@@ -152,14 +152,14 @@ namespace SAPHRON
 						{
 							auto ij = _electrostaticforcefield->Evaluate(particle, *sibling, rij);
 
-							ep.energy.electrostatic+=ij.energy;
+							ep.energy.intraelectrostatic+=ij.energy;
 						}		
 
 						if(ff != nullptr)
 						{
 							auto ij = ff->Evaluate(particle, *sibling, rij);
 
-							ep.energy.intra += ij.energy; // Sum nonbonded energy.
+							ep.energy.intravdw += ij.energy; // Sum nonbonded energy.
 							
 						}    
                     }
@@ -257,7 +257,8 @@ namespace SAPHRON
 
 			//Correct for double counting
 			//Intra and bonded energies already corrected for in EvaluateIntra function
-			ep.energy.inter *= 0.5;
+			ep.energy.intervdw *= 0.5;
+			ep.energy.interelectrostatic *=0.5;
 			ep.pressure *= 0.5;
 
 			return ep;

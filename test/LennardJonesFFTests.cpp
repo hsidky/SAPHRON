@@ -37,7 +37,7 @@ TEST(LennardJonesFF, DefaultBehavior)
 
 	auto H = ffm.EvaluateHamiltonian(s2, compositions, 30*30*30);
 
-	ASSERT_NEAR(-0.3205627464230163, H.energy.inter, 1e-10);
+	ASSERT_NEAR(-0.3205627464230163, H.energy.intervdw, 1e-10);
 	ASSERT_NEAR(-2.1461730362664353e-05, H.pressure.isotropic(), 1e-9);
 }
 
