@@ -55,7 +55,7 @@ namespace SAPHRON
 			int _speciesID;
 
 			// Particle is charged
-			bool _charge;
+			double _charge;
 
 			// Neighbor list.
 			NeighborList _neighbors;
@@ -115,7 +115,7 @@ namespace SAPHRON
 			// Initialize a particle with a particular species. This string represents the global type
 			// species for this particle.
 			Particle(std::string species) : 
-			_species(species), _speciesID(0), _charge(false), _neighbors(0), _bondedneighbors(0), 
+			_species(species), _speciesID(0), _charge(0), _neighbors(0), _bondedneighbors(0), 
 			_children(0), _observers(), _globalID(-1), _world(nullptr), _parent(nullptr),
 			_connectivities(0), _pEvent(this)
 			{
