@@ -31,6 +31,7 @@ namespace SAPHRON
 			void AddParticleComposition(Particle* particle);
 			void RemoveParticleComposition(Particle* particle);
 			void ModifyParticleComposition(const ParticleEvent& pEvent);
+			void UpdateNeighborList(Particle* p1, Particle* p2);
 
 			// Perform all the appropriate configuration for a new particle.
 			inline void ConfigureParticle(Particle* particle)
@@ -278,8 +279,8 @@ namespace SAPHRON
 
 			~SimpleWorld()
 			{
-				for(auto it = _particles.begin(); it != _particles.end(); ++it)
-					delete *it;
+				for(auto& p : _particles)
+					delete p;
 
 				_particles.clear();
 			}

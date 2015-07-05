@@ -42,64 +42,67 @@ namespace SAPHRON
 			// Calculate energy with neighbors.
 			World* world = particle.GetWorld();
 			auto& neighbors = particle.GetNeighbors();
-			#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pxz,pyy,pyz,pzz)
-			for(size_t k = 0; k < neighbors.size(); ++k)
+			if(!particle.HasChildren())
 			{
-				auto* neighbor = neighbors[k];
-
-				Interaction interij, electroij;
-
-				auto it = _nonbondedforcefields.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
-				auto it2 = _electrostaticforcefield.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
-
-				auto* ff = it->second;
-				auto* eff = it2->second;
-				Position rij = particle.GetPositionRef() - neighbor->GetPositionRef();
-								
-				if(world != nullptr)
-					world->ApplyMinimumImage(rij);
-
-				// If particle has parent, compute vector between parent molecule(s).
-				Position rab = rij;
-				if(particle.HasParent() && neighbor->HasParent())
+				#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pxz,pyy,pyz,pzz)
+				for(size_t k = 0; k < neighbors.size(); ++k)
 				{
-					rab = particle.GetParent()->GetPositionRef() - neighbor->GetParent()->GetPositionRef();
-					if(world != nullptr)
-						world->ApplyMinimumImage(rab);
+					auto* neighbor = neighbors[k];
 
-				}
-				else if(neighbor->HasParent() && !particle.HasParent()) 
-				{
-					rab = particle.GetPositionRef() - neighbor->GetParent()->GetPositionRef();
-					if(world != nullptr)
-						world->ApplyMinimumImage(rab);
-				}
-				else if(!neighbor->HasParent() && particle.HasParent()) {
-					rab = particle.GetParent()->GetPositionRef() - neighbor->GetPositionRef();
-					if(world != nullptr)
-						world->ApplyMinimumImage(rab);
-				}
-			
-				// Interaction containing energy and virial.
-				if(it != _nonbondedforcefields.end())
-					interij = ff->Evaluate(particle, *neighbor, rij);
+					Interaction interij, electroij;
 
-				//Electrostatics containing energy and virial
-				if(it2 != _electrostaticforcefield.end() && particle.GetCharge() && neighbor->GetCharge())
-					electroij = eff->Evaluate(particle, *neighbor, rij);
-				
-				intere += interij.energy; // Sum nonbonded van der Waal energy.
-				electroe += electroij.energy; // Sum electrostatic energy
+					auto it = _nonbondedforcefields.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
+					auto it2 = _electrostaticforcefield.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
 
-				auto totalvirial = interij.virial + electroij.virial;
+					auto* ff = it->second;
+					auto* eff = it2->second;
+					Position rij = particle.GetPositionRef() - neighbor->GetPositionRef();
+									
+					if(world != nullptr)
+						world->ApplyMinimumImage(rij);
+
+					// If particle has parent, compute vector between parent molecule(s).
+					Position rab = rij;
+					if(particle.HasParent() && neighbor->HasParent())
+					{
+						rab = particle.GetParent()->GetPositionRef() - neighbor->GetParent()->GetPositionRef();
+						if(world != nullptr)
+							world->ApplyMinimumImage(rab);
+
+					}
+					else if(neighbor->HasParent() && !particle.HasParent()) 
+					{
+						rab = particle.GetPositionRef() - neighbor->GetParent()->GetPositionRef();
+						if(world != nullptr)
+							world->ApplyMinimumImage(rab);
+					}
+					else if(!neighbor->HasParent() && particle.HasParent()) {
+						rab = particle.GetParent()->GetPositionRef() - neighbor->GetPositionRef();
+						if(world != nullptr)
+							world->ApplyMinimumImage(rab);
+					}
 				
-				pxx += totalvirial * rij.x * rab.x;
-				pyy += totalvirial * rij.y * rab.y;
-				pzz += totalvirial * rij.z * rab.z;
-				pxy += totalvirial * 0.5 * (rij.x * rab.y + rij.y * rab.x);
-				pxz += totalvirial * 0.5 * (rij.x * rab.z + rij.z * rab.x);
-				pyz += totalvirial * 0.5 * (rij.y * rab.z + rij.z * rab.y);
-				
+					// Interaction containing energy and virial.
+					if(it != _nonbondedforcefields.end())
+						interij = ff->Evaluate(particle, *neighbor, rij);
+
+					//Electrostatics containing energy and virial
+					if(it2 != _electrostaticforcefield.end() && particle.GetCharge() && neighbor->GetCharge())
+						electroij = eff->Evaluate(particle, *neighbor, rij);
+					
+					intere += interij.energy; // Sum nonbonded van der Waal energy.
+					electroe += electroij.energy; // Sum electrostatic energy
+
+					auto totalvirial = interij.virial + electroij.virial;
+					
+					pxx += totalvirial * rij.x * rab.x;
+					pyy += totalvirial * rij.y * rab.y;
+					pzz += totalvirial * rij.z * rab.z;
+					pxy += totalvirial * 0.5 * (rij.x * rab.y + rij.y * rab.x);
+					pxz += totalvirial * 0.5 * (rij.x * rab.z + rij.z * rab.x);
+					pyz += totalvirial * 0.5 * (rij.y * rab.z + rij.z * rab.y);
+					
+				}
 			}
 			
 			EPTuple ep{intere, 0, electroe, 0, 0, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
@@ -170,18 +173,12 @@ namespace SAPHRON
                 }
             }
 			
-			// Calculate energy with bonded neighbors.
-			auto& bondedneighbors = particle.GetBondedNeighbors();
-
-			for(size_t k = 0; k < bondedneighbors.size(); ++k)
+			for(auto* bondedneighbor : particle.GetBondedNeighbors())
 			{
-				auto* bondedneighbor = bondedneighbors[k];
 				auto* ff = _bondedforcefields[{particle.GetSpeciesID(),bondedneighbor->GetSpeciesID()}];
 				Position rij = particle.GetPositionRef() - bondedneighbor->GetPositionRef();
 				
 				// Minimum image convention.
-				World* world = particle.GetWorld();
-
 				if(world != nullptr)
 					world->ApplyMinimumImage(rij);
 

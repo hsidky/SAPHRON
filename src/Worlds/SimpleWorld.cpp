@@ -198,12 +198,12 @@ namespace SAPHRON
 		for(int i = 0; i < n - 1; ++i)
 		{
 			auto* pi = _particles[i];
-			auto posi = pi->GetPositionRef();
+			auto& posi = pi->GetPositionRef();
 			
 			for(int j = i + 1; j < n; ++j)
 			{
 				auto pj = _particles[j];
-				auto posj = pj->GetPositionRef();
+				auto& posj = pj->GetPositionRef();
 
 				Position rij = posi - posj;
 				ApplyMinimumImage(rij);
@@ -234,42 +234,46 @@ namespace SAPHRON
 
 	void SimpleWorld::UpdateNeighborList(Particle* particle)
 	{
+		particle->RemoveFromNeighbors();
 		particle->ClearNeighborList();
 		particle->SetCheckpoint();
 		
-		const auto& posi = particle->GetPositionRef();
+		for(const auto& c : *particle)
+		{
+			c->RemoveFromNeighbors();
+			c->ClearNeighborList();
+			c->SetCheckpoint();
+		}
+
 		for(const auto& p : _particles)
 		{
 			// Don't count self...
 			if(p == particle)
 				continue;
 
-			const auto& posj = p->GetPositionRef();
-
-			Position rij = posi - posj;
-			ApplyMinimumImage(rij);
-
-			if(rij.normsq() <= _ncutsq)
-			{
-				particle->AddNeighbor(p);
-				p->AddNeighbor(particle);
-			}
-
-			// Add children.
-			for(auto& ci : *particle)
-			{
-				for(auto& cj : *p)
-				{
-					rij = ci->GetPositionRef() - cj->GetPositionRef();
-					ApplyMinimumImage(rij);
-					if(rij.normsq() < _ncutsq)
-					{
-						ci->AddNeighbor(cj);
-						cj->AddNeighbor(ci);
-					}
-				}
-			}
+			UpdateNeighborList(particle, p);
 		}
 	}
 
+	// Update the neighbor list between particles p1 and p2.
+	inline void SimpleWorld::UpdateNeighborList(Particle* p1, Particle* p2)
+	{
+		if(p1->HasChildren())
+			for(auto& child : *p1)
+				UpdateNeighborList(child, p2);
+
+		if(p2->HasChildren())
+			for(auto& child : *p2)
+				UpdateNeighborList(p1, child);
+
+		// TODO: Check if this is elided. 
+		Position rij = p1->GetPositionRef() - p2->GetPositionRef();
+		ApplyMinimumImage(rij);
+
+		if(rij.normsq() <= _ncutsq)
+		{
+			p1->AddNeighbor(p2);
+			p2->AddNeighbor(p1);
+		}
+	}
 }

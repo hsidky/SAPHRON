@@ -121,8 +121,8 @@ namespace SAPHRON
 			{
 				_globalID = SetGlobalIdentifier(GetNextGlobalID());
 				SetSpecies(species);
-				_neighbors.reserve(30);
-				_bondedneighbors.reserve(8);
+				_neighbors.reserve(100);
+				_bondedneighbors.reserve(10);
 			}
 
 			// Copy constructor.
@@ -185,7 +185,7 @@ namespace SAPHRON
 			//Removes self from bondedneighbors list
 			void RemoveFromBondedNeighbors()
 			{
-				for(auto& neighbor : _neighbors)
+				for(auto& neighbor : _bondedneighbors)
 				{
 					if(neighbor != NULL && neighbor != nullptr)
 						neighbor->RemoveBondedNeighbor(this);
@@ -312,7 +312,7 @@ namespace SAPHRON
 			// TODO: figure out an efficient mechanism to check for duplicates other than std::find.
 			inline void AddNeighbor(Particle* particle)
 			{
-				//if(std::find(_neighbors.begin(), _neighbors.end(), particle) == _neighbors.end())
+				if(std::find(_neighbors.begin(), _neighbors.end(), particle) == _neighbors.end())
 					_neighbors.push_back(particle);
 			}
 
