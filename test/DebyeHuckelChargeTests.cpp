@@ -8,7 +8,7 @@ using namespace SAPHRON;
 
 TEST(DebyeHuckelFF, DefaultBehavior)
 {
-	DebyeHuckelFF ff(1.2, 2, 4);
+	DebyeHuckelFF ff(1.2, 2, 4, 10);
 	
 	Site* s1 = new Site({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 	s1->SetCharge(true);

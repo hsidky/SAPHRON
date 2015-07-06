@@ -10,7 +10,7 @@ using namespace SAPHRON;
 
 TEST(ThreeInteractions, DefaultBehavior)
 {
-	DebyeHuckelFF ffe(1.2, 4, 2);
+	DebyeHuckelFF ffe(1.2, 4, 2, 8);
 	FENEFF ffb(2,2.5,8,10);
 	LennardJonesFF ffnb(5,1.5,10);
 
