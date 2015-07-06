@@ -300,6 +300,11 @@ target_include_directories(DebyeHuckelChargeTests PRIVATE "${GTEST_INCLUDE_DIR}"
 add_dependencies(DebyeHuckelChargeTests googletest) 
 add_test(DebyeHuckelChargeTests DebyeHuckelChargeTests)
 
+add_executable(ThreeInteractions test/ThreeInteractions.cpp)
+target_link_libraries(ThreeInteractions ${TEST_DEPS})
+target_include_directories(ThreeInteractions PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(ThreeInteractions googletest) 
+add_test(ThreeInteractions ThreeInteraction)
 # end add testing 
 
 install(TARGETS saphron libsaphron 
