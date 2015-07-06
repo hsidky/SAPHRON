@@ -10,8 +10,9 @@ namespace SAPHRON
 			Director director;
 			Position position;
 			std::string species;
+			double charge;
 
-			MockParticleObserver() : director({ 0.0, 0.0, 0.0 }), position({ 0.0, 0.0, 0.0 }), species("foo") {}
+			MockParticleObserver() : director({ 0.0, 0.0, 0.0 }), position({ 0.0, 0.0, 0.0 }), species("foo"), charge(0) {}
 
 			virtual void ParticleUpdate(const ParticleEvent& pEvent) override
 			{
@@ -29,6 +30,11 @@ namespace SAPHRON
 				if (pEvent.species)
 				{
 					species = p->GetSpecies();
+				}
+
+				if (pEvent.charge)
+				{
+					charge = p->GetCharge();
 				}
 			}
 	};
@@ -51,4 +57,6 @@ TEST(ParticleObserver, DefaultBehavior)
 	ASSERT_EQ(observer.position, s1.GetPosition());
 	s1.SetSpecies("L2");
 	ASSERT_EQ(observer.species, s1.GetSpecies());
+	s1.SetCharge(1.5);
+	ASSERT_EQ(observer.charge,s1.GetCharge());
 }

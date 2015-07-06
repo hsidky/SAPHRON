@@ -15,11 +15,12 @@ namespace SAPHRON
 			Director _oldDirector;
 			Position _oldPosition;
 			int _oldSpecies;
+			double _oldCharge;
 
 		public:
 			ParticleEvent(Particle* particle) : 
 				_particle(particle), _oldDirector(), _oldPosition(), 
-				_oldSpecies(0), mask(0) {}
+				_oldSpecies(0), _oldCharge(), mask(0) {}
 
 			union
 			{
@@ -29,6 +30,7 @@ namespace SAPHRON
 					unsigned int director : 1;
 					unsigned int species : 1;
 					unsigned int neighbors : 1;
+					unsigned int charge : 1;
 				};
 				bool mask;
 			};
@@ -51,6 +53,16 @@ namespace SAPHRON
 			inline const Position& GetOldPosition() const
 			{
 				return _oldPosition;
+			}
+
+			inline void SetOldCharge(const double& charge)
+			{
+				_oldCharge = charge;
+			}
+
+			inline double GetOldCharge() const
+			{
+				return _oldCharge;
 			}
 
 			inline void SetOldSpecies(const int& species)

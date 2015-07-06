@@ -20,10 +20,13 @@ namespace SAPHRON
 			//Reduced Bjerrum length
 			double _bjerrum;
 
+			//The cutoff
+			double _rcutoff;
+
 		public:
 
-			DebyeHuckelFF(double kbt, double debye, double bjerrum) : 
-			_kbt(kbt), _debye(debye), _bjerrum(bjerrum)
+			DebyeHuckelFF(double kbt, double debye, double bjerrum, double rcutoff) : 
+			_kbt(kbt), _debye(debye), _bjerrum(bjerrum), _rcutoff(rcutoff)
 			{ 
 			}
 
@@ -33,7 +36,7 @@ namespace SAPHRON
 
 				double r = rij.norm();
 
-				if(r < 5*_debye)
+				if(r < _rcutoff)
 				{
 
 					ep.energy = _kbt*(_bjerrum/r)*exp(-r/_debye);

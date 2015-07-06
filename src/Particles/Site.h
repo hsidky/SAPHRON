@@ -11,6 +11,7 @@ namespace SAPHRON
 			Position _position;
 			Director _director;
 			Position _checkpoint;
+			double _charge;
 
 		public:
 
@@ -117,6 +118,21 @@ namespace SAPHRON
 				this->_pEvent.director = 1;
 				this->NotifyObservers();
  			}
+
+ 			// Gets site charge.
+			inline virtual double GetCharge() const override
+			{
+				return _charge;
+			}
+
+			// Sets site charge
+			inline virtual void SetCharge(double charge) override
+			{
+				this->_pEvent.SetOldCharge(_charge);
+				_charge=charge;
+				this->_pEvent.charge = 1;
+				this->NotifyObservers();
+			}
 
  			inline virtual double GetMass() override
  			{
