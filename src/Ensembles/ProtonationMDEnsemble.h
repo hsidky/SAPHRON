@@ -16,8 +16,8 @@ namespace SAPHRON
 	{
 		private:
 
-			// System temperature.
-			double _temperature;
+			// System Kb*temperature.
+			double _kbtemperature;
 
 			// System energy and pressure.
 			EPTuple _eptuple;
@@ -40,12 +40,15 @@ namespace SAPHRON
 			// Acceptance map.
 			AcceptanceMap _accmap;
 
+			// Proton chemical potential
+			double _mu;
+
 			// Rand seed.
 			int _seed;
 
 			inline double AcceptanceProbability(double prevH, double currH)
 			{
-				double p = exp(-(currH - prevH) / (_temperature*this->GetBoltzmannConstant()));
+				double p = exp(-(currH - prevH) / _kbtemperature);
 				return p > 1.0 ? 1.0 : p;
 			}
 
@@ -71,9 +74,9 @@ namespace SAPHRON
 			ProtonationMDEnsemble(World& world,
 			            ForceFieldManager& ffmanager,
 			            MoveManager& mmanager,
-			            double temperature,
+			            double kbtemperature,
 			            int seed = 1) :
-				_temperature(temperature), _eptuple(), _world(world),
+				_kbtemperature(kbtemperature), _eptuple(), _world(world),
 				_ffmanager(ffmanager), _mmanager(mmanager), _rand(seed),
 				_particles(0), _accmap(), _seed(seed)
 			{
@@ -89,13 +92,13 @@ namespace SAPHRON
 			// Get temperature.
 			virtual double GetTemperature() override 
 			{
-				return _temperature;
+				return _kbtemperature;
 			}
 
 			virtual Pressure GetPressure() override
 			{
 				Pressure p = _eptuple.pressure;
-				p.ideal = (double)_world.GetParticleCount()*GetBoltzmannConstant()*_temperature/_world.GetVolume();
+				p.ideal = (double)_world.GetParticleCount()*_kbtemperature/_world.GetVolume();
 				return p;
 			}
 

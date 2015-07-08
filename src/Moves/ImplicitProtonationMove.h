@@ -64,7 +64,8 @@ namespace SAPHRON
 
 				++_performed;						
 				
-				return false;
+
+				return _particle->GetCharge();
 			}
 
 			virtual double GetAcceptanceRatio() override

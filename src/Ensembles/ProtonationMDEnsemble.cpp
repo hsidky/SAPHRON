@@ -19,27 +19,43 @@ namespace SAPHRON
 
 		// Draw sample, evaluate energy.
 		move->Draw(_world, _particles);
-		auto prevH = _ffmanager.(_particles, _world.GetComposition(), _world.GetVolume());
+		auto prevH = _ffmanager.EvaluateHamiltonian(_particles, _world.GetComposition(), _world.GetVolume());
 
 		// Perform move.
 		EPTuple currH;
-		if(move->Perform(_world, _particles))
-			currH = _ffmanager.EvaluateHamiltonian(_world);
+
+		//If charged vs uncharged
+		auto _charged = move->Perform(_world, _particles);
+
+		currH = _ffmanager.EvaluateHamiltonian(_particles, _world.GetComposition(), _world.GetVolume());
+
+		// Acceptance probability charging
+		if(_charged)
+		{
+			if(AcceptanceProbability(prevH.energy.total(), currH.energy.total()+_mu) < _rand.doub())
+				move->Undo();
+			else
+				_eptuple += (currH - prevH);
+
+		}
+		
+		// Acceptance probability uncharging
 		else
-			currH = _ffmanager.EvaluateHamiltonian(_particles, _world.GetComposition(), _world.GetVolume());
+		{
+			if(AcceptanceProbability(prevH.energy.total(), currH.energy.total()-_mu) < _rand.doub())
+				move->Undo();
+			else
+				_eptuple += (currH - prevH);
 
-		// Check for neighborlist updates.
-		_world.CheckNeighborListUpdate(_particles);
-
-		// Acceptance probability.
-		if(AcceptanceProbability(prevH.energy.total(), currH.energy.total()) < _rand.doub())
-			move->Undo();
-		else
-			_eptuple += (currH - prevH);
-
+		}
+		
 		UpdateAcceptances();
 		this->IncrementIterations();
 		this->NotifyObservers(SimEvent(this, this->GetIteration()));
+
+		//Run MD here
+
+
 	}
 
 	// Run the Protonation ensemble for a specified number of iterations.
