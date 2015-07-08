@@ -27,27 +27,19 @@ namespace SAPHRON
 		//If charged vs uncharged
 		auto _charged = move->Perform(_world, _particles);
 
+		if(_charged)
+			_munew=_mu;
+		else
+			_munew=_mu*(-1.0);
+
 		currH = _ffmanager.EvaluateHamiltonian(_particles, _world.GetComposition(), _world.GetVolume());
 
 		// Acceptance probability charging
-		if(_charged)
-		{
-			if(AcceptanceProbability(prevH.energy.total(), currH.energy.total()+_mu) < _rand.doub())
-				move->Undo();
-			else
-				_eptuple += (currH - prevH);
 
-		}
-		
-		// Acceptance probability uncharging
+		if(AcceptanceProbability(prevH.energy.total(), currH.energy.total()) < _rand.doub())
+			move->Undo();
 		else
-		{
-			if(AcceptanceProbability(prevH.energy.total(), currH.energy.total()-_mu) < _rand.doub())
-				move->Undo();
-			else
-				_eptuple += (currH - prevH);
-
-		}
+     		_eptuple += (currH - prevH);
 		
 		UpdateAcceptances();
 		this->IncrementIterations();

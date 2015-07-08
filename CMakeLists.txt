@@ -304,7 +304,13 @@ add_executable(ThreeInteractions test/ThreeInteractions.cpp)
 target_link_libraries(ThreeInteractions ${TEST_DEPS})
 target_include_directories(ThreeInteractions PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(ThreeInteractions googletest) 
-add_test(ThreeInteractions ThreeInteraction)
+add_test(ThreeInteractions ThreeInteractions)
+
+add_executable(ProtonationMDEnsembleTests test/ProtonationMDEnsembleTests.cpp)
+target_link_libraries(ProtonationMDEnsembleTests ${TEST_DEPS})
+target_include_directories(ProtonationMDEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(ProtonationMDEnsembleTests googletest) 
+add_test(ProtonationMDEnsembleTests ProtonationMDEnsembleTests)
 # end add testing 
 
 install(TARGETS saphron libsaphron 

@@ -42,13 +42,14 @@ namespace SAPHRON
 
 			// Proton chemical potential
 			double _mu;
+			double _munew;
 
 			// Rand seed.
 			int _seed;
 
 			inline double AcceptanceProbability(double prevH, double currH)
 			{
-				double p = exp(-(currH - prevH) / _kbtemperature);
+				double p = exp(-(currH - prevH + _munew) / _kbtemperature);
 				return p > 1.0 ? 1.0 : p;
 			}
 
@@ -75,10 +76,11 @@ namespace SAPHRON
 			            ForceFieldManager& ffmanager,
 			            MoveManager& mmanager,
 			            double kbtemperature,
+			            double mu,
 			            int seed = 1) :
 				_kbtemperature(kbtemperature), _eptuple(), _world(world),
-				_ffmanager(ffmanager), _mmanager(mmanager), _rand(seed),
-				_particles(0), _accmap(), _seed(seed)
+				_ffmanager(ffmanager), _mmanager(mmanager), _rand(seed), 
+				_particles(0), _accmap(), _mu(mu), _seed(seed)
 			{
 
 				_particles.reserve(10);
