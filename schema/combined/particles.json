@@ -1,0 +1,44 @@
+{
+    "minItems": 1,
+    "items": {
+        "minItems": 4,
+        "items": [
+            {
+                "minimum": 1,
+                "type": "integer"
+            },
+            {
+                "type": "string"
+            },
+            {
+                "type": "string"
+            },
+            {
+                "minItems": 3,
+                "items": {
+                    "minimum": 0,
+                    "type": "number"
+                },
+                "additionalItems": false,
+                "type": "array",
+                "maxItems": 3
+            },
+            {
+                "minItems": 3,
+                "items": {
+                    "type": "number"
+                },
+                "additionalItems": false,
+                "type": "array",
+                "maxItems": 3
+            },
+            {
+                "type": "string"
+            }
+        ],
+        "additionalItems": false,
+        "type": "array"
+    },
+    "additionalItems": false,
+    "type": "array"
+}

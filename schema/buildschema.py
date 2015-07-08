@@ -35,6 +35,7 @@ files = [
 	("particles/selector.particle.json", "Selector"),
 	("particles/components.particle.json", "Components"),
 	("particles/site.particle.json", "Site"),
+	("particles/particles.json", "Particles"),
 	("worlds/simple.world.json", "SimpleWorld"),
 	("worlds/worlds.json", "Worlds")
 	]
@@ -44,7 +45,8 @@ cfiles = [
 	("connectivities/connectivities.json", cdir + "connectivities.json"),
 	("ensembles/ensembles.json", cdir + "ensembles.json"),
 	("moves/moves.json", cdir + "moves.json"),
-	("worlds/worlds.json", cdir + "worlds.json")
+	("worlds/worlds.json", cdir + "worlds.json"),
+	("particles/particles.json", cdir + "particles.json")
 	]
 
 def processfile(filename):

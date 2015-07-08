@@ -442,8 +442,15 @@ namespace SAPHRON
 			// Build a particle. This builds a particle from JSON array and the blueprint. 
 			// If the particle is a composite object, an commensurate number of particles 
 			// in a JSON array must be passed in.
-			// TODO: implement BuildParticles method.
-			static Particle* Build(const Json::Value& particles, const Json::Value& blueprint);
+			static Particle* BuildParticle(const Json::Value& particles, const Json::Value& blueprint);
+
+			// Build particles. This builds particles from JSON array and the blueprint. 
+			// It then stores the created particles in pvector. Object lifetime is the 
+			// responsibility of the caller! If an exception is thrown the caller must 
+			// clean up instantiated object in pvector.
+			static void BuildParticles(const Json::Value& particles, 
+									   const Json::Value& blueprints, 
+									   ParticleList& pvector);
 
 			// Iterators.
 			iterator begin() { return _children.begin(); }
