@@ -34,6 +34,7 @@ namespace SAPHRON
 				++_performed;			
 			}
 
+			//Draw a random particle from the world, if that particle has children, draw a random child
 			inline virtual void Draw(World& world, ParticleList& particles) override
 			{
 				particles.resize(1);
@@ -45,14 +46,21 @@ namespace SAPHRON
 					int n = children.size();
 					particles[0]=children[_rand.int32() % n];
 				}
+
+
 			}
 
+			//(De)protenate a particle based on if it is charged or not.
+			//TODO: current method only works for monoprotic bases and acids
 			inline virtual bool Perform(World& world, ParticleList& particles) override
 			{
 				_particle = particles[0];
 				_prevcharge = _particle->GetCharge();
 				
-				_particle->SetCharge(_prevcharge+_dcharge);
+				if(_prevcharge)
+					_particle->SetCharge(0);
+				else
+					_particle->SetCharge(_dcharge);
 
 				++_performed;						
 				
