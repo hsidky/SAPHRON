@@ -147,22 +147,25 @@ namespace SAPHRON
                 {
                     if(!particle.IsBondedNeighbor(sibling) && sibling != &particle)
                     {
-                    	auto* ff = _nonbondedforcefields[{particle.GetSpeciesID(),sibling->GetSpeciesID()}];
-                    	auto* eff = _electrostaticforcefield[{particle.GetSpeciesID(),sibling->GetSpeciesID()}];
+                    	auto it = _nonbondedforcefields.find({particle.GetSpeciesID(),sibling->GetSpeciesID()});
+						auto it2 = _electrostaticforcefield.find({particle.GetSpeciesID(),sibling->GetSpeciesID()});
+
+						auto* ff = it->second;
+						auto* eff = it2->second;
                     	Position rij = particle.GetPositionRef() - sibling->GetPositionRef();
     					
     					if(world != nullptr)
 							world->ApplyMinimumImage(rij);
 
 						//Electrostatics containing energy and virial
-						if(eff !=nullptr && particle.GetCharge() && sibling->GetCharge())
+						if(it2 != _electrostaticforcefield.end() && particle.GetCharge() && sibling->GetCharge())
 						{
 							auto ij = eff->Evaluate(particle, *sibling, rij);
 
 							ep.energy.intraelectrostatic+=ij.energy;
 						}		
 
-						if(ff != nullptr)
+						if(it != _nonbondedforcefields.end())
 						{
 							auto ij = ff->Evaluate(particle, *sibling, rij);
 

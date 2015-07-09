@@ -37,6 +37,7 @@ namespace SAPHRON
 			//Draw a random particle from the world, if that particle has children, draw a random child
 			inline virtual void Draw(World& world, ParticleList& particles) override
 			{
+
 				particles.resize(1);
 				particles[0] = world.DrawRandomParticle();
 				

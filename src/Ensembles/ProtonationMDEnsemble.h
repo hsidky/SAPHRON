@@ -12,7 +12,7 @@ namespace SAPHRON
 	// Class for simple NVT ensemble - also known as "canonical" ensemble.This
 	// calls moves off the move queue and uses the Metropolis criteria for acceptance
 	// probability, A(i->j) = min(1,exp(DE/kB*T)).
-	class ProtonationMDEnsemble : public Ensemble
+	class ProtonationMDEnsemble : public Ensemble, ParticleObserver
 	{
 		private:
 
@@ -86,6 +86,14 @@ namespace SAPHRON
 				_particles.reserve(10);
 				_eptuple = ffmanager.EvaluateHamiltonian(world);
 				UpdateAcceptances();
+				for (int i = 0; i < world.GetParticleCount(); ++i)
+				{
+					auto* p = world.SelectParticle(i);
+					if(p->GetSpecies() == "FOO")
+					{
+						p->AddObserver(this);
+					}
+				}
 			}
 
 			// Run the NVT ensemble for a specified number of iterations.
@@ -114,6 +122,16 @@ namespace SAPHRON
 			virtual AcceptanceMap GetAcceptanceRatio() override
 			{
 				return _accmap;
+			}
+
+			virtual void ParticleUpdate(const ParticleEvent& pEvent) override
+			{
+				if(pEvent.charge)
+				{
+					pEvent.GetOldCharge();
+					auto* p = pEvent.GetParticle();
+
+				}
 			}
 
 			// Get seed.

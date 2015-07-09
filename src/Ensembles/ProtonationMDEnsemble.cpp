@@ -24,10 +24,7 @@ namespace SAPHRON
 		// Perform move.
 		EPTuple currH;
 
-		//If charged vs uncharged
-		auto _charged = move->Perform(_world, _particles);
-
-		if(_charged)
+		if(move->Perform(_world, _particles))
 			_munew=_mu;
 		else
 			_munew=_mu*(-1.0);

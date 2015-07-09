@@ -7,11 +7,12 @@
 #include "../src/Moves/ImplicitProtonationMove.h"
 #include "../src/Observers/ConsoleObserver.h"
 #include "../src/Worlds/SimpleWorld.h"
+#include "TestAccumulator.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
 
-TEST(NVTEnsemble, DefaultBehavior)
+TEST(ProtonationMDEnsemble, DefaultBehavior)
 {
 	// Initialize world.
 	SimpleWorld world(1000, 1000, 1000, 100);
@@ -42,6 +43,11 @@ TEST(NVTEnsemble, DefaultBehavior)
 	m.AddChild(site5);
 	m.AddChild(site6);
 
+	world.SetSkinThickness(1.0);
+	world.PackWorld({&m}, {1.0}, 1, (1.0/(25.0*25.0*25.0)));
+
+	ASSERT_EQ(1, world.GetParticleCount());
+
 	// Initialize forcefields.
 	DebyeHuckelFF ffe(1.2, 4, 2, 8);
 	ForceFieldManager ffm;
@@ -54,19 +60,20 @@ TEST(NVTEnsemble, DefaultBehavior)
 
 	// Initialize observer.
 	SimFlags flags;
-	flags.temperature = 1;
-	flags.iterations = 1;
-	flags.identifier = 1;
+	//flags.temperature = 1;
 	flags.energy = 1;
-	// flags.particle_species = 1;
-	// flags.particle_director = 1;
-	// flags.particle_neighbors = 1;
-	// flags.particle_position = 1;
-	ConsoleObserver co(flags, 100);
+	flags.iterations = 1;
+	flags.acceptance = 1;
+	flags.pressure = 1;
+	ConsoleObserver observer(flags, 1000);
 
-	// Initialize ensemble.
-	ProtonationMDEnsemble ensemble(world, ffm, mm, 1.2, -100, 45);
-	//ensemble.AddObserver(&co);
+	// Initialize accumulator. 
+	TestAccumulator accumulator(flags, 10, 5000);
+
+	// Initialize ensemble. 
+	ProtonationMDEnsemble ensemble(world, ffm, mm, 1.2, -1.0, 34435);
+	ensemble.AddObserver(&observer);
+	ensemble.AddObserver(&accumulator);
 
 	// Run
 	ensemble.Run(1000);
