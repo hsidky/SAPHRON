@@ -24,10 +24,12 @@ namespace SAPHRON
 		// Perform move.
 		EPTuple currH;
 
-		if(move->Perform(_world, _particles))
-			_munew=_mu;
-		else
+		move->Perform(_world, _particles);
+
+		if(_particles[0]->GetCharge())
 			_munew=_mu*(-1.0);
+		else
+			_munew=_mu;
 
 		currH = _ffmanager.EvaluateHamiltonian(_particles, _world.GetComposition(), _world.GetVolume());
 

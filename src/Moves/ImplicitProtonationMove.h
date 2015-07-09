@@ -53,7 +53,7 @@ namespace SAPHRON
 
 			//(De)protenate a particle based on if it is charged or not.
 			//TODO: current method only works for monoprotic bases and acids
-			inline virtual bool Perform(World& world, ParticleList& particles) override
+			inline virtual bool Perform(World&, ParticleList& particles) override
 			{
 				_particle = particles[0];
 				_prevcharge = _particle->GetCharge();
@@ -66,7 +66,7 @@ namespace SAPHRON
 				++_performed;						
 				
 
-				return _particle->GetCharge();
+				return false;
 			}
 
 			virtual double GetAcceptanceRatio() override

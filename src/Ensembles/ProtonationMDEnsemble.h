@@ -44,6 +44,8 @@ namespace SAPHRON
 			double _mu;
 			double _munew;
 
+			std::string _type;
+
 			// Rand seed.
 			int _seed;
 
@@ -77,10 +79,11 @@ namespace SAPHRON
 			            MoveManager& mmanager,
 			            double kbtemperature,
 			            double mu,
+			            std::string type,
 			            int seed = 1) :
 				_kbtemperature(kbtemperature), _eptuple(), _world(world),
 				_ffmanager(ffmanager), _mmanager(mmanager), _rand(seed), 
-				_particles(0), _accmap(), _mu(mu), _seed(seed)
+				_particles(0), _accmap(), _mu(mu), _type(type), _seed(seed)
 			{
 
 				_particles.reserve(10);
@@ -89,7 +92,7 @@ namespace SAPHRON
 				for (int i = 0; i < world.GetParticleCount(); ++i)
 				{
 					auto* p = world.SelectParticle(i);
-					if(p->GetSpecies() == "FOO")
+					if(p->GetSpeciesID(_type) == p->GetSpeciesID())
 					{
 						p->AddObserver(this);
 					}
