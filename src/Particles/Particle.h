@@ -236,6 +236,13 @@ namespace SAPHRON
 			// Get reference to global particle map.
 			static const ParticleMap& GetParticleMap() { return _identityList; }
 
+			// Get species ID from string.
+			static int GetSpeciesID(std::string id) 
+			{
+				auto p1 = std::find(_speciesList.begin(), _speciesList.end(), id);
+				return p1 - _speciesList.begin();
+			}
+
 			// Get particle species.
 			inline int GetSpeciesID() const	{ return _speciesID; }
 
@@ -379,12 +386,16 @@ namespace SAPHRON
 			inline void AddObserver(ParticleObserver* observer)
 			{
 				_observers.push_back(observer);
+				for(auto& c : _children)
+					c->AddObserver(observer);
 			}
 
 			// Remove particle observer.
 			inline void RemoveObserver(ParticleObserver* observer)
 			{
 				_observers.remove(observer);
+				for(auto& c : _children)
+					c->RemoveObserver(observer);
 			}
 
 			// Notify registered particle observers of a change.
@@ -419,6 +430,8 @@ namespace SAPHRON
 				child->SetWorld(_world);
 				_children.push_back(child);
 				UpdateCenterOfMass();
+				for(auto& o : _observers)
+					child->AddObserver(o);
 			}
 
 			// Remove a child 
@@ -428,6 +441,8 @@ namespace SAPHRON
 				particle->SetWorld(nullptr);
 				_children.erase(std::remove(_children.begin(), _children.end(), particle), _children.end());
 				UpdateCenterOfMass();
+				for(auto& o : _observers)
+					particle->RemoveObserver(o);
 			}
 
 			// Gets all descendants of a particle.
