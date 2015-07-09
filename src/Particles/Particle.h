@@ -236,6 +236,13 @@ namespace SAPHRON
 			// Get reference to global particle map.
 			static const ParticleMap& GetParticleMap() { return _identityList; }
 
+			// Get species ID from string.
+			static int GetSpeciesID(std::string id) 
+			{
+				auto p1 = std::find(_speciesList.begin(), _speciesList.end(), id);
+				return p1 - _speciesList.begin();
+			}
+
 			// Get particle species.
 			inline int GetSpeciesID() const	{ return _speciesID; }
 
@@ -379,12 +386,16 @@ namespace SAPHRON
 			inline void AddObserver(ParticleObserver* observer)
 			{
 				_observers.push_back(observer);
+				for(auto& c : _children)
+					c->AddObserver(observer);
 			}
 
 			// Remove particle observer.
 			inline void RemoveObserver(ParticleObserver* observer)
 			{
 				_observers.remove(observer);
+				for(auto& c : _children)
+					c->RemoveObserver(observer);
 			}
 
 			// Notify registered particle observers of a change.
@@ -419,6 +430,8 @@ namespace SAPHRON
 				child->SetWorld(_world);
 				_children.push_back(child);
 				UpdateCenterOfMass();
+				for(auto& o : _observers)
+					child->AddObserver(o);
 			}
 
 			// Remove a child 
@@ -428,6 +441,8 @@ namespace SAPHRON
 				particle->SetWorld(nullptr);
 				_children.erase(std::remove(_children.begin(), _children.end(), particle), _children.end());
 				UpdateCenterOfMass();
+				for(auto& o : _observers)
+					particle->RemoveObserver(o);
 			}
 
 			// Gets all descendants of a particle.
@@ -442,8 +457,15 @@ namespace SAPHRON
 			// Build a particle. This builds a particle from JSON array and the blueprint. 
 			// If the particle is a composite object, an commensurate number of particles 
 			// in a JSON array must be passed in.
-			// TODO: implement BuildParticles method.
-			static Particle* Build(const Json::Value& particles, const Json::Value& blueprint);
+			static Particle* BuildParticle(const Json::Value& particles, const Json::Value& blueprint);
+
+			// Build particles. This builds particles from JSON array and the blueprint. 
+			// It then stores the created particles in pvector. Object lifetime is the 
+			// responsibility of the caller! If an exception is thrown the caller must 
+			// clean up instantiated object in pvector.
+			static void BuildParticles(const Json::Value& particles, 
+									   const Json::Value& blueprints, 
+									   ParticleList& pvector);
 
 			// Iterators.
 			iterator begin() { return _children.begin(); }

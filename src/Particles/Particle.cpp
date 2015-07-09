@@ -38,7 +38,7 @@ namespace SAPHRON
 		NotifyObservers();
 	}
 
-	Particle* Particle::Build(const Json::Value& particles, const Json::Value& blueprints)
+	Particle* Particle::BuildParticle(const Json::Value& particles, const Json::Value& blueprints)
 	{
 		ArrayRequirement pvalidator;
 		ObjectRequirement bvalidator;
@@ -75,7 +75,7 @@ namespace SAPHRON
 			dir = {particles[4][0].asDouble(), particles[4][1].asDouble(), particles[4][2].asDouble()};
 
 		// Check that we have a proper blueprint.
-		if(blueprints.isMember(component) && blueprints[component].isMember("children"))
+		if(blueprints.isMember(species) && blueprints[species].isMember("children"))
 			throw BuildException({"Particle " + std::to_string(id) + ": only primitive types can be declared."});
 		else if(!blueprints.isMember(component))
 			throw BuildException({"Particle " + std::to_string(id) + " does not match a component definition."});
@@ -87,6 +87,32 @@ namespace SAPHRON
 		return particle;
 	}
 	
+	void Particle::BuildParticles(const Json::Value &particles, const Json::Value &blueprints, ParticleList &pvector)
+	{
+		ArrayRequirement pvalidator;
+		ObjectRequirement bvalidator;
+		Value pschema, bschema; 
+		Reader reader;
+
+		pvector.clear();
+
+		// Parse schemas.
+		reader.parse(JsonSchema::Particles, pschema);
+		pvalidator.Parse(pschema, "#/particles");
+		reader.parse(JsonSchema::Components, bschema);
+		bvalidator.Parse(bschema, "#/components");
+
+		// Validate inputs. 
+		pvalidator.Validate(particles, "#/particles");
+		if(pvalidator.HasErrors())
+				throw BuildException(pvalidator.GetErrors());
+
+		bvalidator.Validate(blueprints, "#/components");
+		if(bvalidator.HasErrors())
+			throw BuildException(bvalidator.GetErrors());
+	}
+
+
 	SpeciesList Particle::_speciesList(0);
 	std::map<int, Particle*> Particle::_identityList {};
 	int Particle::_nextID = 0;

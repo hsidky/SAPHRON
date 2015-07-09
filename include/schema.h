@@ -10,6 +10,7 @@ namespace SAPHRON
 		//INSERT_DEC_HERE
 		static std::string Worlds;
 		static std::string SimpleWorld;
+		static std::string Particles;
 		static std::string Site;
 		static std::string Components;
 		static std::string Selector;

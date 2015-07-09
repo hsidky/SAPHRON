@@ -78,29 +78,19 @@ namespace SAPHRON
 
 
 		// Build particle(s).
-		// TODO: composite type objects.
 		map<string, int> pcount;
 		cerr << setw(_msgw) << left << " > Building particle(s)...";
-		for(auto& jp : root["particles"])
-		{
-			try {
-				auto* particle = Particle::Build(jp, root["components"]);
-				_particles.push_back(particle);
-
-				if(pcount.find(particle->GetSpecies()) == pcount.end())
-					pcount[particle->GetSpecies()] = 1;
-				else
-					++pcount[particle->GetSpecies()];
-
-			} catch(BuildException& e) {
-				DumpErrorsToConsole(e.GetErrors(), _notw);
-				return false;
-			} catch(exception& e) {
-				DumpErrorsToConsole({e.what()}, _notw);
-				return false;
-			}
+		
+		try {
+			Particle::BuildParticles(root["particles"], root["components"], _particles);
+		} catch(BuildException& e) {
+			DumpErrorsToConsole(e.GetErrors(), _notw);
+			return false;
+		} catch(exception& e) {
+			DumpErrorsToConsole({e.what()}, _notw);
+			return false;
 		}
-
+		
 		if(_particles.size() == 0)
 		{
 			DumpErrorsToConsole({"No particles have been specified."}, _notw);
