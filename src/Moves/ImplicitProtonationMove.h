@@ -5,7 +5,7 @@
 
 namespace SAPHRON
 {
-	// Class for translating a random particle a maximum of "dx" distance.
+	// Class for including implicit protonation of atoms 
 	class ImplicitProtonationMove : public Move
 	{
 		private: 
@@ -90,7 +90,7 @@ namespace SAPHRON
 			// Get seed.
 			virtual int GetSeed() override { return _seed; }
 
-			virtual std::string GetName() override { return "Translate"; }
+			virtual std::string GetName() override { return "Protonation"; }
 
 			// Clone move.
 			Move* Clone() const override

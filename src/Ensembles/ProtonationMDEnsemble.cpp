@@ -19,6 +19,16 @@ namespace SAPHRON
 
 		// Draw sample, evaluate energy.
 		move->Draw(_world, _particles);
+
+		if(move->GetName()=="ChargeSwap")
+		{
+			_munew=0.0;
+
+			if(_particles[0]->GetCharge() == _particles[1]->GetCharge())
+				return;
+
+		}
+
 		auto prevH = _ffmanager.EvaluateHamiltonian(_particles, _world.GetComposition(), _world.GetVolume());
 
 		// Perform move.
@@ -26,11 +36,14 @@ namespace SAPHRON
 
 		move->Perform(_world, _particles);
 
-		if(_particles[0]->GetCharge())
-			_munew=_mu*(-1.0);
-		else
-			_munew=_mu;
-
+		if(move->GetName()=="Protonation")
+		{
+			if(_particles[0]->GetCharge())
+				_munew=_mu*(-1.0);
+			else
+				_munew=_mu;
+		}
+		
 		currH = _ffmanager.EvaluateHamiltonian(_particles, _world.GetComposition(), _world.GetVolume());
 
 		// Acceptance probability charging
