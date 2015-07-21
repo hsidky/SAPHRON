@@ -44,7 +44,7 @@ namespace SAPHRON
 			auto& neighbors = particle.GetNeighbors();
 			if(!particle.HasChildren())
 			{
-				#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pxz,pyy,pyz,pzz)
+				//#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pxz,pyy,pyz,pzz)
 				for(size_t k = 0; k < neighbors.size(); ++k)
 				{
 					auto* neighbor = neighbors[k];
