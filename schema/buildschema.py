@@ -7,6 +7,7 @@ import re
 import os
 import json
 import sys 
+from sys import exit
 
 
 # Definitions
@@ -37,7 +38,9 @@ files = [
 	("particles/site.particle.json", "Site"),
 	("particles/particles.json", "Particles"),
 	("worlds/simple.world.json", "SimpleWorld"),
-	("worlds/worlds.json", "Worlds")
+	("worlds/worlds.json", "Worlds"),
+	("forcefields/lennardjones.forcefield.json", "LennardJones"),
+	("forcefields/forcefields.json", "ForceFields")
 	]
 
 # Files to generate combined 
@@ -62,7 +65,12 @@ def processfile(filename):
 
 def gencombined(inoutfile):
 	jtext = processfile(inoutfile[0])
-	jobj = json.loads(jtext)
+	try:
+		jobj = json.loads(jtext)
+	except ValueError as e:
+		print 'Error parsing {0}: {1}'.format(inoutfile[0], e)
+		print jtext
+		exit(0)
 	with open(inoutfile[1], 'w') as outfile:
 		json.dump(jobj, outfile, indent=4, separators=(',', ': '))
 

@@ -8,6 +8,8 @@ namespace SAPHRON
 	{
 	public:
 		//INSERT_DEC_HERE
+		static std::string ForceFields;
+		static std::string LennardJones;
 		static std::string Worlds;
 		static std::string SimpleWorld;
 		static std::string Particles;

@@ -97,6 +97,12 @@ namespace SAPHRON
 			return false;
 		}
 
+		for(auto& p : _particles)
+			if(pcount.find(p->GetSpecies()) == pcount.end())
+				pcount[p->GetSpecies()] = 1;
+			else
+				++pcount[p->GetSpecies()];
+			
 		// Write particle species notices.
 		for(auto& s : pcount)
 			notices.push_back("Initialized " + to_string(s.second) + 

@@ -39,7 +39,8 @@ namespace SAPHRON
 		// Post visit, mark printed bools as true.
 		virtual void PostVisit() override
 		{
-			*_worldfs << std::endl;
+			if(_worldfs)
+				*_worldfs << std::endl;
 			_printedW = true;
 			_printedE = true;
 		}

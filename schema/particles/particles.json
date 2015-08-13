@@ -1,6 +1,6 @@
 {
 	"type" : "array",
-	"items" : {"@file(site.particle.json)"},
+	"items" : "@file(site.particle.json)",
 	"additionalItems" : false,
 	"minItems": 1
 }
