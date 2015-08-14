@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 '''
 buildschema.py - Compiles individual schema files into a single complete 
                  JSON schema and creates a C++ header file containing 
@@ -68,8 +69,7 @@ def gencombined(inoutfile):
 	try:
 		jobj = json.loads(jtext)
 	except ValueError as e:
-		print 'Error parsing {0}: {1}'.format(inoutfile[0], e)
-		print jtext
+		print("Error parsing {0}: {1}".format(inoutfile[0], e))
 		exit(0)
 	with open(inoutfile[1], 'w') as outfile:
 		json.dump(jobj, outfile, indent=4, separators=(',', ': '))

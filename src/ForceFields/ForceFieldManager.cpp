@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include <utility>
+#include <stdexcept>
 
 namespace SAPHRON
 {
@@ -13,12 +14,8 @@ namespace SAPHRON
 		auto p2 = std::find(list.begin(), list.end(), p2type);
 
 		if(p1 == list.end() || p2 == list.end())
-		{
-			std::cerr << "ERROR: Uknown particle types. "
-			          << "Make sure they have been registered with the identity map."
-			          << std::endl;
-			exit(-1);
-		}
+			throw std::invalid_argument("Unknown particle type(s). Please register particles\n"
+						          		"   before adding the forcefield to the manager.");		          
 
 		AddNonBondedForceField(p1-list.begin(), p2-list.begin(), ff);
 	}
@@ -41,15 +38,8 @@ namespace SAPHRON
 		auto list = Particle::GetSpeciesList();
 		auto p1 = std::find(list.begin(), list.end(), p1type);
 		auto p2 = std::find(list.begin(), list.end(), p2type);
-		if(p1 == list.end() || p2 == list.end())
-		{
-			std::cerr << "ERROR: Uknown particle types. "
-			          << "Make sure they have been registered with the identity map."
-			          << std::endl;
-			exit(-1);
-		}
-
-		RemoveNonBondedForceField(p1-list.begin(), p2-list.begin());
+		if(p1 != list.end() && p2 != list.end())
+			RemoveNonBondedForceField(p1-list.begin(), p2-list.begin());
 	}
 
 	// Removes a forcefield from the manager.
@@ -77,12 +67,8 @@ namespace SAPHRON
 		auto p2 = std::find(list.begin(), list.end(), p2type);
 
 		if(p1 == list.end() || p2 == list.end())
-		{
-			std::cerr << "ERROR: Uknown particle types. "
-			          << "Make sure they have been registered with the identity map."
-			          << std::endl;
-			exit(-1);
-		}
+			throw std::invalid_argument("Unknown particle type(s). Please register particles\n"
+						          		"   before adding the forcefield to the manager.");	
 
 		AddBondedForceField(p1-list.begin(), p2-list.begin(), ff);
 	}
@@ -105,15 +91,9 @@ namespace SAPHRON
 		auto list = Particle::GetSpeciesList();
 		auto p1 = std::find(list.begin(), list.end(), p1type);
 		auto p2 = std::find(list.begin(), list.end(), p2type);
-		if(p1 == list.end() || p2 == list.end())
-		{
-			std::cerr << "ERROR: Uknown particle types. "
-			          << "Make sure they have been registered with the identity map."
-			          << std::endl;
-			exit(-1);
-		}
-
-		RemoveBondedForceField(p1-list.begin(), p2-list.begin());
+		
+		if(p1 != list.end() && p2 == list.end())
+			RemoveBondedForceField(p1-list.begin(), p2-list.begin());
 	}
 
 	// Removes a forcefield from the manager.
@@ -141,12 +121,8 @@ namespace SAPHRON
 		auto p2 = std::find(list.begin(), list.end(), p2type);
 
 		if(p1 == list.end() || p2 == list.end())
-		{
-			std::cerr << "ERROR: Uknown particle types. "
-			          << "Make sure they have been registered with the identity map."
-			          << std::endl;
-			exit(-1);
-		}
+			throw std::invalid_argument("Unknown particle type(s). Please register particles\n"
+						          		"   before adding the forcefield to the manager.");	
 
 		AddElectrostaticForceField(p1-list.begin(), p2-list.begin(), ff);
 	}
@@ -169,15 +145,8 @@ namespace SAPHRON
 		auto list = Particle::GetSpeciesList();
 		auto p1 = std::find(list.begin(), list.end(), p1type);
 		auto p2 = std::find(list.begin(), list.end(), p2type);
-		if(p1 == list.end() || p2 == list.end())
-		{
-			std::cerr << "ERROR: Uknown particle types. "
-			          << "Make sure they have been registered with the identity map."
-			          << std::endl;
-			exit(-1);
-		}
-
-		RemoveElectrostaticForceField(p1-list.begin(), p2-list.begin());
+		if(p1 != list.end() && p2 != list.end())
+			RemoveElectrostaticForceField(p1-list.begin(), p2-list.begin());
 	}
 
 	// Removes a forcefield from the manager.
@@ -188,7 +157,6 @@ namespace SAPHRON
 
 		_uniqueeffs.erase({p1type, p2type});
 		_uniqueeffs.erase({p2type, p1type});
-
 	}
 
 	// Get the number of registered forcefields.

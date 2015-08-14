@@ -6,16 +6,16 @@
 			"enum" : ["LennardJones"]
 		},
 		"sigma" : {
-			"type" : "numeric",
+			"type" : "number",
 			"minimum" : 0,
 			"exclusiveMinimum": true
 		},
 		"epsilon" : {
-			"type" : "numeric", 
+			"type" : "number", 
 			"minimum" : 0
 		},
 		"rcut" : {
-			"type" : "numeric", 
+			"type" : "number", 
 			"minimum" : 0,
 			"exclusiveMinimum" : true
 		},

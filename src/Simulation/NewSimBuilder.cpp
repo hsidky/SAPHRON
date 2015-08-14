@@ -111,6 +111,29 @@ namespace SAPHRON
 		DumpNoticesToConsole(notices, "",_notw);
 		notices.clear();
 
+		// Build forcefield(s).
+		cerr << setw(_msgw) << left << " > Building forcefield(s)...";
+		try{
+			for(auto& ff : root["forcefields"])
+			 _forcefields.push_back(ForceField::Build(ff, &_ffm));
+		} catch(BuildException& e) {
+			DumpErrorsToConsole(e.GetErrors(), _notw);
+			return false;
+		} catch(exception& e) {
+			DumpErrorsToConsole({e.what()}, _notw);
+			return false;
+		}
+
+		// Make sure we've created forcefields.
+		if(_forcefields.size() == 0)
+		{
+			DumpErrorsToConsole({"No forcefields have been specified."}, _notw);
+			return false;
+		}
+
+		DumpNoticesToConsole(notices, "",_notw);
+		notices.clear();
+
 		return true;
 	}
 }
