@@ -1,0 +1,18 @@
+{
+	"type" : "object", 
+	"properties": {
+		"type" : {
+			"type": "string",
+			"enum": ["LebwohlLasher"]
+		},
+		"epsilon" : {
+			"type" : "number"
+		},
+		"gamma" : {
+			"type" : "number"
+		},
+		"species" : "@file(nonbonded.forcefield.json)"
+	},
+	"additionalProperties": false,
+	"required": ["type", "epsilon", "gamma", "species"]
+}

@@ -24,13 +24,15 @@
         [2, "LJ3", "LJ", [1,2,3], [0.0, 0.0, 0.0]]
     ],
 
-    "forcefields" : [
+    "forcefields" : {
+        "nonbonded": [        
             {
                 "type"  : "LennardJones",
                 "sigma" : 3.1,
                 "epsilon": 4.4,
                 "rcut": 1.1,
-                "species": ["LJ", "LJJ"] 
+                "species": ["LJ", "LJ"] 
             }
-    ]
+        ]
+    }
 }

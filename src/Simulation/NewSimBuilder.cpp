@@ -114,8 +114,7 @@ namespace SAPHRON
 		// Build forcefield(s).
 		cerr << setw(_msgw) << left << " > Building forcefield(s)...";
 		try{
-			for(auto& ff : root["forcefields"])
-			 _forcefields.push_back(ForceField::Build(ff, &_ffm));
+			ForceField::BuildForceFields(root["forcefields"], &_ffm, _forcefields);
 		} catch(BuildException& e) {
 			DumpErrorsToConsole(e.GetErrors(), _notw);
 			return false;

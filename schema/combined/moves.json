@@ -1,5 +1,4 @@
 {
-    "type": "array",
     "items": {
         "oneOf": [
             {
@@ -11,10 +10,10 @@
                         ]
                     }
                 },
-                "type": "object",
                 "required": [
                     "type"
                 ],
+                "type": "object",
                 "additionalProperties": false
             },
             {
@@ -26,17 +25,17 @@
                         ]
                     }
                 },
-                "type": "object",
                 "required": [
                     "type"
                 ],
+                "type": "object",
                 "additionalProperties": false
             },
             {
                 "properties": {
                     "seed": {
-                        "minimum": 0,
-                        "type": "integer"
+                        "type": "integer",
+                        "minimum": 0
                     },
                     "type": {
                         "type": "string",
@@ -45,10 +44,10 @@
                         ]
                     }
                 },
-                "type": "object",
                 "required": [
                     "type"
                 ],
+                "type": "object",
                 "additionalProperties": false
             },
             {
@@ -60,17 +59,17 @@
                         ]
                     }
                 },
-                "type": "object",
                 "required": [
                     "type"
                 ],
+                "type": "object",
                 "additionalProperties": false
             },
             {
                 "properties": {
                     "seed": {
-                        "minimum": 0,
-                        "type": "integer"
+                        "type": "integer",
+                        "minimum": 0
                     },
                     "type": {
                         "type": "string",
@@ -79,17 +78,17 @@
                         ]
                     }
                 },
-                "type": "object",
                 "required": [
                     "type"
                 ],
+                "type": "object",
                 "additionalProperties": false
             },
             {
                 "properties": {
                     "seed": {
-                        "minimum": 0,
-                        "type": "integer"
+                        "type": "integer",
+                        "minimum": 0
                     },
                     "type": {
                         "type": "string",
@@ -98,41 +97,42 @@
                         ]
                     },
                     "dx": {
-                        "minimum": 0,
-                        "type": "number"
+                        "type": "number",
+                        "minimum": 0
                     }
                 },
-                "type": "object",
                 "required": [
                     "type",
                     "dx"
                 ],
+                "type": "object",
                 "additionalProperties": false
             },
             {
                 "properties": {
                     "seed": {
-                        "minimum": 0,
-                        "type": "integer"
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "dv": {
+                        "type": "number",
+                        "minimum": 0
                     },
                     "type": {
                         "type": "string",
                         "enum": [
                             "VolumeScale"
                         ]
-                    },
-                    "dv": {
-                        "minimum": 0,
-                        "type": "number"
                     }
                 },
-                "type": "object",
                 "required": [
                     "type",
                     "dv"
                 ],
+                "type": "object",
                 "additionalProperties": false
             }
         ]
-    }
+    },
+    "type": "array"
 }

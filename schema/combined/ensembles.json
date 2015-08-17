@@ -2,60 +2,60 @@
     "oneOf": [
         {
             "properties": {
+                "seed": {
+                    "type": "integer",
+                    "minimum": 0
+                },
                 "sweeps": {
-                    "minimum": 1,
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 1
                 },
                 "temperature": {
-                    "minimum": 0,
                     "exclusiveMinimum": "true",
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "type": {
                     "type": "string",
                     "enum": [
                         "NVT"
                     ]
-                },
-                "seed": {
-                    "minimum": 0,
-                    "type": "integer"
                 }
             },
-            "type": "object",
             "required": [
                 "type",
                 "temperature"
             ],
+            "type": "object",
             "additionalProperties": false
         },
         {
             "properties": {
+                "seed": {
+                    "type": "integer",
+                    "minimum": 0
+                },
                 "sweeps": {
-                    "minimum": 1,
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 1
                 },
                 "temperature": {
-                    "minimum": 0,
                     "exclusiveMinimum": "true",
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "type": {
                     "type": "string",
                     "enum": [
                         "GibbsNVT"
                     ]
-                },
-                "seed": {
-                    "minimum": 0,
-                    "type": "integer"
                 }
             },
-            "type": "object",
             "required": [
                 "type",
                 "temperature"
             ],
+            "type": "object",
             "additionalProperties": false
         }
     ]

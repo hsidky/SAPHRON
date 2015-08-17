@@ -1,8 +1,16 @@
 {
-	"type" : "array",
-	"items" : {
-		"oneOf" : [
-			"@file(lennardjones.forcefield.json)"
-		]
-	}
+	"type" : "object",
+	"properties" : {
+		"nonbonded" : {
+			"type": "array"
+		},
+		"bonded" : {
+			"type": "array"
+		},
+		"electrostatic" : {
+			"type": "array"
+		}
+	},
+
+	"additionalProperties": false
 }

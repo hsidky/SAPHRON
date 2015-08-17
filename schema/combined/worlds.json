@@ -1,26 +1,24 @@
 {
-    "minItems": 1,
-    "type": "array",
     "items": {
         "properties": {
+            "seed": {
+                "type": "integer",
+                "minimum": 0
+            },
             "skin_thickness": {
-                "minimum": 0,
                 "exclusiveMinimum": true,
-                "type": "number"
+                "type": "number",
+                "minimum": 0
             },
             "dimensions": {
-                "minItems": 3,
-                "maxItems": 3,
+                "items": {
+                    "type": "number",
+                    "minimum": 0
+                },
                 "additionalItems": false,
                 "type": "array",
-                "items": {
-                    "minimum": 0,
-                    "type": "number"
-                }
-            },
-            "seed": {
-                "minimum": 0,
-                "type": "integer"
+                "minItems": 3,
+                "maxItems": 3
             },
             "type": {
                 "type": "string",
@@ -29,17 +27,19 @@
                 ]
             },
             "nlist_cutoff": {
-                "minimum": 0,
                 "exclusiveMinimum": true,
-                "type": "number"
+                "type": "number",
+                "minimum": 0
             }
         },
-        "type": "object",
         "required": [
             "type",
             "dimensions",
             "nlist_cutoff",
             "skin_thickness"
-        ]
-    }
+        ],
+        "type": "object"
+    },
+    "type": "array",
+    "minItems": 1
 }

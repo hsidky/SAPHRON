@@ -9,6 +9,10 @@ namespace SAPHRON
 {
 	// Forward delcare.
 	class ForceFieldManager;
+	class ForceField;
+
+	// Typedefs. 
+	typedef std::vector<ForceField*> FFList;
 
 	// Abstract base class for a force field. Represents the scalar interaction potential between
 	// two bodies (particles). It calculates energy and intermolecular virial contribution. 
@@ -28,11 +32,20 @@ namespace SAPHRON
 		// Evalutes the pressure tail correction term.
 		virtual double PressureTailCorrection() { return 0.0; }
 
-		static ForceField* Build(const Json::Value& json, ForceFieldManager* ffm);
+		// Build a non-bonded forcefield from a JSON node. Returns a pointer to the built 
+		// FF in addition to adding it to the FFM. If return value is nullptr, then an 
+		// unknown error occurred. Will throw BuildException on failure. Object lifetime 
+		// is the caller's responsibility.
+		static ForceField* BuildNonBonded(const Json::Value& json, ForceFieldManager* ffm);
+
+		// Overloaded function allowing JSON path specification.
+		static ForceField* BuildNonBonded(const Json::Value& json, ForceFieldManager* ffm, const std::string& path);
+
+		// Builds forcefields from base tree root["forcefields"] and adds them to the Forcefield manager.
+		// It also adds all initialized pointers to the fflist array passed in. Throws exception on 
+		// failure. Object lifetime management is caller's responsibility.
+		static void BuildForceFields(const Json::Value& json, ForceFieldManager* ffm, FFList& fflist);
 
 		virtual ~ForceField() {}
 	};
-	
-	// Typedefs. 
-	typedef std::vector<ForceField*> FFList;
 }

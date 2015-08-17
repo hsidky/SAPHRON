@@ -1,10 +1,12 @@
 {
-    "type": "array",
     "items": {
         "oneOf": [
             {
                 "properties": {
                     "selector": {},
+                    "coefficient": {
+                        "type": "number"
+                    },
                     "type": {
                         "type": "string",
                         "enum": [
@@ -12,27 +14,25 @@
                         ]
                     },
                     "director": {
-                        "minItems": 3,
-                        "maxItems": 3,
-                        "additionalItems": false,
-                        "type": "array",
                         "items": {
                             "type": "number"
-                        }
-                    },
-                    "coefficient": {
-                        "type": "number"
+                        },
+                        "additionalItems": false,
+                        "type": "array",
+                        "minItems": 3,
+                        "maxItems": 3
                     }
                 },
-                "type": "object",
                 "required": [
                     "type",
                     "coefficient",
                     "director",
                     "selector"
                 ],
+                "type": "object",
                 "additionalProperties": false
             }
         ]
-    }
+    },
+    "type": "array"
 }
