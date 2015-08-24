@@ -41,8 +41,6 @@ namespace SAPHRON
 			double rcut = json["rcut"].asDouble();
 			
 			ff = new LennardJonesFF(eps, sigma, rcut);
-
-			
 		}
 		else if(type == "LebwohlLasher")
 		{
@@ -73,7 +71,7 @@ namespace SAPHRON
 				throw BuildException({
 					e.what()
 				});
-			}
+		}
 
 		return ff;
 	}

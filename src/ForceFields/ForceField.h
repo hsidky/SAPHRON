@@ -39,7 +39,9 @@ namespace SAPHRON
 		static ForceField* BuildNonBonded(const Json::Value& json, ForceFieldManager* ffm);
 
 		// Overloaded function allowing JSON path specification.
-		static ForceField* BuildNonBonded(const Json::Value& json, ForceFieldManager* ffm, const std::string& path);
+		static ForceField* BuildNonBonded(const Json::Value& json, 
+										  ForceFieldManager* ffm, 
+										  const std::string& path);
 
 		// Builds forcefields from base tree root["forcefields"] and adds them to the Forcefield manager.
 		// It also adds all initialized pointers to the fflist array passed in. Throws exception on 

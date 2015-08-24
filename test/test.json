@@ -34,5 +34,13 @@
                 "species": ["LJ", "LJ"] 
             }
         ]
-    }
+    },
+
+    "moves" : [
+        {
+            "type" : "Translate",
+            "dx" : 1.0,
+            "seed" : 253
+        }
+    ]
 }

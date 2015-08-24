@@ -114,7 +114,10 @@ namespace SAPHRON
 		// Build forcefield(s).
 		cerr << setw(_msgw) << left << " > Building forcefield(s)...";
 		try{
-			ForceField::BuildForceFields(root["forcefields"], &_ffm, _forcefields);
+			ForceField::BuildForceFields(
+					root.get("forcefields", Json::arrayValue), 
+					&_ffm, 
+					_forcefields);
 		} catch(BuildException& e) {
 			DumpErrorsToConsole(e.GetErrors(), _notw);
 			return false;
@@ -129,6 +132,30 @@ namespace SAPHRON
 			DumpErrorsToConsole({"No forcefields have been specified."}, _notw);
 			return false;
 		}
+
+		//TODO: ADD FORCEFIELD INITIALIZATION MESSAGE
+		DumpNoticesToConsole(notices, "",_notw);
+		notices.clear();
+
+		// Build move(s).
+		cerr << setw(_msgw) << left << " > Building move(s)...";
+		try{
+			Move::BuildMoves(root.get("moves", Json::arrayValue), &_mm, _moves);
+		} catch(BuildException& e) {
+			DumpErrorsToConsole(e.GetErrors(), _notw);
+			return false;
+		} catch(exception& e) {
+			DumpErrorsToConsole({e.what()}, _notw);
+			return false;
+		}
+
+		// Make sure we've created moves.
+		if(_moves.size() == 0)
+		{
+			DumpErrorsToConsole({"No moves have been specified."}, _notw);
+			return false;
+		}
+
 
 		DumpNoticesToConsole(notices, "",_notw);
 		notices.clear();

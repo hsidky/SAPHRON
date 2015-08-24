@@ -1,14 +1,3 @@
 {
-	"type" : "array",
-	"items" : {
-		"oneOf" : [
-			"@file(flipspin.move.json)",
-			"@file(identitychange.move.json)",
-			"@file(particleswap.move.json)",
-			"@file(speciesswap.move.json)",
-			"@file(sphereunitvector.move.json)",
-			"@file(translate.move.json)",
-			"@file(volumescale.move.json)"
-		]
-	}
+	"type" : "array"
 }

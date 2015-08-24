@@ -4,6 +4,7 @@
 #include "Worlds/World.h"
 #include "ForceFields/ForceField.h"
 #include "ForceFields/ForceFieldManager.h"
+#include "Moves/MoveManager.h"
 #include "Simulation/SimException.h"
 #include <iostream>
 #include <iomanip>
@@ -18,13 +19,15 @@ namespace SAPHRON
 		WorldList _worlds;
 		ParticleList _particles;
 		FFList _forcefields;
+		MoveList _moves;
 		ForceFieldManager _ffm;
+		MoveManager _mm;
 		int _ltot, _msgw, _notw;
 
 	public:
 		NewSimBuilder() : 
-		_worlds(0), _particles(0), _forcefields(0), _ffm(), 
-		_ltot(77), _msgw(47), _notw(_ltot - _msgw)
+		_worlds(0), _particles(0), _forcefields(0), _moves(0), _ffm(), 
+		_mm(), _ltot(77), _msgw(47), _notw(_ltot - _msgw)
 		{}
 		
 		bool BuildSimulation(std::istream& is);
@@ -42,6 +45,10 @@ namespace SAPHRON
 			for(auto& f: _forcefields)
 				delete f;
 			_forcefields.clear();
+
+			for(auto& m : _moves)
+				delete m;
+			_moves.clear();
 		}
 	};
 }
