@@ -3,20 +3,21 @@
 
 namespace SAPHRON
 {
-	// Simulation class that manages resources for all simulation related 
-	// actions. It also stores simulation conditions: Temperature, pressure, energies,
-	// etc...
+	// Simulation class that manages worlds for simulations. 
 	class Simulation
 	{
 	private:
 		// List of worlds. 
 		WorldList _worlds;
 
-		// List of temperatures.
-		std::vector<double> _temperatures;
+		// Active world.
+		World* _active;
 
 		// Random number generator.
 		Rand _rand;
+
+		// Boltzmann constant.
+		double _kb;
 
 		// Helper method to remove items from vectors.
 		template <typename T> 
@@ -27,7 +28,13 @@ namespace SAPHRON
 
 	public:
 		Simulation(int seed = 1090) : 
-		_worlds(0), _temperatures(0), _rand(seed) {}
+		_worlds(0), _active(nullptr), _rand(seed), _kb(1.0) {}
+
+		// Get Boltzmann constant.
+		double GetkB() const { return _kb; }
+
+		// Set Boltzmann constant.
+		void SetkB(double kb) { _kb = kb; }
 
 		// Adds a world to the world list. Note: Last added world becomes 
 		// the "active" world.
@@ -36,7 +43,7 @@ namespace SAPHRON
 			if(std::find(_worlds.begin(), _worlds.end(), world) == _worlds.end())
 			{
 				_worlds.push_back(world);
-				_temperatures.push_back(0);
+				_active = world;
 			}
 		}
 
@@ -47,29 +54,54 @@ namespace SAPHRON
 			if(pos < _worlds.size())
 			{
 				remove(_worlds, pos);
-				remove(_temperatures, pos);
+
+				// If it was active world, remove it.
+				if(_active == world)
+					_active = _worlds.back();
 			}
 		}
 
-		// Returns active world.
-		World* GetWorld()
+		// Sets the active world to "i".
+		void SetActiveWorld(size_t i)
 		{
-			return _worlds.back();
+			if(i >= _worlds.size())
+				throw std::out_of_range("Specified world for is out of range.");
+			
+			_active = _worlds[i];			
 		}
 
-		// Returns world "i".
-		World* GetWorld(int i)
+		void SetActiveWorld(World* world)
 		{
-			assert(i < _worlds.size() - 1);
+			if(std::find(_worlds.begin(), _worlds.end(), world) == _worlds.end())
+				throw std::logic_error("Cannot set active world: world does not belong to simulation.");
+
+			_active = world;
+		}
+
+		// Returns active world.
+		World* GetWorld() { return _active; }
+
+		// Returns active world (const).
+		World* GetWorld() const {return _active; }
+
+		// Returns world "i". Throws out of range exception for invalid index.
+		World* GetWorld(size_t i)
+		{
+			if(i >= _worlds.size())
+				throw std::out_of_range("Specified world for is out of range.");	
 			return _worlds[i];
 		}
+
+		// Returns world "i" (const).
+		World* GetWorld(size_t i) const { return GetWorld(i); }
+
+		// Returns the number of worlds.
+		size_t GetWorldCount() const { return _worlds.size(); }
 
 		// Returns a random world.
 		World* GetRandomWorld()
 		{
 			return _worlds[_rand.int32() % _worlds.size()];
 		}
-
-
 	};
 }

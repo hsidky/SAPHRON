@@ -307,6 +307,13 @@ target_link_libraries(ProtonationEnsembleTests ${TEST_DEPS})
 target_include_directories(ProtonationEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(ProtonationEnsembleTests googletest) 
 add_test(ProtonationEnsembleTests ProtonationEnsembleTests)
+
+add_executable(SimulationTests test/SimulationTests.cpp)
+target_link_libraries(SimulationTests ${TEST_DEPS})
+target_include_directories(SimulationTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(SimulationTests googletest) 
+add_test(SimulationTests SimulationTests)
+
 # end add testing 
 
 install(TARGETS saphron libsaphron 
