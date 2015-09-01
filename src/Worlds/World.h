@@ -20,6 +20,9 @@ namespace SAPHRON
 	// itself with particles if it needs it, and to remove this when a particle is removed.
 	class World : public Visitable, public ParticleObserver
 	{
+	private:
+		double _temperature; 
+
 	protected:
 
 		// Box vectors.
@@ -33,7 +36,8 @@ namespace SAPHRON
 
 	public:
 		World(double xlength, double ylength, double zlength) : 
-		_xlength(xlength), _ylength(ylength), _zlength(zlength), _stringid(""){}
+		_temperature(0.0), _xlength(xlength), _ylength(ylength), _zlength(zlength), 
+		_stringid(""){}
 
 		// Draw a random particle from the world.
 		virtual Particle* DrawRandomParticle() = 0;
@@ -74,7 +78,7 @@ namespace SAPHRON
 		virtual void RemoveParticle(std::function<bool(Particle*)> filter) = 0;
 
 		// Get neighbor list cutoff radius.
-		virtual double GetNeighborRadius() = 0;
+		virtual double GetNeighborRadius() const = 0;
 
 		// Set neighbor list radius cutoff.
 		virtual void SetNeighborRadius(double ncut) = 0;
@@ -83,7 +87,7 @@ namespace SAPHRON
 		virtual void SetSkinThickness(double x) = 0;
 
 		// Get skin thickness for neighbor list re-generation.
-		virtual double GetSkinThickness() = 0;
+		virtual double GetSkinThickness() const = 0;
 
 		// Applies periodic boundaries to positions.
 		inline void ApplyPeriodicBoundaries(Position& position)
@@ -129,13 +133,13 @@ namespace SAPHRON
 		virtual const CompositionList& GetComposition() const = 0;
 
 		// Get system volume.
-		inline double GetVolume()
+		inline double GetVolume() const
 		{
 			return _xlength*_ylength*_zlength;
 		}	
 
 		// Get the system number density.
-		double GetDensity() 
+		double GetDensity() const
 		{
 			return (double)GetParticleCount()/GetVolume();
 		}
@@ -156,10 +160,16 @@ namespace SAPHRON
 		void SetStringID(std::string stringid) { _stringid = stringid; }
 
 		// Gets the optional string ID for a world.
-		std::string GetStringID() { return _stringid; }
+		std::string GetStringID() const { return _stringid; }
 
 		// Get seed.
 		virtual int GetSeed() const = 0;
+
+		// Get world temperature.
+		double GetTemperature() const { return _temperature; }
+
+		// Sets world temperature.
+		void SetTemperature(double temperature) { _temperature = temperature; }
 
 		// Builds a world from JSON value. Returns a pointer to world object, or throws a 
 		// BuildException if validation fails. Object lifetime is caller's responsibility!

@@ -200,7 +200,7 @@ namespace SAPHRON
 			}
 
 			// Gets the neighbor list cutoff radius.
-			virtual double GetNeighborRadius() override
+			virtual double GetNeighborRadius() const override
 			{
 				return _ncut; 
 			}
@@ -213,7 +213,7 @@ namespace SAPHRON
 			}
 
 			// Get skin thickness for neighbor list re-generation.
-			virtual double GetSkinThickness() override
+			virtual double GetSkinThickness() const override
 			{
 				return _rskin;
 			}
