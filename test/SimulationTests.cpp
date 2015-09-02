@@ -38,4 +38,9 @@ TEST(Simulation, DefaultBehavior)
 	ASSERT_EQ(&w2, sim.GetWorld());
 	sim.SetActiveWorld(&w1);
 	ASSERT_EQ(&w1, sim.GetWorld());
+
+	// Remove world and check. 
+	sim.RemoveWorld(&w1);
+	ASSERT_EQ(1, sim.GetWorldCount());
+	ASSERT_EQ(&w2, sim.GetWorld());
 }

@@ -64,16 +64,16 @@ namespace SAPHRON
 		// Sets the active world to "i".
 		void SetActiveWorld(size_t i)
 		{
-			if(i >= _worlds.size())
-				throw std::out_of_range("Specified world for is out of range.");
-			
+			assert(i < _worlds.size());				
 			_active = _worlds[i];			
 		}
 
+		// Sets the active world to "World*". 
+		// If world does not exist in the list, it is added.
 		void SetActiveWorld(World* world)
 		{
 			if(std::find(_worlds.begin(), _worlds.end(), world) == _worlds.end())
-				throw std::logic_error("Cannot set active world: world does not belong to simulation.");
+				AddWorld(world);
 
 			_active = world;
 		}
@@ -87,8 +87,7 @@ namespace SAPHRON
 		// Returns world "i". Throws out of range exception for invalid index.
 		World* GetWorld(size_t i)
 		{
-			if(i >= _worlds.size())
-				throw std::out_of_range("Specified world for is out of range.");	
+			assert(i < _worlds.size());	
 			return _worlds[i];
 		}
 
