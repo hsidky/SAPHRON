@@ -92,7 +92,7 @@ namespace SAPHRON
 		auto p1 = std::find(list.begin(), list.end(), p1type);
 		auto p2 = std::find(list.begin(), list.end(), p2type);
 		
-		if(p1 != list.end() && p2 == list.end())
+		if(p1 != list.end() && p2 != list.end())
 			RemoveBondedForceField(p1-list.begin(), p2-list.begin());
 	}
 
