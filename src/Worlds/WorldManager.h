@@ -1,10 +1,10 @@
-#include "../Worlds/World.h"
+#include "World.h"
 #include "../Rand.h"
 
 namespace SAPHRON
 {
-	// Simulation class that manages worlds for simulations. 
-	class Simulation
+	// WorldManager class that manages worlds for simulations. 
+	class WorldManager
 	{
 	private:
 		// List of worlds. 
@@ -16,9 +16,6 @@ namespace SAPHRON
 		// Random number generator.
 		Rand _rand;
 
-		// Boltzmann constant.
-		double _kb;
-
 		// Helper method to remove items from vectors.
 		template <typename T> 
 		void remove(std::vector<T>& vec, size_t pos) 
@@ -27,14 +24,8 @@ namespace SAPHRON
 		}
 
 	public:
-		Simulation(int seed = 1090) : 
-		_worlds(0), _active(nullptr), _rand(seed), _kb(1.0) {}
-
-		// Get Boltzmann constant.
-		double GetkB() const { return _kb; }
-
-		// Set Boltzmann constant.
-		void SetkB(double kb) { _kb = kb; }
+		WorldManager(int seed = 1090) : 
+		_worlds(0), _active(nullptr), _rand(seed) {}
 
 		// Adds a world to the world list. Note: Last added world becomes 
 		// the "active" world.

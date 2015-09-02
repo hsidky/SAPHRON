@@ -308,11 +308,11 @@ target_include_directories(ProtonationEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR
 add_dependencies(ProtonationEnsembleTests googletest) 
 add_test(ProtonationEnsembleTests ProtonationEnsembleTests)
 
-add_executable(SimulationTests test/SimulationTests.cpp)
-target_link_libraries(SimulationTests ${TEST_DEPS})
-target_include_directories(SimulationTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(SimulationTests googletest) 
-add_test(SimulationTests SimulationTests)
+add_executable(WorldManagerTests test/WorldManagerTests.cpp)
+target_link_libraries(WorldManagerTests ${TEST_DEPS})
+target_include_directories(WorldManagerTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(WorldManagerTests googletest) 
+add_test(WorldManagerTests WorldManagerTests)
 
 # end add testing 
 

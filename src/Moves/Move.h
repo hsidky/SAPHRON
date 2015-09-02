@@ -39,6 +39,9 @@ namespace SAPHRON
 		// returns false.
 		virtual bool Perform(World& world, ParticleList& particles) = 0;
 
+		// 
+		virtual double AcceptanceProbability() = 0;
+
 		// Undo a move.
 		virtual void Undo() = 0;
 
