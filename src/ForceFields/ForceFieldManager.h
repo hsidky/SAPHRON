@@ -35,7 +35,7 @@ namespace SAPHRON
 		// Evaluate intermolecular interactions of a particle including energy and virial pressure contribution.
 		// Implementation follows Allen and Tildesley. See Forcefield.h. Tail corrections are also summed in.
 		// Pressure tail contribution is added to isotropic pressure parts only!
-		inline EPTuple EvaluateInter(Particle& particle, const CompositionList& compositions, double volume)
+		inline EPTuple EvaluateInter(const Particle& particle, const CompositionList& compositions, double volume) const
 		{
 			double intere = 0, electroe = 0, pxx = 0, pxy = 0, pxz = 0, pyy = 0, pyz = 0, pzz = 0;
 
@@ -134,7 +134,7 @@ namespace SAPHRON
 		}
 
 		// Evaluate intramolecular interactions of a particle.
-		inline Energy EvaluateIntra(Particle& particle, const CompositionList& compositions, double volume)
+		inline Energy EvaluateIntra(const Particle& particle, const CompositionList& compositions, double volume) const
 		{
 			EPTuple ep(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
@@ -178,7 +178,7 @@ namespace SAPHRON
 			
 			for(auto* bondedneighbor : particle.GetBondedNeighbors())
 			{
-				auto* ff = _bondedforcefields[{particle.GetSpeciesID(),bondedneighbor->GetSpeciesID()}];
+				auto* ff = _bondedforcefields.at({particle.GetSpeciesID(),bondedneighbor->GetSpeciesID()});
 				Position rij = particle.GetPositionRef() - bondedneighbor->GetPositionRef();
 				
 				// Minimum image convention.
@@ -197,13 +197,13 @@ namespace SAPHRON
 			return ep.energy;
 		}
 
-		inline double EvaluateConnectivity(Particle& particle)
+		inline double EvaluateConnectivity(const Particle& particle) const
 		{
 			double h = 0;
 
 			// Calculate connectivity energy 
 			for(auto &connectivity : particle.GetConnectivities())
-				h+= connectivity->EvaluateEnergy(&particle);
+				h+= connectivity->EvaluateEnergy(particle);
 
 			// Calculate energy of children.
 			for(auto &child : particle.GetChildren())
@@ -264,7 +264,7 @@ namespace SAPHRON
 		int ElectrostaticForceFieldCount();
 
 		// Evaluate the energy and virial contribution of the entire world.
-		inline EPTuple EvaluateHamiltonian(World& world)
+		inline EPTuple EvaluateHamiltonian(World& world) const
 		{
 			EPTuple ep;
 
@@ -284,7 +284,9 @@ namespace SAPHRON
 		}
 
 		// Evaluate the energy and virial contribution of a list of particles.
-		inline EPTuple EvaluateHamiltonian(const ParticleList& particles, const CompositionList& compositions, double volume)
+		inline EPTuple EvaluateHamiltonian(const ParticleList& particles, 
+										   const CompositionList& compositions, 
+										   double volume) const
 		{
 			EPTuple ep;
 			for(auto& particle : particles)
@@ -294,7 +296,9 @@ namespace SAPHRON
 		}
 
 		// Evaluate the energy and virial contribution of the particle.
-		inline EPTuple EvaluateHamiltonian(Particle& particle, const CompositionList& compositions, double volume)
+		inline EPTuple EvaluateHamiltonian(const Particle& particle, 
+										   const CompositionList& compositions, 
+										   double volume) const
 		{
 			EPTuple ep = EvaluateInter(particle, compositions, volume);
 			ep.energy += EvaluateIntra(particle, compositions, volume);

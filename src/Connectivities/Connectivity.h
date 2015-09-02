@@ -14,7 +14,7 @@ namespace SAPHRON
 	{
 		public:
 			// Evaluate the energy of the connectivity.
-			virtual double EvaluateEnergy(Particle* p) = 0;
+			virtual double EvaluateEnergy(const Particle& p) = 0;
 
 			virtual ~Connectivity(){}
 	};

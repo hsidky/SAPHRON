@@ -216,8 +216,10 @@ namespace SAPHRON
 			// Get particle parent.
 			Particle* GetParent() { return _parent;	}
 
+			Particle const* GetParent() const { return _parent; }
+
 			// Has Parent?
-			bool HasParent() { return _parent != nullptr; }
+			bool HasParent() const { return _parent != nullptr; }
 
 			// Clear parent particle.
 			void ClearParent() { _parent = nullptr; }
@@ -327,7 +329,7 @@ namespace SAPHRON
 			}
 
 			// Check if a particle is a neighbor.
-			inline bool IsNeighbor(Particle* particle)
+			inline bool IsNeighbor(Particle* particle) const
 			{
 				return std::find(_neighbors.begin(), _neighbors.end(), particle) != _neighbors.end();
 			}
@@ -359,7 +361,7 @@ namespace SAPHRON
 			inline void ClearBondedNeighborList() { _bondedneighbors.clear(); }
 
 			// Check if a particle is a bonded neighbor.
-			inline bool IsBondedNeighbor(Particle* particle)
+			inline bool IsBondedNeighbor(Particle* particle) const
 			{
 				return std::find(_bondedneighbors.begin(), _bondedneighbors.end(), particle) != _bondedneighbors.end();
 			}
@@ -419,7 +421,7 @@ namespace SAPHRON
 			}
 
 			// Check if particle has children.
-			bool HasChildren() { return _children.size() != 0; }
+			bool HasChildren() const { return _children.size() != 0; }
 
 			// Add a child. Children MUST be heap allocated! 
 			// Any child belonging to a particle at time of 
@@ -447,6 +449,12 @@ namespace SAPHRON
 
 			// Gets all descendants of a particle.
 			ParticleList& GetChildren()
+			{
+				return _children;
+			}
+
+			// Gets all descendents of a particle.
+			const ParticleList& GetChildren() const
 			{
 				return _children;
 			}
