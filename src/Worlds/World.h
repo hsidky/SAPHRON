@@ -79,11 +79,11 @@ namespace SAPHRON
 		virtual void RemoveParticle(std::function<bool(Particle*)> filter) = 0;
 
 		// Applies periodic boundaries to positions.
-		inline void ApplyPeriodicBoundaries(Position& position)
+		inline void ApplyPeriodicBoundaries(Position* position) const
 		{
-			position.x -= _xlength*ffloor(position.x/_xlength);
-			position.y -= _ylength*ffloor(position.y/_ylength);
-			position.z -= _zlength*ffloor(position.z/_zlength);
+			position->x -= _xlength*ffloor(position->x/_xlength);
+			position->y -= _ylength*ffloor(position->y/_ylength);
+			position->z -= _zlength*ffloor(position->z/_zlength);
 		}
 
 		// Applies minimum image convention to distances. 

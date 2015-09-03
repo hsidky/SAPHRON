@@ -1,56 +1,67 @@
 #pragma once
 
-#include "Move.h"
+#include "../Rand.h"
 #include "../Worlds/WorldManager.h"
 #include "../ForceFields/ForceFieldManager.h"
 #include "../Simulation/SimInfo.h"
-#include "../Rand.h"
-
+#include "Move.h"
+#include <cmath>
 
 namespace SAPHRON
 {
-	// Class for performing a spin flip Monte Carlo move on a particle.
-	class FlipSpinMove : public Move
+
+	// Class performs a random rotation of a particle director.
+	// This is effectively equivalent to picking a random vector on a 
+	// unit sphere.
+	class DirectorRotateMove : public Move
 	{
 	private:
 		Rand _rand;
 		int _rejected;
 		int _performed;
+		int _seed;
 
 	public:
+		DirectorRotateMove (int seed = 3) 
+		: _rand(seed), _rejected(0), _performed(0), _seed(seed) {}
 
-		FlipSpinMove(int seed = 76345) 
-		: _rand(seed), _rejected(0), _performed(0) {} 
-
-		void Perform(Particle* p, const Director& d)
+		// Director rotation. Used for unit testing. 
+		void Perform(Particle* particle)
 		{
-			p->SetDirector(-1.0*d);
+			// Get new unit vector.
+			double v3 = 0;
+			do
+			{
+				double v1 = _rand.doub();
+				double v2 = _rand.doub();
+				v1 = 1 - 2 * v1;
+				v2 = 1 - 2 * v2;
+				v3 = v1*v1 + v2*v2;
+				if(v3 < 1)
+					particle->SetDirector(2.0*v1*sqrt(1 - v3), 2.0*v2*sqrt(1 - v3), 1.0-2.0*v3);
+			} while(v3 > 1);
+
 			++_performed;
 		}
 
-		// Internal flip spin move. 
-		void Perform(Particle* p)
-		{
-			auto di = p->GetDirector();
-			Perform(p, di);
-		}
-
-		// Perform the flip spin move on a particle.
+		// Perform a random director rotation.
 		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm) override
 		{
-			// Get random particle from random world.
+			// Select random particle from random world. 
 			World* w = wm->GetRandomWorld();
 			Particle* particle = w->DrawRandomParticle();
-			
-			// Get initial director and evaluate energy.
-			auto di = particle->GetDirector();
+
+			// Get initial director, energy.
+			Director di = particle->GetDirector();
 			auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
 
-			// Perform move and evaluate new energy.
-			Perform(particle, di);
+			// Perform director rotation.
+			Perform(particle);
+
+			// Evaluate final energy and check probability.
 			auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
 			Energy de = ef.energy - ei.energy;
-
+				
 			// Get sim info for kB.
 			auto sim = SimInfo::Instance();
 
@@ -70,8 +81,9 @@ namespace SAPHRON
 				w->SetEnergy(w->GetEnergy() + de);
 				w->SetPressure(w->GetPressure() + (ef.pressure - ei.pressure));
 			}	
+
 		}
-		
+
 		virtual double GetAcceptanceRatio() const override
 		{
 			return 1.0-(double)_rejected/_performed;
@@ -83,13 +95,15 @@ namespace SAPHRON
 			_rejected = 0;
 		}
 
-		// Get move name.
-		virtual std::string GetName() const override { return "FlipSpin"; }
+		// Get seed.
+		virtual int GetSeed() const override { return _seed; }
+
+		virtual std::string GetName() const override { return "DirectorRotate";	}
 
 		// Clone move.
 		Move* Clone() const override
 		{
-			return new FlipSpinMove(static_cast<const FlipSpinMove&>(*this));
+			return new DirectorRotateMove(static_cast<const DirectorRotateMove&>(*this));
 		}
 	};
 }

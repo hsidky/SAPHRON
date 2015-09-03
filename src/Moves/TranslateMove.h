@@ -1,74 +1,84 @@
 #pragma once 
 
 #include "../Rand.h"
-#include "GibbsMove.h"
+#include "Move.h"
+#include "../Worlds/WorldManager.h"
+#include "../Simulation/SimInfo.h"
+#include "../ForceFields/ForceFieldManager.h"
 
 namespace SAPHRON
 {
 	// Class for translating a random particle a maximum of "dx" distance.
-	class TranslateMove : public GibbsMove
+	class TranslateMove : public Move
 	{
 		private: 
-			Position _prevPos;
 			double _dx;
 			Rand _rand;
-			Particle* _particle;
 			int _rejected;
 			int _performed;
 			int _seed;
 
 		public: 
 			TranslateMove(double dx, int seed = 2496) : 
-			_prevPos({0.0, 0.0, 0.0}), _dx(dx), _rand(seed), _particle(nullptr), 
-			_rejected(0), _performed(0), _seed(seed)
+			_dx(dx), _rand(seed), _rejected(0), _performed(0), _seed(seed)
 			{
 			}
 
 			// This is for unit testing convenience. It is not part of the interface.
-			inline void Perform(Particle* particle)
+			void Perform(Particle* particle)
 			{
-				_particle = particle;
-				_prevPos = particle->GetPositionRef();
-				_particle->SetPosition(_prevPos.x + _dx*(_rand.doub()-0.5), 
-									   _prevPos.y + _dx*(_rand.doub()-0.5), 
-									   _prevPos.z + _dx*(_rand.doub()-0.5));
-				++_performed;			
+				auto& pos = particle->GetPositionRef();
+				particle->SetPosition(pos.x + _dx*(_rand.doub()-0.5), 
+									   pos.y + _dx*(_rand.doub()-0.5), 
+									   pos.z + _dx*(_rand.doub()-0.5));
+				++_performed;
 			}
 
-			inline virtual void Draw(World& world, ParticleList& particles) override
+			// Perform translation on a random particle from a random world.
+			virtual void Perform(WorldManager* wm, ForceFieldManager* ffm) override
 			{
-				particles.resize(1);
-				particles[0] = world.DrawRandomParticle();
-			}
+				// Get random particle from random world.
+				World* w = wm->GetRandomWorld();
+				Particle* particle = w->DrawRandomParticle();
 
-			inline virtual bool Perform(World& world, ParticleList& particles) override
-			{
-				_particle = particles[0];
-				_prevPos = _particle->GetPositionRef();
+				// Initial position.
+				const Position& posi = particle->GetPositionRef();
 				
-				Position newPos({_prevPos.x + _dx*(_rand.doub()-0.5), 
-								 _prevPos.y + _dx*(_rand.doub()-0.5), 
-								 _prevPos.z + _dx*(_rand.doub()-0.5)});
-				
-				world.ApplyPeriodicBoundaries(newPos);
-				_particle->SetPosition(newPos);
-				++_performed;						
-				
-				return false;
-			}
+				// Evaluate initial particle energy. 
+				auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
 
-			// Gibbs move interface. We add the condition of selecting a random world.
-			virtual void Draw(const WorldList& worlds, WorldIndexList& windex, ParticleList& particles) override
-			{
-				windex.resize(1);
-				int index = _rand.int32() % worlds.size();
-				windex[0] = index;				
-				Draw(*worlds[index], particles);
-			}
+				// Generate new position then apply periodic boundaries.
+				Position newPos({posi.x + _dx*(_rand.doub()-0.5), 
+								 posi.y + _dx*(_rand.doub()-0.5), 
+								 posi.z + _dx*(_rand.doub()-0.5)});
+				
+				w->ApplyPeriodicBoundaries(&newPos);
+				particle->SetPosition(newPos);
+				++_performed;										
 
-			virtual bool Perform(const WorldList& worlds, WorldIndexList& windex, ParticleList& particles) override
-			{
-				return Perform(*worlds[windex[0]], particles);
+				// Evaluate final particle energy and get delta E. 
+				auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+				Energy de = ef.energy - ei.energy;
+				
+				// Get sim info for kB.
+				auto sim = SimInfo::Instance();
+
+				// Acceptance probability.
+				double p = exp(-de.total()/(w->GetTemperature()*sim.GetkB()));
+				p = p > 1.0 ? 1.0 : p;
+
+				// Reject or accept move.
+				if(p < _rand.doub())
+				{
+					particle->SetPosition(posi);
+					++_rejected;
+				}
+				else
+				{
+					// Update energies and pressures.
+					w->SetEnergy(w->GetEnergy() + de);
+					w->SetPressure(w->GetPressure() + (ef.pressure - ei.pressure));
+				}	
 			}
 		
 			// Returns maximum displacement.
@@ -77,7 +87,7 @@ namespace SAPHRON
 				return _dx;
 			}
 
-			virtual double GetAcceptanceRatio() override
+			virtual double GetAcceptanceRatio() const override
 			{
 				return 1.0-(double)_rejected/_performed;
 			};
@@ -88,17 +98,10 @@ namespace SAPHRON
 				_rejected = 0;
 			}
 
-			// Undo move.
-			virtual void Undo() override
-			{
-				_particle->SetPosition(_prevPos);
-				++_rejected;
-			}
-
 			// Get seed.
-			virtual int GetSeed() override { return _seed; }
+			virtual int GetSeed() const override { return _seed; }
 
-			virtual std::string GetName() override { return "Translate"; }
+			virtual std::string GetName() const override { return "Translate"; }
 
 			// Clone move.
 			Move* Clone() const override

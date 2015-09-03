@@ -25,19 +25,21 @@ namespace SAPHRON
 		virtual ~Move(){}
 
 		// Get acceptance ratio. 
-		virtual double GetAcceptanceRatio() = 0;
+		virtual double GetAcceptanceRatio() const = 0;
 
 		// Reset acceptance ratio.
 		virtual void ResetAcceptanceRatio() = 0;
 
 		// Perform a move given the world manager and forcefield manager.
-		virtual bool Perform(WorldManager* wm, ForceFieldManager* ffm) = 0;
+		// An implemented move should respect constness and not change the state 
+		// of the instance. This is important to ensure thread safety!
+		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm) = 0;
 
 		// Get move name. 
-		virtual std::string GetName() = 0;
+		virtual std::string GetName() const = 0;
 
 		// Get seed.
-		virtual int GetSeed() { return 0; }
+		virtual int GetSeed() const { return 0; }
 
 		// Clone a move.
 		virtual Move* Clone() const = 0;

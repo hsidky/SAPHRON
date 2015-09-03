@@ -1,21 +1,18 @@
 #pragma once 
 
-#include "GibbsMove.h"
+#include "Move.h"
 #include "../Rand.h"
+#include "../Worlds/WorldManager.h"
+#include "../ForceFields/ForceFieldManager.h"
+#include "../Simulation/SimInfo.h"
 
 namespace SAPHRON
 {
 	// Class for performing a particle swap between two worlds. It removes a particle from 
 	// a random world and inserts it randomly into another in a random location.
-	// Note: this does not implement the Move interface (leaves them empty). 
-	// It only implements the GibbsMove interface.
-	class ParticleSwapMove : public GibbsMove
+	class ParticleSwapMove : public Move
 	{
 	private:
-		Particle* _particle;
-		World* _prevWorld;
-		Position _prevPos;
-		NeighborList _prevList;
 		Rand _rand;
 		int _rejected;
 		int _performed;
@@ -23,84 +20,98 @@ namespace SAPHRON
 
 	public:
 		ParticleSwapMove(int seed = 3429329) : 
-		_particle(nullptr), _prevWorld(nullptr), _prevPos(), _prevList(0), _rand(seed), 
-		_rejected(0), _performed(0), _seed(seed)
+		_rand(seed), _rejected(0), _performed(0), _seed(seed)
 		{
-			_prevList.reserve(100);
 		}
 
-		// Unimplemented for single world.
-		virtual void Draw(World&, ParticleList&) override {}
 
-		// Unimplemented for single world.
-		virtual bool Perform(World&, ParticleList&) override { return false; }
-
-		// Draws a particle from a random world and the world its going to.
-		virtual void Draw(const WorldList& worlds, WorldIndexList& windex, ParticleList& particles) override
+		// Move particle from world 1 to world 2.
+		void MoveParticle(Particle* particle, World* w1, World* w2)
 		{
-			int index = _rand.int32() % worlds.size();
-			if(Particle* particle = worlds[index]->DrawRandomParticle())
+			// Remove particle from its world. Clear neighbor list. 
+			w1->RemoveParticle(particle);
+			particle->ClearNeighborList();
+
+			// Generate a new random coordinate for the particle.
+			Position pf = w2->GetBoxVectors();
+			pf.x *= _rand.doub();
+			pf.y *= _rand.doub();
+			pf.z *= _rand.doub();
+
+			particle->SetPosition(pf);
+			w2->AddParticle(particle);
+			w2->UpdateNeighborList(particle);
+			++_performed;
+		}
+
+		// Swap a random particle from a random world to another random world.
+		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm) override
+		{
+			if(wm->GetWorldCount() < 2)
 			{
-				particles.resize(1);
-				particles[0] = particle;
+				std::cerr << "Cannot perform volume swap move on less than 2 worlds." << std::endl;
+				exit(-1);
+			}
 
-				windex.resize(2);
-				windex[0] = index;
-				
-				int index2 = _rand.int32() % worlds.size();		
-				while(index2 == index)
-					index2 = _rand.int32() % worlds.size();
+			// Pick two random worlds for particle swap.
+			World* w1 = wm->GetRandomWorld();
+			World* w2 = wm->GetRandomWorld();
 
-				windex[1] = index2;
+			// Get volumes.
+			double v1 = w1->GetVolume();
+			double v2 = w2->GetVolume();
+
+			// Make sure we pick a different world.
+			while(w2 == w1)
+				w2 = wm->GetRandomWorld();
+
+			// Get random particle, eval E, backup neighbor list and position.
+			Particle* particle = w1->DrawRandomParticle();
+
+			ParticleList pneighbors = particle->GetNeighbors();
+			Position pi = particle->GetPosition();
+			auto ei = ffm->EvaluateHamiltonian(*particle, w1->GetComposition(), v1);
+
+			// Move particle from w1 to w2.
+			MoveParticle(particle, w1, w2);			
+			double n1 = w1->GetParticleCount();
+			double n2 = w2->GetParticleCount();
+
+			// Evaluate new energy and accept/reject.
+			auto ef = ffm->EvaluateHamiltonian(*particle, w2->GetComposition(), v2);
+			double de = ef.energy.total() - ei.energy.total();
+			
+			// TODO: particle numbers should be number of PRIMITIVE particles, 
+			// not parent molecules. Needs to be fixed.
+
+			// The acceptance rule is from Frenkel & Smit Eq. 8.3.4.
+			// However, it was modified for *final* particle numbers.
+			
+			SimInfo sim = SimInfo::Instance();
+			double beta = 1.0/(sim.GetkB()*w2->GetTemperature());
+			double p = (n1 - 1.0)*v2/(n2*v1)*exp(-beta*de);
+			p = p > 1.0 ? 1.0 : p;
+
+			if(p < _rand.doub())
+			{
+				w2->RemoveParticle(particle);
+				auto& nneighbors = particle->GetNeighbors();
+				nneighbors = pneighbors;
+				particle->SetPosition(pi);
+				w1->AddParticle(particle);
+				++_rejected;
 			}
 			else
 			{
-				windex.resize(0);
-				particles.resize(0);
-			}
-		}
-
-		// Swaps a particle from its world to another random world.
-		virtual bool Perform(const WorldList& worlds, WorldIndexList& windex, ParticleList& particles) override
-		{
-			// There must be more than one world in the list.
-			assert(worlds.size() > 1);
-
-			if(!particles.size())
-			{
-				_particle = nullptr;
-				return false;
+				w1->SetEnergy(w1->GetEnergy() - ei.energy);
+				w1->SetPressure(w1->GetPressure() - ei.pressure);
+				w2->SetEnergy(w2->GetEnergy() + ef.energy);
+				w2->SetPressure(w2->GetPressure() + ef.pressure);
 			}
 
-			_particle = particles[0];
-			_prevWorld = worlds[windex[0]];
-
-			// Backup particle's neighbor list and position.
-			_prevList = _particle->GetNeighbors();
-			_prevPos = _particle->GetPositionRef();
-
-			// Remove particle from its world.
-			_prevWorld->RemoveParticle(_particle);
-			_particle->ClearNeighborList();
-
-			// Insert into new world.
-			World* newworld = worlds[windex[1]];
-				
-			// Generate random new coordinates for new particle.
-			Position pos = newworld->GetBoxVectors();
-			pos.x *= _rand.doub();
-			pos.y *= _rand.doub();
-			pos.z *= _rand.doub();
-
-			_particle->SetPosition(pos);
-			newworld->AddParticle(_particle);
-			newworld->UpdateNeighborList(_particle);
-			++_performed;
-
-			return false;
 		}
 
-		virtual double GetAcceptanceRatio() override
+		virtual double GetAcceptanceRatio() const override
 		{
 			return 1.0-(double)_rejected/_performed;
 		};
@@ -111,25 +122,10 @@ namespace SAPHRON
 			_rejected = 0;
 		}
 
-		// Undo move.
-		virtual void Undo() override
-		{
-			if(_particle == nullptr)
-				return;
-			
-			World* newworld = _particle->GetWorld();
-			newworld->RemoveParticle(_particle);
-			auto& neighbors = _particle->GetNeighbors();
-			neighbors = _prevList;
-			_particle->SetPosition(_prevPos);
-			_prevWorld->AddParticle(_particle);
-			++_rejected;
-		}
-
 		// Get seed.
-		virtual int GetSeed() override { return _seed; }
+		virtual int GetSeed() const override { return _seed; }
 
-		virtual std::string GetName() override { return "ParticleSwap"; }
+		virtual std::string GetName() const override { return "ParticleSwap"; }
 
 		// Clone move.
 		Move* Clone() const override
