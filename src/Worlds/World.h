@@ -2,6 +2,7 @@
 
 #include "../Particles/Particle.h"
 #include "../Observers/Visitable.h"
+#include "../Properties/EPTuple.h"
 #include "json/json.h"
 #include <memory>
 #include <functional>
@@ -22,6 +23,8 @@ namespace SAPHRON
 	{
 	private:
 		double _temperature; 
+		Energy _energy;
+		Pressure _pressure;
 
 	protected:
 
@@ -54,14 +57,11 @@ namespace SAPHRON
 		// Checks list of particles, and if needed updates neighbor list.
 		virtual void CheckNeighborListUpdate(const ParticleList& particles) = 0;
 
-		// Get number of high level particles in the world.
-		virtual int GetParticleCount() const = 0;
-
 		// Get a specific particle based on location.
 		virtual Particle* SelectParticle(int location) = 0;
 
 		// Get a specific particle based on location (const).
-		virtual const Particle* SelectParticle(int location) const = 0;
+		virtual Particle const* SelectParticle(int location) const = 0;
 		
 		// Add a particle. 
 		virtual void AddParticle(Particle&& particle) = 0;
@@ -72,22 +72,11 @@ namespace SAPHRON
 		// Remove a specific particle based on location.
 		virtual void RemoveParticle(int location) = 0;
 
+		// Remove particle based on pointer.
 		virtual void RemoveParticle(Particle* p) = 0;
 
 		// Remove particle(s) based on a supplied filter.
 		virtual void RemoveParticle(std::function<bool(Particle*)> filter) = 0;
-
-		// Get neighbor list cutoff radius.
-		virtual double GetNeighborRadius() const = 0;
-
-		// Set neighbor list radius cutoff.
-		virtual void SetNeighborRadius(double ncut) = 0;
-
-		// Set skin thickness for neighbor list re-generation.
-		virtual void SetSkinThickness(double x) = 0;
-
-		// Get skin thickness for neighbor list re-generation.
-		virtual double GetSkinThickness() const = 0;
 
 		// Applies periodic boundaries to positions.
 		inline void ApplyPeriodicBoundaries(Position& position)
@@ -119,15 +108,26 @@ namespace SAPHRON
 			position.z -= _zlength*anint(position.z/_zlength);*/
 		}
 
-		// Accept a visitor.
-		virtual void AcceptVisitor(class Visitor &v) override
-		{
-			v.Visit(this);
-			VisitChildren(v);
-		}
+		/***************************
+		 *                         *		
+		 *   Getters and setters   *
+		 *                         *
+		 ***************************/
 
-		// Particle observer.
-		virtual void ParticleUpdate(const ParticleEvent& pEvent) override = 0;
+		// Get number of high level particles in the world.
+		virtual int GetParticleCount() const = 0;
+
+		// Get neighbor list cutoff radius.
+		virtual double GetNeighborRadius() const = 0;
+
+		// Set neighbor list radius cutoff.
+		virtual void SetNeighborRadius(double ncut) = 0;
+
+		// Get skin thickness for neighbor list re-generation.
+		virtual double GetSkinThickness() const = 0;
+
+		// Set skin thickness for neighbor list re-generation.
+		virtual void SetSkinThickness(double x) = 0;		
 
 		// Get system composition.
 		virtual const CompositionList& GetComposition() const = 0;
@@ -144,6 +144,33 @@ namespace SAPHRON
 			return (double)GetParticleCount()/GetVolume();
 		}
 
+		// Gets the optional string ID for a world.
+		std::string GetStringID() const { return _stringid; }
+
+		// Sets an optional string ID for a world.
+		void SetStringID(std::string stringid) { _stringid = stringid; }
+
+		// Get seed.
+		virtual int GetSeed() const = 0;
+
+		// Get world temperature.
+		double GetTemperature() const { return _temperature; }
+
+		// Sets world temperature.
+		void SetTemperature(double temperature) { _temperature = temperature; }
+
+		// Get world pressure.
+		Pressure GetPressure() const { return _pressure; }
+		
+		// Set world pressure. 
+		void SetPressure(const Pressure& p) { _pressure = p; }
+
+		// Get world energy. 
+		Energy GetEnergy() const { return _energy; }
+
+		// Set world energy. 
+		void SetEnergy(const Energy& e) { _energy = e; }
+
 		// Get box vectors.
 		inline Position GetBoxVectors() const 
 		{
@@ -156,20 +183,27 @@ namespace SAPHRON
 		// The neighbor list is auto regenerated.
 		virtual void SetBoxVectors(double x, double y, double z, bool scale) = 0;
 
-		// Sets an optional string ID for a world.
-		void SetStringID(std::string stringid) { _stringid = stringid; }
+		/***********************************
+		 *                                 *
+		 * Other interface implementations *
+		 *                                 *
+		 ***********************************/
 
-		// Gets the optional string ID for a world.
-		std::string GetStringID() const { return _stringid; }
+		// Accept a visitor.
+		virtual void AcceptVisitor(class Visitor &v) override
+		{
+			v.Visit(this);
+			VisitChildren(v);
+		}
 
-		// Get seed.
-		virtual int GetSeed() const = 0;
+		// Particle observer.
+		virtual void ParticleUpdate(const ParticleEvent& pEvent) override = 0;
 
-		// Get world temperature.
-		double GetTemperature() const { return _temperature; }
-
-		// Sets world temperature.
-		void SetTemperature(double temperature) { _temperature = temperature; }
+		/**********************************
+		 *                                *
+		 *      Static world builders     *
+		 *                                *
+		 **********************************/
 
 		// Builds a world from JSON value. Returns a pointer to world object, or throws a 
 		// BuildException if validation fails. Object lifetime is caller's responsibility!
