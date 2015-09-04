@@ -10,6 +10,14 @@ namespace Json {
 
 namespace SAPHRON
 {
+	// Move override flag.
+	enum MoveOverride
+	{
+		None,
+		ForceAccept,
+		ForceReject
+	};
+
 	// Forward declare.
 	class Move;
 	class ForceFieldManager;
@@ -33,7 +41,7 @@ namespace SAPHRON
 		// Perform a move given the world manager and forcefield manager.
 		// An implemented move should respect constness and not change the state 
 		// of the instance. This is important to ensure thread safety!
-		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm) = 0;
+		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm, const MoveOverride& override) = 0;
 
 		// Get move name. 
 		virtual std::string GetName() const = 0;

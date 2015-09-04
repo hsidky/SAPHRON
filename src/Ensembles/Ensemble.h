@@ -16,9 +16,6 @@ namespace SAPHRON
 	class Ensemble : public SimObservable
 	{
 		private:
-			// Boltzmann constant.
-			static double _kb;
-
 			// Iteration counter.
 			int _iterations = 0;
 
@@ -40,12 +37,6 @@ namespace SAPHRON
 			virtual void Run(int iterations) = 0;
 
 			/* Getters and setters */
-
-			// Sets the Boltzmann constant.
-			static void SetBoltzmannConstant(double kb)	{ _kb = kb;	}
-
-			// Gets the Boltzmann constant.
-			inline static double GetBoltzmannConstant()	{ return _kb; }
 
 			// Get seed.
 			virtual int GetSeed() = 0;
@@ -74,9 +65,6 @@ namespace SAPHRON
 
 			/* Properties */
 			virtual std::string GetName() = 0;
-			virtual double GetTemperature() { return 0.0; }
-			virtual Energy GetEnergy() { return Energy(0,0,0,0,0,0); }
-			virtual Pressure GetPressure() { return Pressure(); }
 			virtual AcceptanceMap GetAcceptanceRatio() { return {}; }
 
 			virtual ~Ensemble(){}

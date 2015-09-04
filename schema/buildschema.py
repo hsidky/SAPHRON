@@ -29,7 +29,7 @@ files = [
 	("moves/moves.json", "Moves"),
 	("moves/particleswap.move.json", "ParticleSwapMove"),
 	("moves/speciesswap.move.json", "SpeciesSwapMove"),
-	("moves/sphereunitvector.move.json", "SphereUnitVectorMove"),
+	("moves/directorrotate.move.json", "DirectorRotateMove"),
 	("moves/translate.move.json", "TranslateMove"),
 	("observers/csv.observer.json", "CSVObserver"),
 	("observers/observer.json", "Observer"),

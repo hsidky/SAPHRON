@@ -1,13 +1,22 @@
 {
     "oneOf": [
         {
-            "additionalProperties": false,
             "required": [
                 "type",
                 "temperature"
             ],
             "type": "object",
+            "additionalProperties": false,
             "properties": {
+                "temperature": {
+                    "exclusiveMinimum": "true",
+                    "type": "number",
+                    "minimum": 0
+                },
+                "seed": {
+                    "type": "integer",
+                    "minimum": 0
+                },
                 "type": {
                     "type": "string",
                     "enum": [
@@ -17,26 +26,26 @@
                 "sweeps": {
                     "type": "integer",
                     "minimum": 1
-                },
-                "temperature": {
-                    "type": "number",
-                    "minimum": 0,
-                    "exclusiveMinimum": "true"
-                },
-                "seed": {
-                    "type": "integer",
-                    "minimum": 0
                 }
             }
         },
         {
-            "additionalProperties": false,
             "required": [
                 "type",
                 "temperature"
             ],
             "type": "object",
+            "additionalProperties": false,
             "properties": {
+                "temperature": {
+                    "exclusiveMinimum": "true",
+                    "type": "number",
+                    "minimum": 0
+                },
+                "seed": {
+                    "type": "integer",
+                    "minimum": 0
+                },
                 "type": {
                     "type": "string",
                     "enum": [
@@ -46,15 +55,6 @@
                 "sweeps": {
                     "type": "integer",
                     "minimum": 1
-                },
-                "temperature": {
-                    "type": "number",
-                    "minimum": 0,
-                    "exclusiveMinimum": "true"
-                },
-                "seed": {
-                    "type": "integer",
-                    "minimum": 0
                 }
             }
         }

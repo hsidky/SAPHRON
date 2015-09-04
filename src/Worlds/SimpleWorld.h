@@ -267,7 +267,7 @@ namespace SAPHRON
 					for(auto& particle: _particles)
 					{
 						auto pos = particle->GetPosition();
-						ApplyPeriodicBoundaries(pos);
+						ApplyPeriodicBoundaries(&pos);
 						particle->SetPosition(pos);
 					}
 				}

@@ -1,16 +1,16 @@
-#include "../src/Moves/IdentityChangeMove.h"
+#include "../src/Moves/RandomIdentityMove.h"
 #include "../src/Particles/Site.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
 
 // Test the default behavior of the species change move.
-TEST(IdentityChangeMove, DefaultBehavior)
+TEST(RandomIdentityMove, DefaultBehavior)
 {
 	Site s({0, 0, 0},{0,0,0}, "T1");
 	Site s2({0, 0, 0},{0,0,0}, "T2");
 	Site s3({0, 0, 0},{0,0,0}, "T3");
-	IdentityChangeMove m(3);
+	RandomIdentityMove m({"T1", "T2", "T3"});
 
 	//ASSERT_EQ(0, s.GetSpeciesID());
 
@@ -28,7 +28,7 @@ TEST(IdentityChangeMove, DefaultBehavior)
 
 	// Swap, verify, undo, verify.
 	int prev = s.GetSpeciesID();
-	m.Perform({&s});
-	m.Undo();
+	m.Perform(&s);
+	s.SetSpecies(prev);
 	ASSERT_EQ(prev, s.GetSpeciesID());
 }

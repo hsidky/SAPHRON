@@ -2,5 +2,4 @@
 
 namespace SAPHRON
 {
-	double Ensemble::_kb = 1.0;
 }

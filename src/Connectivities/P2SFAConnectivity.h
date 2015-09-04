@@ -6,7 +6,7 @@
 
 namespace SAPHRON
 {
-	typedef std::function<void(Particle*, Director&)> DirectorFunc;
+	typedef std::function<void(const Particle&, Director&)> DirectorFunc;
 
 	// Class representing P2 Legendre polynomial (uniaxial) spin anchoring on a particle. 
 	// The Hamiltonian defines a penalty function -coeff*P2(dot(d,n)) where d is the director is
@@ -26,9 +26,9 @@ namespace SAPHRON
 			_coeff(coeff), _dir({0.0, 0.0, 0.0}), _func(func){}
 			
 			// Evaluate Hamiltonian.
-			virtual double EvaluateEnergy(Particle* p) override
+			virtual double EvaluateEnergy(const Particle& p) override
 			{
-				auto& dir = p->GetDirectorRef();
+				auto& dir = p.GetDirectorRef();
 				
 				// Calculate dir based on user supplied func.
 				_func(p, _dir);

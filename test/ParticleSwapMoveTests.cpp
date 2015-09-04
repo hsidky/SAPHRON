@@ -2,6 +2,7 @@
 #include "../src/ForceFields/ForceFieldManager.h"
 #include "../src/ForceFields/LennardJonesFF.h"
 #include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/WorldManager.h"
 #include "../src/Particles/Site.h"
 #include "gtest/gtest.h"
 
@@ -22,44 +23,34 @@ TEST(ParticleSwapMove, DefaultBehavior)
 	ASSERT_EQ(200, liquid.GetParticleCount());
 	ASSERT_EQ(200, vapor.GetParticleCount());
 
-	ForceFieldManager ffm1;
-	ForceFieldManager ffm2;
+	ForceFieldManager ffm;
 
-	LennardJonesFF lj1(1.0, 1.0, 4.0);
-	LennardJonesFF lj2(1.0, 1.0, 20.0);
-	ffm1.AddNonBondedForceField("LJ", "LJ", lj1);
-	ffm2.AddNonBondedForceField("LJ", "LJ", lj2);
+	LennardJonesFF lj(1.0, 1.0, 4.0);
+	ffm.AddNonBondedForceField("LJ", "LJ", lj);
 
-	auto H1 = ffm1.EvaluateHamiltonian(liquid);
-	auto H2 = ffm2.EvaluateHamiltonian(vapor);
+	auto H1 = ffm.EvaluateHamiltonian(liquid);
+	auto H2 = ffm.EvaluateHamiltonian(vapor);
+
+	WorldManager wm;
+	wm.AddWorld(&liquid);
+	wm.AddWorld(&vapor);
 
 	ParticleSwapMove move;
-	ParticleList plist;
 
-	WorldIndexList windex;
-
-	// Particle swap move. 
-	move.Draw({&liquid, &vapor}, windex, plist);
-	
-	World* world = plist[0]->GetWorld();
-	Position pos = plist[0]->GetPosition();
-	NeighborList nlist = plist[0]->GetNeighbors();
-
-	move.Perform({&liquid, &vapor}, windex, plist);
-
-	World* newworld = plist[0]->GetWorld();
-	ASSERT_EQ(199, world->GetParticleCount());
-	ASSERT_NE(world, newworld);
-	ASSERT_EQ(201, newworld->GetParticleCount());
-	ASSERT_NE(H1.energy.total(), ffm1.EvaluateHamiltonian(liquid).energy.total());
-	ASSERT_NE(H2.energy.total(), ffm2.EvaluateHamiltonian(vapor).energy.total());
-
-	// Undo 
-	move.Undo();
+	// Let's perform the move but force reject and ensure everything is the same.
+	move.Perform(&wm, &ffm, MoveOverride::ForceReject);
 	ASSERT_EQ(200, liquid.GetParticleCount());
 	ASSERT_EQ(200, vapor.GetParticleCount());
-	ASSERT_EQ(pos, plist[0]->GetPosition());
-	ASSERT_EQ(nlist, plist[0]->GetNeighbors());
-	ASSERT_EQ(H1.energy, ffm1.EvaluateHamiltonian(liquid).energy);
-	ASSERT_EQ(H2.energy, ffm2.EvaluateHamiltonian(vapor).energy);
+	ASSERT_EQ(H1.energy, ffm.EvaluateHamiltonian(liquid).energy);
+	ASSERT_EQ(H2.energy, ffm.EvaluateHamiltonian(vapor).energy);
+
+	// Let's perform the move on a specific particle.
+	Particle* p = liquid.DrawRandomParticle();
+	move.MoveParticle(p, &liquid, &vapor);
+
+	ASSERT_EQ(199, liquid.GetParticleCount());
+	ASSERT_NE(&liquid, p->GetWorld());
+	ASSERT_EQ(201, vapor.GetParticleCount());
+	ASSERT_NE(H1.energy.total(), ffm.EvaluateHamiltonian(liquid).energy.total());
+	ASSERT_NE(H2.energy.total(), ffm.EvaluateHamiltonian(vapor).energy.total());
 }

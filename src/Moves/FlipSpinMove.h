@@ -36,7 +36,7 @@ namespace SAPHRON
 		}
 
 		// Perform the flip spin move on a particle.
-		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm) override
+		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm, const MoveOverride& override) override
 		{
 			// Get random particle from random world.
 			World* w = wm->GetRandomWorld();
@@ -59,7 +59,7 @@ namespace SAPHRON
 			p = p > 1.0 ? 1.0 : p;
 
 			// Reject or accept move.
-			if(p < _rand.doub())
+			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
 				particle->SetDirector(di);
 				++_rejected;

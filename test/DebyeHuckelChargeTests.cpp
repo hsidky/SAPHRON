@@ -79,8 +79,8 @@ TEST(DebyeHuckelFF, DefaultBehavior)
 	ffm.AddElectrostaticForceField("L2", "L1", ff);
 	ffm.AddElectrostaticForceField("L2", "L2", ff);
 
-	CompositionList compositions;
-
+	CompositionList compositions{};
+	
 	//Check simple atom to atom
 	auto Energy = ff.Evaluate(*s1,*s3,s1->GetPosition()-s3->GetPosition());
 	ASSERT_NEAR(0.3570082562, Energy.energy, 1e-3);

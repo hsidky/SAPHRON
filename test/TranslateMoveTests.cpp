@@ -22,9 +22,4 @@ TEST(TranslateMove, DefaultBehavior)
 	}
 
 	ASSERT_EQ(1.0, m.GetAcceptanceRatio());
-
-	auto prevP = s.GetPosition();
-	m.Perform(&s);
-	m.Undo();
-	ASSERT_EQ(prevP, s.GetPosition());
 }

@@ -12,16 +12,16 @@ namespace SAPHRON
 	{
 		private:
 			double _temperature; 
-			Energy _energy;
-			Pressure _pressure;
 			int _counter;
 			int _start;
 			std::map<World*, double> _density;
-
+			std::map<World*, Energy> _energy;
+			std::map<World*, Pressure> _pressure;
+			
 		public: 
 			TestAccumulator(SimFlags flags, unsigned int frequency, unsigned int start) : 
-			SimObserver(flags, frequency), _temperature(0), _energy(), _pressure(), 
-			_counter(0), _start(start){}
+			SimObserver(flags, frequency), _temperature(0),	_counter(0), _start(start),
+			_density(), _energy(), _pressure() {}
 
 			virtual void Visit(Ensemble* e) override
 			{
@@ -29,12 +29,7 @@ namespace SAPHRON
 					return;
 
 				++_counter;
-				if(this->Flags.temperature)
-					_temperature += e->GetTemperature();
-				if(this->Flags.energy)
-					_energy += e->GetEnergy();
-				if(this->Flags.pressure)
-					_pressure += e->GetPressure();
+				
 			}
 
 			virtual void Visit(DOSEnsemble*) override
@@ -47,6 +42,24 @@ namespace SAPHRON
 				if((int)this->GetIteration() < _start)
 					return;
 				
+				if(this->Flags.temperature)
+					_temperature += world->GetTemperature();
+				
+				if(this->Flags.energy)
+				{
+					if(_energy.find(world) == _energy.end())
+						_energy[world] = world->GetEnergy();
+					else
+						_energy[world] += world->GetEnergy();
+				}
+				if(this->Flags.pressure)
+				{
+					if(_pressure.find(world) == _pressure.end())
+						_pressure[world] = world->GetPressure();
+					else
+						_pressure[world] += world->GetPressure();
+				}
+
 				if(_density.find(world) == _density.end())
 					_density[world]  = world->GetDensity();
 				else
@@ -68,17 +81,24 @@ namespace SAPHRON
 				
 			}
 
-
-			Energy GetAverageEnergy()
+			std::map<World*, Energy> GetAverageEnergies()
 			{
-				return _energy / (double)_counter;
+				auto emap = _energy;
+				for(auto& world : emap)
+					world.second /= (double)_counter;
+
+				return emap;
 			}
 
-			double GetAveragePressure()
+			std::map<World*, Pressure> GetAveragePressures()
 			{
-				return _pressure.isotropic() / (double)_counter;
-			}
+				auto pmap = _pressure;
+				for(auto& world : pmap)
+					world.second /= (double)_counter;
 
+				return pmap;
+			}
+			
 			double GetAverageTemperature()
 			{
 				return _temperature / (double)_counter;

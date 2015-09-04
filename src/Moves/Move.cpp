@@ -9,7 +9,7 @@
 #include "../Simulation/SimException.h"
 #include "FlipSpinMove.h"
 #include "TranslateMove.h"
-#include "SphereUnitVectorMove.h"
+#include "DirectorRotateMove.h"
 
 using namespace Json;
 
@@ -59,9 +59,9 @@ namespace SAPHRON
 
 			move = new TranslateMove(dx, seed);
 		}
-		else if(type == "SphereUnitVector")
+		else if(type == "DirectorRotate")
 		{
-			reader.parse(JsonSchema::SphereUnitVectorMove, schema);
+			reader.parse(JsonSchema::DirectorRotateMove, schema);
 			validator.Parse(schema, path);
 
 			// Validate inputs.
@@ -72,7 +72,7 @@ namespace SAPHRON
 			srand(time(NULL));
 			int seed = json.get("seed", rand()).asInt();
 
-			move = new SphereUnitVectorMove(seed);
+			move = new DirectorRotateMove(seed);
 		}
 		else
 		{

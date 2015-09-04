@@ -45,7 +45,7 @@ namespace SAPHRON
 		}
 
 		// Swap a random particle from a random world to another random world.
-		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm) override
+		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm, const MoveOverride& override) override
 		{
 			if(wm->GetWorldCount() < 2)
 			{
@@ -92,7 +92,7 @@ namespace SAPHRON
 			double p = (n1 - 1.0)*v2/(n2*v1)*exp(-beta*de);
 			p = p > 1.0 ? 1.0 : p;
 
-			if(p < _rand.doub())
+			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
 				w2->RemoveParticle(particle);
 				auto& nneighbors = particle->GetNeighbors();

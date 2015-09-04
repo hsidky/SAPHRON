@@ -178,17 +178,19 @@ namespace SAPHRON
 			
 			for(auto* bondedneighbor : particle.GetBondedNeighbors())
 			{
-				auto* ff = _bondedforcefields.at({particle.GetSpeciesID(),bondedneighbor->GetSpeciesID()});
-				Position rij = particle.GetPositionRef() - bondedneighbor->GetPositionRef();
-				
-				// Minimum image convention.
-				if(world != nullptr)
-					world->ApplyMinimumImage(rij);
-
-				if(ff != nullptr)
+				auto it = _bondedforcefields.find({particle.GetSpeciesID(),bondedneighbor->GetSpeciesID()});
+				if(it != _bondedforcefields.end())
 				{
+					auto ff = it->second;
+					Position rij = particle.GetPositionRef() - bondedneighbor->GetPositionRef();
+					
+					// Minimum image convention.
+					if(world != nullptr)
+						world->ApplyMinimumImage(rij);
+
 					auto ij = ff->Evaluate(particle, *bondedneighbor, rij);
 					ep.energy.bonded += ij.energy; // Sum bonded energy.
+					
 				}
 			}
 			

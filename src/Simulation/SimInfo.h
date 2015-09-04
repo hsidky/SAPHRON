@@ -1,3 +1,5 @@
+#pragma once 
+
 namespace SAPHRON
 {
 	// Class that hold useful information to be used across SAPHRON

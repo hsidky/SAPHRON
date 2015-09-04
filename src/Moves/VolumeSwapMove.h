@@ -55,7 +55,7 @@ namespace SAPHRON
 		}
 
 		// Perform volume swap move.
-		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm) override
+		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm, const MoveOverride& override) override
 		{
 			if(wm->GetWorldCount() < 2)
 			{
@@ -109,7 +109,7 @@ namespace SAPHRON
 			p = p > 1.0 ? 1.0 : p;
 			
 			// Undo move if it doesn't meet probability.
-			if(p < _rand.doub())
+			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
 				double b1 = pow(vi1, 1.0/3.0);
 				double b2 = pow(vi2, 1.0/3.0);

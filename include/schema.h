@@ -21,7 +21,7 @@ namespace SAPHRON
 		static std::string Observer;
 		static std::string CSVObserver;
 		static std::string TranslateMove;
-		static std::string SphereUnitVectorMove;
+		static std::string DirectorRotateMove;
 		static std::string SpeciesSwapMove;
 		static std::string ParticleSwapMove;
 		static std::string Moves;

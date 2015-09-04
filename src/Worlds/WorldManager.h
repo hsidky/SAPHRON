@@ -1,3 +1,5 @@
+#pragma once 
+
 #include "World.h"
 #include "../Rand.h"
 
@@ -41,7 +43,7 @@ namespace SAPHRON
 		// Removes a world from the world list.
 		void RemoveWorld(World* world)
 		{
-			int pos = std::find(_worlds.begin(), _worlds.end(), world) - _worlds.begin();
+			size_t pos = std::find(_worlds.begin(), _worlds.end(), world) - _worlds.begin();
 			if(pos < _worlds.size())
 			{
 				remove(_worlds, pos);

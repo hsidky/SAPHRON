@@ -88,24 +88,23 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${ARMA_INCLUDE}")
 
 set(SOURCE
-	src/Ensembles/Ensemble.cpp
-	src/Ensembles/DOSEnsemble.cpp
-	src/Ensembles/NVTEnsemble.cpp
-	src/Ensembles/GibbsNVTEnsemble.cpp
-	src/Ensembles/ProtonationMDEnsemble.cpp
-	src/ForceFields/ForceField.cpp
-	src/ForceFields/ForceFieldManager.cpp
-	src/Particles/Particle.cpp
-	src/Observers/CSVObserver.cpp
-	src/Observers/ConsoleObserver.cpp
-	src/Observers/JSONObserver.cpp
-	src/Simulation/SimObservable.cpp
-	src/Simulation/SimObserver.cpp
-	src/Worlds/World.cpp
-	src/Worlds/SimpleWorld.cpp
-	src/Moves/Move.cpp
 	src/jsoncpp.cpp
 	src/schema.cpp
+#	src/Ensembles/DOSEnsemble.cpp
+	src/Ensembles/Ensemble.cpp
+#	src/Ensembles/NVTEnsemble.cpp
+#	src/Ensembles/ProtonationMDEnsemble.cpp
+	src/ForceFields/ForceField.cpp
+	src/ForceFields/ForceFieldManager.cpp
+	src/Moves/Move.cpp
+#	src/Observers/CSVObserver.cpp
+#	src/Observers/ConsoleObserver.cpp
+#	src/Observers/JSONObserver.cpp
+	src/Particles/Particle.cpp
+	src/Simulation/SimObservable.cpp
+	src/Simulation/SimObserver.cpp
+	src/Worlds/SimpleWorld.cpp
+	src/Worlds/World.cpp
 	src/Validator/RequirementLoader.cpp
 )
 
@@ -115,7 +114,7 @@ target_link_libraries(libsaphron ${SAPH_LIBS})
 
 add_executable(saphron 
 	src/main.cpp 
-	src/Simulation/SimBuilder.cpp
+#	src/Simulation/SimBuilder.cpp
 	src/Simulation/NewSimBuilder.cpp
 )
 target_link_libraries(saphron ${SAPH_LIBS} libsaphron)
@@ -134,11 +133,23 @@ set(TEST_DEPS
 	${GTEST_LIBRARY_MAIN_PATH}
 	libsaphron)
 
-add_executable(DOSEnsembleTests test/DOSEnsembleTests.cpp)
-target_link_libraries(DOSEnsembleTests ${TEST_DEPS})
-target_include_directories(DOSEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(DOSEnsembleTests googletest) 
-add_test(DOSEnsembleTests DOSEnsembleTests)
+add_executable(DebyeHuckelChargeTests test/DebyeHuckelChargeTests.cpp)
+target_link_libraries(DebyeHuckelChargeTests ${TEST_DEPS})
+target_include_directories(DebyeHuckelChargeTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(DebyeHuckelChargeTests googletest) 
+add_test(DebyeHuckelChargeTests DebyeHuckelChargeTests)
+
+add_executable(DirectorRotateMoveTests test/DirectorRotateMoveTests.cpp)
+target_link_libraries(DirectorRotateMoveTests ${TEST_DEPS})
+target_include_directories(DirectorRotateMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(DirectorRotateMoveTests googletest) 
+add_test(DirectorRotateMoveTests DirectorRotateMoveTests)
+
+#add_executable(DOSEnsembleTests test/DOSEnsembleTests.cpp)
+#target_link_libraries(DOSEnsembleTests ${TEST_DEPS})
+#target_include_directories(DOSEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
+#add_dependencies(DOSEnsembleTests googletest) 
+#add_test(DOSEnsembleTests DOSEnsembleTests)
 
 add_executable(DLSAConnectivityTests test/DLSAConnectivityTests.cpp)
 target_link_libraries(DLSAConnectivityTests ${TEST_DEPS})
@@ -152,6 +163,12 @@ target_include_directories(ElasticCoeffOPTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(ElasticCoeffOPTests googletest) 
 add_test(ElasticCoeffOPTests ElasticCoeffOPTests)
 
+#add_executable(FENEFFTests test/FENEFFTests.cpp)
+#target_link_libraries(FENEFFTests ${TEST_DEPS})
+#target_include_directories(FENEFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
+#add_dependencies(FENEFFTests googletest) 
+#add_test(FENEFFTests FENEFFTests)
+
 add_executable(FlipSpinMoveTests test/FlipSpinMoveTests.cpp)
 target_link_libraries(FlipSpinMoveTests ${TEST_DEPS})
 target_include_directories(FlipSpinMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
@@ -164,17 +181,17 @@ target_include_directories(ForceFieldManagerTests PRIVATE "${GTEST_INCLUDE_DIR}"
 add_dependencies(ForceFieldManagerTests googletest) 
 add_test(ForceFieldManagerTests ForceFieldManagerTests)
 
+#add_executable(GibbsNVTEnsembleTests test/GibbsNVTEnsembleTests.cpp)
+#target_link_libraries(GibbsNVTEnsembleTests ${TEST_DEPS})
+#target_include_directories(GibbsNVTEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
+#add_dependencies(GibbsNVTEnsembleTests googletest) 
+#add_test(GibbsNVTEnsembleTests GibbsNVTEnsembleTests)
+
 add_executable(HistogramTests test/HistogramTests.cpp)
 target_link_libraries(HistogramTests ${TEST_DEPS})
 target_include_directories(HistogramTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(HistogramTests googletest) 
 add_test(HistogramTests HistogramTests)
-
-add_executable(IdentityChangeMoveTests test/IdentityChangeMoveTests.cpp)
-target_link_libraries(IdentityChangeMoveTests ${TEST_DEPS})
-target_include_directories(IdentityChangeMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(IdentityChangeMoveTests googletest) 
-add_test(IdentityChangeMoveTests IdentityChangeMoveTests)
 
 add_executable(LebwohlLasherFFTests test/LebwohlLasherFFTests.cpp)
 target_link_libraries(LebwohlLasherFFTests ${TEST_DEPS})
@@ -182,11 +199,23 @@ target_include_directories(LebwohlLasherFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(LebwohlLasherFFTests googletest) 
 add_test(LebwohlLasherFFTests LebwohlLasherFFTests)
 
-add_executable(NVTEnsembleTests test/NVTEnsembleTests.cpp)
-target_link_libraries(NVTEnsembleTests ${TEST_DEPS})
-target_include_directories(NVTEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(NVTEnsembleTests googletest) 
-add_test(NVTEnsembleTests NVTEnsembleTests)
+#add_executable(LennardJonesFFTests test/LennardJonesFFTests.cpp)
+#target_link_libraries(LennardJonesFFTests ${TEST_DEPS})
+#target_include_directories(LennardJonesFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
+#add_dependencies(LennardJonesFFTests googletest) 
+#add_test(LennardJonesFFTests LennardJonesFFTests)
+
+add_executable(MoleculeTests test/MoleculeTests.cpp)
+target_link_libraries(MoleculeTests ${TEST_DEPS})
+target_include_directories(MoleculeTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(MoleculeTests googletest) 
+add_test(MoleculeTests MoleculeTests)
+
+#add_executable(NVTEnsembleTests test/NVTEnsembleTests.cpp)
+#target_link_libraries(NVTEnsembleTests ${TEST_DEPS})
+#target_include_directories(NVTEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
+#add_dependencies(NVTEnsembleTests googletest) 
+#add_test(NVTEnsembleTests NVTEnsembleTests)
 
 add_executable(P2SAConnectivityTests test/P2SAConnectivityTests.cpp)
 target_link_libraries(P2SAConnectivityTests ${TEST_DEPS})
@@ -205,6 +234,24 @@ target_link_libraries(ParticleObserverTests ${TEST_DEPS})
 target_include_directories(ParticleObserverTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(ParticleObserverTests googletest) 
 add_test(ParticleObserverTests ParticleObserverTests)
+
+add_executable(ParticleSwapMoveTests test/ParticleSwapMoveTests.cpp)
+target_link_libraries(ParticleSwapMoveTests ${TEST_DEPS})
+target_include_directories(ParticleSwapMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(ParticleSwapMoveTests googletest) 
+add_test(ParticleSwapMoveTests ParticleSwapMoveTests)
+
+#add_executable(ProtonationEnsembleTests test/ProtonationEnsembleTests.cpp)
+#target_link_libraries(ProtonationEnsembleTests ${TEST_DEPS})
+#target_include_directories(ProtonationEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
+#add_dependencies(ProtonationEnsembleTests googletest) 
+#add_test(ProtonationEnsembleTests ProtonationEnsembleTests)
+
+add_executable(RandomIdentityMoveTests test/RandomIdentityMoveTests.cpp)
+target_link_libraries(RandomIdentityMoveTests ${TEST_DEPS})
+target_include_directories(RandomIdentityMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(RandomIdentityMoveTests googletest) 
+add_test(RandomIdentityMoveTests RandomIdentityMoveTests)
 
 add_executable(RandTests test/RandTests.cpp)
 target_link_libraries(RandTests ${TEST_DEPS})
@@ -230,71 +277,11 @@ target_include_directories(SiteTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(SiteTests googletest) 
 add_test(SiteTests SiteTests)
 
-add_executable(SpeciesSwapMoveTests test/SpeciesSwapMoveTests.cpp)
-target_link_libraries(SpeciesSwapMoveTests ${TEST_DEPS})
-target_include_directories(SpeciesSwapMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(SpeciesSwapMoveTests googletest) 
-add_test(SpeciesSwapMoveTests SpeciesSwapMoveTests)
-
-add_executable(SphereUnitVectorMoveTests test/SphereUnitVectorMoveTests.cpp)
-target_link_libraries(SphereUnitVectorMoveTests ${TEST_DEPS})
-target_include_directories(SphereUnitVectorMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(SphereUnitVectorMoveTests googletest) 
-add_test(SphereUnitVectorMoveTests SphereUnitVectorMoveTests)
-
-add_executable(LennardJonesFFTests test/LennardJonesFFTests.cpp)
-target_link_libraries(LennardJonesFFTests ${TEST_DEPS})
-target_include_directories(LennardJonesFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(LennardJonesFFTests googletest) 
-add_test(LennardJonesFFTests LennardJonesFFTests)
-
-add_executable(TranslateMoveTests test/TranslateMoveTests.cpp)
-target_link_libraries(TranslateMoveTests ${TEST_DEPS})
-target_include_directories(TranslateMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(TranslateMoveTests googletest) 
-add_test(TranslateMoveTests TranslateMoveTests)
-
-add_executable(VolumeScaleMoveTests test/VolumeScaleMoveTests.cpp)
-target_link_libraries(VolumeScaleMoveTests ${TEST_DEPS})
-target_include_directories(VolumeScaleMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(VolumeScaleMoveTests googletest) 
-add_test(VolumeScaleMoveTests VolumeScaleMoveTests)
-
-add_executable(ParticleSwapMoveTests test/ParticleSwapMoveTests.cpp)
-target_link_libraries(ParticleSwapMoveTests ${TEST_DEPS})
-target_include_directories(ParticleSwapMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(ParticleSwapMoveTests googletest) 
-add_test(ParticleSwapMoveTests ParticleSwapMoveTests)
-
-add_executable(GibbsNVTEnsembleTests test/GibbsNVTEnsembleTests.cpp)
-target_link_libraries(GibbsNVTEnsembleTests ${TEST_DEPS})
-target_include_directories(GibbsNVTEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(GibbsNVTEnsembleTests googletest) 
-add_test(GibbsNVTEnsembleTests GibbsNVTEnsembleTests)
-
-add_executable(ValidatorTests test/ValidatorTests.cpp)
-target_link_libraries(ValidatorTests ${TEST_DEPS})
-target_include_directories(ValidatorTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(ValidatorTests googletest) 
-add_test(ValidatorTests ValidatorTests)
-
-add_executable(MoleculeTests test/MoleculeTests.cpp)
-target_link_libraries(MoleculeTests ${TEST_DEPS})
-target_include_directories(MoleculeTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(MoleculeTests googletest) 
-add_test(MoleculeTests MoleculeTests)
-
-add_executable(FENEFFTests test/FENEFFTests.cpp)
-target_link_libraries(FENEFFTests ${TEST_DEPS})
-target_include_directories(FENEFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(FENEFFTests googletest) 
-add_test(FENEFFTests FENEFFTests)
-
-add_executable(DebyeHuckelChargeTests test/DebyeHuckelChargeTests.cpp)
-target_link_libraries(DebyeHuckelChargeTests ${TEST_DEPS})
-target_include_directories(DebyeHuckelChargeTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(DebyeHuckelChargeTests googletest) 
-add_test(DebyeHuckelChargeTests DebyeHuckelChargeTests)
+#add_executable(SpeciesSwapMoveTests test/SpeciesSwapMoveTests.cpp)
+#target_link_libraries(SpeciesSwapMoveTests ${TEST_DEPS})
+#target_include_directories(SpeciesSwapMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+#add_dependencies(SpeciesSwapMoveTests googletest) 
+#add_test(SpeciesSwapMoveTests SpeciesSwapMoveTests)
 
 add_executable(ThreeInteractions test/ThreeInteractions.cpp)
 target_link_libraries(ThreeInteractions ${TEST_DEPS})
@@ -302,11 +289,23 @@ target_include_directories(ThreeInteractions PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(ThreeInteractions googletest) 
 add_test(ThreeInteractions ThreeInteractions)
 
-add_executable(ProtonationEnsembleTests test/ProtonationEnsembleTests.cpp)
-target_link_libraries(ProtonationEnsembleTests ${TEST_DEPS})
-target_include_directories(ProtonationEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(ProtonationEnsembleTests googletest) 
-add_test(ProtonationEnsembleTests ProtonationEnsembleTests)
+add_executable(TranslateMoveTests test/TranslateMoveTests.cpp)
+target_link_libraries(TranslateMoveTests ${TEST_DEPS})
+target_include_directories(TranslateMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(TranslateMoveTests googletest) 
+add_test(TranslateMoveTests TranslateMoveTests)
+
+add_executable(VolumeSwapMoveTests test/VolumeSwapMoveTests.cpp)
+target_link_libraries(VolumeSwapMoveTests ${TEST_DEPS})
+target_include_directories(VolumeSwapMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(VolumeSwapMoveTests googletest) 
+add_test(VolumeSwapMoveTests VolumeSwapMoveTests)
+
+add_executable(ValidatorTests test/ValidatorTests.cpp)
+target_link_libraries(ValidatorTests ${TEST_DEPS})
+target_include_directories(ValidatorTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(ValidatorTests googletest) 
+add_test(ValidatorTests ValidatorTests)
 
 add_executable(WorldManagerTests test/WorldManagerTests.cpp)
 target_link_libraries(WorldManagerTests ${TEST_DEPS})

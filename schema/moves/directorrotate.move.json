@@ -3,7 +3,7 @@
 	"properties" : {
 		"type" : { 
 			"type" : "string",
-			"enum" : ["SphereUnitVector"]
+			"enum" : ["DirectorRotate"]
 		},
 		"seed" : {
 			"type" : "integer",

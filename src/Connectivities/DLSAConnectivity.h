@@ -11,8 +11,8 @@
 
 namespace SAPHRON
 {
-	typedef std::function<void(Particle*, Director&)> DirectorFunc;
-	typedef std::function<int(const Particle*)> PFilterFunc;
+	typedef std::function<void(const Particle&, Director&)> DirectorFunc;
+	typedef std::function<int(const Particle&)> PFilterFunc;
 	// Class representing De-Localized Spin Anchoring (DLSA) on a particle.
 	// The de-localization is w.r.t. a user-supplied filter that uses a 
 	// de-localized director to compute the anchoring potential rather than 
@@ -45,9 +45,9 @@ namespace SAPHRON
 
 				for (int i = 0; i < world.GetParticleCount(); ++i)
 				{
-					auto* particle = world.SelectParticle(i);
+					auto particle = world.SelectParticle(i);
 					int id = particle->GetGlobalIdentifier();
-					int group = _pfunc(particle);
+					int group = _pfunc(*particle);
 
 					// See if the group is already registered in the vector. If not add it.
 					auto loc = std::find(std::begin(_groupVec),std::end(_groupVec), group);
@@ -78,9 +78,9 @@ namespace SAPHRON
 			}
 
 			// Evaluate Hamiltonian.
-			inline virtual double EvaluateEnergy(Particle* p) override
+			inline virtual double EvaluateEnergy(const Particle& p) override
 			{
-				int id = p->GetGlobalIdentifier();
+				int id = p.GetGlobalIdentifier();
 				auto loc = _groupMap.find(id);
 				if(loc == _groupMap.end())
 					return 0.0;

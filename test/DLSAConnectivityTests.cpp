@@ -13,13 +13,13 @@ TEST(DLSAConnectivity, DefaultBehavior)
 	world.ConfigureParticles({ &site1 }, { 1.0 });
 
 	// Initialize connectivity.
-	DLSAConnectivity connectivity(world, 1.0, [](Particle*, Director& dir){
+	DLSAConnectivity connectivity(world, 1.0, [](const Particle&, Director& dir){
 		dir.x = 1.0;
 		dir.y = 0.0;
 		dir.z = 0.0;
 	},
-	[](const Particle* p){
-		return (int)p->GetPositionRef().x;
+	[](const Particle& p){
+		return (int)p.GetPositionRef().x;
 	});
 
 	ForceFieldManager ffm;
