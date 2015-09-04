@@ -57,13 +57,13 @@ namespace SAPHRON
 			World* w1 = wm->GetRandomWorld();
 			World* w2 = wm->GetRandomWorld();
 
-			// Get volumes.
-			double v1 = w1->GetVolume();
-			double v2 = w2->GetVolume();
-
 			// Make sure we pick a different world.
 			while(w2 == w1)
 				w2 = wm->GetRandomWorld();
+
+			// Get volumes.
+			double v1 = w1->GetVolume();
+			double v2 = w2->GetVolume();
 
 			// Get random particle, eval E, backup neighbor list and position.
 			Particle* particle = w1->DrawRandomParticle();
