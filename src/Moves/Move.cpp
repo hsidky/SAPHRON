@@ -81,7 +81,7 @@ namespace SAPHRON
 
 		// Add to appropriate species pair.
 		try{
-				mm->PushMove(*move);
+				mm->AddMove(move);
 			} catch(std::exception& e) {
 				delete move;
 				throw BuildException({

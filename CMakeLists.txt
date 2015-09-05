@@ -211,6 +211,12 @@ target_include_directories(MoleculeTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(MoleculeTests googletest) 
 add_test(MoleculeTests MoleculeTests)
 
+add_executable(MoveManagerTests test/MoveManagerTests.cpp)
+target_link_libraries(MoveManagerTests ${TEST_DEPS})
+target_include_directories(MoveManagerTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(MoveManagerTests googletest) 
+add_test(MoveManagerTests MoveManagerTests)
+
 #add_executable(NVTEnsembleTests test/NVTEnsembleTests.cpp)
 #target_link_libraries(NVTEnsembleTests ${TEST_DEPS})
 #target_include_directories(NVTEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
