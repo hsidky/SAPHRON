@@ -42,7 +42,7 @@ namespace SAPHRON
 				Particle* particle = w->DrawRandomParticle();
 
 				// Initial position.
-				const Position& posi = particle->GetPositionRef();
+				Position posi = particle->GetPosition();
 				
 				// Evaluate initial particle energy. 
 				auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());

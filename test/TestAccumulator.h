@@ -4,6 +4,7 @@
 #include "../src/Properties/Pressure.h"
 #include "../src/Properties/Energy.h"
 #include "../src/Worlds/World.h"
+#include "../src/Worlds/WorldManager.h"
 
 namespace SAPHRON
 {
@@ -23,60 +24,65 @@ namespace SAPHRON
 			SimObserver(flags, frequency), _temperature(0),	_counter(0), _start(start),
 			_density(), _energy(), _pressure() {}
 
-			virtual void Visit(Ensemble* e) override
+			virtual void Visit(const Ensemble& e) override
 			{
-				if(e->GetIteration() < _start)
+				if(e.GetIteration() < _start)
 					return;
 
 				++_counter;
 				
 			}
 
-			virtual void Visit(DOSEnsemble*) override
+			virtual void Visit(const DOSEnsemble&) override
 			{
 
 			}
 
-			virtual void Visit(World* world) override
+			virtual void Visit(const WorldManager& wm) override
 			{
 				if((int)this->GetIteration() < _start)
 					return;
 				
-				if(this->Flags.temperature)
-					_temperature += world->GetTemperature();
+				for(auto& world : wm)
+				{
+					if(this->Flags.temperature)
+						_temperature += world->GetTemperature();
 				
-				if(this->Flags.energy)
-				{
-					if(_energy.find(world) == _energy.end())
-						_energy[world] = world->GetEnergy();
+					if(this->Flags.energy)
+					{
+						if(_energy.find(world) == _energy.end())
+							_energy[world] = world->GetEnergy();
+						else
+							_energy[world] += world->GetEnergy();
+					}
+					if(this->Flags.pressure)
+					{
+						if(_pressure.find(world) == _pressure.end())
+							_pressure[world] = world->GetPressure();
+						else
+							_pressure[world] += world->GetPressure();
+					}
+
+					if(_density.find(world) == _density.end())
+						_density[world]  = world->GetDensity();
 					else
-						_energy[world] += world->GetEnergy();
-				}
-				if(this->Flags.pressure)
-				{
-					if(_pressure.find(world) == _pressure.end())
-						_pressure[world] = world->GetPressure();
-					else
-						_pressure[world] += world->GetPressure();
+						_density[world] += world->GetDensity();
 				}
 
-				if(_density.find(world) == _density.end())
-					_density[world]  = world->GetDensity();
-				else
-					_density[world] += world->GetDensity();
+				
 			}
 
-			virtual void Visit(Particle*) override
+			virtual void Visit(const Particle&) override
 			{
 
 			}
 
-			virtual void Visit(MoveManager*) override
+			virtual void Visit(const MoveManager&) override
 			{
 				
 			}
 
-			virtual void Visit(ForceFieldManager*) override
+			virtual void Visit(const ForceFieldManager&) override
 			{
 				
 			}

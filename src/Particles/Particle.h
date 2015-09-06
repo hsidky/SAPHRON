@@ -41,6 +41,9 @@ namespace SAPHRON
 	typedef std::vector<Particle*> ParticleList;
 	typedef std::map<int, Particle*> ParticleMap;
 
+	// Forward declare.
+	class World;
+
 	// Abstract class Particle represents either a composite or primitive object, from an atom/site to
 	// a molecule to a collection of molecules. It represents an common interface allowing the manipulation
 	// of all of the above through a common interface.
@@ -417,7 +420,7 @@ namespace SAPHRON
 
 			virtual void AcceptVisitor(Visitor &v) override
 			{
-				v.Visit(this);
+				v.Visit(*this);
 			}
 
 			// Check if particle has children.

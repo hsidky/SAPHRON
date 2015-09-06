@@ -1,13 +1,14 @@
 #include "../src/ForceFields/LennardJonesFF.h"
 #include "../src/ForceFields/ForceFieldManager.h"
-#include "../src/Ensembles/NVTEnsemble.h"
+#include "../src/Ensembles/StandardEnsemble.h"
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Particles/Site.h"
 #include "../src/Particles/Molecule.h"
-#include "../src/Observers/ConsoleObserver.h"
+//#include "../src/Observers/ConsoleObserver.h"
 #include "TestAccumulator.h"
 #include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/WorldManager.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
@@ -50,7 +51,7 @@ TEST(LennardJonesFF, ReducedProperties)
 	int N = 500; // Number of LJ particles per NIST.
 	double sigma = 1.0; 
 	double eps   = 1.0; 
-	double kb = 1.0;
+	//double kb = 1.0;
 	double T = 0.85;
 	double rcut = 3.0*sigma;
 
@@ -65,6 +66,11 @@ TEST(LennardJonesFF, ReducedProperties)
 	world.SetSkinThickness(1.0);
 	world.PackWorld({&ljm}, {1.0}, N, rdensity);
 	world.UpdateNeighborList();
+	world.SetTemperature(T);
+
+	// Initialize world manager.
+	WorldManager wm;
+	wm.AddWorld(&world);
 
 	ASSERT_EQ(N, world.GetParticleCount());
 	ASSERT_NEAR((double)N*pow(sigma,3)/rdensity, world.GetVolume(), 1e-10);
@@ -77,7 +83,7 @@ TEST(LennardJonesFF, ReducedProperties)
 	// Initialize moves. 
 	TranslateMove move(0.22);
 	MoveManager mm;
-	mm.PushMove(move);
+	mm.AddMove(&move);
 
 	// Initialize observer.
 	SimFlags flags;
@@ -86,25 +92,25 @@ TEST(LennardJonesFF, ReducedProperties)
 	flags.iterations = 1;
 	flags.acceptance = 1;
 	flags.pressure = 1;
-	ConsoleObserver observer(flags, 1000);
+	//ConsoleObserver observer(flags, 1000);
 
 	// Initialize accumulator. 
-	TestAccumulator accumulator(flags, 10, 5000);
+	TestAccumulator accumulator(flags, 1000, 5000*N);
 
 	// Initialize ensemble. 
-	NVTEnsemble ensemble(world, ffm, mm, T, 34435);
-	ensemble.SetBoltzmannConstant(kb);
-	ensemble.AddObserver(&observer);
+	StandardEnsemble ensemble(&wm, &ffm, &mm);
+
+	//ensemble.AddObserver(&observer);
 	ensemble.AddObserver(&accumulator);
 
 	// Run 
-	ensemble.Run(20000);
+	ensemble.Run(20000*N);
 
-	ASSERT_NEAR(-5.5121, accumulator.GetAverageEnergy().total()/(double)N, 1e-2);
-	ASSERT_NEAR(6.7714E-03, accumulator.GetAveragePressure(), 2.0E-03);
+	ASSERT_NEAR(-5.5121, accumulator.GetAverageEnergies()[&world].total()/(double)N, 1e-2);
+	ASSERT_NEAR(6.7714E-03, accumulator.GetAveragePressures()[&world].isotropic(), 2.0E-03);
 
 	// "Conservation" of energy and pressure.
 	EPTuple H = ffm.EvaluateHamiltonian(world);
-	ASSERT_NEAR(H.pressure.isotropic(), ensemble.GetPressure().isotropic()-ensemble.GetPressure().ideal, 1e-9);
-	ASSERT_NEAR(H.energy.total(), ensemble.GetEnergy().total(), 1e-9);
+	ASSERT_NEAR(H.pressure.isotropic(), world.GetPressure().isotropic()-world.GetPressure().ideal, 1e-9);
+	ASSERT_NEAR(H.energy.total(), world.GetEnergy().total(), 1e-9);
 }

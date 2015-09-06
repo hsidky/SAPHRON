@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Simulation/SimInfo.h"
 #include "../Particles/Particle.h"
 #include "../Observers/Visitable.h"
 #include "../Properties/EPTuple.h"
@@ -19,7 +20,7 @@ namespace SAPHRON
 	// updating negihbor lists on particles. World implements ParticleObserver so it can "listen in" 
 	// on it's particles if it needs it. Note: it is the World implementation's responsibility to register 
 	// itself with particles if it needs it, and to remove this when a particle is removed.
-	class World : public Visitable, public ParticleObserver
+	class World : public ParticleObserver
 	{
 	private:
 		double _temperature; 
@@ -163,7 +164,13 @@ namespace SAPHRON
 		void SetTemperature(double temperature) { _temperature = temperature; }
 
 		// Get world pressure.
-		Pressure GetPressure() const { return _pressure; }
+		Pressure GetPressure() const 
+		{
+			auto p = _pressure;
+			auto& sim = SimInfo::Instance();
+			p.ideal = GetParticleCount()*sim.GetkB()*_temperature/GetVolume(); 
+			return p; 
+		}
 		
 		// Set world pressure. 
 		void SetPressure(const Pressure& p) { _pressure = p; }
@@ -191,13 +198,6 @@ namespace SAPHRON
 		 * Other interface implementations *
 		 *                                 *
 		 ***********************************/
-
-		// Accept a visitor.
-		virtual void AcceptVisitor(class Visitor &v) override
-		{
-			v.Visit(this);
-			VisitChildren(v);
-		}
 
 		// Particle observer.
 		virtual void ParticleUpdate(const ParticleEvent& pEvent) override = 0;

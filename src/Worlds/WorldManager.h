@@ -2,11 +2,12 @@
 
 #include "World.h"
 #include "../Rand.h"
+#include "../Observers/Visitable.h"
 
 namespace SAPHRON
 {
 	// WorldManager class that manages worlds for simulations. 
-	class WorldManager
+	class WorldManager : public Visitable
 	{
 	private:
 		// List of worlds. 
@@ -99,8 +100,16 @@ namespace SAPHRON
 			return _worlds[_rand.int32() % _worlds.size()];
 		}
 
+		// Accept visitor.
+		virtual void AcceptVisitor(Visitor& v) override
+		{
+			v.Visit(*this);
+		}
+
 		// Iterators.
 		iterator begin() { return _worlds.begin(); }
 		iterator end() { return _worlds.end(); }
+		const_iterator begin() const { return _worlds.begin(); }
+		const_iterator end() const { return _worlds.end(); }
 	};
 }

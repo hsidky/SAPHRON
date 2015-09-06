@@ -110,7 +110,7 @@ namespace SAPHRON
 		// Accept a visitor.
 		virtual void AcceptVisitor(class Visitor &v)
 		{
-			v.Visit(this);
+			v.Visit(*this);
 		}
 
 		// Iterators.

@@ -1,4 +1,4 @@
-#include "../src/Ensembles/NVTEnsemble.h"
+#include "../src/Ensembles/StandardEnsemble.h"
 #include "../src/ForceFields/ForceFieldManager.h"
 #include "../src/ForceFields/LebwohlLasherFF.h"
 #include "../src/Moves/MoveManager.h"
@@ -45,7 +45,7 @@ TEST(NVTEnsemble, DefaultBehavior)
 	//ConsoleObserver co(flags, 100);
 
 	// Initialize ensemble.
-	NVTEnsemble ensemble(&wm, &ffm, &mm);
+	StandardEnsemble ensemble(&wm, &ffm, &mm);
 	//ensemble.AddObserver(&co);
 
 	// Run

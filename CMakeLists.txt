@@ -92,7 +92,7 @@ set(SOURCE
 	src/schema.cpp
 #	src/Ensembles/DOSEnsemble.cpp
 	src/Ensembles/Ensemble.cpp
-	src/Ensembles/NVTEnsemble.cpp
+	src/Ensembles/StandardEnsemble.cpp
 #	src/Ensembles/ProtonationMDEnsemble.cpp
 	src/ForceFields/ForceField.cpp
 	src/ForceFields/ForceFieldManager.cpp
@@ -199,11 +199,11 @@ target_include_directories(LebwohlLasherFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(LebwohlLasherFFTests googletest) 
 add_test(LebwohlLasherFFTests LebwohlLasherFFTests)
 
-#add_executable(LennardJonesFFTests test/LennardJonesFFTests.cpp)
-#target_link_libraries(LennardJonesFFTests ${TEST_DEPS})
-#target_include_directories(LennardJonesFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
-#add_dependencies(LennardJonesFFTests googletest) 
-#add_test(LennardJonesFFTests LennardJonesFFTests)
+add_executable(LennardJonesFFTests test/LennardJonesFFTests.cpp)
+target_link_libraries(LennardJonesFFTests ${TEST_DEPS})
+target_include_directories(LennardJonesFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(LennardJonesFFTests googletest) 
+add_test(LennardJonesFFTests LennardJonesFFTests)
 
 add_executable(MoleculeTests test/MoleculeTests.cpp)
 target_link_libraries(MoleculeTests ${TEST_DEPS})

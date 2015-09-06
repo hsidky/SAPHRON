@@ -29,12 +29,12 @@ namespace SAPHRON
 	public:
 		CSVObserver(std::string prefix, SimFlags flags, unsigned int frequency = 1);
 
-		virtual void Visit(Ensemble* e) override;
-		virtual void Visit(DOSEnsemble* e) override;
-		virtual void Visit(World* w) override;
-		virtual void Visit(Particle* p) override;
-		virtual void Visit(MoveManager* mm) override;
-		virtual void Visit(ForceFieldManager* ffm) override;
+		virtual void Visit(const Ensemble& e) override;
+		virtual void Visit(const DOSEnsemble& e) override;
+		virtual void Visit(const WorldManager& w) override;
+		virtual void Visit(const Particle& p) override;
+		virtual void Visit(const MoveManager& mm) override;
+		virtual void Visit(const ForceFieldManager& ffm) override;
 
 		// Post visit, mark printed bools as true.
 		virtual void PostVisit() override
