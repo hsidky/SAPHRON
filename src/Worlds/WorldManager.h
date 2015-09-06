@@ -26,6 +26,9 @@ namespace SAPHRON
 		}
 
 	public:
+		typedef WorldList::iterator iterator;
+		typedef WorldList::const_iterator const_iterator;
+
 		WorldManager(int seed = 1090) : 
 		_worlds(0), _active(nullptr), _rand(seed) {}
 
@@ -95,5 +98,9 @@ namespace SAPHRON
 		{
 			return _worlds[_rand.int32() % _worlds.size()];
 		}
+
+		// Iterators.
+		iterator begin() { return _worlds.begin(); }
+		iterator end() { return _worlds.end(); }
 	};
 }

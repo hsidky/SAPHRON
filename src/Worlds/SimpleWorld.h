@@ -187,9 +187,21 @@ namespace SAPHRON
 				{
 					auto dist = particle->GetCheckpointDist();
 					ApplyMinimumImage(dist);
-					if(dist.normsq() > _rskinsq/4.0)	
+					if(dist.normsq() > _rskinsq/4.0)
+					{	
 						UpdateNeighborList();
+						return;
+					}
 				}
+			}
+
+			// Check particle and update neighbor lists if needed.
+			virtual void CheckNeighborListUpdate(Particle* p) override
+			{
+				auto dist = p->GetCheckpointDist();
+				ApplyMinimumImage(dist);
+				if(dist.normsq() > _rskinsq/4.0)	
+					UpdateNeighborList();
 			}
 
 			// Sets the neighbor list cutoff radius.

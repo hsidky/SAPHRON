@@ -57,6 +57,9 @@ namespace SAPHRON
 		// Checks list of particles, and if needed updates neighbor list.
 		virtual void CheckNeighborListUpdate(const ParticleList& particles) = 0;
 
+		// Check if neighbor lists need updating based on particle.
+		virtual void CheckNeighborListUpdate(Particle* p) = 0;
+
 		// Get a specific particle based on location.
 		virtual Particle* SelectParticle(int location) = 0;
 
