@@ -60,6 +60,9 @@ namespace SAPHRON
 				auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
 				Energy de = ef.energy - ei.energy;
 				
+				// Update neighbor list if needed.
+				w->CheckNeighborListUpdate(particle);
+
 				// Get sim info for kB.
 				auto sim = SimInfo::Instance();
 

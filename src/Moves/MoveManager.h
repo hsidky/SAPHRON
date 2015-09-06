@@ -115,6 +115,6 @@ namespace SAPHRON
 
 		// Iterators.
 		iterator begin() { return _moves.begin(); }
-			iterator end() { return _moves.end(); }
+		iterator end() { return _moves.end(); }
 	};
 }
