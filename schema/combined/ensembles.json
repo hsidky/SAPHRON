@@ -1,62 +1,62 @@
 {
     "oneOf": [
         {
-            "required": [
-                "type",
-                "temperature"
-            ],
-            "type": "object",
-            "additionalProperties": false,
             "properties": {
-                "temperature": {
-                    "exclusiveMinimum": "true",
-                    "type": "number",
-                    "minimum": 0
-                },
                 "seed": {
-                    "type": "integer",
-                    "minimum": 0
+                    "minimum": 0,
+                    "type": "integer"
+                },
+                "temperature": {
+                    "minimum": 0,
+                    "exclusiveMinimum": "true",
+                    "type": "number"
                 },
                 "type": {
-                    "type": "string",
                     "enum": [
                         "NVT"
-                    ]
+                    ],
+                    "type": "string"
                 },
                 "sweeps": {
-                    "type": "integer",
-                    "minimum": 1
+                    "minimum": 1,
+                    "type": "integer"
                 }
-            }
-        },
-        {
+            },
+            "type": "object",
             "required": [
                 "type",
                 "temperature"
             ],
-            "type": "object",
-            "additionalProperties": false,
+            "additionalProperties": false
+        },
+        {
             "properties": {
-                "temperature": {
-                    "exclusiveMinimum": "true",
-                    "type": "number",
-                    "minimum": 0
-                },
                 "seed": {
-                    "type": "integer",
-                    "minimum": 0
+                    "minimum": 0,
+                    "type": "integer"
+                },
+                "temperature": {
+                    "minimum": 0,
+                    "exclusiveMinimum": "true",
+                    "type": "number"
                 },
                 "type": {
-                    "type": "string",
                     "enum": [
                         "GibbsNVT"
-                    ]
+                    ],
+                    "type": "string"
                 },
                 "sweeps": {
-                    "type": "integer",
-                    "minimum": 1
+                    "minimum": 1,
+                    "type": "integer"
                 }
-            }
+            },
+            "type": "object",
+            "required": [
+                "type",
+                "temperature"
+            ],
+            "additionalProperties": false
         }
     ]
 }

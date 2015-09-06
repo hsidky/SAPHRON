@@ -25,7 +25,7 @@ namespace SAPHRON
 		static std::string SpeciesSwapMove;
 		static std::string ParticleSwapMove;
 		static std::string Moves;
-		static std::string IdentityChangeMove;
+		static std::string RandomIdentityMove;
 		static std::string FlipSpinMove;
 		static std::string GibbsNVTEnsemble;
 		static std::string NVTEnsemble;

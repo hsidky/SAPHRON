@@ -39,16 +39,13 @@ namespace SAPHRON
 			/* Getters and setters */
 
 			// Get seed.
-			virtual int GetSeed() = 0;
+			virtual int GetSeed() const = 0;
 
 			// Set seed.
 			virtual void SetSeed(int seed) = 0;
 
 			// Gets the current iteration count.
-			inline int GetIteration()
-			{
-				return _iterations;
-			}
+			inline int GetIteration() const { return _iterations; }
 
 			// Reset iteration count.
 			void ResetIterations()
@@ -64,8 +61,8 @@ namespace SAPHRON
 			}
 
 			/* Properties */
-			virtual std::string GetName() = 0;
-			virtual AcceptanceMap GetAcceptanceRatio() { return {}; }
+			virtual std::string GetName() const = 0;
+			virtual AcceptanceMap GetAcceptanceRatio() const { return {}; }
 
 			virtual ~Ensemble(){}
 	};

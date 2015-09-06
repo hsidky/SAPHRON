@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 '''
-buildschema.py - Compiles individual schema files into a single complete 
-                 JSON schema and creates a C++ header file containing 
+buildschema.py - Compiles individual schema files into a single complete
+                 JSON schema and creates a C++ header file containing
                  the escaped schemas.
 '''
-import re 
+import re
 import os
 import json
-import sys 
+import sys
 from sys import exit
 
 
@@ -25,7 +25,7 @@ files = [
 	("ensembles/nvt.ensemble.json", "NVTEnsemble"),
 	("ensembles/gibbsnvt.ensemble.json", "GibbsNVTEnsemble"),
 	("moves/flipspin.move.json", "FlipSpinMove"),
-	("moves/identitychange.move.json", "IdentityChangeMove"),
+	("moves/randomidentity.move.json", "RandomIdentityMove"),
 	("moves/moves.json", "Moves"),
 	("moves/particleswap.move.json", "ParticleSwapMove"),
 	("moves/speciesswap.move.json", "SpeciesSwapMove"),
@@ -45,7 +45,7 @@ files = [
 	("forcefields/forcefields.json", "ForceFields")
 	]
 
-# Files to generate combined 
+# Files to generate combined
 cfiles = [
 	("connectivities/connectivities.json", cdir + "connectivities.json"),
 	("ensembles/ensembles.json", cdir + "ensembles.json"),
@@ -54,16 +54,18 @@ cfiles = [
 	("particles/particles.json", cdir + "particles.json")
 	]
 
+
 def processfile(filename):
 	fpath = os.path.dirname(filename)
 	with open(filename, 'r') as f:
 		text = f.read()
 		for match in re.findall('"@file[(](.*)[)]"', text):
 			text = text.replace(
-				'"@file(' + match + ')"', 
+				'"@file(' + match + ')"',
 				processfile(fpath + "/" + match)
 			)
 		return text
+
 
 def gencombined(inoutfile):
 	jtext = processfile(inoutfile[0])
@@ -75,9 +77,10 @@ def gencombined(inoutfile):
 	with open(inoutfile[1], 'w') as outfile:
 		json.dump(jobj, outfile, indent=4, separators=(',', ': '))
 
+
 def genheader(inputfd):
 	fout = os.path.join(currd, schemah)
-	fin = fout 
+	fin = fout
 	if not os.path.isfile(fin):
 		fin = os.path.join(currd, "headertemplate.h")
 
@@ -95,9 +98,9 @@ def genheader(inputfd):
 	with open(fout, "w") as f:
 		f.writelines(lines)
 
-	# Write cpp. 
+	# Write cpp.
 	fout = os.path.join(currd, schemac)
-	fin = fout 
+	fin = fout
 	if not os.path.isfile(fin):
 		fin = os.path.join(currd, "sourcetemplate.cpp")
 
@@ -106,7 +109,7 @@ def genheader(inputfd):
 		lines = f.readlines()
 		i = next(j for j, s in enumerate(lines) if 'INSERT_DEF_HERE' in s)
 		lines.insert(
-			i+1, 
+			i+1,
 			"\t" + defn + '"' + json.dumps(jobj).replace('"', '\\"') + '";\n'
 		)
 
