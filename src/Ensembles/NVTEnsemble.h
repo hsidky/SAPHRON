@@ -2,6 +2,7 @@
 
 #include "../ForceFields/ForceFieldManager.h"
 #include "../Moves/MoveManager.h"
+#include "../Worlds/WorldManager.h"
 #include "../Rand.h"
 #include "../Worlds/World.h"
 #include "Ensemble.h"
@@ -16,42 +17,21 @@ namespace SAPHRON
 	{
 		private:
 
-			// System temperature.
-			double _temperature;
+			// Pointer to world manager.
+			WorldManager* _wmanager;
 
-			// System energy and pressure.
-			EPTuple _eptuple;
+			// Pointer to force field manager.
+			ForceFieldManager* _ffmanager;
 
-			// Reference to world.
-			World& _world;
-
-			// Reference to force field manager.
-			ForceFieldManager& _ffmanager;
-
-			// Reference to move manager.
-			MoveManager& _mmanager;
-
-			// Random number generator.
-			Rand _rand;
-
-			// Particle list.
-			ParticleList _particles;
+			// Pointer to move manager.
+			MoveManager* _mmanager;
 
 			// Acceptance map.
 			AcceptanceMap _accmap;
 
-			// Rand seed.
-			int _seed;
-
-			inline double AcceptanceProbability(double prevH, double currH)
-			{
-				double p = exp(-(currH - prevH) / (_temperature*this->GetBoltzmannConstant()));
-				return p > 1.0 ? 1.0 : p;
-			}
-
 			inline void UpdateAcceptances()
 			{
-				for(auto& move : _mmanager)
+				for(auto& move : *_mmanager)
 					_accmap[move->GetName()] = move->GetAcceptanceRatio();
 			}
 
@@ -62,61 +42,37 @@ namespace SAPHRON
 			// Visit children.
 			virtual void VisitChildren(Visitor& v) override
 			{
-				_mmanager.AcceptVisitor(v);
-				_ffmanager.AcceptVisitor(v);
-				_world.AcceptVisitor(v);
+				_mmanager->AcceptVisitor(v);
+				_ffmanager->AcceptVisitor(v);
 			}
 
 		public:
-			NVTEnsemble(World& world,
-			            ForceFieldManager& ffmanager,
-			            MoveManager& mmanager,
-			            double temperature,
-			            int seed = 1) :
-				_temperature(temperature), _eptuple(), _world(world),
-				_ffmanager(ffmanager), _mmanager(mmanager), _rand(seed),
-				_particles(0), _accmap(), _seed(seed)
+			NVTEnsemble(WorldManager* wmanager,
+			            ForceFieldManager* ffmanager,
+			            MoveManager* mmanager) :
+				_wmanager(wmanager), _ffmanager(ffmanager), 
+				_mmanager(mmanager), _accmap()
 			{
+				// Evaluate energies of systems. 
+				for(auto& world : *_wmanager)
+				{
+					auto EP = _ffmanager->EvaluateHamiltonian(*world);
+					world->SetEnergy(EP.energy);
+					world->SetPressure(EP.pressure);
+				}
 
-				_particles.reserve(10);
-				_eptuple = ffmanager.EvaluateHamiltonian(world);
 				UpdateAcceptances();
 			}
 
 			// Run the NVT ensemble for a specified number of iterations.
 			virtual void Run(int iterations) override;
 
-			// Get temperature.
-			virtual double GetTemperature() override 
-			{
-				return _temperature;
-			}
-
-			virtual Pressure GetPressure() override
-			{
-				Pressure p = _eptuple.pressure;
-				p.ideal = (double)_world.GetParticleCount()*GetBoltzmannConstant()*_temperature/_world.GetVolume();
-				return p;
-			}
-
-			// Get energy.
-			virtual Energy GetEnergy() override
-			{
-				return _eptuple.energy;
-			}
-
 			// Get ratio of accepted moves.
-			virtual AcceptanceMap GetAcceptanceRatio() override
+			virtual AcceptanceMap GetAcceptanceRatio() const override
 			{
 				return _accmap;
 			}
 
-			// Get seed.
-			virtual int GetSeed() override { return _seed; }
-			
-			// Set seed.
-			virtual void SetSeed(int seed) override { _rand.seed(seed); _seed = seed; }
-
-			virtual std::string GetName() override { return "NVT"; }
+			virtual std::string GetName() const override { return "NVT"; }
 	};
 }

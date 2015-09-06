@@ -92,7 +92,7 @@ set(SOURCE
 	src/schema.cpp
 #	src/Ensembles/DOSEnsemble.cpp
 	src/Ensembles/Ensemble.cpp
-#	src/Ensembles/NVTEnsemble.cpp
+	src/Ensembles/NVTEnsemble.cpp
 #	src/Ensembles/ProtonationMDEnsemble.cpp
 	src/ForceFields/ForceField.cpp
 	src/ForceFields/ForceFieldManager.cpp
@@ -217,11 +217,11 @@ target_include_directories(MoveManagerTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(MoveManagerTests googletest) 
 add_test(MoveManagerTests MoveManagerTests)
 
-#add_executable(NVTEnsembleTests test/NVTEnsembleTests.cpp)
-#target_link_libraries(NVTEnsembleTests ${TEST_DEPS})
-#target_include_directories(NVTEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
-#add_dependencies(NVTEnsembleTests googletest) 
-#add_test(NVTEnsembleTests NVTEnsembleTests)
+add_executable(NVTEnsembleTests test/NVTEnsembleTests.cpp)
+target_link_libraries(NVTEnsembleTests ${TEST_DEPS})
+target_include_directories(NVTEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(NVTEnsembleTests googletest) 
+add_test(NVTEnsembleTests NVTEnsembleTests)
 
 add_executable(P2SAConnectivityTests test/P2SAConnectivityTests.cpp)
 target_link_libraries(P2SAConnectivityTests ${TEST_DEPS})

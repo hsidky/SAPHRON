@@ -4,34 +4,12 @@ namespace SAPHRON
 {
 	inline void NVTEnsemble::Iterate()
 	{
-		_mmanager.ResetMoveAcceptances();
-		for (int i = 0; i < _world.GetParticleCount(); ++i)
-		{
-
-			// Select random move.
-			auto move = _mmanager.SelectRandomMove();
-
-			// Draw sample, evaluate energy.
-			move->Draw(_world, _particles);
-			auto prevH = _ffmanager.EvaluateHamiltonian(_particles, _world.GetComposition(), _world.GetVolume());
-
-			// Perform move.
-			EPTuple currH;
-			if(move->Perform(_world, _particles))
-				currH = _ffmanager.EvaluateHamiltonian(_world);
-			else
-				currH = _ffmanager.EvaluateHamiltonian(_particles, _world.GetComposition(), _world.GetVolume());
-
-			// Check for neighborlist updates.
-			_world.CheckNeighborListUpdate(_particles);
-
-			// Acceptance probability.
-			if(AcceptanceProbability(prevH.energy.total(), currH.energy.total()) < _rand.doub())
-				move->Undo();
-			else
-				_eptuple += (currH - prevH);
-		}
-
+		_mmanager->ResetMoveAcceptances();
+		
+		// Select random move and perform.
+		auto move = _mmanager->SelectRandomMove();
+		move->Perform(_wmanager, _ffmanager, MoveOverride::None);			
+		
 		UpdateAcceptances();
 		this->IncrementIterations();
 		this->NotifyObservers(SimEvent(this, this->GetIteration()));

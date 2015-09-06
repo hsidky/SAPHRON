@@ -38,12 +38,6 @@ namespace SAPHRON
 
 			/* Getters and setters */
 
-			// Get seed.
-			virtual int GetSeed() const = 0;
-
-			// Set seed.
-			virtual void SetSeed(int seed) = 0;
-
 			// Gets the current iteration count.
 			inline int GetIteration() const { return _iterations; }
 
