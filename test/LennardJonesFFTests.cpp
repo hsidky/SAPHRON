@@ -153,7 +153,7 @@ TEST(LennardJonesFF, ReducedProperties)
 	//ConsoleObserver observer(flags, 1000);
 
 	// Initialize accumulator. 
-	TestAccumulator accumulator(flags, 10*N, 10000*N);
+	TestAccumulator accumulator(flags, 10*N, 20000*N);
 
 	// Initialize ensemble. 
 	StandardEnsemble ensemble(&wm, &ffm, &mm);
@@ -162,15 +162,15 @@ TEST(LennardJonesFF, ReducedProperties)
 	ensemble.AddObserver(&accumulator);
 
 	// Run 
-	ensemble.Run(30000*N);
+	ensemble.Run(50000*N);
 
 	// "Conservation" of energy and pressure.
 	EPTuple H = ffm.EvaluateHamiltonian(world);
-	ASSERT_NEAR(H.pressure.isotropic(), world.GetPressure().isotropic()-world.GetPressure().ideal, 1e-9);
-	ASSERT_NEAR(H.energy.total(), world.GetEnergy().total(), 1e-9);
+	ASSERT_NEAR(H.pressure.isotropic(), world.GetPressure().isotropic()-world.GetPressure().ideal, 1e-8);
+	ASSERT_NEAR(H.energy.total(), world.GetEnergy().total(), 1e-8);
 
-	ASSERT_NEAR(-5.5121, accumulator.GetAverageEnergies()[&world].total()/(double)N, 1e-2);
-	ASSERT_NEAR(6.7714E-03, accumulator.GetAveragePressures()[&world].isotropic(), 2.0E-03);
+	ASSERT_NEAR(-5.5121, accumulator.GetAverageEnergies()[&world].total()/(double)N, 1e-3);
+	ASSERT_NEAR(6.7714E-03, accumulator.GetAveragePressures()[&world].isotropic(), 1e-3);
 
 	
 }
