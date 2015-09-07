@@ -64,7 +64,7 @@ TEST(LennardJonesFF, ReducedProperties)
 	// World volume is adjusted by packworld.
 	SimpleWorld world(1, 1, 1, rcut + 1.0);
 	world.SetSkinThickness(1.0);
-	world.PackWorld({&ljm}, {1.0}, N, rdensity);
+	world.PackWorld({ljatom}, {1.0}, N, rdensity);
 	world.UpdateNeighborList();
 	world.SetTemperature(T);
 
@@ -81,7 +81,7 @@ TEST(LennardJonesFF, ReducedProperties)
 	ffm.AddNonBondedForceField("LJ", "LJ", ff);
 
 	// Initialize moves. 
-	TranslateMove move(0.22);
+	TranslateMove move(0.20);
 	MoveManager mm;
 	mm.AddMove(&move);
 
@@ -95,7 +95,7 @@ TEST(LennardJonesFF, ReducedProperties)
 	//ConsoleObserver observer(flags, 1000);
 
 	// Initialize accumulator. 
-	TestAccumulator accumulator(flags, 1000, 5000*N);
+	TestAccumulator accumulator(flags, 100, 1000*N);
 
 	// Initialize ensemble. 
 	StandardEnsemble ensemble(&wm, &ffm, &mm);
@@ -106,11 +106,12 @@ TEST(LennardJonesFF, ReducedProperties)
 	// Run 
 	ensemble.Run(20000*N);
 
-	ASSERT_NEAR(-5.5121, accumulator.GetAverageEnergies()[&world].total()/(double)N, 1e-2);
-	ASSERT_NEAR(6.7714E-03, accumulator.GetAveragePressures()[&world].isotropic(), 2.0E-03);
-
 	// "Conservation" of energy and pressure.
 	EPTuple H = ffm.EvaluateHamiltonian(world);
 	ASSERT_NEAR(H.pressure.isotropic(), world.GetPressure().isotropic()-world.GetPressure().ideal, 1e-9);
 	ASSERT_NEAR(H.energy.total(), world.GetEnergy().total(), 1e-9);
+
+	// Check against NIST values.
+	ASSERT_NEAR(-5.5121, accumulator.GetAverageEnergies()[&world].total()/(double)N, 1e-2);
+	ASSERT_NEAR(6.7714E-03, accumulator.GetAveragePressures()[&world].isotropic(), 2.0E-03);
 }
