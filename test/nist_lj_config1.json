@@ -4,7 +4,7 @@
 			"type" : "Simple",
 			"dimensions" : [10, 10, 10],
 			"seed" : 300, 
-			"nlist_cutoff" : 4.5,
+			"r_cutoff" : 3.0,
 			"skin_thickness" : 0.5
 		}
 	],

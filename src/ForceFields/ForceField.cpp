@@ -38,9 +38,8 @@ namespace SAPHRON
 
 			double eps = json["epsilon"].asDouble();
 			double sigma = json["sigma"].asDouble();
-			double rcut = json["rcut"].asDouble();
 			
-			ff = new LennardJonesFF(eps, sigma, rcut);
+			ff = new LennardJonesFF(eps, sigma);
 		}
 		else if(type == "LebwohlLasher")
 		{

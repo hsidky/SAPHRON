@@ -13,8 +13,8 @@ TEST(ParticleSwapMove, DefaultBehavior)
 	Site s({0, 0, 0},{0,0,0}, "LJ");
 
 	// "Liquid-like" world. Volumes adjusted by packworld.
-	SimpleWorld liquid(1, 1, 1, 5);
-	SimpleWorld vapor(1, 1, 1, 25);
+	SimpleWorld liquid(1, 1, 1,  4.0);
+	SimpleWorld vapor(1, 1, 1,  4.0);
 
 	// Pack the worlds. 
 	liquid.PackWorld({&s}, {1.0}, 200, 0.1);
@@ -25,7 +25,7 @@ TEST(ParticleSwapMove, DefaultBehavior)
 
 	ForceFieldManager ffm;
 
-	LennardJonesFF lj(10.0, 1.0, 4.0);
+	LennardJonesFF lj(10.0, 1.0);
 	ffm.AddNonBondedForceField("LJ", "LJ", lj);
 
 	auto H1 = ffm.EvaluateHamiltonian(liquid);

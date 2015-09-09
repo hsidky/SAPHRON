@@ -46,22 +46,23 @@ namespace SAPHRON
 						 json["dimensions"][2].asDouble()};
 
 			// Neighbor list cutoff check.
-			double ncut = json["nlist_cutoff"].asDouble();
+			double ncut = json.get("nlist_cutoff",0.0).asDouble();
 			if(ncut > dim.x/2.0 || ncut > dim.y/2.0 || ncut > dim.z/2.0)
 				throw BuildException({"Neighbor list cutoff must not exceed "
 									  "half the shortest box vector."});
 			
 			// Skin thickness check.
-			double skin = json["skin_thickness"].asDouble();
-			if(skin > ncut)
-				throw BuildException({"Skin thickness must not exceed neighbor list cutoff."});
+			double rcut = json["r_cutoff"].asDouble();
+			if(ncut && rcut > ncut)
+				throw BuildException({"Cutoff radius must not exceed neighbor list cutoff."});
 
 			srand(time(NULL));
 			int seed = json.isMember("seed") ? json["seed"].asInt() : rand();
 
 			
-			world = new SimpleWorld(dim.x, dim.y, dim.z, ncut, seed);
-			world->SetSkinThickness(skin);
+			world = new SimpleWorld(dim.x, dim.y, dim.z, rcut, seed);
+			if(ncut)
+				world->SetNeighborRadius(ncut);
 		}
 
 		return world;

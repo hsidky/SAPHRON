@@ -127,11 +127,14 @@ namespace SAPHRON
 		// Set neighbor list radius cutoff.
 		virtual void SetNeighborRadius(double ncut) = 0;
 
-		// Get skin thickness for neighbor list re-generation.
-		virtual double GetSkinThickness() const = 0;
+		// Get the cutoff radius for forcefields.
+		virtual double GetCutoffRadius() const = 0;
 
-		// Set skin thickness for neighbor list re-generation.
-		virtual void SetSkinThickness(double x) = 0;		
+		// Set the cutoff radius for forcefields..
+		virtual void SetCutoffRadius(double x) = 0;
+
+		// Get the effective skin thickness of the world.
+		virtual double GetSkinThickness() const = 0;
 
 		// Get system composition.
 		virtual const CompositionList& GetComposition() const = 0;

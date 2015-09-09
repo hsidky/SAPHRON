@@ -14,11 +14,6 @@
 			"type" : "number", 
 			"minimum" : 0
 		},
-		"rcut" : {
-			"type" : "number", 
-			"minimum" : 0,
-			"exclusiveMinimum" : true
-		},
 		"species" : "@file(nonbonded.forcefield.json)"
 	},
 	"additionalProperties" : false,

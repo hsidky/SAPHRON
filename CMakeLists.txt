@@ -181,11 +181,11 @@ target_include_directories(ForceFieldManagerTests PRIVATE "${GTEST_INCLUDE_DIR}"
 add_dependencies(ForceFieldManagerTests googletest) 
 add_test(ForceFieldManagerTests ForceFieldManagerTests)
 
-#add_executable(GibbsNVTEnsembleTests test/GibbsNVTEnsembleTests.cpp)
-#target_link_libraries(GibbsNVTEnsembleTests ${TEST_DEPS})
-#target_include_directories(GibbsNVTEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
-#add_dependencies(GibbsNVTEnsembleTests googletest) 
-#add_test(GibbsNVTEnsembleTests GibbsNVTEnsembleTests)
+add_executable(GibbsNVTEnsembleTests test/GibbsNVTEnsembleTests.cpp)
+target_link_libraries(GibbsNVTEnsembleTests ${TEST_DEPS})
+target_include_directories(GibbsNVTEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(GibbsNVTEnsembleTests googletest) 
+add_test(GibbsNVTEnsembleTests GibbsNVTEnsembleTests)
 
 add_executable(HistogramTests test/HistogramTests.cpp)
 target_link_libraries(HistogramTests ${TEST_DEPS})

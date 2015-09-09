@@ -57,6 +57,10 @@ namespace SAPHRON
 			World* w1 = wm->GetRandomWorld();
 			World* w2 = wm->GetRandomWorld();
 
+			// If world is empty, return. 
+			if(w1->GetParticleCount() == 0)
+				return;
+
 			// Make sure we pick a different world.
 			while(w2 == w1)
 				w2 = wm->GetRandomWorld();
