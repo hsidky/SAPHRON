@@ -4,14 +4,15 @@
 #include <memory>
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 namespace SAPHRON 
 {
 	class CSVObserver : public SimObserver
 	{
 	private: 
-		std::unique_ptr<std::ofstream> _ensemblefs;
-        std::unique_ptr<std::ofstream> _worldfs;
+		std::unique_ptr<std::ofstream> _simfs;
+        std::vector<std::unique_ptr<std::ofstream>> _worldfs;
         std::unique_ptr<std::ofstream> _particlefs;
         std::unique_ptr<std::ofstream> _dosfs;
         std::unique_ptr<std::ofstream> _histfs;
@@ -19,12 +20,14 @@ namespace SAPHRON
         // Delimiter 
         std::string _dlm;
         std::string _ext;
+        
+        // Fixed length output? 
         bool _fixl;
 
-		bool _printedE;
-		bool _printedW;
+        // Printed headers?
+        bool _printedH;
 
-		void PrintEnsembleHeader(Ensemble* e);
+		void PrintEnsembleHeader(const Ensemble& e);
 
 	public:
 		CSVObserver(std::string prefix, SimFlags flags, unsigned int frequency = 1);
@@ -39,18 +42,20 @@ namespace SAPHRON
 		// Post visit, mark printed bools as true.
 		virtual void PostVisit() override
 		{
-			if(_worldfs)
-				*_worldfs << std::endl;
-			_printedW = true;
-			_printedE = true;
+			for(auto& w : _worldfs)
+				*w << std::endl;
+
+			_printedH = true;
 		}
 
 		~CSVObserver()
 		{
-			if(_ensemblefs)
-				_ensemblefs->close();
-			if(_worldfs)
-				_worldfs->close();
+			if(_simfs)
+				_simfs->close();
+			
+			for(auto& w : _worldfs)
+				w->close();
+
 			if(_particlefs)
 				_particlefs->close();
 			if(_dosfs)

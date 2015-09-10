@@ -3,14 +3,14 @@
 #include "CSVObserver.h"
 #include "../Particles/Particle.h"
 #include "../Ensembles/Ensemble.h"
-#include "../Ensembles/DOSEnsemble.h"
+//#include "../Ensembles/DOSEnsemble.h"
 #include "../Worlds/World.h"
 
 namespace SAPHRON
 {
 
 	CSVObserver::CSVObserver(std::string prefix, SimFlags flags, unsigned int frequency) : 
-		SimObserver(flags, frequency), _dlm(","), _ext(".csv"), _printedE(false), _printedW(false)
+		SimObserver(flags, frequency), _dlm(" "), _ext(".csv"), _fixl(true), _printedH(false)
 	{
 		if(flags.ensemble)
 		{
@@ -125,7 +125,7 @@ namespace SAPHRON
 		*_ensemblefs << std::endl;
 	}
 
-	void CSVObserver::Visit(Ensemble *e)
+	void CSVObserver::Visit(const Ensemble& e)
 	{
 		// Write header.
 		if(!_printedE)
@@ -157,7 +157,7 @@ namespace SAPHRON
 		*_ensemblefs << std::endl;
 	}
 
-	void CSVObserver::Visit(DOSEnsemble *e)
+/*	void CSVObserver::Visit(DOSEnsemble *e)
 	{
 		// Visit ensemble.
 		Visit((Ensemble*) e);
@@ -187,7 +187,7 @@ namespace SAPHRON
 		}
 
 		*_dosfs << std::endl;
-	}
+	}*/
 
 	void CSVObserver::Visit(World* world)
 	{

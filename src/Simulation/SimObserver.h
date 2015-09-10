@@ -54,7 +54,7 @@ namespace SAPHRON
 				: _frequency(frequency), _event(nullptr, 0), Flags(flags){}
 
 			// Update observer when simulation has changed.
-			void Update(SimEvent& e);
+			void Update(const SimEvent& e);
 
 			// Called before visitors invokes.
 			virtual void PreVisit(){}
