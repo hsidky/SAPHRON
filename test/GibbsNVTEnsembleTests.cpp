@@ -66,10 +66,10 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 	// Initialize observer.
 	SimFlags flags;
 	//flags.temperature = 1;
-	flags.iterations = 1;
-	flags.acceptance = 1;
+	flags.iteration = 1;
+	flags.move_acceptances = 1;
 	flags.world_density = 1;
-	flags.world_count = 1;
+	flags.world_composition = 1;
 	flags.world_volume = 1;
 	//ConsoleObserver observer(flags, 1000);
 

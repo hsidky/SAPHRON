@@ -6,19 +6,19 @@ using namespace SAPHRON;
 TEST(SimFlags, DefaultBehavior)
 {
 	SimFlags flags;
-	ASSERT_EQ(0, (int)flags.ensemble);
-	ASSERT_EQ(0, (int)flags.temperature);
-	flags.temperature = true;
-	ASSERT_EQ(1, (int)flags.temperature);
-	ASSERT_EQ(1, (int)flags.ensemble);
-	flags.ensemble = 0;
-	ASSERT_EQ(0, (int)flags.temperature);
+	ASSERT_EQ(0, (int)flags.simulation);
+	ASSERT_EQ(0, (int)flags.world_temperature);
+	flags.world_temperature = true;
+	ASSERT_EQ(1, (int)flags.world_temperature);
+	ASSERT_EQ(1, (int)flags.world);
+	flags.world = 0;
+	ASSERT_EQ(0, (int)flags.world_temperature);
 
-	flags.pressure = 1;
-	flags.composition = 1;
+	flags.world_pressure = 1;
+	flags.world_composition = 1;
 
-	ASSERT_EQ(1, (int)flags.pressure);
-	ASSERT_EQ(1, (int)flags.composition);
+	ASSERT_EQ(1, (int)flags.world_pressure);
+	ASSERT_EQ(1, (int)flags.world_composition);
 
 	// Try subflags
 	ASSERT_EQ(0, (int)flags.histogram);

@@ -100,7 +100,7 @@ namespace SAPHRON
 		int GetSeed() const	{ return _seed; }
 
 		// Accept a visitor.
-		virtual void AcceptVisitor(class Visitor &v)
+		virtual void AcceptVisitor(Visitor& v) const override
 		{
 			v.Visit(*this);
 		}

@@ -3,246 +3,212 @@
 #include "CSVObserver.h"
 #include "../Particles/Particle.h"
 #include "../Ensembles/Ensemble.h"
-//#include "../Ensembles/DOSEnsemble.h"
+#include "../Worlds/WorldManager.h"
 #include "../Worlds/World.h"
+
+using namespace std;
 
 namespace SAPHRON
 {
-
-	CSVObserver::CSVObserver(std::string prefix, SimFlags flags, unsigned int frequency) : 
-		SimObserver(flags, frequency), _dlm(" "), _ext(".csv"), _fixl(true), _printedH(false)
-	{
-		if(flags.ensemble)
-		{
-			_ensemblefs = std::unique_ptr<std::ofstream>(
-				new std::ofstream(prefix + ".ensemble" + _ext)
-				);
-			_ensemblefs->precision(15);
-			*_ensemblefs << std::scientific;
-		}
-
-		if(flags.dos)
-		{
-			_dosfs = std::unique_ptr<std::ofstream>(
-                new std::ofstream(prefix + ".dos" + _ext)
-                );
-			_dosfs->precision(15);
-
-			if(flags.identifier)
-				*_dosfs << "Identifier" << _dlm;
-			if(flags.iterations)
-				*_dosfs << "Iterations" << _dlm;
-			if(flags.dos_walker)
-				*_dosfs << "Walker ID" << _dlm;
-			if(flags.dos_scale_factor)
-				*_dosfs << "Scale Factor" << _dlm;
-			if(flags.dos_flatness)
-				*_dosfs << "Flatness" << _dlm;
-			if(flags.dos_bin_count)
-				*_dosfs << "Bin Count" << _dlm;
-			if(flags.dos_interval)
-			{
-				*_dosfs << "Interval Min" << _dlm;
-				*_dosfs << "Interval Max" << _dlm;
-			}
-			if(flags.dos_values)
-				*_dosfs << "DOS" << _dlm;
-
-			*_dosfs << std::endl;
-		}
-
-		if(flags.world)
-		{
-			_worldfs = std::unique_ptr<std::ofstream>(
-                new std::ofstream(prefix + ".world" + _ext)
-                );
-			_worldfs->precision(15);
-
-			if(flags.world_count)
-				*_worldfs << "Particle Count" << _dlm;
-			if(flags.world_density)
-				*_worldfs << "Density" << _dlm;
-			if(flags.world_volume)
-				*_worldfs << "Volume" << _dlm;
-
-			*_worldfs << std::endl;
-		}
-
-		if(flags.particle)
-		{
-			_particlefs = std::unique_ptr<std::ofstream>(
-				new std::ofstream(prefix + ".particle" + _ext)
-				);
-			_particlefs->precision(15);
-
-			if (this->Flags.identifier)
-            	*_particlefs << "Identifier" << _dlm;
-         	if (this->Flags.iterations)
-                *_particlefs << "Iterations" << _dlm;
-            if(this->Flags.particle_global_id)
-            	*_particlefs << "Global ID" << _dlm;
-         	if(this->Flags.particle_species)
-                *_particlefs << "Species" << _dlm;
-            if(this->Flags.particle_species_id)
-                *_particlefs << "Species ID" << _dlm;
-         	if(this->Flags.particle_position)
-                *_particlefs << "X,Y,Z" << _dlm;
-         	if(this->Flags.particle_director)
-         	{
-                *_particlefs << "UX" << _dlm;
-                *_particlefs << "UY" << _dlm;
-                *_particlefs << "UZ" << _dlm;
-         	}
-         	if(this->Flags.particle_neighbors)
-                *_particlefs << "Neighbor List" << _dlm;
-
-         	*_particlefs << std::endl;
-
-		}
-	}
-
-	void CSVObserver::PrintEnsembleHeader(Ensemble* e)
-	{
-		if(this->Flags.identifier)
-			*_ensemblefs << "Identifier" << _dlm;
-		if(this->Flags.iterations)
-			*_ensemblefs << "Iterations" << _dlm;
-		if(this->Flags.energy)
-		{
-			*_ensemblefs << "Non-bonded Energy" << _dlm;
-			*_ensemblefs << "Bonded Energy" <<_dlm;
-			*_ensemblefs << "Connectivity Energy" << _dlm;
-			*_ensemblefs << "Total Energy" << _dlm;
-		}
-		if(this->Flags.temperature)
-			*_ensemblefs << "Temperature" << _dlm;
-		if(this->Flags.pressure)
-			*_ensemblefs << "Pressure" << _dlm;
-		if(this->Flags.acceptance)
-			for(auto& acceptance : e->GetAcceptanceRatio())
-				*_ensemblefs << acceptance.first + " Acceptance" << _dlm;
-
-		*_ensemblefs << std::endl;
-	}
-
-	void CSVObserver::Visit(const Ensemble& e)
-	{
-		// Write header.
-		if(!_printedE)
-			PrintEnsembleHeader(e);
-
-		if(this->Flags.identifier)
-			*_ensemblefs << this->GetObservableID() << _dlm;
-		if(this->Flags.iterations)
-			*_ensemblefs << this->GetIteration() << _dlm;
-		if(this->Flags.energy)
-		{
-			auto energy = e->GetEnergy();
-			*_ensemblefs << energy.intervdw << _dlm;
-			*_ensemblefs << energy.intravdw << _dlm;
-			*_ensemblefs << energy.interelectrostatic << _dlm;
-			*_ensemblefs << energy.intraelectrostatic << _dlm;
-			*_ensemblefs << energy.bonded << _dlm;
-			*_ensemblefs << energy.connectivity << _dlm;
-			*_ensemblefs << energy.total() << _dlm;
-		}
-		if(this->Flags.temperature)
-			*_ensemblefs << e->GetTemperature() << _dlm;
-		if(this->Flags.pressure)
-			*_ensemblefs << e->GetPressure().isotropic() << _dlm;
-		if(this->Flags.acceptance)
-			for(auto& acceptance : e->GetAcceptanceRatio())
-				*_ensemblefs << acceptance.second << _dlm;
-
-		*_ensemblefs << std::endl;
-	}
-
-/*	void CSVObserver::Visit(DOSEnsemble *e)
-	{
-		// Visit ensemble.
-		Visit((Ensemble*) e);
-
-		if(this->Flags.identifier)
-			*_dosfs << this->GetObservableID() << _dlm;
-		if(this->Flags.iterations)
-			*_dosfs << this->GetIteration() << _dlm;
-		if(this->Flags.dos_walker) // Temporary until walkers are implemented.
-			*_dosfs << "TOBEIMPLEMENTED" << _dlm;
-		if(this->Flags.dos_scale_factor)
-			*_dosfs << e->GetScaleFactor() << _dlm;
-		if(this->Flags.dos_flatness)
-			*_dosfs << e->GetFlatness() << _dlm;
-		if(this->Flags.dos_bin_count)
-			*_dosfs << e->GetBinCount() << _dlm;
-		if(this->Flags.dos_interval)
-		{
-			auto interval = e->GetInterval();
-			*_dosfs << interval.first << _dlm;
-			*_dosfs << interval.second << _dlm;
-		}
-		if(this->Flags.dos_values)
-		{
-			auto *dos = e->GetDensityOfStates();
-			std::copy(dos->begin(), dos->end(), std::ostream_iterator<double>(*_dosfs, _dlm.c_str()));
-		}
-
-		*_dosfs << std::endl;
-	}*/
-
-	void CSVObserver::Visit(World* world)
-	{
-		if(this->Flags.world_count)
-			*_worldfs << world->GetParticleCount() << _dlm;
-		if(this->Flags.world_density)
-			*_worldfs << world->GetDensity() << _dlm;
-		if(this->Flags.world_volume)
-			*_worldfs << world->GetVolume() << _dlm;
-	}
-
-	void CSVObserver::Visit(MoveManager*)
+	CSVObserver::CSVObserver(string prefix, SimFlags flags, unsigned int frequency) : 
+		SimObserver(flags, frequency), _worldfs(0), _particlefs(), _dlm(" "), _ext(".csv"), 
+		_fixl(true), _w(15), _prefix(prefix), _printedH(false)
 	{
 	}
 
-	void CSVObserver::Visit(ForceFieldManager*)
+	void CSVObserver::InitializeEnsemble(const Ensemble& e)
 	{
+		if(!this->Flags.simulation)
+			return;
+
+		// Open file for writing. 
+		_simfs = unique_ptr<ofstream>(
+			new ofstream(_prefix + ".simulation" + _ext)
+			);
+		_simfs->precision(8);
+		*_simfs << scientific;
+
+
+		if(this->Flags.iteration)
+			*_simfs << setw(_w) << "Iteration" << _dlm;
+		if(this->Flags.move_acceptances)
+			for(auto& acceptance : e.GetAcceptanceRatio())
+				*_simfs << setw(_w) << acceptance.first + " Acc." << _dlm;
+
+		*_simfs << endl;
 	}
 
-	void CSVObserver::Visit(Particle *p)
+	void CSVObserver::InitializeWorlds(const WorldManager& wm)
+	{
+		InitializeParticles(wm);
+		if(!this->Flags.world)
+			return;
+
+		// Open files for writing.
+		for(const auto& w : wm)
+		{
+			_worldfs.push_back(unique_ptr<ofstream>(
+				new ofstream(_prefix + "." + w->GetStringID() + ".world" + _ext)
+			));
+
+			_worldfs.back()->precision(8);
+			*_worldfs.back() << scientific;
+
+			if(this->Flags.iteration)
+				*_worldfs.back() << setw(_w) <<  "Iteration" << _dlm;
+			if(this->Flags.world_temperature)
+				*_worldfs.back() << setw(_w) << "Temperature" << _dlm;
+			if(this->Flags.world_pressure)
+				*_worldfs.back() << setw(_w) << "Pressure" << _dlm;
+			if(this->Flags.world_volume)
+				*_worldfs.back() << setw(_w) << "Volume" << _dlm;
+			if(this->Flags.world_density)
+				*_worldfs.back() << setw(_w) << "Density" << _dlm;
+			if(this->Flags.world_energy)
+				*_worldfs.back() << setw(_w) << "Energy" << _dlm;
+			if(this->Flags.world_composition)
+				for(auto&c : w->GetComposition())
+					*_worldfs.back() << setw(_w) << "#" + to_string(c.first) << _dlm;
+
+			*_worldfs.back() << endl;
+		}
+	}
+
+	void CSVObserver::InitializeParticles(const WorldManager& wm)
 	{
 		if(!this->Flags.particle)
 			return;
 
-		if(this->Flags.identifier)
-			*_particlefs << this->GetObservableID() << _dlm;
-		if(this->Flags.iterations)
-			*_particlefs << this->GetIteration() << _dlm;
-		if(this->Flags.particle_global_id)
-			*_particlefs << p->GetGlobalIdentifier() << _dlm;
-		if(this->Flags.particle_species)
-			*_particlefs << p->GetSpecies() << _dlm;
-		if(this->Flags.particle_species_id)
-			*_particlefs << p->GetSpeciesID() << _dlm;
-		if (this->Flags.particle_position)
-	    {
-	    	auto coords = p->GetPosition();
-	    	*_particlefs << coords.x << _dlm;
-	    	*_particlefs << coords.y << _dlm;  
-	    	*_particlefs << coords.z << _dlm;
-		}
-		if (this->Flags.particle_director)
-	    {
-	    	auto& dir = p->GetDirectorRef();
-	    	*_particlefs << dir.x << _dlm;
-	    	*_particlefs << dir.y << _dlm;
-	    	*_particlefs << dir.z << _dlm;
-	    }
-	    if (this->Flags.particle_neighbors)
-	    {
-	    	auto& neighbors = p->GetNeighbors();
-	        for(auto& neighbor : neighbors)
-	        	*_particlefs << neighbor->GetGlobalIdentifier() << _dlm;
-	   	}
+		for(const auto& w : wm)
+		{
+			_particlefs[w->GetID()] = unique_ptr<ofstream>(
+				new ofstream(_prefix + "." + w->GetStringID() + ".particle" + _ext)
+			);
 
-	   	*_particlefs << std::endl;
+			auto& fs = _particlefs[w->GetID()];
+			fs->precision(8);	
+
+			if(this->Flags.iteration)
+				*fs << setw(_w) <<  "Iteration" << _dlm;
+			if(this->Flags.particle_id)
+				*fs << setw(_w) << "ID" << _dlm;
+			if(this->Flags.particle_species)
+				*fs << setw(_w) << "Species" << _dlm;
+			if(this->Flags.particle_parent_id)
+				*fs << setw(_w) << "Parent ID" << _dlm;
+			if(this->Flags.particle_parent_species) 
+				*fs << setw(_w) << "Parent Species" << _dlm;
+			if(this->Flags.particle_position)
+				*fs << setw(_w) << "x" << _dlm << setw(_w)  << "y" << _dlm << setw(_w) << "z" << _dlm;
+			if(this->Flags.particle_director)
+				*fs << setw(_w) << "ux" << _dlm << setw(_w) << "uy" << _dlm << setw(_w) << "uz" << _dlm;
+			if(this->Flags.particle_neighbors)
+				*fs << setw(_w) << "Neighbor IDs" << _dlm;
+
+			*fs << endl;
+		}
+	}
+
+	void CSVObserver::Visit(const Ensemble& e)
+	{
+		// Flags sim is checked in init ensemble.
+		if(!_printedH)
+			InitializeEnsemble(e);
+
+		if(!this->Flags.simulation)	
+			return;
+
+		if(this->Flags.iteration)
+			*_simfs << setw(_w) << e.GetIteration() << _dlm;
+		if(this->Flags.move_acceptances)
+			for(auto& acceptance : e.GetAcceptanceRatio())
+				*_simfs << setw(_w) << acceptance.second << _dlm;
+	}
+
+	void CSVObserver::Visit(const DOSEnsemble &e)
+	{
+
+	}
+
+	void CSVObserver::Visit(const WorldManager &wm)
+	{
+		if(!_printedH)
+			InitializeWorlds(wm);
+
+		// Worlds flag is checked in init worlds. Keep first because 
+		// it loads particle files as well.
+		if(!this->Flags.world)
+			return;
+
+		int i = 0;
+		for(auto& w : wm)
+		{
+			auto& fs = _worldfs[i];
+			if(this->Flags.iteration)
+				*fs << setw(_w) << fixed << this->GetIteration() << scientific << _dlm;
+			if(this->Flags.world_temperature)
+				*fs << setw(_w) << w->GetTemperature() << _dlm;
+			if(this->Flags.world_pressure)
+				*fs << setw(_w) << w->GetPressure().isotropic() << _dlm;
+			if(this->Flags.world_volume)
+				*fs << setw(_w) << w->GetVolume() << _dlm;
+			if(this->Flags.world_density)
+				*fs << setw(_w) << w->GetDensity() << _dlm;
+			if(this->Flags.world_energy)
+				*fs << setw(_w) << w->GetEnergy().total() << _dlm;
+			if(this->Flags.world_composition)
+				for(auto&c : w->GetComposition())
+					*fs << setw(_w) << fixed << c.second << scientific << _dlm;
+		}
+	}
+
+	void CSVObserver::Visit(const MoveManager&)
+	{
+	}
+
+	void CSVObserver::Visit(const ForceFieldManager&)
+	{
+	}
+
+	void CSVObserver::Visit(const Particle& p)
+	{
+		if(!this->Flags.particle)
+			return;
+
+		auto& fs = _particlefs[p.GetWorld()->GetID()];
+
+		if(this->Flags.iteration)
+			*fs << setw(_w) <<  this->GetIteration() << _dlm;
+		if(this->Flags.particle_id)
+			*fs << setw(_w) << p.GetGlobalIdentifier() << _dlm;
+		if(this->Flags.particle_species)
+			*fs << setw(_w) << p.GetSpecies() << _dlm;
+		if(this->Flags.particle_parent_id)
+			*fs << setw(_w) << p.GetParent()->GetGlobalIdentifier() << _dlm;
+		if(this->Flags.particle_parent_species) 
+			*fs << setw(_w) << p.GetParent()->GetSpecies() << _dlm;
+		if(this->Flags.particle_position) 
+		{
+			const auto& pos = p.GetPositionRef();
+			*fs << scientific; 
+			*fs << setw(_w) << pos.x << _dlm;
+			*fs << setw(_w) << pos.y << _dlm;
+			*fs << setw(_w) << pos.z << _dlm;
+			*fs << fixed;
+		}
+		if(this->Flags.particle_director) 
+		{
+			const auto& dir = p.GetDirectorRef();
+			*fs << scientific; 
+			*fs << setw(_w) << dir.x << _dlm;
+			*fs << setw(_w) << dir.y << _dlm;
+			*fs << setw(_w) << dir.z << _dlm;
+			*fs << fixed;		
+		}
+		if(this->Flags.particle_neighbors)
+		{
+			for(auto& neighbor : p.GetNeighbors())
+				*fs << setw(_w) << neighbor->GetGlobalIdentifier() << _dlm;		
+		}
 	}
 }

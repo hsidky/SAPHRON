@@ -65,7 +65,7 @@
 // 			}
 //
 // 			// Accept visitor to class.
-// 			virtual void AcceptVisitor(class Visitor& v)
+// 			virtual void AcceptVisitor(Visitor& v) const override
 // 			{
 // 				v.Visit(this);
 // 				this->model.AcceptVisitor(v);

@@ -28,7 +28,7 @@ namespace SAPHRON
 			}
 
 			// Visit children.
-			virtual void VisitChildren(Visitor& v) = 0;
+			virtual void VisitChildren(Visitor& v) const = 0;
 
 		public:
 			typedef std::map<std::string, double> AcceptanceMap;
@@ -48,7 +48,7 @@ namespace SAPHRON
 			}
 
 			// Accept a visitor.
-			virtual void AcceptVisitor(class Visitor &v)
+			virtual void AcceptVisitor(Visitor& v) const override
 			{
 				v.Visit(*this);
 				VisitChildren(v);

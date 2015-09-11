@@ -319,7 +319,7 @@ namespace SAPHRON
 		}
 
 		// Accept a visitor.
-		virtual void AcceptVisitor(class Visitor &v) override
+		virtual void AcceptVisitor(Visitor& v) const override
 		{
 			v.Visit(*this);
 		}

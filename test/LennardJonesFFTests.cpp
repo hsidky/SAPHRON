@@ -5,7 +5,7 @@
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Particles/Site.h"
 #include "../src/Particles/Molecule.h"
-//#include "../src/Observers/ConsoleObserver.h"
+#include "../src/Observers/CSVObserver.h"
 #include "TestAccumulator.h"
 #include "../src/Worlds/SimpleWorld.h"
 #include "../src/Worlds/WorldManager.h"
@@ -149,19 +149,28 @@ TEST(LennardJonesFF, ReducedProperties)
 	// Initialize observer.
 	SimFlags flags;
 	//flags.temperature = 1;
-	flags.energy = 1;
-	flags.iterations = 1;
-	flags.acceptance = 1;
-	flags.pressure = 1;
-	//ConsoleObserver observer(flags, 1000);
+	flags.world_energy = 1;
+	flags.iteration = 1;
+	flags.move_acceptances = 1;
+	flags.world_pressure = 1;
 
 	// Initialize accumulator. 
 	TestAccumulator accumulator(flags, 10*N, 20000*N);
 
+	// Initialize observer.
+	flags.world_temperature = 1;
+	flags.world_pressure = 1;
+	flags.world_volume = 1;
+	flags.world_density = 1;
+	flags.world_energy = 1;
+	flags.world_composition = 1;
+	CSVObserver csv("test", flags, 1000*N);
+
+
 	// Initialize ensemble. 
 	StandardEnsemble ensemble(&wm, &ffm, &mm);
 
-	//ensemble.AddObserver(&observer);
+	ensemble.AddObserver(&csv);
 	ensemble.AddObserver(&accumulator);
 
 	// Run 

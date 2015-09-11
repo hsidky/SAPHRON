@@ -26,6 +26,12 @@ namespace SAPHRON
 		double _temperature; 
 		Energy _energy;
 		Pressure _pressure;
+		
+		// World ID.
+		int _id; 
+
+		// Global world ID.
+		static int _nextID;
 
 	protected:
 
@@ -40,8 +46,11 @@ namespace SAPHRON
 
 	public:
 		World(double xlength, double ylength, double zlength) : 
-		_temperature(0.0), _xlength(xlength), _ylength(ylength), _zlength(zlength), 
-		_stringid(""){}
+		_temperature(0.0), _id(++_nextID), _xlength(xlength), 
+		_ylength(ylength), _zlength(zlength) 
+		{
+			_stringid = "World" + std::to_string(_id);
+		}
 
 		// Draw a random particle from the world.
 		virtual Particle* DrawRandomParticle() = 0;
@@ -153,6 +162,9 @@ namespace SAPHRON
 
 		// Gets the optional string ID for a world.
 		std::string GetStringID() const { return _stringid; }
+
+		// Get unique world ID.
+		int GetID() const { return _id; }
 
 		// Sets an optional string ID for a world.
 		void SetStringID(std::string stringid) { _stringid = stringid; }

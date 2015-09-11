@@ -23,12 +23,11 @@ namespace SAPHRON
 			{
 				struct
 				{
+					unsigned int world_temperature: 1;
+					unsigned int world_pressure: 1;
 					unsigned int world_volume : 1;
 					unsigned int world_density : 1;
-					unsigned int world_particle_count : 1;
-					unsigned int world_temperature: 1;
 					unsigned int world_energy : 1;
-					unsigned int world_pressure: 1;
 					unsigned int world_composition: 1;
 				};
 

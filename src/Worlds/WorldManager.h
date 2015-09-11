@@ -101,7 +101,7 @@ namespace SAPHRON
 		}
 
 		// Accept visitor.
-		virtual void AcceptVisitor(Visitor& v) override
+		virtual void AcceptVisitor(Visitor& v) const override
 		{
 			v.Visit(*this);
 		}

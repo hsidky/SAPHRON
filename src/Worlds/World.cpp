@@ -67,4 +67,7 @@ namespace SAPHRON
 
 		return world;
 	}
+
+	// Initialize global world ID.
+	int World::_nextID = 0;
 }

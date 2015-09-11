@@ -418,7 +418,7 @@ namespace SAPHRON
 				return (int)_observers.size();
 			}
 
-			virtual void AcceptVisitor(Visitor &v) override
+			virtual void AcceptVisitor(Visitor& v) const override
 			{
 				v.Visit(*this);
 			}
