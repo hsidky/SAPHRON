@@ -40,8 +40,8 @@ TEST(LennardJonesFF, DefaultBehavior)
 
 	auto H = ffm.EvaluateHamiltonian(s2, compositions, 30*30*30);
 
-	ASSERT_NEAR(-0.3205627464230163, H.energy.intervdw, 1e-10);
-	ASSERT_NEAR(-2.1461730362664353e-05, H.pressure.isotropic(), 1e-9);
+	ASSERT_NEAR(-0.32033659427857464, H.energy.intervdw, 1e-10);
+	ASSERT_NEAR(-2.1444978352706585e-05, H.pressure.isotropic(), 1e-9);
 }
 
 // Validate results from NIST MC LJ standards 
@@ -104,7 +104,7 @@ TEST(LennardJonesFF, ConfigurationValues)
 
 // Validate results from NIST MC LJ standards page.
 // http://mmlapps.nist.gov/srs/LJ_PURE/mc.htm
-TEST(LennardJonesFF, ReducedProperties)
+TEST(LennardJonesFF, NISTValidation1)
 {
 	// Target reduced density to validate.
 	double rdensity = 7.76E-01;
@@ -141,7 +141,7 @@ TEST(LennardJonesFF, ReducedProperties)
 	ffm.AddNonBondedForceField("LJ", "LJ", ff);
 
 	// Initialize moves. 
-	TranslateMove move(0.20);
+	TranslateMove move(0.22);
 	MoveManager mm;
 	mm.AddMove(&move);
 
