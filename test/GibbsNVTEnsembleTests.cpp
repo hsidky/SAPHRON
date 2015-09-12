@@ -15,6 +15,8 @@
 
 using namespace SAPHRON;
 
+// Benchmark NIST data obtained from 
+// http://mmlapps.nist.gov/srs/LJ_PURE/sattmmc.htm.
 TEST(GibbsNVTEnsemble, LJNISTValidation1)
 {
 	int N = 256; // Number of LJ particles per NIST.
@@ -68,35 +70,35 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 	flags.iteration = 1;
 	flags.move_acceptances = 1;
 	flags.world_density = 1;
-	flags.world_composition = 1;
-	flags.world_volume = 1;
+	flags.world_energy = 1;
+	flags.world_pressure = 1;
 	//ConsoleObserver observer(flags, 1000);
 
 	// Initialize accumulator. 
 	TestAccumulator accumulator(flags, 10*N, 30000*N);
-	flags.world = 63;
-	CSVObserver csv("test", flags, 100*N);
 
 	// Initialize ensemble. 
 	StandardEnsemble ensemble(&wm, &ffm, &mm);
-	//ensemble.AddObserver(&observer);
 	ensemble.AddObserver(&accumulator);
-	ensemble.AddObserver(&csv);
 	
 	// Run 
 	ensemble.Run(50000*N);
 
-	// Check "conservation" of energy.
-	//EPTuple H1 = ffm.EvaluateHamiltonian(liquid);
-	//EPTuple H2 = ffm.EvaluateHamiltonian(vapor);
-	//ASSERT_NEAR(H1.energy.total(), liquid.GetEnergy().total(), 1e-11);
-	//ASSERT_NEAR(H1.pressure.isotropic(), liquid.GetPressure().isotropic() - liquid.GetPressure().ideal, 1e-11);
-	//ASSERT_NEAR(H2.energy.total(), vapor.GetEnergy().total(), 1e-11);
-	//ASSERT_NEAR(H2.pressure.isotropic(), vapor.GetPressure().isotropic() - vapor.GetPressure().ideal, 1e-11);
-
 	// Check values (from NIST)
 	auto density = accumulator.GetAverageDensities();
-	std::cout << "D1 = " << density[&liquid] << " D2 = " << density[&vapor] << std::endl;
 	ASSERT_NEAR(5.63158E-01, density[&liquid], 3e-3);
 	ASSERT_NEAR(1.00339E-01, density[&vapor], 1.1e-2);
+
+	auto pressure = accumulator.GetAveragePressures();
+	ASSERT_NEAR(7.72251E-02, pressure[&liquid].isotropic(), 1e-3);
+	ASSERT_NEAR(7.72251E-02, pressure[&vapor].isotropic(), 1e-3);	
+
+	// Check "conservation" of energy.
+	EPTuple H1 = ffm.EvaluateHamiltonian(liquid);
+	EPTuple H2 = ffm.EvaluateHamiltonian(vapor);
+	ASSERT_NEAR(H1.energy.total(), liquid.GetEnergy().total(), 1e-9);
+	ASSERT_NEAR(H1.pressure.isotropic(), liquid.GetPressure().isotropic() - liquid.GetPressure().ideal, 1e-9);
+	ASSERT_NEAR(H2.energy.total(), vapor.GetEnergy().total(), 1e-9);
+	ASSERT_NEAR(H2.pressure.isotropic(), vapor.GetPressure().isotropic() - vapor.GetPressure().ideal, 1e-9);
+
 }
