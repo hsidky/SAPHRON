@@ -9,7 +9,7 @@
 #include "../src/Worlds/WorldManager.h"
 #include "../src/Worlds/SimpleWorld.h"
 //#include "../src/Observers/ConsoleObserver.h"
-//#include "../src/Observers/CSVObserver.h"
+#include "../src/Observers/CSVObserver.h"
 #include "TestAccumulator.h"
 #include "gtest/gtest.h"
 
@@ -20,7 +20,6 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 	int N = 256; // Number of LJ particles per NIST.
 	double sigma = 1.0; 
 	double eps   = 1.0; 
-	double kb = 1.0;
 	double T = 1.20;
 	double rcut = 3.0*sigma;
 
@@ -59,9 +58,9 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 	ParticleSwapMove pswap;
 
 	MoveManager mm;
-	mm.AddMove(&translate, 985);
-	mm.AddMove(&pswap, 10);
-	mm.AddMove(&vscale, 5);
+	mm.AddMove(&translate, 95);
+	mm.AddMove(&pswap, 3);
+	mm.AddMove(&vscale, 2);
 
 	// Initialize observer.
 	SimFlags flags;
@@ -75,13 +74,14 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 
 	// Initialize accumulator. 
 	TestAccumulator accumulator(flags, 10*N, 30000*N);
-	//CSVObserver csv("test", flags, 100);
+	flags.world = 63;
+	CSVObserver csv("test", flags, 100*N);
 
 	// Initialize ensemble. 
 	StandardEnsemble ensemble(&wm, &ffm, &mm);
 	//ensemble.AddObserver(&observer);
 	ensemble.AddObserver(&accumulator);
-	//ensemble.AddObserver(&csv);
+	ensemble.AddObserver(&csv);
 	
 	// Run 
 	ensemble.Run(50000*N);
