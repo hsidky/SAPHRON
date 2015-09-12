@@ -16,11 +16,14 @@ namespace SAPHRON
 			std::vector<Particle*> _particles;
 			Rand _rand;
 
+			// Cutoff radius.
+			double _rcut, _rcutsq; 
+
 			// Neighbor list cutoff radius.
 			double _ncut, _ncutsq;
 
-			// Skin thickness.
-			double _rskin, _rskinsq; 
+			// Skin thickness (calculated).
+			double _skin, _skinsq;
 
 			// Composition of the system.
 			CompositionList _composition;
@@ -56,17 +59,22 @@ namespace SAPHRON
 
 		protected:
 			// Visit children.
-			virtual void VisitChildren(class Visitor &v) override
+			virtual void VisitChildren(Visitor& v) const override
 			{
 				for(auto& particle : _particles)
 					particle->AcceptVisitor(v);
 			}
 
 		public:
-			SimpleWorld(double xlength, double ylength, double zlength, double ncut, int seed = 1) : 
-			World(xlength, ylength, zlength), _particles(0), _rand(seed), _ncut(ncut), _ncutsq(ncut*ncut), 
-			_rskin(1.0), _rskinsq(1.0), _seed(seed)
+			SimpleWorld(double xlength, double ylength, double zlength, double rcut, int seed = 1) : 
+			World(xlength, ylength, zlength), _particles(0), _rand(seed), _rcut(rcut), _rcutsq(rcut*rcut), 
+			_ncut(0), _ncutsq(0), _skin(0), _skinsq(0), _composition(), _seed(seed)
 			{
+				// Compute default neighbor list cutoff and skin thickness. 
+				_skin = 0.30 * _rcut;
+				_skinsq = _skin * _skin;
+				_ncut = _rcut + _skin;
+				_ncutsq = (_rcut + _skin)*(_rcut + _skin);
 			}
 
 			// Packs a SimpleWorld with the given particle blueprints and 
@@ -187,7 +195,7 @@ namespace SAPHRON
 				{
 					auto dist = particle->GetCheckpointDist();
 					ApplyMinimumImage(dist);
-					if(dist.normsq() > _rskinsq/4.0)
+					if(dist.normsq() > _skinsq/4.0)
 					{	
 						UpdateNeighborList();
 						return;
@@ -200,7 +208,7 @@ namespace SAPHRON
 			{
 				auto dist = p->GetCheckpointDist();
 				ApplyMinimumImage(dist);
-				if(dist.normsq() > _rskinsq/4.0)	
+				if(dist.normsq() > _skinsq/4.0)	
 					UpdateNeighborList();
 			}
 
@@ -209,6 +217,10 @@ namespace SAPHRON
 			{
 				_ncutsq = ncut*ncut;
 				_ncut = ncut;
+
+				// Recompute skin.
+				_skin = _ncut - _rcut;
+				_skinsq = _skin * _skin;
 			}
 
 			// Gets the neighbor list cutoff radius.
@@ -217,17 +229,27 @@ namespace SAPHRON
 				return _ncut; 
 			}
 
-			// Set skin thickness for neighbor list re-generation.
-			virtual void SetSkinThickness(double x) override
+			// Set cutoff radius for interactions.
+			virtual void SetCutoffRadius(double x) override
 			{
-				_rskin = x;
-				_rskinsq = x*x;
+				_rcut = x;
+				_rcutsq = x*x;
+
+				// Recompute skin.
+				_skin = _ncut - _rcut;
+				_skinsq = _skin * _skin;
 			}
 
-			// Get skin thickness for neighbor list re-generation.
+			// Get cutoff radius for interactions.
+			virtual double GetCutoffRadius() const override
+			{
+				return _rcut;
+			}
+
+			// Get skin thickness for the world.
 			virtual double GetSkinThickness() const override
 			{
-				return _rskin;
+				return _skin;
 			}
 
 			// Get seed.

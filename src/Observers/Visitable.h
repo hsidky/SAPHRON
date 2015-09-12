@@ -8,6 +8,6 @@ namespace SAPHRON
 	class Visitable
 	{
 		public:
-			virtual void AcceptVisitor(class Visitor &v) = 0;
+			virtual void AcceptVisitor(Visitor &v) const = 0;
 	};
 }

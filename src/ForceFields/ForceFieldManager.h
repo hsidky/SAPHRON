@@ -8,6 +8,7 @@
 #include <math.h>
 #include <map>
 #include <iterator>
+#include <limits>
 
 namespace SAPHRON
 {
@@ -42,6 +43,7 @@ namespace SAPHRON
 			// Calculate energy with neighbors.
 			World* world = particle.GetWorld();
 			auto& neighbors = particle.GetNeighbors();
+			double rcut = (world == nullptr) ? std::numeric_limits<double>::infinity() : world->GetCutoffRadius();
 			if(!particle.HasChildren())
 			{
 				#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pxz,pyy,pyz,pzz)
@@ -57,9 +59,13 @@ namespace SAPHRON
 					auto* ff = it->second;
 					auto* eff = it2->second;
 					Position rij = particle.GetPositionRef() - neighbor->GetPositionRef();
-									
+												
 					if(world != nullptr)
 						world->ApplyMinimumImage(rij);
+
+					// skip if exceeds cutoff.
+					if(rij.norm() >= rcut)
+						continue;
 
 					// If particle has parent, compute vector between parent molecule(s).
 					Position rab = rij;
@@ -84,11 +90,11 @@ namespace SAPHRON
 				
 					// Interaction containing energy and virial.
 					if(it != _nonbondedforcefields.end())
-						interij = ff->Evaluate(particle, *neighbor, rij);
+						interij = ff->Evaluate(particle, *neighbor, rij, rcut);
 
 					//Electrostatics containing energy and virial
 					if(it2 != _electrostaticforcefield.end() && particle.GetCharge() && neighbor->GetCharge())
-						electroij = eff->Evaluate(particle, *neighbor, rij);
+						electroij = eff->Evaluate(particle, *neighbor, rij, rcut);
 					
 					intere += interij.energy; // Sum nonbonded van der Waal energy.
 					electroe += electroij.energy; // Sum electrostatic energy
@@ -122,8 +128,8 @@ namespace SAPHRON
 						auto* forcefield = it.second;
 						double N = compositions.at(key.second);
 						double rho = N/volume;
-						ep.energy.intervdw += 2.0*2.0*M_PI*rho*forcefield->EnergyTailCorrection();
-						ep.pressure.ptail = 2.0/3.0*2.0*M_PI*rho*forcefield->PressureTailCorrection();
+						ep.energy.intervdw += 2.0*2.0*M_PI*rho*forcefield->EnergyTailCorrection(rcut);
+						ep.pressure.ptail = 2.0/3.0*2.0*M_PI*rho*forcefield->PressureTailCorrection(rcut);
 					}
 				}
 			}
@@ -139,6 +145,7 @@ namespace SAPHRON
 			EPTuple ep(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 			World* world = particle.GetWorld();
+			double rcut = (world == nullptr) ? std::numeric_limits<double>::infinity() : world->GetCutoffRadius();
 
     		// Go to particle parent and evaluate non-bonded interactions with siblings.
             if(particle.HasParent())
@@ -160,14 +167,14 @@ namespace SAPHRON
 						//Electrostatics containing energy and virial
 						if(it2 != _electrostaticforcefield.end() && particle.GetCharge() && sibling->GetCharge())
 						{
-							auto ij = eff->Evaluate(particle, *sibling, rij);
+							auto ij = eff->Evaluate(particle, *sibling, rij, rcut);
 
 							ep.energy.intraelectrostatic+=ij.energy;
 						}		
 
 						if(it != _nonbondedforcefields.end())
 						{
-							auto ij = ff->Evaluate(particle, *sibling, rij);
+							auto ij = ff->Evaluate(particle, *sibling, rij, rcut);
 
 							ep.energy.intravdw += ij.energy; // Sum nonbonded energy.
 							
@@ -188,7 +195,7 @@ namespace SAPHRON
 					if(world != nullptr)
 						world->ApplyMinimumImage(rij);
 
-					auto ij = ff->Evaluate(particle, *bondedneighbor, rij);
+					auto ij = ff->Evaluate(particle, *bondedneighbor, rij, rcut);
 					ep.energy.bonded += ij.energy; // Sum bonded energy.
 					
 				}
@@ -312,7 +319,7 @@ namespace SAPHRON
 		}
 
 		// Accept a visitor.
-		virtual void AcceptVisitor(class Visitor &v) override
+		virtual void AcceptVisitor(Visitor& v) const override
 		{
 			v.Visit(*this);
 		}

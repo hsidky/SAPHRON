@@ -22,15 +22,19 @@ namespace SAPHRON
 	{
 	public:
 		// Returns the potential and virial contribution between two particle. The distance vector 
-		// between the two particles is provided by the FFManager with minimum image applied.
-		virtual Interaction Evaluate(const Particle& p1, const Particle& p2, const Position& rij) = 0;
+		// between the two particles is provided by the FFManager with minimum image applied. The 
+		// cutoff radius for the corresopnding system is also supplied.
+		virtual Interaction Evaluate(const Particle& p1, 
+									 const Particle& p2, 
+									 const Position& rij, 
+									 double rcut) = 0;
 
 		// Evaluates the energy tail correction term. This is precisely integral(u(r)*r^2,rc,inf). The 
 		// remainder is taken care of by the forcefield manager.
-		virtual double EnergyTailCorrection() { return 0.0; }
+		virtual double EnergyTailCorrection(double) { return 0.0; }
 
 		// Evalutes the pressure tail correction term.
-		virtual double PressureTailCorrection() { return 0.0; }
+		virtual double PressureTailCorrection(double) { return 0.0; }
 
 		// Build a non-bonded forcefield from a JSON node. Returns a pointer to the built 
 		// FF in addition to adding it to the FFM. If return value is nullptr, then an 

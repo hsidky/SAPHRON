@@ -7,32 +7,29 @@ namespace SAPHRON
 	class SimFlags
 	{
 		public:
-			SimFlags() : ensemble(0), world(0), dos(0), histogram(0), particle(0) {}
+			SimFlags() : simulation(0), world(0), dos(0), histogram(0), particle(0) {}
 			union
 			{
 				struct
 				{
-					unsigned int identifier : 1;
-					unsigned int iterations : 1;
-					unsigned int energy : 1;
-					unsigned int temperature : 1;
-					unsigned int pressure : 1;
-					unsigned int composition : 1;
-					unsigned int acceptance: 1;
+					unsigned int iteration : 1;
+					unsigned int move_acceptances: 1;
 				};
 
-				unsigned int ensemble;
+				unsigned int simulation;
 			};
 
 			union
 			{
 				struct
 				{
+					unsigned int world_temperature: 1;
+					unsigned int world_pressure: 1;
 					unsigned int world_volume : 1;
 					unsigned int world_density : 1;
-					unsigned int world_count : 1;
+					unsigned int world_energy : 1;
+					unsigned int world_composition: 1;
 				};
-
 				unsigned int world;
 			};
 
@@ -66,14 +63,15 @@ namespace SAPHRON
 			{
 				struct
 				{
-					unsigned int particle_global_id : 1;
+					unsigned int particle_id : 1;
+					unsigned int particle_species : 1;
+					unsigned int particle_parent_id : 1;
+					unsigned int particle_parent_species : 1;
 					unsigned int particle_position : 1;
 					unsigned int particle_director : 1;
-					unsigned int particle_species : 1;
-					unsigned int particle_species_id : 1;
 					unsigned int particle_neighbors : 1;
 				};
-				bool particle;
+				unsigned int particle;
 			};
 	};
 
@@ -89,21 +87,12 @@ namespace SAPHRON
 				: _observable(observable), _iteration(iteration), _forceObserve(forceObserve){}
 
 			// Get Sim Observable.
-			SimObservable* GetObservable()
-			{
-				return _observable;
-			}
+			SimObservable const * GetObservable() const { return _observable; }
 
 			// Get iteration.
-			int GetIteration()
-			{
-				return _iteration;
-			}
+			int GetIteration() const { return _iteration; }
 
 			// Tell the observer that they should observe this event.
-			bool ForceObserve()
-			{
-				return _forceObserve;
-			}
+			bool ForceObserve() const { return _forceObserve; }
 	};
 }

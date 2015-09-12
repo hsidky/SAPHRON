@@ -13,19 +13,19 @@ TEST(ParticleSwapMove, DefaultBehavior)
 	Site s({0, 0, 0},{0,0,0}, "LJ");
 
 	// "Liquid-like" world. Volumes adjusted by packworld.
-	SimpleWorld liquid(1, 1, 1, 5);
-	SimpleWorld vapor(1, 1, 1, 25);
+	SimpleWorld liquid(1, 1, 1,  4.0);
+	SimpleWorld vapor(1, 1, 1,  4.0);
 
 	// Pack the worlds. 
 	liquid.PackWorld({&s}, {1.0}, 200, 0.1);
-	vapor.PackWorld({&s}, {1.0}, 200, 0.001);
+	vapor.PackWorld({&s}, {1.0}, 200, 0.01);
 
 	ASSERT_EQ(200, liquid.GetParticleCount());
 	ASSERT_EQ(200, vapor.GetParticleCount());
 
 	ForceFieldManager ffm;
 
-	LennardJonesFF lj(1.0, 1.0, 4.0);
+	LennardJonesFF lj(10.0, 1.0);
 	ffm.AddNonBondedForceField("LJ", "LJ", lj);
 
 	auto H1 = ffm.EvaluateHamiltonian(liquid);
@@ -38,19 +38,17 @@ TEST(ParticleSwapMove, DefaultBehavior)
 	ParticleSwapMove move;
 
 	// Let's perform the move but force reject and ensure everything is the same.
-	move.Perform(&wm, &ffm, MoveOverride::ForceReject);
-	ASSERT_EQ(200, liquid.GetParticleCount());
-	ASSERT_EQ(200, vapor.GetParticleCount());
-	ASSERT_EQ(H1.energy, ffm.EvaluateHamiltonian(liquid).energy);
-	ASSERT_EQ(H2.energy, ffm.EvaluateHamiltonian(vapor).energy);
-
-	// Let's perform the move on a specific particle.
-	Particle* p = liquid.DrawRandomParticle();
-	move.MoveParticle(p, &liquid, &vapor);
-
-	ASSERT_EQ(199, liquid.GetParticleCount());
-	ASSERT_NE(&liquid, p->GetWorld());
-	ASSERT_EQ(201, vapor.GetParticleCount());
-	ASSERT_NE(H1.energy.total(), ffm.EvaluateHamiltonian(liquid).energy.total());
-	ASSERT_NE(H2.energy.total(), ffm.EvaluateHamiltonian(vapor).energy.total());
+	for (int i = 0; i < 1000; ++i)
+	{
+		move.Perform(&wm, &ffm, MoveOverride::ForceReject);
+		ASSERT_EQ(200, liquid.GetParticleCount());
+		ASSERT_EQ(200, vapor.GetParticleCount());
+		ASSERT_EQ(H1.energy, ffm.EvaluateHamiltonian(liquid).energy);
+		ASSERT_EQ(H2.energy, ffm.EvaluateHamiltonian(vapor).energy);
+	}
+	
+	// Let's force acceptance on a move and make sure the energy difference is equal
+	// in both worlds.
+	move.Perform(&wm, &ffm, MoveOverride::ForceAccept);
+	ASSERT_EQ(liquid.GetParticleCount() - 200, 200 - vapor.GetParticleCount());
 }

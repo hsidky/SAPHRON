@@ -104,7 +104,7 @@ namespace SAPHRON
 			// Calculate acceptance.
 			double beta = 1.0/(sim.GetkB()*w1->GetTemperature());
 			double a1 = -beta*(de1 - (n1 + 1)*log(vf1/vi1)/beta);
-			double a2 = -beta*(de2 - (n2 + 1)*log(vf2/vf1)/beta);
+			double a2 = -beta*(de2 - (n2 + 1)*log(vf2/vi2)/beta);
 			double p = exp(a1 + a2);
 			p = p > 1.0 ? 1.0 : p;
 			

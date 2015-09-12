@@ -124,7 +124,7 @@ TEST(SimpleWorld, DefaultBehavior)
 	pr->SetSpecies(newid);
 	ASSERT_EQ(9001, composition.at(newid));
 	ASSERT_EQ(8999, composition.at(previd));
-}	
+}
 
 TEST(SimpleWorld, MoveParticleSemantics)
 {
@@ -153,4 +153,19 @@ TEST(SimpleWorld, VolumeScaling)
 	Position newpos = 2.0*p->GetPosition(); // we will scale by 2
 	world.SetBoxVectors(2.0*box.x, 2.0*box.y, 2.0*box.z, true);
 	ASSERT_EQ(newpos, p->GetPosition());
+}
+
+TEST(SimpleWorld, NeighborList)
+{
+	// create world with specified nlist. 
+	double rcut = 1.5;
+	SimpleWorld world(30, 30, 30, rcut);
+	ASSERT_EQ(rcut, world.GetCutoffRadius());
+	ASSERT_DOUBLE_EQ(1.3*rcut, world.GetNeighborRadius());
+	ASSERT_DOUBLE_EQ(0.3*rcut, world.GetSkinThickness());
+
+	// Change values and make sure it propogates. 
+	world.SetCutoffRadius(0.9);
+	ASSERT_DOUBLE_EQ(0.9, world.GetCutoffRadius());
+	ASSERT_DOUBLE_EQ(1.3*rcut-0.9, world.GetSkinThickness());
 }

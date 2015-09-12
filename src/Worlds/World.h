@@ -20,12 +20,18 @@ namespace SAPHRON
 	// updating negihbor lists on particles. World implements ParticleObserver so it can "listen in" 
 	// on it's particles if it needs it. Note: it is the World implementation's responsibility to register 
 	// itself with particles if it needs it, and to remove this when a particle is removed.
-	class World : public ParticleObserver
+	class World : public ParticleObserver, public Visitable
 	{
 	private:
 		double _temperature; 
 		Energy _energy;
 		Pressure _pressure;
+		
+		// World ID.
+		int _id; 
+
+		// Global world ID.
+		static int _nextID;
 
 	protected:
 
@@ -36,12 +42,15 @@ namespace SAPHRON
 		std::string _stringid;
 
 		// Visit children.
-		virtual void VisitChildren(class Visitor &v) = 0;
+		virtual void VisitChildren(Visitor& v) const = 0;
 
 	public:
 		World(double xlength, double ylength, double zlength) : 
-		_temperature(0.0), _xlength(xlength), _ylength(ylength), _zlength(zlength), 
-		_stringid(""){}
+		_temperature(0.0), _id(++_nextID), _xlength(xlength), 
+		_ylength(ylength), _zlength(zlength) 
+		{
+			_stringid = "World" + std::to_string(_id);
+		}
 
 		// Draw a random particle from the world.
 		virtual Particle* DrawRandomParticle() = 0;
@@ -127,11 +136,14 @@ namespace SAPHRON
 		// Set neighbor list radius cutoff.
 		virtual void SetNeighborRadius(double ncut) = 0;
 
-		// Get skin thickness for neighbor list re-generation.
-		virtual double GetSkinThickness() const = 0;
+		// Get the cutoff radius for forcefields.
+		virtual double GetCutoffRadius() const = 0;
 
-		// Set skin thickness for neighbor list re-generation.
-		virtual void SetSkinThickness(double x) = 0;		
+		// Set the cutoff radius for forcefields..
+		virtual void SetCutoffRadius(double x) = 0;
+
+		// Get the effective skin thickness of the world.
+		virtual double GetSkinThickness() const = 0;
 
 		// Get system composition.
 		virtual const CompositionList& GetComposition() const = 0;
@@ -150,6 +162,9 @@ namespace SAPHRON
 
 		// Gets the optional string ID for a world.
 		std::string GetStringID() const { return _stringid; }
+
+		// Get unique world ID.
+		int GetID() const { return _id; }
 
 		// Sets an optional string ID for a world.
 		void SetStringID(std::string stringid) { _stringid = stringid; }
@@ -201,6 +216,12 @@ namespace SAPHRON
 
 		// Particle observer.
 		virtual void ParticleUpdate(const ParticleEvent& pEvent) override = 0;
+
+		// Accept a visitor.
+		virtual void AcceptVisitor(Visitor &v) const override
+		{
+			VisitChildren(v);
+		}
 
 		/**********************************
 		 *                                *

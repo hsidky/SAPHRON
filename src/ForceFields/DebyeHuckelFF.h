@@ -20,29 +20,23 @@ namespace SAPHRON
 			//Reduced Bjerrum length
 			double _bjerrum;
 
-			//The cutoff
-			double _rcutoff;
-
 		public:
 
-			DebyeHuckelFF(double kbt, double debye, double bjerrum, double rcutoff) : 
-			_kbt(kbt), _debye(debye), _bjerrum(bjerrum), _rcutoff(rcutoff)
+			DebyeHuckelFF(double kbt, double debye, double bjerrum) : 
+			_kbt(kbt), _debye(debye), _bjerrum(bjerrum)
 			{ 
 			}
 
-			inline virtual Interaction Evaluate(const Particle&, const Particle&, const Position& rij) override
+			inline virtual Interaction Evaluate(const Particle&, 
+												const Particle&, 
+												const Position& rij,
+												double) override
 			{
 				Interaction ep;
 
 				double r = rij.norm();
-
-				if(r < _rcutoff)
-				{
-
-					ep.energy = _kbt*(_bjerrum/r)*exp(-r/_debye);
-					ep.virial = _kbt*_bjerrum*((-exp(-r/_debye)/(r*r))-(exp(-r/_debye)/(_debye*r)));
-				}
-
+				ep.energy = _kbt*(_bjerrum/r)*exp(-r/_debye);
+				ep.virial = _kbt*_bjerrum*((-exp(-r/_debye)/(r*r))-(exp(-r/_debye)/(_debye*r)));
 				
 				return ep;
 			}

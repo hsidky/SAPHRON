@@ -15,11 +15,11 @@
 			"minimum" : 0,
 			"exclusiveMinimum": true
 		},
-		"skin_thickness" : {
+		"r_cutoff" : {
 			"type" : "number",
 			"minimum" : 0,
 			"exclusiveMinimum" : true
 		}
 	},
-	"required" : ["type", "dimensions", "nlist_cutoff", "skin_thickness"]
+	"required" : ["type", "dimensions", "r_cutoff"]
 }

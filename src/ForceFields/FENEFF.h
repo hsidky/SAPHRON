@@ -28,7 +28,10 @@ namespace SAPHRON
 			}
 
 			// TODO: virial for FENE
-			inline virtual Interaction Evaluate(const Particle&, const Particle&, const Position& rij) override
+			inline virtual Interaction Evaluate(const Particle&, 
+												const Particle&, 
+												const Position& rij,
+												double) override
 			{
 				Interaction ep;
 

@@ -45,17 +45,17 @@ namespace SAPHRON
 				
 				for(auto& world : wm)
 				{
-					if(this->Flags.temperature)
+					if(this->Flags.world_temperature)
 						_temperature += world->GetTemperature();
 				
-					if(this->Flags.energy)
+					if(this->Flags.world_energy)
 					{
 						if(_energy.find(world) == _energy.end())
 							_energy[world] = world->GetEnergy();
 						else
 							_energy[world] += world->GetEnergy();
 					}
-					if(this->Flags.pressure)
+					if(this->Flags.world_pressure)
 					{
 						if(_pressure.find(world) == _pressure.end())
 							_pressure[world] = world->GetPressure();

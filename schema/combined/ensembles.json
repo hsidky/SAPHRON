@@ -1,15 +1,19 @@
 {
     "oneOf": [
         {
+            "required": [
+                "type",
+                "temperature"
+            ],
             "properties": {
-                "seed": {
-                    "minimum": 0,
-                    "type": "integer"
-                },
                 "temperature": {
-                    "minimum": 0,
                     "exclusiveMinimum": "true",
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
+                },
+                "sweeps": {
+                    "type": "integer",
+                    "minimum": 1
                 },
                 "type": {
                     "enum": [
@@ -17,28 +21,28 @@
                     ],
                     "type": "string"
                 },
-                "sweeps": {
-                    "minimum": 1,
-                    "type": "integer"
+                "seed": {
+                    "type": "integer",
+                    "minimum": 0
                 }
             },
             "type": "object",
+            "additionalProperties": false
+        },
+        {
             "required": [
                 "type",
                 "temperature"
             ],
-            "additionalProperties": false
-        },
-        {
             "properties": {
-                "seed": {
-                    "minimum": 0,
-                    "type": "integer"
-                },
                 "temperature": {
-                    "minimum": 0,
                     "exclusiveMinimum": "true",
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
+                },
+                "sweeps": {
+                    "type": "integer",
+                    "minimum": 1
                 },
                 "type": {
                     "enum": [
@@ -46,16 +50,12 @@
                     ],
                     "type": "string"
                 },
-                "sweeps": {
-                    "minimum": 1,
-                    "type": "integer"
+                "seed": {
+                    "type": "integer",
+                    "minimum": 0
                 }
             },
             "type": "object",
-            "required": [
-                "type",
-                "temperature"
-            ],
             "additionalProperties": false
         }
     ]

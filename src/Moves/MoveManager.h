@@ -24,22 +24,14 @@ namespace SAPHRON
 		void NormalizeProbabilities()
 		{
 			// Re-normalize probabilities.
-			double sum = std::accumulate(_prob.begin(), _prob.end(), 0);
+			double sum = std::accumulate(_prob.begin(), _prob.end(), 0.0);
 			_normprob.resize(_prob.size());
 
 			for(size_t i = 0; i < _normprob.size(); ++i)
-				_normprob[i] = _prob[i]/sum;
-			
+				_normprob[i] = (double)_prob[i]/sum;
+
 			for(size_t i = 1; i < _normprob.size(); ++i)
 				_normprob[i] = _normprob[i-1] + _normprob[i];
-
-			// Verify new sum.
-			sum = std::accumulate(_normprob.begin(), _normprob.end(), 0);
-			if(std::abs(sum - 1.0) > 1e-9)
-			{
-				std::cerr << "Unkown error occurred normalizing move probabilities." << std::endl;
-				exit(-1);
-			}
 		}
 
 	public:
@@ -108,7 +100,7 @@ namespace SAPHRON
 		int GetSeed() const	{ return _seed; }
 
 		// Accept a visitor.
-		virtual void AcceptVisitor(class Visitor &v)
+		virtual void AcceptVisitor(Visitor& v) const override
 		{
 			v.Visit(*this);
 		}

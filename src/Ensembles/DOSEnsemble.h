@@ -74,7 +74,7 @@ namespace SAPHRON
 		protected:
 
 			// Visit children.
-			virtual void VisitChildren(Visitor& v) override
+			virtual void VisitChildren(Visitor& v) const override
 			{
 				_mmanager.AcceptVisitor(v);
 				_ffmanager.AcceptVisitor(v);
@@ -192,7 +192,7 @@ namespace SAPHRON
 			virtual std::string GetName() override { return "DOS"; }
 
          	// Accept a visitor.
-			virtual void AcceptVisitor(class Visitor &v) override
+			virtual void AcceptVisitor(Visitor& v) const override
 			{
 				v.Visit(this);
 				VisitChildren(v);

@@ -3,7 +3,7 @@
 
 namespace SAPHRON
 {
-	void SimObserver::Update(SimEvent& e)
+	void SimObserver::Update(const SimEvent& e)
 	{
 		// Only lock and proceed if we have to.
 		if(e.GetIteration() % _frequency == 0 || e.ForceObserve())

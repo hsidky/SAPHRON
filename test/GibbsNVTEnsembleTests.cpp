@@ -5,90 +5,100 @@
 #include "../src/Moves/VolumeSwapMove.h"
 #include "../src/Moves/ParticleSwapMove.h"
 #include "../src/Particles/Site.h"
-#include "../src/Observers/ConsoleObserver.h"
+#include "../src/Ensembles/StandardEnsemble.h"
+#include "../src/Worlds/WorldManager.h"
+#include "../src/Worlds/SimpleWorld.h"
+//#include "../src/Observers/ConsoleObserver.h"
 #include "../src/Observers/CSVObserver.h"
 #include "TestAccumulator.h"
-#include "../src/Worlds/SimpleWorld.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
 
+// Benchmark NIST data obtained from 
+// http://mmlapps.nist.gov/srs/LJ_PURE/sattmmc.htm.
 TEST(GibbsNVTEnsemble, LJNISTValidation1)
 {
-/*	int N = 256; // Number of LJ particles per NIST.
+	int N = 256; // Number of LJ particles per NIST.
 	double sigma = 1.0; 
 	double eps   = 1.0; 
-	double kb = 1.0;
 	double T = 1.20;
-	double rcut = 2.0*sigma;
+	double rcut = 3.0*sigma;
 
 	// Prototype particle.
 	Site ljatom({0,0,0}, {0,0,0}, "LJ");
 
 	// Add lj atom to world and initialize in simple lattice configuration.
 	// World volume is adjusted by packworld.
-	SimpleWorld liquid(1, 1, 1, rcut + 1.0);
-	liquid.SetSkinThickness(1.0);
+	SimpleWorld liquid(1, 1, 1, rcut);
+	liquid.SetNeighborRadius(rcut + 1.0);
 	liquid.PackWorld({&ljatom}, {1.0}, N/2, 0.30);
+	liquid.SetTemperature(T);
 	liquid.UpdateNeighborList();
 
-	SimpleWorld vapor(1, 1, 1, rcut + 1.0);
-	vapor.SetSkinThickness(1.0);
+	SimpleWorld vapor(1, 1, 1, rcut);
+	vapor.SetNeighborRadius(rcut + 1.0);
 	vapor.PackWorld({&ljatom}, {1.0}, N/2, 0.30);
+	vapor.SetTemperature(T);
 	vapor.UpdateNeighborList();
+
+	WorldManager wm;
+	wm.AddWorld(&liquid);
+	wm.AddWorld(&vapor);
 
 	ASSERT_EQ(128, liquid.GetParticleCount());
 	ASSERT_EQ(128, vapor.GetParticleCount());
 
 	// Initialize LJ forcefield.
-	LennardJonesFF ff(eps, sigma, rcut);
+	LennardJonesFF ff(eps, sigma);
 	ForceFieldManager ffm;
 	ffm.AddNonBondedForceField("LJ", "LJ", ff);
 
 	// Initialize moves. 
 	TranslateMove translate(0.30);
-	VolumeScaleMove vscale(0.05);
+	VolumeSwapMove vscale(0.05);
 	ParticleSwapMove pswap;
 
 	MoveManager mm;
-	mm.PushMove(translate);
-	mm.PushMove(vscale);
-	mm.PushMove(pswap);
+	mm.AddMove(&translate, 95);
+	mm.AddMove(&pswap, 3);
+	mm.AddMove(&vscale, 2);
 
 	// Initialize observer.
 	SimFlags flags;
 	//flags.temperature = 1;
-	flags.iterations = 1;
-	flags.acceptance = 1;
+	flags.iteration = 1;
+	flags.move_acceptances = 1;
 	flags.world_density = 1;
-	flags.world_count = 1;
-	flags.world_volume = 1;
-	ConsoleObserver observer(flags, 1000);
+	flags.world_energy = 1;
+	flags.world_pressure = 1;
+	//ConsoleObserver observer(flags, 1000);
 
 	// Initialize accumulator. 
-	TestAccumulator accumulator(flags, 10, 20000);
-	CSVObserver csv("test", flags, 100);
+	TestAccumulator accumulator(flags, 10*N, 30000*N);
 
 	// Initialize ensemble. 
-	WorldList wl = {&liquid, &vapor};
-	FFManagerList ffl = {&ffm, &ffm};
-	GibbsNVTEnsemble ensemble(wl, ffl, mm, T, 34435);
-	ensemble.SetBoltzmannConstant(kb);
-	ensemble.AddObserver(&observer);
+	StandardEnsemble ensemble(&wm, &ffm, &mm);
 	ensemble.AddObserver(&accumulator);
-	ensemble.AddObserver(&csv);
 	
 	// Run 
-	ensemble.Run(50000);
-
-	// Check "conservation" of energy.
-	EPTuple H1 = ffm.EvaluateHamiltonian(liquid);
-	EPTuple H2 = ffm.EvaluateHamiltonian(vapor);
-	double esum = (H1 + H2).energy.total();
-	ASSERT_NEAR(esum, ensemble.GetEnergy().total(), 1e-9);
+	ensemble.Run(50000*N);
 
 	// Check values (from NIST)
 	auto density = accumulator.GetAverageDensities();
 	ASSERT_NEAR(5.63158E-01, density[&liquid], 3e-3);
-	ASSERT_NEAR(1.00339E-01, density[&vapor], 1.1e-2);*/
+	ASSERT_NEAR(1.00339E-01, density[&vapor], 1.1e-2);
+
+	auto pressure = accumulator.GetAveragePressures();
+	ASSERT_NEAR(7.72251E-02, pressure[&liquid].isotropic(), 1e-3);
+	ASSERT_NEAR(7.72251E-02, pressure[&vapor].isotropic(), 1e-3);	
+
+	// Check "conservation" of energy.
+	EPTuple H1 = ffm.EvaluateHamiltonian(liquid);
+	EPTuple H2 = ffm.EvaluateHamiltonian(vapor);
+	ASSERT_NEAR(H1.energy.total(), liquid.GetEnergy().total(), 1e-9);
+	ASSERT_NEAR(H1.pressure.isotropic(), liquid.GetPressure().isotropic() - liquid.GetPressure().ideal, 1e-9);
+	ASSERT_NEAR(H2.energy.total(), vapor.GetEnergy().total(), 1e-9);
+	ASSERT_NEAR(H2.pressure.isotropic(), vapor.GetPressure().isotropic() - vapor.GetPressure().ideal, 1e-9);
+
 }
