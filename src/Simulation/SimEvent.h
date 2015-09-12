@@ -30,7 +30,6 @@ namespace SAPHRON
 					unsigned int world_energy : 1;
 					unsigned int world_composition: 1;
 				};
-
 				unsigned int world;
 			};
 
@@ -72,7 +71,7 @@ namespace SAPHRON
 					unsigned int particle_director : 1;
 					unsigned int particle_neighbors : 1;
 				};
-				bool particle;
+				unsigned int particle;
 			};
 	};
 

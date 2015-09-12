@@ -59,7 +59,7 @@ namespace SAPHRON
 
 		protected:
 			// Visit children.
-			virtual void VisitChildren(class Visitor &v) override
+			virtual void VisitChildren(Visitor& v) const override
 			{
 				for(auto& particle : _particles)
 					particle->AcceptVisitor(v);

@@ -56,9 +56,6 @@ namespace SAPHRON
 			for(auto& w : _worldfs)
 				*w << std::endl;
 
-			for(auto& p : _particlefs)
-				*p.second << std::endl;
-
 			_printedH = true;
 		}
 

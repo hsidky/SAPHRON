@@ -20,7 +20,7 @@ namespace SAPHRON
 	// updating negihbor lists on particles. World implements ParticleObserver so it can "listen in" 
 	// on it's particles if it needs it. Note: it is the World implementation's responsibility to register 
 	// itself with particles if it needs it, and to remove this when a particle is removed.
-	class World : public ParticleObserver
+	class World : public ParticleObserver, public Visitable
 	{
 	private:
 		double _temperature; 
@@ -42,7 +42,7 @@ namespace SAPHRON
 		std::string _stringid;
 
 		// Visit children.
-		virtual void VisitChildren(class Visitor &v) = 0;
+		virtual void VisitChildren(Visitor& v) const = 0;
 
 	public:
 		World(double xlength, double ylength, double zlength) : 
@@ -216,6 +216,12 @@ namespace SAPHRON
 
 		// Particle observer.
 		virtual void ParticleUpdate(const ParticleEvent& pEvent) override = 0;
+
+		// Accept a visitor.
+		virtual void AcceptVisitor(Visitor &v) const override
+		{
+			VisitChildren(v);
+		}
 
 		/**********************************
 		 *                                *

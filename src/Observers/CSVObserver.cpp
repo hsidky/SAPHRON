@@ -125,7 +125,7 @@ namespace SAPHRON
 				*_simfs << setw(_w) << acceptance.second << _dlm;
 	}
 
-	void CSVObserver::Visit(const DOSEnsemble &e)
+	void CSVObserver::Visit(const DOSEnsemble&)
 	{
 
 	}
@@ -159,6 +159,7 @@ namespace SAPHRON
 			if(this->Flags.world_composition)
 				for(auto&c : w->GetComposition())
 					*fs << setw(_w) << fixed << c.second << scientific << _dlm;
+			++i;
 		}
 	}
 
@@ -176,16 +177,15 @@ namespace SAPHRON
 			return;
 
 		auto& fs = _particlefs[p.GetWorld()->GetID()];
-
 		if(this->Flags.iteration)
 			*fs << setw(_w) <<  this->GetIteration() << _dlm;
 		if(this->Flags.particle_id)
 			*fs << setw(_w) << p.GetGlobalIdentifier() << _dlm;
 		if(this->Flags.particle_species)
 			*fs << setw(_w) << p.GetSpecies() << _dlm;
-		if(this->Flags.particle_parent_id)
+		if(this->Flags.particle_parent_id && p.HasParent())
 			*fs << setw(_w) << p.GetParent()->GetGlobalIdentifier() << _dlm;
-		if(this->Flags.particle_parent_species) 
+		if(this->Flags.particle_parent_species && p.HasParent()) 
 			*fs << setw(_w) << p.GetParent()->GetSpecies() << _dlm;
 		if(this->Flags.particle_position) 
 		{
@@ -210,5 +210,7 @@ namespace SAPHRON
 			for(auto& neighbor : p.GetNeighbors())
 				*fs << setw(_w) << neighbor->GetGlobalIdentifier() << _dlm;		
 		}
+
+		*fs << std::endl;
 	}
 }

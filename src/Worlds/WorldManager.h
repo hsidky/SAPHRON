@@ -104,6 +104,8 @@ namespace SAPHRON
 		virtual void AcceptVisitor(Visitor& v) const override
 		{
 			v.Visit(*this);
+			for(auto& w : _worlds)
+				w->AcceptVisitor(v);
 		}
 
 		// Iterators.
