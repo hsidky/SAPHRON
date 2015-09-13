@@ -19,6 +19,9 @@ namespace SAPHRON
 			// Iteration counter.
 			int _iterations = 0;
 
+			// Moves per iteration.
+			int _mpi = 0;
+
 		protected:
 
 			// Increment iterations.
@@ -33,10 +36,18 @@ namespace SAPHRON
 		public:
 			typedef std::map<std::string, double> AcceptanceMap;
 
+			Ensemble() : _iterations(0), _mpi(0) {}
+
 			// Run the Ensemble simulation for a specified number of iterations.
 			virtual void Run(int iterations) = 0;
 
 			/* Getters and setters */
+
+			// Get moves per iteration.
+			int GetMovesPerIteration() const { return _mpi; }
+
+			// Set moves per iteration.
+			void SetMovesPerIteration(int mpi) { _mpi = mpi; }
 
 			// Gets the current iteration count.
 			inline int GetIteration() const { return _iterations; }

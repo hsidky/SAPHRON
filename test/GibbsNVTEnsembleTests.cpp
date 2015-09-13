@@ -8,8 +8,6 @@
 #include "../src/Ensembles/StandardEnsemble.h"
 #include "../src/Worlds/WorldManager.h"
 #include "../src/Worlds/SimpleWorld.h"
-//#include "../src/Observers/ConsoleObserver.h"
-#include "../src/Observers/CSVObserver.h"
 #include "TestAccumulator.h"
 #include "gtest/gtest.h"
 
@@ -75,14 +73,14 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 	//ConsoleObserver observer(flags, 1000);
 
 	// Initialize accumulator. 
-	TestAccumulator accumulator(flags, 10*N, 30000*N);
+	TestAccumulator accumulator(flags, 10, 30000);
 
 	// Initialize ensemble. 
 	StandardEnsemble ensemble(&wm, &ffm, &mm);
 	ensemble.AddObserver(&accumulator);
 	
 	// Run 
-	ensemble.Run(50000*N);
+	ensemble.Run(50000);
 
 	// Check values (from NIST)
 	auto density = accumulator.GetAverageDensities();

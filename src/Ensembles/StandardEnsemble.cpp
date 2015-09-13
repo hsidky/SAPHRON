@@ -7,8 +7,11 @@ namespace SAPHRON
 		_mmanager->ResetMoveAcceptances();
 		
 		// Select random move and perform.
-		auto move = _mmanager->SelectRandomMove();
-		move->Perform(_wmanager, _ffmanager, MoveOverride::None);			
+		for(int i = 0; i < GetMovesPerIteration(); ++i)
+		{
+			auto* move = _mmanager->SelectRandomMove();
+			move->Perform(_wmanager, _ffmanager, MoveOverride::None);
+		}
 		
 		UpdateAcceptances();
 		this->IncrementIterations();

@@ -54,14 +54,19 @@ namespace SAPHRON
 			_wmanager(wmanager), _ffmanager(ffmanager), 
 			_mmanager(mmanager), _accmap()
 		{
+			// Moves per iteration.
+			int mpi = 0;
+
 			// Evaluate energies of systems. 
 			for(auto& world : *_wmanager)
 			{
 				auto EP = _ffmanager->EvaluateHamiltonian(*world);
 				world->SetEnergy(EP.energy);
 				world->SetPressure(EP.pressure);
+				mpi += world->GetParticleCount();
 			}
 
+			this->SetMovesPerIteration(mpi);
 			UpdateAcceptances();
 		}
 

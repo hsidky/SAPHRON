@@ -153,14 +153,14 @@ TEST(LennardJonesFF, NISTValidation1)
 	flags.world_pressure = 1;
 
 	// Initialize accumulator. 
-	TestAccumulator accumulator(flags, 10*N, 20000*N);
+	TestAccumulator accumulator(flags, 10, 20000);
 
 	// Initialize ensemble. 
 	StandardEnsemble ensemble(&wm, &ffm, &mm);
 	ensemble.AddObserver(&accumulator);
 
 	// Run 
-	ensemble.Run(50000*N);
+	ensemble.Run(50000);
 
 	// "Conservation" of energy and pressure.
 	EPTuple H = ffm.EvaluateHamiltonian(world);
