@@ -332,9 +332,9 @@ namespace SAPHRON
 			}
 
 			// Check if a particle is a neighbor.
-			inline bool IsNeighbor(Particle* particle) const
+			inline bool IsNeighbor(const Particle& particle) const
 			{
-				return std::find(_neighbors.begin(), _neighbors.end(), particle) != _neighbors.end();
+				return std::find(_neighbors.begin(), _neighbors.end(), &particle) != _neighbors.end();
 			}
 
 			// Clear the neighbor list.

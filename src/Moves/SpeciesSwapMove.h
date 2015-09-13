@@ -1,7 +1,10 @@
 #pragma once 
 
+#include "Rand.h"
 #include "Move.h"
-#include <utility>
+#include "../Worlds/WorldManager.h"
+#include "../ForceFields/ForceFieldManager.h"
+#include "../Simulation/SimInfo.h"
 
 namespace SAPHRON
 {
@@ -9,67 +12,88 @@ namespace SAPHRON
 	// alter the underlying structure of the particles, but merely exchanges their species identifier.
 	class SpeciesSwapMove : public Move
 	{
-		private:
-			int _prevA, _prevB;
-			std::pair<Particle*, Particle*> _particlePair;
-			int _rejected;
-			int _performed;
+	private:
+		Rand _rand;
+		int _seed;
+		int _rejected;
+		int _performed;
 
-		public:
-			SpeciesSwapMove() : _prevA(0), _prevB(0), _particlePair{nullptr, nullptr} {} 
+	public:
+		SpeciesSwapMove(int seed = 2446) :
+		_rand(seed), _seed(seed), _rejected(0), _performed(0)  {} 
 
-			// Perform move.
-			inline void Perform(Particle* p1, Particle* p2)
+		// Perform move.
+		void Perform(Particle* p1, Particle* p2)
+		{
+			int i1 = p1->GetSpeciesID();
+			int i2 = p2->GetSpeciesID();
+			p1->SetSpecies(i2);
+			p2->SetSpecies(i1);
+		};
+
+		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm, const MoveOverride& override) override
+		{
+			// Get two random particles from a random world.
+			World* w = wm->GetRandomWorld();
+			assert(w->GetParticleCount() > 1);
+
+			Particle* p1 = w->DrawRandomParticle();
+			Particle* p2 = w->DrawRandomParticle();
+
+			while(p2 == p1)
+				p2 = w->DrawRandomParticle();
+
+			// TODO: FFM is known to double count energies of two particles that are neighbors.
+			auto ei = ffm->EvaluateHamiltonian({p1, p2}, w->GetComposition(), w->GetVolume());
+
+			// Increment pulled out since function is called for undo later on.
+			Perform(p1, p2);
+			++_performed;
+
+			auto ef = ffm->EvaluateHamiltonian({p1, p2}, w->GetComposition(), w->GetVolume());
+			Energy de = ef.energy - ei.energy;
+
+			// Get sim info for kB.
+			auto& sim = SimInfo::Instance();
+
+			// Acceptance probability. 
+			double p = exp(-de.total()/(w->GetTemperature()*sim.GetkB()));
+			p = p > 1.0 ? 1.0 : p;
+
+			// Reject or accept move.
+			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
-				_particlePair.first = p1;
-				_particlePair.second = p2;
-				_prevA = p1->GetSpeciesID();
-				_prevB = p2->GetSpeciesID();
-				p1->SetSpecies(_prevB);
-				p2->SetSpecies(_prevA);
-				++_performed;
-			};
-
-			virtual bool Perform(World&, ParticleList& particles) override
-			{
-				Perform(particles[0], particles[1]);
-				return false;
-			}
-
-			virtual void Draw(World& world, ParticleList& particles) override
-			{
-				particles.resize(2);
-				particles[0] = world.DrawRandomParticle();
-				particles[1] = world.DrawRandomParticle();
-			}
-
-			virtual double GetAcceptanceRatio() override
-			{
-				return 1.0-(double)_rejected/_performed;
-			};
-
-			virtual void ResetAcceptanceRatio() override
-			{
-				_performed = 0;
-				_rejected = 0;
-			}
-
-			// Undo move.
-			virtual void Undo() override
-			{
-				_particlePair.first->SetSpecies(_prevA);
-				_particlePair.second->SetSpecies(_prevB);
+				Perform(p1, p2);
 				++_rejected;
 			}
-			
-			virtual std::string GetName() override { return "SpeciesSwap";	}
-
-
-			virtual Move* Clone() const override
+			else
 			{
-				return new SpeciesSwapMove(
-				               static_cast<const SpeciesSwapMove&>(*this)
-				               );
-			}
+				// Update energies and pressures.
+				w->SetEnergy(w->GetEnergy() + de);
+				w->SetPressure(w->GetPressure() + (ef.pressure - ei.pressure));
+			}	
+		}
+
+		virtual double GetAcceptanceRatio() const override
+		{
+			return 1.0-(double)_rejected/_performed;
+		};
+
+		virtual void ResetAcceptanceRatio() override
+		{
+			_performed = 0;
+			_rejected = 0;
+		}
+
+		virtual int GetSeed() const override { return _seed; }
+
+		virtual std::string GetName() const override { return "SpeciesSwap"; }
+
+		virtual Move* Clone() const override
+		{
+			return new SpeciesSwapMove(
+			               static_cast<const SpeciesSwapMove&>(*this)
+			               );
+		}
 	};
 }
