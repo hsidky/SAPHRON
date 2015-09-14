@@ -21,7 +21,7 @@ namespace SAPHRON
 			intervdw(intervdwE), intravdw(intravdwE), interelectrostatic(interelectroE), intraelectrostatic(intraelectroE),
 			bonded(bondedE), connectivity(connectivityE){}
 		
-		double total()
+		double total() const
 		{
 			return intervdw + intravdw + interelectrostatic + intraelectrostatic + connectivity + bonded;
 		}

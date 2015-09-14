@@ -4,6 +4,7 @@
 #include "Move.h"
 #include "../Worlds/WorldManager.h"
 #include "../Simulation/SimInfo.h"
+#include "../DensityOfStates/DOSOrderParameter.h"
 #include "../ForceFields/ForceFieldManager.h"
 
 namespace SAPHRON
@@ -83,7 +84,53 @@ namespace SAPHRON
 					w->SetPressure(w->GetPressure() + (ef.pressure - ei.pressure));
 				}	
 			}
-		
+			
+			// Perform move using DOS interface.
+			virtual void Perform(World* w, ForceFieldManager* ffm, DOSOrderParameter* op , const MoveOverride& override) override
+			{
+				Particle* particle = w->DrawRandomParticle();
+
+				// Initial position.
+				Position posi = particle->GetPosition();
+				
+				// Evaluate initial particle energy. 
+				auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+				auto opi = op->EvaluateOrderParameter(*w);
+
+				// Generate new position then apply periodic boundaries.
+				Position newPos({posi.x + _dx*(_rand.doub()-0.5), 
+								 posi.y + _dx*(_rand.doub()-0.5), 
+								 posi.z + _dx*(_rand.doub()-0.5)});
+				
+				w->ApplyPeriodicBoundaries(&newPos);
+				particle->SetPosition(newPos);
+				++_performed;										
+
+				// Evaluate final particle energy and get delta E. 
+				auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+				auto opf = op->EvaluateOrderParameter(*w);
+				Energy de = ef.energy - ei.energy;
+				
+				// Update neighbor list if needed.
+				w->CheckNeighborListUpdate(particle);
+
+				// Acceptance probability.
+				double p = op->AcceptanceProbability(ei.energy, ef.energy, opi, opf, *w);
+
+				// Reject or accept move.
+				if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
+				{
+					particle->SetPosition(posi);
+					++_rejected;
+				}
+				else
+				{
+					// Update energies and pressures.
+					w->SetEnergy(w->GetEnergy() + de);
+					w->SetPressure(w->GetPressure() + (ef.pressure - ei.pressure));
+				}	
+			}
+
 			// Returns maximum displacement.
 			double GetMaxDisplacement()
 			{

@@ -2,10 +2,9 @@
 
 #include "Ensemble.h"
 #include "../DensityOfStates/DOSOrderParameter.h"
-#include "../Worlds/World.h"
+#include "../Worlds/WorldManager.h"
 #include "../ForceFields/ForceFieldManager.h"
 #include "../Moves/MoveManager.h"
-#include "../Rand.h"
 #include "../Histogram.h"
 
 namespace SAPHRON
@@ -18,56 +17,41 @@ namespace SAPHRON
 	class DOSEnsemble : public Ensemble
 	{
 		private: 
+			// Pointer to world manager.
+			WorldManager* _wmanager;
 
-			// Total system energy and pressure.
-			EPTuple _eptuple;
+			// Pointer to force field manager.
+			ForceFieldManager* _ffmanager;
 
-			// Energy interval.
-			Interval _interval;
+			// Pointer to move manager.
+			MoveManager* _mmanager;
+
+			// Order parameter
+			DOSOrderParameter* _orderp;
+
+			// Histogram
+			Histogram* _hist;
 
 			// Acceptance map.
 			AcceptanceMap _accmap;
 
-			// Histogram
-			Histogram _hist;
+			// Histogram reset frequency. 
+			int _hreset; 
 
-			// Scale factor 
-			double _sf; 
+			// Convergence factor 
+			double _f; 
 
 			// Flatness.
 			double _flatness;
 
-			// Reference to world.
-			World& _world;
-			
-			// Reference to force field manager.
-			ForceFieldManager& _ffmanager;
-
-			// Reference to move manager.
-			MoveManager& _mmanager;
-
-			// Order parameter
-			DOSOrderParameter& _orderp;
-
-			// Random number generator.
-			Rand _rand; 
-
-			// List of drawn particles.
-			ParticleList _particles;
-
 			// Target flatness.
 			double _targetFlatness;
-
-			// Seed.
-			int _seed;
-
-			double AcceptanceProbability(double prevE, double prevO, double newE, double newO);
 		
 			void Iterate();
 
 			inline void UpdateAcceptances()
 			{
-				for(auto& move : _mmanager)
+				for(auto& move : *_mmanager)
 					_accmap[move->GetName()] = move->GetAcceptanceRatio();
 			}
 
@@ -76,125 +60,82 @@ namespace SAPHRON
 			// Visit children.
 			virtual void VisitChildren(Visitor& v) const override
 			{
-				_mmanager.AcceptVisitor(v);
-				_ffmanager.AcceptVisitor(v);
-				_world.AcceptVisitor(v);
+				_mmanager->AcceptVisitor(v);
+				_ffmanager->AcceptVisitor(v);
+				_wmanager->AcceptVisitor(v);
 			}
 
 		public:
-			DOSEnsemble(DOSOrderParameter& orderp, World& world, 
-						ForceFieldManager& ffmanager, 
-					    MoveManager& mmanager, Interval interval, int binCount, int seed = 1) : 
-				_eptuple(), _interval(interval), _accmap(), _hist(interval.first, interval.second, binCount), 
-				_sf(1.0), _flatness(0), _world(world), _ffmanager(ffmanager), _mmanager(mmanager), 
-				_orderp(orderp), _rand(seed), _particles(0), _targetFlatness(0.80), _seed(seed)
+			DOSEnsemble(WorldManager* wm, 
+						ForceFieldManager* ffm, 
+						MoveManager* mm, 
+						DOSOrderParameter* dop,
+						Histogram* hist) : 
+				_wmanager(wm), _ffmanager(ffm), _mmanager(mm), _orderp(dop), _hist(hist),
+				_accmap(), _hreset(0), _f(1.0), _flatness(0.0), _targetFlatness(0.80)			
 			{
-				_particles.reserve(10);
-				_eptuple = ffmanager.EvaluateHamiltonian(world);
-				UpdateAcceptances();
-			}
+				// Moves per iteration.
+				int mpi = 0;
 
-			DOSEnsemble(DOSOrderParameter& orderp, World& world, 
-						ForceFieldManager& ffmanager, 
-					    MoveManager& mmanager, Interval interval, double binWidth, int seed = 1) : 
-				_eptuple(), _interval(interval), _accmap(), _hist(interval.first, interval.second, binWidth), 
-				_sf(1.0), _flatness(0), _world(world), _ffmanager(ffmanager), _mmanager(mmanager), 
-				_orderp(orderp), _rand(seed), _particles(0), _targetFlatness(0.80)
-			{
-				_particles.reserve(10);
-				_eptuple = ffmanager.EvaluateHamiltonian(world);
+				// Evaluate energies of systems. 
+				for(auto& world : *_wmanager)
+				{
+					auto EP = _ffmanager->EvaluateHamiltonian(*world);
+					world->SetEnergy(EP.energy);
+					world->SetPressure(EP.pressure);
+					mpi += world->GetParticleCount();
+				}
+
+				this->SetMovesPerIteration(mpi);
 				UpdateAcceptances();
 			}
 
 			virtual void Run(int iterations) override;
 
-			virtual Energy GetEnergy() override
-			{
-				return _eptuple.energy;
-			}
 
-			virtual double GetTemperature() override 
-			{
-				return _orderp.GetTemperature();
-			}
+            // Reduces the convergence factor order by a specified multiple.
+         	void ReduceConvergenceFactor(double order = 0.5)
+         	{
+            	// We store log of scale factor. So we simply multiply.
+                _f = _f*order;
+         	}
+
+			/* Getters and setters */
 
 			// Get ratio of accepted moves.
-			virtual AcceptanceMap GetAcceptanceRatio() override
+			virtual AcceptanceMap GetAcceptanceRatio() const override
 			{
 				return _accmap;
 			}
 
-			virtual double GetFlatness()
-			{
-				return _flatness;
-			}
+			// Get current flatness.
+			double GetFlatness() const { return _flatness; }
 
 			// Get target flatness.
-			double GetTargetFlatness()
-			{
-				return _targetFlatness;
-			}
+			double GetTargetFlatness() const { return _targetFlatness; }
 
 			// Set target flatness.
-			void SetTargetFlatness(double f)
-			{
-				_targetFlatness = f;
-			}
-
-			// Get bin count.
-			double GetBinCount()
-			{
-				return _hist.GetBinCount();
-			}
-
-			// Get interval.
-			Interval GetInterval()
-			{
-				return _interval;
-			}
-
-			std::vector<double>* GetDensityOfStates()
-			{
-				return _hist.GetValuesPointer();
-			}
-
-			// Reset histogram.
-			void ResetHistogram()
-			{
-				_hist.ResetHistogram();
-			}
-
-            // Reduces the scaling factor order by a specified multiple.
-         	void ReduceScaleFactor(double order = 0.5)
-         	{
-            	// We store log of scale factor. So we simply multiply.
-                _sf = _sf*order;
-         	}
-
-         	// Sets the scale factor.
-         	void SetScaleFactor(double sf)
-         	{
-         		_sf = sf;
-         	}
-
-         	// Gets the scale factor.
-         	double GetScaleFactor()
-         	{
-         		return _sf;
-         	}
-
-         	// Get seed.
-			virtual int GetSeed() override { return _seed; }
+			void SetTargetFlatness(double f) { _targetFlatness = f; }
 			
-			// Set seed.
-			virtual void SetSeed(int seed) override { _rand.seed(seed); _seed = seed; }
+			// Gets the log of convergence factor.
+         	double GetConvergenceFactor() const { return _f; }
+         	
+         	// Sets the log of scale factor.
+         	void SetConvergenceFactor(double f) { _f = f; }
+        
+        	// Gets the histogram reset frequency. 
+        	double GetHistogramResetFrequency() const { return _hreset; }
 
-			virtual std::string GetName() override { return "DOS"; }
+        	// Set histogram reset frequency. 
+        	void SetHistogramResetFrequency(double hreset) { _hreset = hreset; }
+
+        	// Get ensemble name.
+			virtual std::string GetName() const override { return "DOS"; }
 
          	// Accept a visitor.
 			virtual void AcceptVisitor(Visitor& v) const override
 			{
-				v.Visit(this);
+				v.Visit(*this);
 				VisitChildren(v);
 			}
 

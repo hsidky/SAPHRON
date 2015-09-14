@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <vector>
+#include <limits>
 
 namespace SAPHRON
 {
@@ -139,7 +140,7 @@ namespace SAPHRON
 		double GetMinimum() const { return _min; }
 
 		// Gets the maximum histogram value.
-		double GetMaximum()	{ return _max; }
+		double GetMaximum() const { return _max; }
 
 		// Resets the histogram.
 		void ResetHistogram()
@@ -153,7 +154,7 @@ namespace SAPHRON
 		double CalculateFlatness() const 
 		{
 			double avg = 0;
-			double minVal = 1e10;
+			double minVal = std::numeric_limits<int>::infinity();
 			for(auto& count : _counts)
 			{
 				if(count < minVal)

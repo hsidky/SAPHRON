@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DOSOrderParameter.h"
+#include "../Worlds/World.h"
 #include <cmath>
 
 namespace SAPHRON
@@ -12,10 +13,10 @@ namespace SAPHRON
 	{
 		public:
 
-			// Return the order parameter based on the energy.
-			inline virtual double EvaluateParameter(double energy) override
+			// Return the Wang-Landau order parameter (energy).
+			virtual double EvaluateOrderParameter(World* w) const override
 			{
-				return energy;
+				return w->GetEnergy().total();
 			}
 
 			// Calculate the acceptance probability.

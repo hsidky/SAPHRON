@@ -3,6 +3,7 @@
 #include "../Rand.h"
 #include "../Worlds/WorldManager.h"
 #include "../ForceFields/ForceFieldManager.h"
+#include "../DensityOfStates/DOSOrderParameter.h"
 #include "../Simulation/SimInfo.h"
 #include "Move.h"
 #include <cmath>
@@ -82,6 +83,40 @@ namespace SAPHRON
 				w->SetPressure(w->GetPressure() + (ef.pressure - ei.pressure));
 			}	
 
+		}
+
+		// Perform move using DOS interface. 
+		virtual void Perform(World* world, ForceFieldManager* ffm, DOSOrderParameter* op , const MoveOverride& override) override
+		{
+			Particle* particle = world->DrawRandomParticle();
+
+			Director di = particle->GetDirector();
+			auto ei = ffm->EvaluateHamiltonian(*particle, world->GetComposition(), world->GetVolume());
+			auto opi = op->EvaluateOrderParameter(*world);
+			
+			// Perform
+			Perform(particle);
+
+			// Evaluate final energy and order parameter and check probability. 
+			auto ef = ffm->EvaluateHamiltonian(*particle, world->GetComposition(), world->GetVolume());
+			auto opf = op->EvaluateOrderParameter(*world);
+			Energy de = ef.energy - ei.energy;
+
+			// Evaluate acceptance probability. 
+			double p = op->AcceptanceProbability(ei.energy, ef.energy, opi, opf, *world);
+
+			// Reject or accept move.
+			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
+			{
+				particle->SetDirector(di);
+				++_rejected;
+			}
+			else
+			{
+				// Update energies and pressures.
+				world->SetEnergy(world->GetEnergy() + de);
+				world->SetPressure(world->GetPressure() + (ef.pressure - ei.pressure));
+			}	
 		}
 
 		virtual double GetAcceptanceRatio() const override

@@ -3,6 +3,7 @@
 #include "Rand.h"
 #include "Move.h"
 #include "../Worlds/WorldManager.h"
+#include "../DensityOfStates/DOSOrderParameter.h"
 #include "../ForceFields/ForceFieldManager.h"
 #include "../Simulation/SimInfo.h"
 
@@ -59,6 +60,46 @@ namespace SAPHRON
 			// Acceptance probability. 
 			double p = exp(-de.total()/(w->GetTemperature()*sim.GetkB()));
 			p = p > 1.0 ? 1.0 : p;
+
+			// Reject or accept move.
+			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
+			{
+				Perform(p1, p2);
+				++_rejected;
+			}
+			else
+			{
+				// Update energies and pressures.
+				w->SetEnergy(w->GetEnergy() + de);
+				w->SetPressure(w->GetPressure() + (ef.pressure - ei.pressure));
+			}	
+		}
+
+		// Perform move using DOS interface.
+		virtual void Perform(World* w, ForceFieldManager* ffm, DOSOrderParameter* op , const MoveOverride& override) override
+		{
+			assert(w->GetParticleCount() > 1);
+
+			Particle* p1 = w->DrawRandomParticle();
+			Particle* p2 = w->DrawRandomParticle();
+
+			while(p2 == p1)
+				p2 = w->DrawRandomParticle();
+
+			// TODO: FFM is known to double count energies of two particles that are neighbors.
+			auto ei = ffm->EvaluateHamiltonian({p1, p2}, w->GetComposition(), w->GetVolume());
+			auto opi = op->EvaluateOrderParameter(*w);
+
+			// Increment pulled out since function is called for undo later on.
+			Perform(p1, p2);
+			++_performed;
+
+			auto ef = ffm->EvaluateHamiltonian({p1, p2}, w->GetComposition(), w->GetVolume());
+			auto opf = op->EvaluateOrderParameter(*w);
+			Energy de = ef.energy - ei.energy;
+
+			// Acceptance probability. 
+			double p = op->AcceptanceProbability(ei.energy, ef.energy, opi, opf, *w);
 
 			// Reject or accept move.
 			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))

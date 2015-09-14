@@ -48,11 +48,8 @@ namespace SAPHRON
 
 	public:
 
-		StandardEnsemble(WorldManager* wmanager,
-		            ForceFieldManager* ffmanager,
-		            MoveManager* mmanager) :
-			_wmanager(wmanager), _ffmanager(ffmanager), 
-			_mmanager(mmanager), _accmap()
+		StandardEnsemble(WorldManager* wm, ForceFieldManager* ffm, MoveManager* mm) :
+			_wmanager(wm), _ffmanager(ffm), _mmanager(mm), _accmap()
 		{
 			// Moves per iteration.
 			int mpi = 0;

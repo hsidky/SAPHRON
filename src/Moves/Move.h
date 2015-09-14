@@ -22,6 +22,7 @@ namespace SAPHRON
 	class Move;
 	class ForceFieldManager;
 	class WorldManager;
+	class DOSOrderParameter;
 
 	// Typedefs.
 	typedef std::vector<Move*> MoveList; 
@@ -42,6 +43,9 @@ namespace SAPHRON
 		// An implemented move should respect constness and not change the state 
 		// of the instance. This is important to ensure thread safety!
 		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm, const MoveOverride& override) = 0;
+
+		// Perform move interface for DOS ensemble.
+		virtual void Perform(World* world, ForceFieldManager* ffm, DOSOrderParameter* op, const MoveOverride& override) = 0;
 
 		// Get move name. 
 		virtual std::string GetName() const = 0;

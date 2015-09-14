@@ -127,6 +127,13 @@ namespace SAPHRON
 			}			
 		}
 
+		// Perform move using DOS interface (not!).
+		virtual void Perform(World*, ForceFieldManager*, DOSOrderParameter*, const MoveOverride&) override
+		{
+			std::cerr << "Volume swap move does not support DOS interface." << std::endl;
+			exit(-1);
+		}
+
 		// Get maximum volume change.
 		double GetMaxVolumeChange() const { return _dvmax; }
 	

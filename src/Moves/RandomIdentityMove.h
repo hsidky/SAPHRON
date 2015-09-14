@@ -4,6 +4,7 @@
 #include "Move.h"
 #include "../Worlds/WorldManager.h"
 #include "../ForceFields/ForceFieldManager.h"
+#include "../DensityOfStates/DOSOrderParameter.h"
 #include "../Simulation/SimInfo.h"
 
 namespace SAPHRON
@@ -28,7 +29,7 @@ namespace SAPHRON
 			auto list = Particle::GetSpeciesList();
 			for(auto& id : identities)
 			{
-				if(id >= list.size())
+				if(id >= (int)list.size())
 				{
 					std::cerr << "Specied ID provided does not exist." << std::endl;
 					exit(-1);
@@ -97,6 +98,41 @@ namespace SAPHRON
 				w->SetPressure(w->GetPressure() + (ef.pressure - ei.pressure));
 			}	
 		}
+
+		// Perform move using DOS interface.
+		virtual void Perform(World* world, ForceFieldManager* ffm, DOSOrderParameter* op , const MoveOverride& override) override
+		{
+			Particle* particle = world->DrawRandomParticle();
+
+			// Get initial species and evaluate energy and OP.
+			auto si = particle->GetSpeciesID();
+			auto ei = ffm->EvaluateHamiltonian(*particle, world->GetComposition(), world->GetVolume());
+			auto opi = op->EvaluateOrderParameter(*world);
+
+			// Perform move and evaluate new energy and OP.
+			Perform(particle);
+			auto ef = ffm->EvaluateHamiltonian(*particle, world->GetComposition(), world->GetVolume());
+			auto opf = op->EvaluateOrderParameter(*world);
+
+			Energy de = ef.energy - ei.energy;
+	
+			// Acceptance probability.
+			double p = op->AcceptanceProbability(ei.energy, ef.energy, opi, opf, *world);
+
+			// Reject or accept move.
+			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
+			{
+				particle->SetSpecies(si);
+				++_rejected;
+			}
+			else
+			{
+				// Update energies and pressures.
+				world->SetEnergy(world->GetEnergy() + de);
+				world->SetPressure(world->GetPressure() + (ef.pressure - ei.pressure));
+			}	
+		}
+
 
 		virtual double GetAcceptanceRatio() const override
 		{

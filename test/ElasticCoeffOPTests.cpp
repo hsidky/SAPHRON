@@ -1,6 +1,7 @@
 #include "../src/DensityOfStates/ElasticCoeffOP.h"
 #include "../src/Particles/Site.h"
 #include "../src/Worlds/SimpleWorld.h"
+#include "../src/Histogram.h"
 #include "gtest/gtest.h"
 
 
@@ -15,14 +16,16 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 	world.ConfigureParticles({&site1}, {1.0});
 	world.UpdateNeighborList();
 
+
 	// Initialize ElasticCoeffOP 
+	Histogram hist(-0.02, 0.02, 200);
 	int middle = ceil(n/2);
-	ElasticCoeffOP op(world, 1.0, n - middle, [=](const Particle* p){
+	ElasticCoeffOP op(hist, world, n - middle, [=](const Particle* p){
 		auto& pos = p->GetPositionRef();
 		return pos.x == middle; 
 	});
 
-	ASSERT_EQ(0, op.EvaluateParameter(0));
+	ASSERT_EQ(0, op.EvaluateOrderParameter(world));
 
 	// Register event handler for particles of interest.
 	//int idx = 0; // Get index of one of the middle spins for later.
@@ -45,7 +48,7 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 	ASSERT_EQ(n*n, count);
 
 	// Re-evaluate OP.
-	ASSERT_EQ(1.0/(n-middle), op.EvaluateParameter(0));
+	ASSERT_EQ(1.0/(n-middle), op.EvaluateOrderParameter(world));
 
 	for(int i = 0; i < world.GetParticleCount(); ++i)
 	{
@@ -56,9 +59,9 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 		auto eigvec = op.GetDirector();
 
 		// Check eigenvectors are normalized.
-		ASSERT_NEAR(1.0, sqrt(eigvec[0]*eigvec[0] + eigvec[1]*eigvec[1] + eigvec[2]*eigvec[2]), 1e-5);
+		ASSERT_NEAR(1.0, eigvec.norm(), 1e-5);
 	}
 
 	// Re-evaluate OP.
-	ASSERT_NEAR(sqrt(2.0)/(2.0*(n-middle)), op.EvaluateParameter(0), 1e-9);
+	ASSERT_NEAR(sqrt(2.0)/(2.0*(n-middle)), op.EvaluateOrderParameter(world), 1e-9);
 }

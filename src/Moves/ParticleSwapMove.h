@@ -112,7 +112,12 @@ namespace SAPHRON
 				w2->SetEnergy(w2->GetEnergy() + ef.energy);
 				w2->SetPressure(w2->GetPressure() + ef.pressure);
 			}
+		}
 
+		virtual void Perform(World*, ForceFieldManager*, DOSOrderParameter* , const MoveOverride&) override
+		{
+			std::cerr << "Particle swap move does not support DOS ensemble." << std::endl;
+			exit(-1);
 		}
 
 		virtual double GetAcceptanceRatio() const override
