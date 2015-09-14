@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Observers/Visitable.h"
 #include <algorithm>
 #include <cmath>
 #include <vector>
@@ -10,7 +11,7 @@ namespace SAPHRON
 	// A Histogram class. Along with the traditional histogram and binning, this class
 	// provides "value" storage, which can be used to store custom data associated with
 	// each entry in a bin. The interval specified in the histogram is [min, max). 
-	class Histogram
+	class Histogram : public Visitable
 	{
 	private:
 		// Width of bins.
@@ -168,5 +169,12 @@ namespace SAPHRON
 
 			return minVal/avg;
 		}
+
+		// Visitable interface.
+		virtual void AcceptVisitor(Visitor& v) const override
+		{
+			v.Visit(*this);
+		}
+
 	};
 }

@@ -9,6 +9,7 @@ namespace SAPHRON
 	class Particle;
 	class MoveManager;
 	class ForceFieldManager;
+	class Histogram;
 
 	class Visitor
 	{
@@ -20,5 +21,6 @@ namespace SAPHRON
 			virtual void Visit(const Particle& p) = 0;
 			virtual void Visit(const MoveManager& mm) = 0;
 			virtual void Visit(const ForceFieldManager& ffm) = 0;
+			virtual void Visit(const Histogram& hist) = 0;
 	};
 }

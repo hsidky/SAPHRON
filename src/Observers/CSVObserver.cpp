@@ -3,8 +3,10 @@
 #include "CSVObserver.h"
 #include "../Particles/Particle.h"
 #include "../Ensembles/Ensemble.h"
+#include "../Ensembles/DOSEnsemble.h"
 #include "../Worlds/WorldManager.h"
 #include "../Worlds/World.h"
+#include "../Histogram.h"
 
 using namespace std;
 
@@ -35,7 +37,33 @@ namespace SAPHRON
 			for(auto& acceptance : e.GetAcceptanceRatio())
 				*_simfs << setw(_w) << acceptance.first + " Acc." << _dlm;
 
-		*_simfs << endl;
+		*_simfs << "\n";
+	}
+
+	void CSVObserver::InitializeDOSEnsemble(const DOSEnsemble &e)
+	{
+		if(!this->Flags.simulation)
+			return;
+
+		// Open file for writing. 
+		_simfs = unique_ptr<ofstream>(
+			new ofstream(_prefix + ".simulation" + _ext)
+			);
+		_simfs->precision(8);
+		*_simfs << scientific;
+
+
+		if(this->Flags.iteration)
+			*_simfs << setw(_w) << "Iteration" << _dlm;
+		if(this->Flags.dos_factor)
+			*_simfs << setw(_w) << "DOS Factor" << _dlm;
+		if(this->Flags.dos_flatness)
+			*_simfs << setw(_w) << "DOS Flatness" << _dlm;
+		if(this->Flags.move_acceptances)
+			for(auto& acceptance : e.GetAcceptanceRatio())
+				*_simfs << setw(_w) << acceptance.first + " Acc." << _dlm;
+
+		*_simfs << "\n";
 	}
 
 	void CSVObserver::InitializeWorlds(const WorldManager& wm)
@@ -70,7 +98,7 @@ namespace SAPHRON
 				for(auto&c : w->GetComposition())
 					*_worldfs.back() << setw(_w) << "#" + to_string(c.first) << _dlm;
 
-			*_worldfs.back() << endl;
+			*_worldfs.back() << "\n";
 		}
 	}
 
@@ -105,8 +133,41 @@ namespace SAPHRON
 			if(this->Flags.particle_neighbors)
 				*fs << setw(_w) << "Neighbor IDs" << _dlm;
 
-			*fs << endl;
+			*fs << "\n";
 		}
+	}
+
+	void CSVObserver::InitializeHistogram(const Histogram& hist)
+	{
+		if(!this->Flags.histogram)
+			return; 
+
+		// Open file for writing. 
+		_histfs = unique_ptr<ofstream>(
+			new ofstream(_prefix + ".histogram" + _ext)
+			);
+		_histfs->precision(10);
+		*_histfs << scientific;
+
+		if(this->Flags.iteration)
+			*_histfs << setw(_w) << "Iteration" << _dlm;
+		if(this->Flags.hist_interval)
+			*_histfs << setw(_w) << "Interval" << _dlm;
+		if(this->Flags.hist_bin_count)
+			*_histfs << setw(_w) << "Bin Count" << _dlm;
+		if(this->Flags.hist_lower_outliers)
+			*_histfs << setw(_w) << "Lower Outliers" << _dlm;
+		if(this->Flags.hist_upper_outliers)
+			*_histfs << setw(_w) << "Upper Outliers" << _dlm;
+		if(this->Flags.hist_values)
+		{
+			for(int i = 0; i < hist.GetBinCount(); ++i)
+			{
+			//	*_histfs << set(_w) << "V" << 
+			}
+		}
+		
+		*_histfs << "\n";
 	}
 
 	void CSVObserver::Visit(const Ensemble& e)
@@ -125,7 +186,26 @@ namespace SAPHRON
 				*_simfs << setw(_w) << acceptance.second << _dlm;
 	}
 
-	void CSVObserver::Visit(const DOSEnsemble&)
+	void CSVObserver::Visit(const DOSEnsemble& e)
+	{
+		if(!_printedH)
+			InitializeDOSEnsemble(e);
+
+		if(!this->Flags.simulation)	
+			return;
+
+		if(this->Flags.iteration)
+			*_simfs << setw(_w) << e.GetIteration() << _dlm;
+		if(this->Flags.dos_factor)
+			*_simfs << setw(_w) << e.GetConvergenceFactor() << _dlm;
+		if(this->Flags.dos_flatness)
+			*_simfs << setw(_w) << e.GetFlatness() << _dlm;
+		if(this->Flags.move_acceptances)
+			for(auto& acceptance : e.GetAcceptanceRatio())
+				*_simfs << setw(_w) << acceptance.second << _dlm;
+	}
+
+	void CSVObserver::Visit(const Histogram& hist)
 	{
 
 	}
@@ -211,6 +291,6 @@ namespace SAPHRON
 				*fs << setw(_w) << neighbor->GetGlobalIdentifier() << _dlm;		
 		}
 
-		*fs << std::endl;
+		*fs << "\n";
 	}
 }

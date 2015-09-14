@@ -33,8 +33,10 @@ namespace SAPHRON
         bool _printedH;
 
         void InitializeEnsemble(const Ensemble& e);
+        void InitializeDOSEnsemble(const DOSEnsemble& e);
         void InitializeWorlds(const WorldManager& wm);
         void InitializeParticles(const WorldManager& wm);
+        void InitializeHistogram(const Histogram& hist);
 
 	public:
 		CSVObserver(std::string prefix, SimFlags flags, unsigned int frequency = 1);
@@ -45,16 +47,16 @@ namespace SAPHRON
 		virtual void Visit(const MoveManager& mm) override;
 		virtual void Visit(const ForceFieldManager& ffm) override;
 		virtual void Visit(const Particle& p) override;
-		
+		virtual void Visit(const Histogram& hist) override;
 
 		// Post visit, mark printed bools as true.
 		virtual void PostVisit() override
 		{
 			// Newline it out!
-			*_simfs << std::endl;
+			*_simfs << "\n";
 
 			for(auto& w : _worldfs)
-				*w << std::endl;
+				*w << "\n";
 
 			_printedH = true;
 		}

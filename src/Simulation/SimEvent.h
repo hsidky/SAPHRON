@@ -7,13 +7,15 @@ namespace SAPHRON
 	class SimFlags
 	{
 		public:
-			SimFlags() : simulation(0), world(0), dos(0), histogram(0), particle(0) {}
+			SimFlags() : simulation(0), world(0), histogram(0), particle(0) {}
 			union
 			{
 				struct
 				{
 					unsigned int iteration : 1;
 					unsigned int move_acceptances: 1;
+					unsigned int dos_factor : 1;
+					unsigned int dos_flatness : 1;
 				};
 
 				unsigned int simulation;
@@ -37,24 +39,12 @@ namespace SAPHRON
 			{
 				struct
 				{
-					unsigned int dos_walker : 1;
-					unsigned int dos_scale_factor : 1;
-					unsigned int dos_flatness : 1;
-					unsigned int dos_interval : 1;
-					unsigned int dos_bin_count: 1;
-					unsigned int dos_values : 1;
-				};
-				unsigned int dos;
-			};
-
-			union
-			{
-				struct
-				{
+					unsigned int hist_interval : 1;
 					unsigned int hist_bin_count : 1;
 					unsigned int hist_lower_outliers : 1;
 					unsigned int hist_upper_outliers : 1;
 					unsigned int hist_values : 1;
+					unsigned int hist_counts : 1;
 				};
 				unsigned int histogram;
 			};
