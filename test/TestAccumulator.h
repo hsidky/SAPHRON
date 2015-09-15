@@ -82,6 +82,11 @@ namespace SAPHRON
 				
 			}
 
+			virtual void Visit(const Histogram&) override
+			{
+				
+			}
+
 			virtual void Visit(const ForceFieldManager&) override
 			{
 				

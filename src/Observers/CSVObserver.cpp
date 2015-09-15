@@ -152,7 +152,10 @@ namespace SAPHRON
 		if(this->Flags.iteration)
 			*_histfs << setw(_w) << "Iteration" << _dlm;
 		if(this->Flags.hist_interval)
-			*_histfs << setw(_w) << "Interval" << _dlm;
+		{
+			*_histfs << setw(_w) << "Minimum" << _dlm;
+			*_histfs << setw(_w) << "Maximum" << _dlm;
+		}
 		if(this->Flags.hist_bin_count)
 			*_histfs << setw(_w) << "Bin Count" << _dlm;
 		if(this->Flags.hist_lower_outliers)
@@ -161,10 +164,10 @@ namespace SAPHRON
 			*_histfs << setw(_w) << "Upper Outliers" << _dlm;
 		if(this->Flags.hist_values)
 		{
+			auto min = hist.GetMinimum();
+			auto bw = hist.GetBinWidth();
 			for(int i = 0; i < hist.GetBinCount(); ++i)
-			{
-			//	*_histfs << set(_w) << "V" << 
-			}
+				*_histfs << setw(_w) << to_string(min + i*bw) << _dlm;
 		}
 		
 		*_histfs << "\n";
@@ -207,7 +210,28 @@ namespace SAPHRON
 
 	void CSVObserver::Visit(const Histogram& hist)
 	{
+		if(!_printedH)
+			InitializeHistogram(hist);
 
+		if(this->Flags.histogram)
+			return;
+
+		if(this->Flags.iteration)
+			*_histfs << setw(_w) << this->GetIteration() << _dlm;
+		if(this->Flags.hist_interval)
+		{
+			*_histfs << setw(_w) << hist.GetMinimum() << _dlm;
+			*_histfs << setw(_w) << hist.GetMaximum() << _dlm;
+		}
+		if(this->Flags.hist_bin_count)
+			*_histfs << setw(_w) << hist.GetBinCount() << _dlm;
+		if(this->Flags.hist_lower_outliers)
+			*_histfs << setw(_w) << hist.GetLowerOutlierCount() << _dlm;
+		if(this->Flags.hist_upper_outliers)
+			*_histfs << setw(_w) << hist.GetUpperOutlierCount() << _dlm;
+		if(this->Flags.hist_values)
+			for(const auto& v : hist.GetValues())
+				*_histfs << setw(_w) << v << _dlm;
 	}
 
 	void CSVObserver::Visit(const WorldManager &wm)
