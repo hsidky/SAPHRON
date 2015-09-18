@@ -49,7 +49,7 @@ namespace SAPHRON
 		_temperature(0.0), _id(++_nextID), _xlength(xlength), 
 		_ylength(ylength), _zlength(zlength) 
 		{
-			_stringid = "World" + std::to_string(_id);
+			_stringid = "world" + std::to_string(_id);
 		}
 
 		// Draw a random particle from the world.
@@ -190,11 +190,17 @@ namespace SAPHRON
 		// Set world pressure. 
 		void SetPressure(const Pressure& p) { _pressure = p; }
 
+		// Increment world pressure. (aka p += dp).
+		void IncrementPressure(const Pressure& dp) { _pressure += dp; }
+
 		// Get world energy. 
 		Energy GetEnergy() const { return _energy; }
 
 		// Set world energy. 
 		void SetEnergy(const Energy& e) { _energy = e; }
+
+		// Increment world energy (e += de).
+		void IncrementEnergy(const Energy& de) { _energy += de; }
 
 		// Get box vectors.
 		inline Position GetBoxVectors() const 

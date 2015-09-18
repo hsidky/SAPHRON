@@ -79,8 +79,8 @@ namespace SAPHRON
 			else
 			{
 				// Update energies and pressures.
-				w->SetEnergy(w->GetEnergy() + de);
-				w->SetPressure(w->GetPressure() + (ef.pressure - ei.pressure));
+				w->IncrementEnergy(de);
+				w->IncrementPressure(ef.pressure - ei.pressure);
 			}	
 
 		}
@@ -99,8 +99,13 @@ namespace SAPHRON
 
 			// Evaluate final energy and order parameter and check probability. 
 			auto ef = ffm->EvaluateHamiltonian(*particle, world->GetComposition(), world->GetVolume());
-			auto opf = op->EvaluateOrderParameter(*world);
 			Energy de = ef.energy - ei.energy;
+
+			// Update energies and pressures.
+			world->IncrementEnergy(de);
+			world->IncrementPressure(ef.pressure - ei.pressure);
+
+			auto opf = op->EvaluateOrderParameter(*world);
 
 			// Evaluate acceptance probability. 
 			double p = op->AcceptanceProbability(ei.energy, ef.energy, opi, opf, *world);
@@ -108,15 +113,13 @@ namespace SAPHRON
 			// Reject or accept move.
 			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
+				// Update energies and pressures.
+				world->IncrementEnergy(-1.0*de);
+				world->IncrementPressure(ei.pressure - ef.pressure);
+
 				particle->SetDirector(di);
 				++_rejected;
 			}
-			else
-			{
-				// Update energies and pressures.
-				world->SetEnergy(world->GetEnergy() + de);
-				world->SetPressure(world->GetPressure() + (ef.pressure - ei.pressure));
-			}	
 		}
 
 		virtual double GetAcceptanceRatio() const override

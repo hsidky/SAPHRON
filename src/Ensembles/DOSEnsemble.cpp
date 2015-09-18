@@ -23,8 +23,10 @@ namespace SAPHRON
 			}
 
 			// Reset histogram if desired.
-			if(_hreset && this->GetIteration() % _hreset == 0)
+			if(_hreset && (this->GetIteration() % _hreset == 0)){
+				std::cout << "HISTOGRAM RESET" << std::endl;
 				_hist->ResetHistogram();
+			}
 			
 			_flatness = _hist->CalculateFlatness();
 			UpdateAcceptances();

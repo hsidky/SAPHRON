@@ -70,6 +70,18 @@ namespace SAPHRON
 			connectivity /= rhs;
 			return *this;
 		}
+
+		inline Energy operator*(const double& rhs) const
+		{
+			Energy lhs(*this);
+			lhs.intervdw *= rhs; 
+			lhs.intravdw *= rhs; 
+			lhs.bonded *= rhs; 
+			lhs.interelectrostatic *= rhs; 
+			lhs.intraelectrostatic *= rhs; 
+			lhs.connectivity *= rhs;
+			return lhs;
+		}
 	};
 
 	inline Energy operator+(Energy lhs, const Energy& rhs)
@@ -103,5 +115,10 @@ namespace SAPHRON
 		lhs.intraelectrostatic /= rhs;
 		lhs.connectivity /= rhs;
 		return lhs;
+	}	
+
+	inline Energy operator*(double lhs, const Energy& rhs)
+	{
+		return rhs*lhs;
 	}
 }

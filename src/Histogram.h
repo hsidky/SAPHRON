@@ -155,7 +155,7 @@ namespace SAPHRON
 		double CalculateFlatness() const 
 		{
 			double avg = 0;
-			double minVal = std::numeric_limits<int>::infinity();
+			double minVal = 10.0e10;
 			for(auto& count : _counts)
 			{
 				if(count < minVal)

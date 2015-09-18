@@ -11,22 +11,28 @@ namespace SAPHRON
 	// [2] Wang, F., & Landau, D. P. (2001). Physical Review E, 64, 1–16.
 	class WangLandauOP : public DOSOrderParameter
 	{
-		public:
+	protected:
 
-			// Return the Wang-Landau order parameter (energy).
-			virtual double EvaluateOrderParameter(World* w) const override
-			{
-				return w->GetEnergy().total();
-			}
+		// Calculate Wang-Landau acceptance probability.
+		virtual double CalcAcceptanceProbability(const Energy& ei, 
+												 const Energy& ef, 
+												 double opi, 
+												 double opf,
+												 const World&) const override
+		{
+			double p = exp(GetHistValue(opi) - GetHistValue(opf));
+			return p > 1.0 ? 1.0 : p;
+		}
 
-			// Calculate the acceptance probability.
-			inline virtual double AcceptanceProbability(double, double prevO, 
-														double, double newO) override 
-			{
-				double p = exp(prevO - newO);
-				return p > 1.0 ? 1.0 : p;
-			}
+	public:
+		WangLandauOP(const Histogram& hist) : DOSOrderParameter(hist) {}
 
-			~WangLandauOP(){};	
+		// Return the Wang-Landau order parameter (energy).
+		virtual double EvaluateOrderParameter(const World& w) const override
+		{
+			return w.GetEnergy().total();
+		}
+
+		~WangLandauOP(){};	
 	};
 }

@@ -52,11 +52,14 @@ namespace SAPHRON
 		// Post visit, mark printed bools as true.
 		virtual void PostVisit() override
 		{
-			// Newline it out!
-			*_simfs << "\n";
+			if(_simfs)
+				*_simfs << std::endl;
+
+			if(_histfs)
+				*_histfs << std::endl;
 
 			for(auto& w : _worldfs)
-				*w << "\n";
+				*w << std::endl;
 
 			_printedH = true;
 		}

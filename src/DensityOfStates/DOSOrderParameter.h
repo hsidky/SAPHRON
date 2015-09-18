@@ -19,6 +19,8 @@ namespace SAPHRON
 												 double opf,
 												 const World& w) const = 0;
 
+		double GetHistValue(double op) const { return _hist->GetValue(op); }
+
 	public:
 		DOSOrderParameter(const Histogram& hist)
 		{

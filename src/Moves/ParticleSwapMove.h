@@ -107,10 +107,11 @@ namespace SAPHRON
 			}
 			else
 			{
-				w1->SetEnergy(w1->GetEnergy() - ei.energy);
-				w1->SetPressure(w1->GetPressure() - ei.pressure);
-				w2->SetEnergy(w2->GetEnergy() + ef.energy);
-				w2->SetPressure(w2->GetPressure() + ef.pressure);
+				// Update energies and pressures.
+				w1->IncrementEnergy(-1.0*ei.energy);
+				w1->IncrementPressure(-1.0*ei.pressure);
+				w2->IncrementEnergy(ef.energy);
+				w2->IncrementPressure(ef.pressure);
 			}
 		}
 

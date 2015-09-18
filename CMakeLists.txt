@@ -90,7 +90,7 @@ include_directories("${ARMA_INCLUDE}")
 set(SOURCE
 	src/jsoncpp.cpp
 	src/schema.cpp
-#	src/Ensembles/DOSEnsemble.cpp
+	src/Ensembles/DOSEnsemble.cpp
 	src/Ensembles/Ensemble.cpp
 	src/Ensembles/StandardEnsemble.cpp
 #	src/Ensembles/ProtonationMDEnsemble.cpp
@@ -145,11 +145,11 @@ target_include_directories(DirectorRotateMoveTests PRIVATE "${GTEST_INCLUDE_DIR}
 add_dependencies(DirectorRotateMoveTests googletest) 
 add_test(DirectorRotateMoveTests DirectorRotateMoveTests)
 
-#add_executable(DOSEnsembleTests test/DOSEnsembleTests.cpp)
-#target_link_libraries(DOSEnsembleTests ${TEST_DEPS})
-#target_include_directories(DOSEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
-#add_dependencies(DOSEnsembleTests googletest) 
-#add_test(DOSEnsembleTests DOSEnsembleTests)
+add_executable(DOSEnsembleTests test/DOSEnsembleTests.cpp)
+target_link_libraries(DOSEnsembleTests ${TEST_DEPS})
+target_include_directories(DOSEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(DOSEnsembleTests googletest) 
+add_test(DOSEnsembleTests DOSEnsembleTests)
 
 add_executable(DLSAConnectivityTests test/DLSAConnectivityTests.cpp)
 target_link_libraries(DLSAConnectivityTests ${TEST_DEPS})

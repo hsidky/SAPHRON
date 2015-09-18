@@ -37,7 +37,7 @@ namespace SAPHRON
 			for(auto& acceptance : e.GetAcceptanceRatio())
 				*_simfs << setw(_w) << acceptance.first + " Acc." << _dlm;
 
-		*_simfs << "\n";
+		*_simfs << endl;
 	}
 
 	void CSVObserver::InitializeDOSEnsemble(const DOSEnsemble &e)
@@ -63,7 +63,7 @@ namespace SAPHRON
 			for(auto& acceptance : e.GetAcceptanceRatio())
 				*_simfs << setw(_w) << acceptance.first + " Acc." << _dlm;
 
-		*_simfs << "\n";
+		*_simfs << endl;
 	}
 
 	void CSVObserver::InitializeWorlds(const WorldManager& wm)
@@ -133,7 +133,7 @@ namespace SAPHRON
 			if(this->Flags.particle_neighbors)
 				*fs << setw(_w) << "Neighbor IDs" << _dlm;
 
-			*fs << "\n";
+			*fs << endl;
 		}
 	}
 
@@ -170,7 +170,7 @@ namespace SAPHRON
 				*_histfs << setw(_w) << to_string(min + i*bw) << _dlm;
 		}
 		
-		*_histfs << "\n";
+		*_histfs << endl;
 	}
 
 	void CSVObserver::Visit(const Ensemble& e)
@@ -213,7 +213,7 @@ namespace SAPHRON
 		if(!_printedH)
 			InitializeHistogram(hist);
 
-		if(this->Flags.histogram)
+		if(!this->Flags.histogram)
 			return;
 
 		if(this->Flags.iteration)

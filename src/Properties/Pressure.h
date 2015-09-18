@@ -75,6 +75,20 @@ namespace SAPHRON
 			ptail /= rhs;
 			return *this;
 		}
+
+		inline Pressure operator*(const double& rhs) const
+		{
+			Pressure lhs(*this);
+			lhs.pxx /= rhs;
+			lhs.pxy /= rhs;
+			lhs.pxz /= rhs;
+			lhs.pyy /= rhs;
+			lhs.pyz /= rhs;
+			lhs.pzz /= rhs;
+			lhs.ideal /= rhs;
+			lhs.ptail /= rhs;
+			return lhs;
+		}
 	};
 
 	inline Pressure operator+(Pressure lhs, const Pressure& rhs)
@@ -101,5 +115,10 @@ namespace SAPHRON
 		lhs.ideal -= rhs.ideal;
 		lhs.ptail -= rhs.ptail;
 		return lhs;
+	}
+
+	inline Pressure operator*(double lhs, const Pressure& rhs)
+	{
+		return rhs*lhs;
 	}
 }

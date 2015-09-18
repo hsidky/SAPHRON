@@ -94,8 +94,8 @@ namespace SAPHRON
 			else
 			{
 				// Update energies and pressures.
-				w->SetEnergy(w->GetEnergy() + de);
-				w->SetPressure(w->GetPressure() + (ef.pressure - ei.pressure));
+				w->IncrementEnergy(de);
+				w->IncrementPressure(ef.pressure - ei.pressure);
 			}	
 		}
 
@@ -128,8 +128,8 @@ namespace SAPHRON
 			else
 			{
 				// Update energies and pressures.
-				world->SetEnergy(world->GetEnergy() + de);
-				world->SetPressure(world->GetPressure() + (ef.pressure - ei.pressure));
+				world->IncrementEnergy(de);
+				world->IncrementPressure(ef.pressure - ei.pressure);
 			}	
 		}
 
