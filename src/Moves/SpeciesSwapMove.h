@@ -95,8 +95,13 @@ namespace SAPHRON
 			++_performed;
 
 			auto ef = ffm->EvaluateHamiltonian({p1, p2}, w->GetComposition(), w->GetVolume());
-			auto opf = op->EvaluateOrderParameter(*w);
 			Energy de = ef.energy - ei.energy;
+			
+			// Update energies and pressures.
+			w->IncrementEnergy(de);
+			w->IncrementPressure(ef.pressure - ei.pressure);
+			
+			auto opf = op->EvaluateOrderParameter(*w);
 
 			// Acceptance probability. 
 			double p = op->AcceptanceProbability(ei.energy, ef.energy, opi, opf, *w);
@@ -105,14 +110,13 @@ namespace SAPHRON
 			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
 				Perform(p1, p2);
+				
+				// Update energies and pressures.
+				w->IncrementEnergy(-1.0*de);
+				w->IncrementPressure(ei.pressure - ef.pressure);
+
 				++_rejected;
 			}
-			else
-			{
-				// Update energies and pressures.
-				w->IncrementEnergy(de);
-				w->IncrementPressure(ef.pressure - ei.pressure);
-			}	
 		}
 
 		virtual double GetAcceptanceRatio() const override

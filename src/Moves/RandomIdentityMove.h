@@ -112,10 +112,14 @@ namespace SAPHRON
 			// Perform move and evaluate new energy and OP.
 			Perform(particle);
 			auto ef = ffm->EvaluateHamiltonian(*particle, world->GetComposition(), world->GetVolume());
+			Energy de = ef.energy - ei.energy;
+
+			// Update energies and pressures.
+			world->IncrementEnergy(de);
+			world->IncrementPressure(ef.pressure - ei.pressure);
+			
 			auto opf = op->EvaluateOrderParameter(*world);
 
-			Energy de = ef.energy - ei.energy;
-	
 			// Acceptance probability.
 			double p = op->AcceptanceProbability(ei.energy, ef.energy, opi, opf, *world);
 
@@ -123,14 +127,13 @@ namespace SAPHRON
 			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
 				particle->SetSpecies(si);
+
+				// Update energies and pressures.
+				world->IncrementEnergy(-1.0*de);
+				world->IncrementPressure(ei.pressure - ef.pressure);
+
 				++_rejected;
 			}
-			else
-			{
-				// Update energies and pressures.
-				world->IncrementEnergy(de);
-				world->IncrementPressure(ef.pressure - ei.pressure);
-			}	
 		}
 
 

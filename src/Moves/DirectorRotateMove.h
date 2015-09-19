@@ -113,11 +113,12 @@ namespace SAPHRON
 			// Reject or accept move.
 			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
+				particle->SetDirector(di);
+
 				// Update energies and pressures.
 				world->IncrementEnergy(-1.0*de);
 				world->IncrementPressure(ei.pressure - ef.pressure);
-
-				particle->SetDirector(di);
+				
 				++_rejected;
 			}
 		}

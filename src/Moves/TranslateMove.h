@@ -108,8 +108,13 @@ namespace SAPHRON
 
 				// Evaluate final particle energy and get delta E. 
 				auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
-				auto opf = op->EvaluateOrderParameter(*w);
 				Energy de = ef.energy - ei.energy;
+				
+				// Update energies and pressures.
+				w->IncrementEnergy(de);
+				w->IncrementPressure(ef.pressure - ei.pressure);
+
+				auto opf = op->EvaluateOrderParameter(*w);
 				
 				// Update neighbor list if needed.
 				w->CheckNeighborListUpdate(particle);
@@ -121,13 +126,12 @@ namespace SAPHRON
 				if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 				{
 					particle->SetPosition(posi);
-					++_rejected;
-				}
-				else
-				{
+					
 					// Update energies and pressures.
-					w->IncrementEnergy(de);
-					w->IncrementPressure(ef.pressure - ei.pressure);
+					w->IncrementEnergy(-1.0*de);
+					w->IncrementPressure(ei.pressure - ef.pressure);
+					
+					++_rejected;
 				}	
 			}
 
