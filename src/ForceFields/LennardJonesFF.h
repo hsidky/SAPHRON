@@ -26,7 +26,7 @@ namespace SAPHRON
 			{
 				Interaction ep;
 
-				double rsq = rij.normsq();
+				double rsq = arma::dot(rij,rij);
 				double sr6 = _sigma3*_sigma3/(rsq*rsq*rsq);
 				ep.energy = 4.0*_epsilon*(sr6*sr6-sr6);
 				ep.virial = 24.0*_epsilon*(sr6-2.0*sr6*sr6)/rsq;

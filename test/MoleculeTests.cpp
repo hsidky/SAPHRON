@@ -17,15 +17,15 @@ TEST(Molecule, DefaultBehavior)
 	m.AddChild(s3);
 
 	Position pos{2.0, 0.0, 0.0};
-	ASSERT_EQ(pos, m.GetPosition());
+	ASSERT_TRUE(is_close(pos, m.GetPosition(),1e-11));
 
 	// Move molecule.
 	pos = {3.5, 2.7, 8.3};
 	m.SetPosition(pos);
-	ASSERT_EQ(pos, m.GetPosition());
-	ASSERT_EQ(Position({2.5, 2.7, 8.3}), s1->GetPosition()); 
-	ASSERT_EQ(Position({3.5, 2.7, 8.3}), s2->GetPosition()); 
-	ASSERT_EQ(Position({4.5, 2.7, 8.3}), s3->GetPosition()); 
+	ASSERT_TRUE(is_close(pos, m.GetPosition(),1e-11));
+	ASSERT_TRUE(is_close(Position({2.5, 2.7, 8.3}), s1->GetPosition(),1e-11)); 
+	ASSERT_TRUE(is_close(Position({3.5, 2.7, 8.3}), s2->GetPosition(),1e-11)); 
+	ASSERT_TRUE(is_close(Position({4.5, 2.7, 8.3}), s3->GetPosition(),1e-11)); 
 
 	ASSERT_EQ(3.0, m.GetMass());
 
@@ -33,7 +33,7 @@ TEST(Molecule, DefaultBehavior)
 	// Remove children.
 	m.RemoveChild(s1);
 	pos = {4.0, 2.7, 8.3};
-	ASSERT_EQ(pos, m.GetPosition());
+	ASSERT_TRUE(is_close(pos, m.GetPosition(),1e-11));
 
 	delete s1;
 }

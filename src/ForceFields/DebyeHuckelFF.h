@@ -34,7 +34,7 @@ namespace SAPHRON
 			{
 				Interaction ep;
 
-				double r = rij.norm();
+				double r = arma::norm(rij);
 				ep.energy = _kbt*(_bjerrum/r)*exp(-r/_debye);
 				ep.virial = _kbt*_bjerrum*((-exp(-r/_debye)/(r*r))-(exp(-r/_debye)/(_debye*r)));
 				

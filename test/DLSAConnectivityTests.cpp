@@ -19,7 +19,7 @@ TEST(DLSAConnectivity, DefaultBehavior)
 		dir[2] = 0.0;
 	},
 	[](const Particle& p){
-		return (int)p.GetPositionRef().x;
+		return (int)p.GetPositionRef()[0];
 	});
 
 	ForceFieldManager ffm;

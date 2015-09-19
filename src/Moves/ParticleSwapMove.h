@@ -34,9 +34,9 @@ namespace SAPHRON
 
 			// Generate a new random coordinate for the particle.
 			Position pf = w2->GetBoxVectors();
-			pf.x *= _rand.doub();
-			pf.y *= _rand.doub();
-			pf.z *= _rand.doub();
+			pf[0] *= _rand.doub();
+			pf[1] *= _rand.doub();
+			pf[2] *= _rand.doub();
 
 			particle->SetPosition(pf);
 			w2->AddParticle(particle);

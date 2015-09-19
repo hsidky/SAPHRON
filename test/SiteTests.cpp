@@ -8,9 +8,9 @@ TEST(Site, DefaultConstructor)
 	Site s({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 
 	auto pos = s.GetPosition();
-	ASSERT_EQ(0.0, pos.x);
-	ASSERT_EQ(0.0, pos.y);
-	ASSERT_EQ(0.0, pos.z);
+	ASSERT_EQ(0.0, pos[0]);
+	ASSERT_EQ(0.0, pos[1]);
+	ASSERT_EQ(0.0, pos[2]);
 
 	Director d1 {0.0, 0.0, 0.0};
 	ASSERT_TRUE(is_close(d1, s.GetDirector(), 1e-11));
@@ -25,13 +25,13 @@ TEST(Site, DefaultConstructor)
 
 	// Test checkpoint 
 	s.SetCheckpoint();
-	ASSERT_EQ(Position({0.0, 0.0, 0.0}), s.GetCheckpoint());
+	ASSERT_TRUE(is_close(Position({0.0, 0.0, 0.0}), s.GetCheckpoint(),1e-11));
 	s.SetPosition({2.0, 0, 0});
-	ASSERT_EQ(Position({2.0, 0.0, 0.0}), s.GetPosition());
-	ASSERT_EQ(Position({0.0, 0.0, 0.0}), s.GetCheckpoint());
-	ASSERT_EQ(2.0, (s.GetCheckpoint() - s.GetPosition()).norm());
+	ASSERT_TRUE(is_close(Position({2.0, 0.0, 0.0}), s.GetCheckpointDist(),1e-11));
+	ASSERT_TRUE(is_close(Position({0.0, 0.0, 0.0}), s.GetCheckpoint(),1e-11));
+	ASSERT_EQ(2.0, arma::norm(s.GetCheckpoint() - s.GetPosition()));
 	s.SetCheckpoint();
-	ASSERT_EQ(Position({2.0, 0.0, 0.0}), s.GetCheckpoint());
+	ASSERT_TRUE(is_close(Position({2.0, 0.0, 0.0}), s.GetCheckpoint(),1e-11));
 }
 
 TEST(Site, Identifiers)
@@ -64,7 +64,7 @@ TEST(Site, Identifiers)
 	Particle* particle = s3.Clone();
 
 	ASSERT_TRUE(is_close(dir, particle->GetDirector(), 1e-11));
-	ASSERT_EQ(pos, particle->GetPosition());
+	ASSERT_TRUE(is_close(pos, particle->GetPosition(),1e-11));
 	ASSERT_EQ(5, particle->GetGlobalIdentifier());
 
 	// Test setting new identifier.
@@ -131,20 +131,20 @@ TEST(Site, PositionArithmetic)
 	Position p1({2.0, 2.0, 3.0});
 	Position p2({2.0, 3.0, 2.0});
 	Position p3({3.0, 2.0, 2.0});
-	ASSERT_EQ(p1, s1.GetPosition() + s2.GetPosition()); 
-	ASSERT_EQ(p2, s1.GetPosition() + s3.GetPosition()); 
-	ASSERT_EQ(p3, s1.GetPosition() + s4.GetPosition()); 
-	ASSERT_EQ(sqrt(17.0), (s1.GetPosition() + s2.GetPosition()).norm());
-	ASSERT_EQ(sqrt(17.0), (s1.GetPosition() + s3.GetPosition()).norm());
-	ASSERT_EQ(sqrt(17.0), (s1.GetPosition() + s4.GetPosition()).norm());
+	ASSERT_TRUE(is_close(p1, s1.GetPosition() + s2.GetPosition(),1e-11)); 
+	ASSERT_TRUE(is_close(p2, s1.GetPosition() + s3.GetPosition(),1e-11)); 
+	ASSERT_TRUE(is_close(p3, s1.GetPosition() + s4.GetPosition(),1e-11)); 
+	ASSERT_EQ(sqrt(17.0), arma::norm(s1.GetPosition() + s2.GetPosition()));
+	ASSERT_EQ(sqrt(17.0), arma::norm(s1.GetPosition() + s3.GetPosition()));
+	ASSERT_EQ(sqrt(17.0), arma::norm(s1.GetPosition() + s4.GetPosition()));
 
 	Position p4({0.0, 0.0, -1.0});
 	Position p5({0.0, -1.0, 0.0});
 	Position p6({-1.0, 0.0, 0.0});
-	ASSERT_EQ(p4, s1.GetPosition() - s2.GetPosition()); 
-	ASSERT_EQ(p5, s1.GetPosition() - s3.GetPosition()); 
-	ASSERT_EQ(p6, s1.GetPosition() - s4.GetPosition()); 
-	ASSERT_EQ(1.0, (s1.GetPosition() - s2.GetPosition()).norm());
-	ASSERT_EQ(1.0, (s1.GetPosition() - s3.GetPosition()).norm());
-	ASSERT_EQ(1.0, (s1.GetPosition() - s4.GetPosition()).norm());
+	ASSERT_TRUE(is_close(p4, s1.GetPosition() - s2.GetPosition(),1e-11)); 
+	ASSERT_TRUE(is_close(p5, s1.GetPosition() - s3.GetPosition(),1e-11)); 
+	ASSERT_TRUE(is_close(p6, s1.GetPosition() - s4.GetPosition(),1e-11)); 
+	ASSERT_EQ(1.0, arma::norm(s1.GetPosition() - s2.GetPosition()));
+	ASSERT_EQ(1.0, arma::norm(s1.GetPosition() - s3.GetPosition()));
+	ASSERT_EQ(1.0, arma::norm(s1.GetPosition() - s4.GetPosition()));
 }

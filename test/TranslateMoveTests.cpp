@@ -18,7 +18,7 @@ TEST(TranslateMove, DefaultBehavior)
 		auto prev = s.GetPosition();
 		m.Perform(&s);
 		auto curr = s.GetPosition();
-		ASSERT_LE((curr-prev).norm(), 1.0);
+		ASSERT_LE(arma::norm(curr-prev), 1.0);
 	}
 
 	ASSERT_EQ(1.0, m.GetAcceptanceRatio());

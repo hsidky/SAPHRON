@@ -94,31 +94,31 @@ namespace SAPHRON
 		// Applies periodic boundaries to positions.
 		inline void ApplyPeriodicBoundaries(Position* position) const
 		{
-			position->x -= _xlength*ffloor(position->x/_xlength);
-			position->y -= _ylength*ffloor(position->y/_ylength);
-			position->z -= _zlength*ffloor(position->z/_zlength);
+			(*position)[0] -= _xlength*ffloor((*position)[0]/_xlength);
+			(*position)[1] -= _ylength*ffloor((*position)[1]/_ylength);
+			(*position)[2] -= _zlength*ffloor((*position)[2]/_zlength);
 		}
 
 		// Applies minimum image convention to distances. 
 		inline void ApplyMinimumImage(Position& position)
 		{
-			if(position.x > _xlength/2.0)
-				position.x -= _xlength;
-			else if(position.x < -_xlength/2.0)
-				position.x += _xlength;
+			if(position[0] > _xlength/2.0)
+				position[0] -= _xlength;
+			else if(position[0] < -_xlength/2.0)
+				position[0] += _xlength;
 			
-			if(position.y > _ylength/2.0)
-				position.y -= _ylength;
-			else if(position.y < -_ylength/2.0)
-				position.y += _ylength;
+			if(position[1] > _ylength/2.0)
+				position[1] -= _ylength;
+			else if(position[1] < -_ylength/2.0)
+				position[1] += _ylength;
 
-			if(position.z > _zlength/2.0)
-				position.z -= _zlength;
-			else if(position.z < -_zlength/2.0)
-				position.z += _zlength;
-			/*position.x -= _xlength*anint(position.x/_xlength);
-			position.y -= _ylength*anint(position.y/_ylength);
-			position.z -= _zlength*anint(position.z/_zlength);*/
+			if(position[2] > _zlength/2.0)
+				position[2] -= _zlength;
+			else if(position[2] < -_zlength/2.0)
+				position[2] += _zlength;
+			/*position[0] -= _xlength*anint(position[0]/_xlength);
+			position[1] -= _ylength*anint(position[1]/_ylength);
+			position[2] -= _zlength*anint(position[2]/_zlength);*/
 		}
 
 		/***************************

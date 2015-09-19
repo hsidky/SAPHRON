@@ -439,7 +439,7 @@ namespace SAPHRON
 			}
 
 			// Check norm.
-			double norm = director.norm();
+			double norm = arma::norm(director);
 			if(std::abs(norm - 1.0) > 1e-7 && norm != 0)
 			{
 				_nmsgs.push_back("Particle " + istr + " norm is not equal to 1. Normalizing vector.");

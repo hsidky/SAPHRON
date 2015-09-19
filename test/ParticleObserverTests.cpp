@@ -54,7 +54,7 @@ TEST(ParticleObserver, DefaultBehavior)
 	s1.SetDirector({ 1.0, 0.0, 0.0 });
 	ASSERT_EQ(0, arma::norm(observer.director - s1.GetDirector()));
 	s1.SetPosition({ 3.0, 2.0, 1.0 });
-	ASSERT_EQ(observer.position, s1.GetPosition());
+	ASSERT_TRUE(is_close(observer.position, s1.GetPosition(),1e-11));
 	s1.SetSpecies("L2");
 	ASSERT_EQ(observer.species, s1.GetSpecies());
 	s1.SetCharge(1.5);

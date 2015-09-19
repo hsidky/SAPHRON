@@ -208,7 +208,7 @@ namespace SAPHRON
 				Position rij = posi - posj;
 				ApplyMinimumImage(rij);
 
-				if(rij.normsq() <= _ncutsq)
+				if(arma::dot(rij,rij) <= _ncutsq)
 				{
 					pj->AddNeighbor(pi);
 					pi->AddNeighbor(pj);
@@ -221,7 +221,7 @@ namespace SAPHRON
 					{
 						rij = ci->GetPositionRef() - cj->GetPositionRef();
 						ApplyMinimumImage(rij);
-						if(rij.normsq() < _ncutsq)
+						if(arma::dot(rij,rij) < _ncutsq)
 						{
 							ci->AddNeighbor(cj);
 							cj->AddNeighbor(ci);
@@ -270,7 +270,7 @@ namespace SAPHRON
 		Position rij = p1->GetPositionRef() - p2->GetPositionRef();
 		ApplyMinimumImage(rij);
 
-		if(rij.normsq() <= _ncutsq)
+		if(arma::dot(rij,rij) <= _ncutsq)
 		{
 			p1->AddNeighbor(p2);
 			p2->AddNeighbor(p1);

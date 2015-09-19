@@ -195,7 +195,7 @@ namespace SAPHRON
 				{
 					auto dist = particle->GetCheckpointDist();
 					ApplyMinimumImage(dist);
-					if(dist.normsq() > _skinsq/4.0)
+					if(dot(dist,dist) > _skinsq/4.0)
 					{	
 						UpdateNeighborList();
 						return;
@@ -208,7 +208,7 @@ namespace SAPHRON
 			{
 				auto dist = p->GetCheckpointDist();
 				ApplyMinimumImage(dist);
-				if(dist.normsq() > _skinsq/4.0)	
+				if(dot(dist,dist) > _skinsq/4.0)	
 					UpdateNeighborList();
 			}
 
@@ -284,7 +284,7 @@ namespace SAPHRON
 					for(auto& particle : _particles)
 					{
 						const auto& pos = particle->GetPositionRef();
-						particle->SetPosition(xs*pos.x, ys*pos.y, zs*pos.z);
+						particle->SetPosition(xs*pos[0], ys*pos[1], zs*pos[2]);
 					}
 
 					_xlength = x;

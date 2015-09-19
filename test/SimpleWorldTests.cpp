@@ -37,17 +37,17 @@ TEST(SimpleWorld, DefaultBehavior)
 
 		// Check neighbors
 		Position n1 =
-		{(coords.x == n) ? 1.0 : (double) coords.x + 1.0, (double) coords.y, (double) coords.z};
+		{(coords[0] == n) ? 1.0 : (double) coords[0] + 1.0, (double) coords[1], (double) coords[2]};
 		Position n2 =
-		{(coords.x == 1) ? (double) n : coords.x - 1.0, (double) coords.y, (double) coords.z};
+		{(coords[0] == 1) ? (double) n : coords[0] - 1.0, (double) coords[1], (double) coords[2]};
 		Position n3 =
-		{(double) coords.x, (coords.y == n) ? 1.0 : (double) coords.y + 1.0, (double) coords.z};
+		{(double) coords[0], (coords[1] == n) ? 1.0 : (double) coords[1] + 1.0, (double) coords[2]};
 		Position n4 =
-		{(double) coords.x, (coords.y == 1) ? (double) n : coords.y - 1.0, (double) coords.z};
+		{(double) coords[0], (coords[1] == 1) ? (double) n : coords[1] - 1.0, (double) coords[2]};
 		Position n5 =
-		{(double) coords.x, (double) coords.y, (coords.z == n) ? 1.0 : (double) coords.z + 1.0};
+		{(double) coords[0], (double) coords[1], (coords[2] == n) ? 1.0 : (double) coords[2] + 1.0};
 		Position n6 =
-		{(double) coords.x, (double) coords.y, (coords.z == 1) ? (double) n : coords.z - 1.0};
+		{(double) coords[0], (double) coords[1], (coords[2] == 1) ? (double) n : coords[2] - 1.0};
 
 		auto& neighbors = particle->GetNeighbors();
 		ASSERT_EQ(6, (int)neighbors.size());
@@ -56,12 +56,12 @@ TEST(SimpleWorld, DefaultBehavior)
 		{
 			auto& np = neighbor->GetPositionRef();
 			ASSERT_TRUE(
-			        np == n1 ||
-			        np == n2 ||
-			        np == n3 ||
-			        np == n4 ||
-			        np == n5 ||
-			        np == n6
+			        is_close(np, n1, 1e-11) ||
+			        is_close(np, n2, 1e-11) ||
+			        is_close(np, n3, 1e-11) ||
+			        is_close(np, n4, 1e-11) ||
+			        is_close(np, n5, 1e-11) ||
+			        is_close(np, n6, 1e-11)
 			        );
 		}
 	}
@@ -75,17 +75,17 @@ TEST(SimpleWorld, DefaultBehavior)
 
 		// Check neighbors
 		Position n1 =
-		{(coords.x == n) ? 1.0 : (double) coords.x + 1.0, (double) coords.y, (double) coords.z};
+		{(coords[0] == n) ? 1.0 : (double) coords[0] + 1.0, (double) coords[1], (double) coords[2]};
 		Position n2 =
-		{(coords.x == 1) ? (double) n : coords.x - 1.0, (double) coords.y, (double) coords.z};
+		{(coords[0] == 1) ? (double) n : coords[0] - 1.0, (double) coords[1], (double) coords[2]};
 		Position n3 =
-		{(double) coords.x, (coords.y == n) ? 1.0 : (double) coords.y + 1.0, (double) coords.z};
+		{(double) coords[0], (coords[1] == n) ? 1.0 : (double) coords[1] + 1.0, (double) coords[2]};
 		Position n4 =
-		{(double) coords.x, (coords.y == 1) ? (double) n : coords.y - 1.0, (double) coords.z};
+		{(double) coords[0], (coords[1] == 1) ? (double) n : coords[1] - 1.0, (double) coords[2]};
 		Position n5 =
-		{(double) coords.x, (double) coords.y, (coords.z == n) ? 1.0 : (double) coords.z + 1.0};
+		{(double) coords[0], (double) coords[1], (coords[2] == n) ? 1.0 : (double) coords[2] + 1.0};
 		Position n6 =
-		{(double) coords.x, (double) coords.y, (coords.z == 1) ? (double) n : coords.z - 1.0};
+		{(double) coords[0], (double) coords[1], (coords[2] == 1) ? (double) n : coords[2] - 1.0};
 
 		auto& neighbors = particle->GetNeighbors();
 		ASSERT_EQ(6, (int)neighbors.size());
@@ -94,12 +94,12 @@ TEST(SimpleWorld, DefaultBehavior)
 		{
 			auto& np = neighbor->GetPositionRef();
 			ASSERT_TRUE(
-			        np == n1 ||
-			        np == n2 ||
-			        np == n3 ||
-			        np == n4 ||
-			        np == n5 ||
-			        np == n6
+			        is_close(np, n1, 1e-11) ||
+			        is_close(np, n2, 1e-11) ||
+			        is_close(np, n3, 1e-11) ||
+			        is_close(np, n4, 1e-11) ||
+			        is_close(np, n5, 1e-11) ||
+			        is_close(np, n6, 1e-11)
 			        );
 		}
 	}
@@ -151,8 +151,8 @@ TEST(SimpleWorld, VolumeScaling)
 	auto box = world.GetBoxVectors();
 	Particle* p = world.DrawRandomParticle();
 	Position newpos = 2.0*p->GetPosition(); // we will scale by 2
-	world.SetBoxVectors(2.0*box.x, 2.0*box.y, 2.0*box.z, true);
-	ASSERT_EQ(newpos, p->GetPosition());
+	world.SetBoxVectors(2.0*box[0], 2.0*box[1], 2.0*box[2], true);
+	ASSERT_TRUE(is_close(newpos, p->GetPosition(),1e-11))	;
 }
 
 TEST(SimpleWorld, NeighborList)

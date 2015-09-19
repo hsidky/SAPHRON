@@ -47,7 +47,7 @@ namespace SAPHRON
 
 			// Neighbor list cutoff check.
 			double ncut = json.get("nlist_cutoff",0.0).asDouble();
-			if(ncut > dim.x/2.0 || ncut > dim.y/2.0 || ncut > dim.z/2.0)
+			if(ncut > dim[0]/2.0 || ncut > dim[1]/2.0 || ncut > dim[2]/2.0)
 				throw BuildException({"Neighbor list cutoff must not exceed "
 									  "half the shortest box vector."});
 			
@@ -60,7 +60,7 @@ namespace SAPHRON
 			int seed = json.isMember("seed") ? json["seed"].asInt() : rand();
 
 			
-			world = new SimpleWorld(dim.x, dim.y, dim.z, rcut, seed);
+			world = new SimpleWorld(dim[0], dim[1], dim[2], rcut, seed);
 			if(ncut)
 				world->SetNeighborRadius(ncut);
 		}

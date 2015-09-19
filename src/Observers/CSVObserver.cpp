@@ -295,9 +295,9 @@ namespace SAPHRON
 		{
 			const auto& pos = p.GetPositionRef();
 			*fs << scientific; 
-			*fs << setw(_w) << pos.x << _dlm;
-			*fs << setw(_w) << pos.y << _dlm;
-			*fs << setw(_w) << pos.z << _dlm;
+			*fs << setw(_w) << pos[0] << _dlm;
+			*fs << setw(_w) << pos[1] << _dlm;
+			*fs << setw(_w) << pos[2] << _dlm;
 			*fs << fixed;
 		}
 		if(this->Flags.particle_director) 

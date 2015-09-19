@@ -64,7 +64,7 @@ namespace SAPHRON
 						world->ApplyMinimumImage(rij);
 
 					// skip if exceeds cutoff.
-					if(rij.norm() > rcut)
+					if(arma::norm(rij) > rcut)
 						continue;
 
 					// If particle has parent, compute vector between parent molecule(s).
@@ -101,12 +101,12 @@ namespace SAPHRON
 
 					auto totalvirial = interij.virial + electroij.virial;
 					
-					pxx += totalvirial * rij.x * rab.x;
-					pyy += totalvirial * rij.y * rab.y;
-					pzz += totalvirial * rij.z * rab.z;
-					pxy += totalvirial * 0.5 * (rij.x * rab.y + rij.y * rab.x);
-					pxz += totalvirial * 0.5 * (rij.x * rab.z + rij.z * rab.x);
-					pyz += totalvirial * 0.5 * (rij.y * rab.z + rij.z * rab.y);
+					pxx += totalvirial * rij[0] * rab[0];
+					pyy += totalvirial * rij[1] * rab[1];
+					pzz += totalvirial * rij[2] * rab[2];
+					pxy += totalvirial * 0.5 * (rij[0] * rab[1] + rij[1] * rab[0]);
+					pxz += totalvirial * 0.5 * (rij[0] * rab[2] + rij[2] * rab[0]);
+					pyz += totalvirial * 0.5 * (rij[1] * rab[2] + rij[2] * rab[1]);
 					
 				}
 			}

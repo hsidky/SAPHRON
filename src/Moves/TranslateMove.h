@@ -29,9 +29,9 @@ namespace SAPHRON
 			void Perform(Particle* particle)
 			{
 				auto& pos = particle->GetPositionRef();
-				particle->SetPosition(pos.x + _dx*(_rand.doub()-0.5), 
-									   pos.y + _dx*(_rand.doub()-0.5), 
-									   pos.z + _dx*(_rand.doub()-0.5));
+				particle->SetPosition(pos[0] + _dx*(_rand.doub()-0.5), 
+									   pos[1] + _dx*(_rand.doub()-0.5), 
+									   pos[2] + _dx*(_rand.doub()-0.5));
 				++_performed;
 			}
 
@@ -49,9 +49,9 @@ namespace SAPHRON
 				auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
 
 				// Generate new position then apply periodic boundaries.
-				Position newPos({posi.x + _dx*(_rand.doub()-0.5), 
-								 posi.y + _dx*(_rand.doub()-0.5), 
-								 posi.z + _dx*(_rand.doub()-0.5)});
+				Position newPos({posi[0] + _dx*(_rand.doub()-0.5), 
+								 posi[1] + _dx*(_rand.doub()-0.5), 
+								 posi[2] + _dx*(_rand.doub()-0.5)});
 				
 				w->ApplyPeriodicBoundaries(&newPos);
 				particle->SetPosition(newPos);
@@ -98,9 +98,9 @@ namespace SAPHRON
 				auto opi = op->EvaluateOrderParameter(*w);
 
 				// Generate new position then apply periodic boundaries.
-				Position newPos({posi.x + _dx*(_rand.doub()-0.5), 
-								 posi.y + _dx*(_rand.doub()-0.5), 
-								 posi.z + _dx*(_rand.doub()-0.5)});
+				Position newPos({posi[0] + _dx*(_rand.doub()-0.5), 
+								 posi[1] + _dx*(_rand.doub()-0.5), 
+								 posi[2] + _dx*(_rand.doub()-0.5)});
 				
 				w->ApplyPeriodicBoundaries(&newPos);
 				particle->SetPosition(newPos);

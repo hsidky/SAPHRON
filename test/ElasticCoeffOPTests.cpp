@@ -22,7 +22,7 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 	int middle = ceil(n/2);
 	ElasticCoeffOP op(hist, world, n - middle, [=](const Particle* p){
 		auto& pos = p->GetPositionRef();
-		return pos.x == middle; 
+		return pos[0] == middle; 
 	});
 
 	ASSERT_EQ(0, op.EvaluateOrderParameter(world));
@@ -34,7 +34,7 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 	{
 		auto* p = world.SelectParticle(i);
 		auto& pos = p->GetPositionRef();
-		if(pos.x == middle)
+		if(pos[0] == middle)
 		{
 			p->AddObserver(&op);
 			++count;

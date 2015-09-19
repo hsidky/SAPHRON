@@ -35,7 +35,7 @@ namespace SAPHRON
 			{
 				Interaction ep;
 
-				double rsq = rij.normsq();
+				double rsq = arma::dot(rij,rij);
 
 				if(rsq < _rmaxsq)
 				{

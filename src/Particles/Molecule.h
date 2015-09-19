@@ -72,12 +72,12 @@ namespace SAPHRON
 		inline virtual void SetPosition(double x, double y, double z) override
 		{
 			this->_pEvent.SetOldPosition(_position);
-			Position dij {_position.x - x, _position.y - y, _position.z - z};
+			Position dij {_position[0] - x, _position[1] - y, _position[2] - z};
 			for(auto& child : *this)
 				child->SetPosition(child->GetPosition() + dij);
-			_position.x = x;
-			_position.y = y;
-			_position.z = z;
+			_position[0] = x;
+			_position[1] = y;
+			_position[2] = z;
 			this->_pEvent.position = 1;
 			this->NotifyObservers();
 		}

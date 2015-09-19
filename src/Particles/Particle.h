@@ -4,7 +4,6 @@
 #include "../Connectivities/Connectivity.h"
 #include "ParticleObserver.h"
 #include "ParticleEvent.h"
-#include "Position.h"
 #include "../Properties/Vector3D.h"
 #include "json/json.h"
 #include <algorithm>
