@@ -33,7 +33,7 @@ namespace SAPHRON
 				// Calculate dir based on user supplied func.
 				_func(p, _dir);
 
-				double dot = _dir.dot(dir);
+				double dot = arma::dot(_dir, dir);
 				return -1.0*_coeff*(1.5*dot*dot - 0.5);
 			}
 	};

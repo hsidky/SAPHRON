@@ -22,7 +22,7 @@ namespace SAPHRON
 			virtual double EvaluateEnergy(const Particle& p) override
 			{
 				auto& dir = p.GetDirectorRef();
-				double dot = _dir.dot(dir);
+				double dot = arma::dot(_dir, dir);
 				return -1*_coeff*(1.5*dot*dot - 0.5);
 			}
 			

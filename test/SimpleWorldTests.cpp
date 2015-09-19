@@ -136,7 +136,7 @@ TEST(SimpleWorld, MoveParticleSemantics)
 	ASSERT_EQ(1, world.GetParticleCount());
 	auto * p = world.SelectParticle(0);
 	Director d {1, 0, 0};
-	ASSERT_EQ(d, p->GetDirector());
+	ASSERT_TRUE(is_close(d, p->GetDirector(), 1e-9));
 }
 
 TEST(SimpleWorld, VolumeScaling)

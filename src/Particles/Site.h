@@ -112,9 +112,9 @@ namespace SAPHRON
 			inline virtual void SetDirector(double ux, double uy, double uz) override
 			{
 				this->_pEvent.SetOldDirector(_director);
-				_director.x = ux;
-				_director.y = uy;
-				_director.z = uz;
+				_director[0] = ux;
+				_director[1] = uy;
+				_director[2] = uz;
 				this->_pEvent.director = 1;
 				this->NotifyObservers();
  			}

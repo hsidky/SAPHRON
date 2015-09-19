@@ -304,9 +304,9 @@ namespace SAPHRON
 		{
 			const auto& dir = p.GetDirectorRef();
 			*fs << scientific; 
-			*fs << setw(_w) << dir.x << _dlm;
-			*fs << setw(_w) << dir.y << _dlm;
-			*fs << setw(_w) << dir.z << _dlm;
+			*fs << setw(_w) << dir[0] << _dlm;
+			*fs << setw(_w) << dir[1] << _dlm;
+			*fs << setw(_w) << dir[2] << _dlm;
 			*fs << fixed;		
 		}
 		if(this->Flags.particle_neighbors)

@@ -13,15 +13,15 @@ TEST(Site, DefaultConstructor)
 	ASSERT_EQ(0.0, pos.z);
 
 	Director d1 {0.0, 0.0, 0.0};
-	ASSERT_EQ(d1, s.GetDirector());
+	ASSERT_TRUE(is_close(d1, s.GetDirector(), 1e-11));
 	ASSERT_EQ("L1", s.GetSpecies());
 
 	// Set a few things
 	Director d {0.1, 0.2, 0.4};
 	s.SetDirector(d);
-	ASSERT_EQ(d, s.GetDirector());
-	d.x = 1.0;
-	ASSERT_NE(d, s.GetDirector());
+	ASSERT_TRUE(is_close(d, s.GetDirector(), 1e-11));
+	d[0] = 1.0;
+	ASSERT_FALSE(is_close(d, s.GetDirector(), 1e-11));
 
 	// Test checkpoint 
 	s.SetCheckpoint();
@@ -63,7 +63,7 @@ TEST(Site, Identifiers)
 	// Test copy 
 	Particle* particle = s3.Clone();
 
-	ASSERT_EQ(dir, particle->GetDirector());
+	ASSERT_TRUE(is_close(dir, particle->GetDirector(), 1e-11));
 	ASSERT_EQ(pos, particle->GetPosition());
 	ASSERT_EQ(5, particle->GetGlobalIdentifier());
 

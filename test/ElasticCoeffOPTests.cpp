@@ -59,7 +59,7 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 		auto eigvec = op.GetDirector();
 
 		// Check eigenvectors are normalized.
-		ASSERT_NEAR(1.0, eigvec.norm(), 1e-5);
+		ASSERT_NEAR(1.0, arma::norm(eigvec), 1e-5);
 	}
 
 	// Re-evaluate OP.

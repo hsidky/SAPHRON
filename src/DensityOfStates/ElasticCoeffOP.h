@@ -64,8 +64,7 @@ namespace SAPHRON
 				{
 					++_pcount;
 					auto& dir = p->GetDirectorRef();
-					arma::vec tmpv{dir.x, dir.y, dir.z};
-					_Q += arma::kron(tmpv.t(), tmpv) - 1.0/3.0*arma::eye(3,3);
+					_Q += arma::kron(dir.t(), dir) - 1.0/3.0*arma::eye(3,3);
 				}
 			}
 
@@ -95,11 +94,8 @@ namespace SAPHRON
 				return;
 
 			const auto& pdir = pEvent.GetOldDirector();
-			auto& dir = p->GetDirectorRef();
-			arma::vec prevDir{pdir.x, pdir.y, pdir.z};
-			arma::vec currDir{dir.x, dir.y, dir.z};
-
-			_Q += 3.0/(2.0*_pcount)*(arma::kron(currDir.t(), currDir) - arma::kron(prevDir.t(), prevDir));
+			const auto& dir = p->GetDirectorRef();
+			_Q += 3.0/(2.0*_pcount)*(arma::kron(dir.t(), dir) - arma::kron(pdir.t(), pdir));
 
 			// Eager decomposition. Only on appropriate update.
 			if(!arma::eig_gen(_eigval, _eigvec, _Q))
@@ -111,7 +107,7 @@ namespace SAPHRON
 		// Get layer director.
 		Director GetDirector()
 		{
-			return {_eigvec(0, _imax).real(), _eigvec(1, _imax).real(), _eigvec(2, _imax).real()};
+			return arma::real(_eigvec.col(_imax));
 		}
 
 	};

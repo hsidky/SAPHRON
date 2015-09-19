@@ -1,6 +1,6 @@
 #pragma once 
 #include "Position.h"
-#include "Director.h"
+#include "../Properties/Vector3D.h"
 
 namespace SAPHRON
 {

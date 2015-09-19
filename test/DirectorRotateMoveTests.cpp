@@ -15,7 +15,7 @@ TEST(DirectorRotateMove, DefaultBehavior)
 	// Get random unit vector and check that its norm is 1.
 	m.Perform(&s);
 	auto v = s.GetDirector();
-	double x = sqrt(v.dot(v));
+	double x = sqrt(arma::dot(v,v));
 	ASSERT_DOUBLE_EQ(1.0, x);
 
 	// Do a bunch of these for good measure
@@ -23,7 +23,7 @@ TEST(DirectorRotateMove, DefaultBehavior)
 	{
 		m.Perform(&s);
 		v = s.GetDirector();
-		x = sqrt(v.dot(v));
+		x = sqrt(arma::dot(v,v));
 		ASSERT_DOUBLE_EQ(1.0, x);
 	}
 }

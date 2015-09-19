@@ -25,7 +25,7 @@ namespace SAPHRON
 			std::map<int, int> _groupMap;
 			std::map<int, arma::vec> _idmap;
 			std::vector<arma::mat> _Qmats;
-			arma::vec _tmpVec;
+			Director _tmpVec;
 			std::vector<int> _groupCounts;
 			arma::cx_vec _eigval;
 			arma::cx_mat _eigvec;
@@ -37,7 +37,7 @@ namespace SAPHRON
 
 		public:
 			DLSAConnectivity(const World& world, double coeff, DirectorFunc dfunc, PFilterFunc pfunc) :
-				_groupMap(), _idmap(), _Qmats(0), _tmpVec(3, arma::fill::zeros), _groupCounts(0), 
+				_groupMap(), _idmap(), _Qmats(0), _tmpVec(arma::fill::zeros), _groupCounts(0), 
 				_eigval(3, arma::fill::zeros), _eigvec(3,3,arma::fill::zeros), _imax(0), _dfunc(dfunc), 
 				_dir({ 0.0, 0.0, 0.0 }), _coeff(coeff),  _pfunc(pfunc)
 			{
@@ -62,9 +62,7 @@ namespace SAPHRON
 					// Get director and build up Q matrix.
 					int index = loc - _groupVec.begin();
 					auto& dir = particle->GetDirectorRef();
-					_tmpVec[0] = dir.x;
-					_tmpVec[1] = dir.y;
-					_tmpVec[2] = dir.z;
+					_tmpVec = dir;
 
 					_Qmats[index] += arma::kron(_tmpVec.t(), _tmpVec) - 1.0/3.0*arma::eye(3,3);
 					_groupCounts[index]++;
@@ -95,11 +93,8 @@ namespace SAPHRON
 				// Calculate director based on user supplied func.
 				_dfunc(p, _dir);
 				
-				double d1 = _eigvec(0, _imax).real();
-				double d2 = _eigvec(1, _imax).real();
-				double d3 = _eigvec(2, _imax).real();
-
-				double dot = d1*_dir.x + d2*_dir.y + d3*_dir.z;
+				double dot = arma::dot(arma::real(_eigvec.col(_imax)), _dir);	
+;
 				return -1.0*_coeff*(1.5*dot*dot-0.5);
 			}
 
@@ -120,9 +115,7 @@ namespace SAPHRON
 				auto& dir = p->GetDirectorRef();
 				arma::vec& prevDir = _idmap[id];
 
-				_tmpVec[0] = dir.x;
-				_tmpVec[1] = dir.y;
-				_tmpVec[2] = dir.z;
+				_tmpVec = dir;
 				
 				_Qmats[index] += 3.0 / (2.0*_groupCounts[index])*(arma::kron(_tmpVec.t(), _tmpVec) - arma::kron(prevDir.t(), prevDir));
 				prevDir = _tmpVec;

@@ -26,7 +26,7 @@ namespace SAPHRON
 			auto& n1 = p1.GetDirectorRef();
 			auto& n2 = p2.GetDirectorRef();
 
-			double dot = n1.dot(n2);
+			double dot = arma::dot(n1,n2);
 
 			return {-1.0*(_eps*(1.5*dot*dot - 0.5) + _gamma), 0.0};
 		}
