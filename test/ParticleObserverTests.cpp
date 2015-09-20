@@ -1,5 +1,7 @@
 #include "../src/Particles/Site.h"
+#include "../src/Particles/Molecule.h"
 #include "../src/Particles/ParticleObserver.h"
+#include "../src/Worlds/SimpleWorld.h"
 #include "gtest/gtest.h"
 
 namespace SAPHRON
@@ -59,4 +61,51 @@ TEST(ParticleObserver, DefaultBehavior)
 	ASSERT_EQ(observer.species, s1.GetSpecies());
 	s1.SetCharge(1.5);
 	ASSERT_EQ(observer.charge,s1.GetCharge());
+}
+
+TEST(ParticleObserver, AddRemoveChild)
+{
+	SimpleWorld sw(10.0, 10.0, 10.0, 1.0);
+
+	Site* s1 = new Site({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "S1");
+	Site* s2 = new Site({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "S1");
+
+	Molecule* m1 = new Molecule("M1"); 
+	m1->AddChild(s1);
+	sw.AddParticle(m1);
+
+	const auto& comp = sw.GetComposition();
+
+	ASSERT_EQ(1, sw.GetParticleCount());
+	ASSERT_EQ(1, comp.at(m1->GetSpeciesID()));
+	ASSERT_EQ(1, comp.at(s1->GetSpeciesID()));
+
+	// Add child and see if it gets reflected.
+	m1->AddChild(s2);
+	ASSERT_EQ(1, sw.GetParticleCount());
+	ASSERT_EQ(1, comp.at(m1->GetSpeciesID()));
+	ASSERT_EQ(2, comp.at(s1->GetSpeciesID()));
+
+	// Remove child and see if it gets reflects.
+	m1->RemoveChild(s1);
+	ASSERT_EQ(1, sw.GetParticleCount());
+	ASSERT_EQ(1, comp.at(m1->GetSpeciesID()));
+	ASSERT_EQ(1, comp.at(s1->GetSpeciesID()));
+
+	// Change child species and make sure it gets reflected. 
+	s2->SetSpecies("S2");
+	ASSERT_EQ(1, sw.GetParticleCount());
+	ASSERT_EQ(1, comp.at(m1->GetSpeciesID()));
+	ASSERT_EQ(0, comp.at(s1->GetSpeciesID()));
+	ASSERT_EQ(1, comp.at(s2->GetSpeciesID()));
+
+	// Remove parent and make sure it propogates.
+	sw.RemoveParticle(m1);
+	ASSERT_EQ(0, sw.GetParticleCount());
+	ASSERT_EQ(0, comp.at(m1->GetSpeciesID()));
+	ASSERT_EQ(0, comp.at(s1->GetSpeciesID()));
+	ASSERT_EQ(0, comp.at(s2->GetSpeciesID()));
+
+	delete m1;
+	delete s1;
 }

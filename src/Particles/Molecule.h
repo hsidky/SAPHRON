@@ -14,6 +14,11 @@ namespace SAPHRON
 	protected:
 		virtual void UpdateCenterOfMass() override
 		{
+			// We don't fire event here because it's fired by the 
+			// caller.
+			this->_pEvent.SetOldPosition(_position);
+			this->_pEvent.position = 1;
+
 			_position = {0, 0, 0};
 			double m = 0; 
 			for(auto& child : *this)

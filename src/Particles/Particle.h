@@ -408,7 +408,7 @@ namespace SAPHRON
 				for (auto observer : _observers)
 					observer->ParticleUpdate(_pEvent);
 
-				_pEvent.mask = false;
+				_pEvent.mask = 0;
 			}
 
 			// Get the number of observers.
@@ -433,20 +433,39 @@ namespace SAPHRON
 				child->SetParent(this);
 				child->SetWorld(_world);
 				_children.push_back(child);
+			
+				this->_pEvent.SetChild(child);
+				this->_pEvent.child_add = 1;
+
 				UpdateCenterOfMass();
+
+				// Add all the same observers for children.
 				for(auto& o : _observers)
 					child->AddObserver(o);
+
+				// Fire event. 
+				NotifyObservers();
 			}
 
 			// Remove a child 
 			void RemoveChild(Particle* particle)
 			{
-				particle->ClearParent();
-				particle->SetWorld(nullptr);
-				_children.erase(std::remove(_children.begin(), _children.end(), particle), _children.end());
-				UpdateCenterOfMass();
-				for(auto& o : _observers)
-					particle->RemoveObserver(o);
+				auto it = std::remove(_children.begin(), _children.end(), particle);
+				if(it != _children.end())
+				{
+					this->_pEvent.SetChild(particle);
+					this->_pEvent.child_remove = 1;
+
+					particle->ClearParent();
+					particle->SetWorld(nullptr);
+					UpdateCenterOfMass();
+					for(auto& o : _observers)
+						particle->RemoveObserver(o);
+					_children.erase(it);
+
+					// Fire event.
+					NotifyObservers();
+				}
 			}
 
 			// Gets all descendants of a particle.

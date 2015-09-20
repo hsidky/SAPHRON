@@ -15,6 +15,7 @@ namespace SAPHRON
 			Position _oldPosition;
 			int _oldSpecies;
 			double _oldCharge;
+			Particle* _child;
 
 		public:
 			ParticleEvent(Particle* particle) : 
@@ -28,10 +29,11 @@ namespace SAPHRON
 					unsigned int position : 1;
 					unsigned int director : 1;
 					unsigned int species : 1;
-					unsigned int neighbors : 1;
 					unsigned int charge : 1;
+					unsigned int child_add: 1;
+					unsigned int child_remove: 1;
 				};
-				bool mask;
+				unsigned int mask;
 			};
 
 			inline void SetOldDirector(const Director& director)
@@ -54,7 +56,7 @@ namespace SAPHRON
 				return _oldPosition;
 			}
 
-			inline void SetOldCharge(const double& charge)
+			inline void SetOldCharge(double charge)
 			{
 				_oldCharge = charge;
 			}
@@ -64,7 +66,7 @@ namespace SAPHRON
 				return _oldCharge;
 			}
 
-			inline void SetOldSpecies(const int& species)
+			inline void SetOldSpecies(int species)
 			{
 				_oldSpecies = species;
 			}
@@ -72,6 +74,16 @@ namespace SAPHRON
 			inline int GetOldSpecies() const
 			{
 				return _oldSpecies;
+			}
+
+			inline Particle* GetChild() const
+			{
+				return _child;
+			}
+
+			inline void SetChild(Particle* particle)
+			{
+				_child = particle;
 			}
 
 			inline Particle* GetParticle() const

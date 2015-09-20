@@ -186,6 +186,12 @@ namespace SAPHRON
 			{
 				if(pEvent.species)
 					ModifyParticleComposition(pEvent);
+
+				if(pEvent.child_add)
+					AddParticleComposition(pEvent.GetChild());
+			
+				if(pEvent.child_remove)
+					RemoveParticleComposition(pEvent.GetChild());
 			}
 
 			// Checks particles and updates neighborlist if necessary.
