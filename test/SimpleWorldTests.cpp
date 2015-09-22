@@ -17,6 +17,8 @@ TEST(SimpleWorld, DefaultBehavior)
 	world.ConfigureParticles({&site1, &site2, &site3}, {1.0/3.0, 1.0/3.0, 1.0/3.0});
 
 	ASSERT_EQ(27000, world.GetParticleCount());
+	ASSERT_EQ(27000, world.GetPrimitiveCount());
+
 
 	std::map<std::string, int> counts {{"E1", 0}, {"E2", 0}, {"E3", 0}};
 	for(int i = 0; i < world.GetParticleCount(); i++)
@@ -134,6 +136,7 @@ TEST(SimpleWorld, MoveParticleSemantics)
 	ASSERT_EQ(0, world.GetParticleCount());
 	world.AddParticle(new Site({0,0,0}, {1,0,0}, "E1"));
 	ASSERT_EQ(1, world.GetParticleCount());
+	ASSERT_EQ(1, world.GetPrimitiveCount());
 	auto * p = world.SelectParticle(0);
 	Director d {1, 0, 0};
 	ASSERT_TRUE(is_close(d, p->GetDirector(), 1e-9));
@@ -146,6 +149,7 @@ TEST(SimpleWorld, VolumeScaling)
 	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
 	world.PackWorld({&site1}, {1.0}, 500, 1.0);
 	ASSERT_EQ(500, world.GetParticleCount());
+	ASSERT_EQ(500, world.GetPrimitiveCount());
 
 	// Get random coordinate and check it afterwards.
 	auto box = world.GetBoxVectors();

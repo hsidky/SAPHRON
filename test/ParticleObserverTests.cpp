@@ -77,24 +77,28 @@ TEST(ParticleObserver, AddRemoveChild)
 	const auto& comp = sw.GetComposition();
 
 	ASSERT_EQ(1, sw.GetParticleCount());
+	ASSERT_EQ(1, sw.GetPrimitiveCount());
 	ASSERT_EQ(1, comp.at(m1->GetSpeciesID()));
 	ASSERT_EQ(1, comp.at(s1->GetSpeciesID()));
 
 	// Add child and see if it gets reflected.
 	m1->AddChild(s2);
 	ASSERT_EQ(1, sw.GetParticleCount());
+	ASSERT_EQ(2, sw.GetPrimitiveCount());
 	ASSERT_EQ(1, comp.at(m1->GetSpeciesID()));
 	ASSERT_EQ(2, comp.at(s1->GetSpeciesID()));
 
 	// Remove child and see if it gets reflects.
 	m1->RemoveChild(s1);
 	ASSERT_EQ(1, sw.GetParticleCount());
+	ASSERT_EQ(1, sw.GetPrimitiveCount());
 	ASSERT_EQ(1, comp.at(m1->GetSpeciesID()));
 	ASSERT_EQ(1, comp.at(s1->GetSpeciesID()));
 
 	// Change child species and make sure it gets reflected. 
 	s2->SetSpecies("S2");
 	ASSERT_EQ(1, sw.GetParticleCount());
+	ASSERT_EQ(1, sw.GetPrimitiveCount());
 	ASSERT_EQ(1, comp.at(m1->GetSpeciesID()));
 	ASSERT_EQ(0, comp.at(s1->GetSpeciesID()));
 	ASSERT_EQ(1, comp.at(s2->GetSpeciesID()));
@@ -102,6 +106,7 @@ TEST(ParticleObserver, AddRemoveChild)
 	// Remove parent and make sure it propogates.
 	sw.RemoveParticle(m1);
 	ASSERT_EQ(0, sw.GetParticleCount());
+	ASSERT_EQ(0, sw.GetPrimitiveCount());
 	ASSERT_EQ(0, comp.at(m1->GetSpeciesID()));
 	ASSERT_EQ(0, comp.at(s1->GetSpeciesID()));
 	ASSERT_EQ(0, comp.at(s2->GetSpeciesID()));

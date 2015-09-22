@@ -13,7 +13,13 @@ namespace SAPHRON
 	class SimpleWorld : public World
 	{
 		private:
-			std::vector<Particle*> _particles;
+			// Particle list.
+			ParticleList _particles;
+
+			// Primitive particle list.
+			ParticleList _primitives;
+
+			// Random number generator.
 			Rand _rand;
 
 			// Cutoff radius.
@@ -67,8 +73,9 @@ namespace SAPHRON
 
 		public:
 			SimpleWorld(double xlength, double ylength, double zlength, double rcut, int seed = 1) : 
-			World(xlength, ylength, zlength), _particles(0), _rand(seed), _rcut(rcut), _rcutsq(rcut*rcut), 
-			_ncut(0), _ncutsq(0), _skin(0), _skinsq(0), _composition(), _seed(seed)
+			World(xlength, ylength, zlength), _particles(0), _primitives(0), _rand(seed), 
+			_rcut(rcut), _rcutsq(rcut*rcut), _ncut(0), _ncutsq(0), _skin(0), _skinsq(0), 
+			_composition(), _seed(seed)
 			{
 				// Compute default neighbor list cutoff and skin thickness. 
 				_skin = 0.30 * _rcut;
@@ -90,19 +97,25 @@ namespace SAPHRON
 			
 
 			// Draw a random particle from the world.
-			inline virtual Particle* DrawRandomParticle() override
+			virtual Particle* DrawRandomParticle() override
 			{
-				int n = _particles.size();
-				if(n == 0)
-					return nullptr;
-
+				size_t n = _particles.size();
+				assert(n > 0);
 				return _particles[_rand.int32() % n];
+			}
+
+			// Draw random primitive from the world.
+			virtual Particle* DrawRandomPrimitive() override
+			{
+				size_t n = _primitives.size();
+				assert(n > 0);
+				return _primitives[_rand.int32() % n];
 			}
 
 			// Draw random particles from the world and inserts them into particles. NOTE: this method 
 			// clears the list before adding new elements.
-			inline virtual void DrawRandomParticles(ParticleList& particles, 
-											        unsigned int count = 1) override 
+			virtual void DrawRandomParticles(ParticleList& particles, 
+											 unsigned int count = 1) override 
 			{
 				particles.resize(count);
 				unsigned int n = this->_particles.size();
@@ -114,6 +127,12 @@ namespace SAPHRON
 			virtual int GetParticleCount() const override
 			{
 				return (int)_particles.size();
+			}
+
+			// Get number of primitives in the world.
+			virtual int GetPrimitiveCount() const override
+			{
+				return (int)_primitives.size();
 			}
 
 			// Get system composition.
@@ -132,6 +151,18 @@ namespace SAPHRON
 			virtual const Particle*  SelectParticle(int location) const override
 			{
 				return _particles[location];
+			}
+
+			// Get a primitive by index.
+			virtual Particle* SelectPrimitive(int location) override
+			{
+				return _primitives[location];
+			}
+
+			// Get a primitive by index (const).
+			virtual const Particle* SelectPrimitive(int location) const override
+			{
+				return _primitives[location];
 			}
 
 			// Add particle. TODO: CAREFUL with the move semantics. 
@@ -153,10 +184,7 @@ namespace SAPHRON
 			virtual void RemoveParticle(int location) override
 			{
 				Particle* p = _particles[location];
-				p->RemoveFromNeighbors();
-				p->RemoveObserver(this);
-				RemoveParticleComposition(p);
-				_particles.erase(_particles.begin() + location);
+				RemoveParticle(p);
 			}
 
 			// Remove particle by value.
@@ -169,6 +197,7 @@ namespace SAPHRON
 					particle->RemoveObserver(this);
 					particle->SetWorld(nullptr);
 					RemoveParticleComposition(particle);
+
 					_particles.erase(it);
 				}
 			}
@@ -182,7 +211,7 @@ namespace SAPHRON
 			}
 
 			// Particle observer to update world composition.
-			inline virtual void ParticleUpdate(const ParticleEvent& pEvent) override
+			virtual void ParticleUpdate(const ParticleEvent& pEvent) override
 			{
 				if(pEvent.species)
 					ModifyParticleComposition(pEvent);
@@ -195,7 +224,7 @@ namespace SAPHRON
 			}
 
 			// Checks particles and updates neighborlist if necessary.
-			inline virtual void CheckNeighborListUpdate(const ParticleList& particles) override
+			virtual void CheckNeighborListUpdate(const ParticleList& particles) override
 			{
 				for(auto& particle : particles)
 				{

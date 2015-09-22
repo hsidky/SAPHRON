@@ -55,6 +55,9 @@ namespace SAPHRON
 		// Draw a random particle from the world.
 		virtual Particle* DrawRandomParticle() = 0;
 
+		// Draw a random primitive from the world.
+		virtual Particle* DrawRandomPrimitive() = 0;
+
 		// Draw random particles from the world and adds them to the list provided. 
 		virtual void DrawRandomParticles(ParticleList& particles, unsigned int count = 1) = 0;
 
@@ -75,6 +78,12 @@ namespace SAPHRON
 
 		// Get a specific particle based on location (const).
 		virtual Particle const* SelectParticle(int location) const = 0;
+
+		// Select a primitive particle by location.
+		virtual Particle* SelectPrimitive(int location) = 0;
+
+		// Select a primitive particle by location (const).
+		virtual Particle const* SelectPrimitive(int location) const = 0;
 		
 		// Add a particle. 
 		virtual void AddParticle(Particle&& particle) = 0;
@@ -129,6 +138,9 @@ namespace SAPHRON
 
 		// Get number of high level particles in the world.
 		virtual int GetParticleCount() const = 0;
+
+		// Get number of primitives in the world.
+		virtual int GetPrimitiveCount() const = 0;
 
 		// Get neighbor list cutoff radius.
 		virtual double GetNeighborRadius() const = 0;

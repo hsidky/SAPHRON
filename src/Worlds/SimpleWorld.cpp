@@ -10,6 +10,10 @@ namespace SAPHRON
 		else
 			++_composition[id];
 
+		// If it's a primitive, add it to the primitives list. 
+		if(!particle->HasChildren())
+			_primitives.push_back(particle);
+
 		for(auto& child : particle->GetChildren())
 			AddParticleComposition(child);
 	}
@@ -19,6 +23,12 @@ namespace SAPHRON
 		int id = particle->GetSpeciesID();
 		assert(_composition.find(id) != _composition.end());
 		--_composition[id];
+
+		if(!particle->HasChildren())
+			_primitives.erase(
+				std::remove(_primitives.begin(), _primitives.end(), particle),
+				_primitives.end()
+			);
 
 		for(auto& child : particle->GetChildren())
 			RemoveParticleComposition(child);
