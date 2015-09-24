@@ -190,30 +190,27 @@ namespace SAPHRON
 
 	void SimpleWorld::UpdateNeighborList()
 	{
-		int n = this->GetParticleCount();
+		int n = this->GetPrimitiveCount();
 
 		// Clear neighbor list before repopulating.
+		// We are operating exclusively on primitives
+		// so no need to check for children.
 		#pragma omp parallel for
 		for(int i = 0; i < n; ++i)
 		{
-			_particles[i]->ClearNeighborList();
-			_particles[i]->SetCheckpoint();
-			for(auto& child : *_particles[i])
-			{
-				child->ClearNeighborList();
-				child->SetCheckpoint();
-			}
+			_primitives[i]->ClearNeighborList();
+			_primitives[i]->SetCheckpoint();
 		}
 		
 		for(int i = 0; i < n - 1; ++i)
 		{
-			auto* pi = _particles[i];
-			auto& posi = pi->GetPositionRef();
+			auto* pi = _primitives[i];
+			const Position& posi = pi->GetPositionRef();
 			
 			for(int j = i + 1; j < n; ++j)
 			{
-				auto pj = _particles[j];
-				auto& posj = pj->GetPositionRef();
+				auto pj = _primitives[j];
+				const Position& posj = pj->GetPositionRef();
 
 				Position rij = posi - posj;
 				ApplyMinimumImage(rij);
@@ -222,21 +219,6 @@ namespace SAPHRON
 				{
 					pj->AddNeighbor(pi);
 					pi->AddNeighbor(pj);
-				}
-
-				// Add children.
-				for(auto& ci : *pi)
-				{
-					for(auto& cj : *pj)
-					{
-						rij = ci->GetPositionRef() - cj->GetPositionRef();
-						ApplyMinimumImage(rij);
-						if(arma::dot(rij,rij) < _ncutsq)
-						{
-							ci->AddNeighbor(cj);
-							cj->AddNeighbor(ci);
-						}
-					}
 				}
 			}
 		}
