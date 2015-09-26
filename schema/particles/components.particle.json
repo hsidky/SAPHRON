@@ -5,16 +5,35 @@
 			"type" : "object",
 			"properties" : {
 				"children" : {
-					"type" : "object",
-					"patternProperties" : {
-						"^[A-z][A-z0-9]+$" : {
-							"type" : "object"
-						}
-					}
+					"type" : "array",
+					"items" : {
+						"type" : "object",
+						"properties": {
+							"species" : {
+								"type" : "string"
+							},
+							"mass" : {
+								"type" : "number",
+								"minimum": 0
+							},
+							"charge" : {
+								"type" : "number"
+							}
+						},
+						"required" : ["species"]
+					},
+					"minItems" : 1
 				},
 				"count" : {
 					"type" : "integer",
 					"minimum" : 1
+				},
+				"mass" : {
+					"type" : "number",
+					"minimum": 0
+				},
+				"charge" : {
+					"type" : "number"
 				}
 			},
 			"required": ["count"],

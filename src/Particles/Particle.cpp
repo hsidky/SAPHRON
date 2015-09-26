@@ -113,7 +113,7 @@ namespace SAPHRON
 		// Validate inputs via schemas. 
 		pvalidator.Validate(particles, "#/particles");
 		if(pvalidator.HasErrors())
-				throw BuildException(pvalidator.GetErrors());
+			throw BuildException(pvalidator.GetErrors());
 
 		bvalidator.Validate(blueprints, "#/components");
 		if(bvalidator.HasErrors())
@@ -157,23 +157,16 @@ namespace SAPHRON
 						{"Particle " + std::to_string(id) + ": must belong to component \"" + bp + "\"."}
 					);
 
-				// Must be primitive type.
-				if(ccount && 
-				   !blueprints[bp]["children"].isMember(species))
-					throw BuildException(
-						{"Particle " + std::to_string(id) + ": must be a child of \"" + bp + "\"."}
-					);
-
 				// Validate species by determining what the current component should be.
 				if(ccount) // component has child.
 				{
 					int sindex = (j - i) % ccount;
-					auto children = blueprints[bp]["children"].getMemberNames();
-					if(species != children[sindex])
+					auto& children = blueprints[bp]["children"];
+					if(species != children[sindex]["species"].asString())
 						throw BuildException(
 							{
 								"Particle " + std::to_string(id) + ": expected type \"" 
-								+ children[sindex] + "\"."
+								+ children[sindex]["species"].asString() + "\"."
 							}
 						);
 				}
@@ -215,16 +208,22 @@ namespace SAPHRON
 		}
 
 		// Create parent particles and add to output container.
+		// Here we also assign charges and masses from blueprints.
 		for(auto& bp : blueprints.getMemberNames())
 		{
-			int count = blueprints[bp]["count"].asInt();
-			int ccount = blueprints[bp].isMember("children") ? blueprints[bp]["children"].size() : 0;
+			auto& spec = blueprints[bp];
+			int count = spec["count"].asInt();
+			int ccount = spec.isMember("children") ? spec["children"].size() : 0;
 
 			for(int j = 0; j < count; ++j)
 			{
+				// No children. Particle is primitive.
 				if(!ccount)
 				{
-					pvector.push_back(pcontainer.front());
+					auto* p = pcontainer.front();
+					p->SetMass(spec.get("mass", 1.0).asDouble());
+					p->SetCharge(spec.get("charge", 0.0).asDouble());
+					pvector.push_back(p);
 					pcontainer.pop();
 				}
 				else
@@ -233,7 +232,12 @@ namespace SAPHRON
 					Particle* parent = new Molecule(bp);
 					for(int k = 0; k < ccount; ++k)
 					{
-						parent->AddChild(pcontainer.front());
+						auto* p = pcontainer.front();
+
+						p->SetMass(spec[p->GetSpecies()].get("mass", 1.0).asDouble());
+						p->SetCharge(spec[p->GetSpecies()].get("charge", 0.0).asDouble());
+						
+						parent->AddChild(p);
 						pcontainer.pop();
 					}
 					pvector.push_back(parent);

@@ -1,44 +1,44 @@
 {
-    "minItems": 1,
+    "type": "array",
     "items": {
+        "type": "object",
+        "properties": {
+            "dimensions": {
+                "maxItems": 3,
+                "additionalItems": false,
+                "type": "array",
+                "items": {
+                    "minimum": 0,
+                    "type": "number"
+                },
+                "minItems": 3
+            },
+            "type": {
+                "type": "string",
+                "enum": [
+                    "Simple"
+                ]
+            },
+            "r_cutoff": {
+                "minimum": 0,
+                "type": "number",
+                "exclusiveMinimum": true
+            },
+            "nlist_cutoff": {
+                "minimum": 0,
+                "type": "number",
+                "exclusiveMinimum": true
+            },
+            "seed": {
+                "minimum": 0,
+                "type": "integer"
+            }
+        },
         "required": [
             "type",
             "dimensions",
             "r_cutoff"
-        ],
-        "properties": {
-            "seed": {
-                "type": "integer",
-                "minimum": 0
-            },
-            "dimensions": {
-                "additionalItems": false,
-                "minItems": 3,
-                "type": "array",
-                "maxItems": 3,
-                "items": {
-                    "type": "number",
-                    "minimum": 0
-                }
-            },
-            "type": {
-                "enum": [
-                    "Simple"
-                ],
-                "type": "string"
-            },
-            "nlist_cutoff": {
-                "exclusiveMinimum": true,
-                "type": "number",
-                "minimum": 0
-            },
-            "r_cutoff": {
-                "exclusiveMinimum": true,
-                "type": "number",
-                "minimum": 0
-            }
-        },
-        "type": "object"
+        ]
     },
-    "type": "array"
+    "minItems": 1
 }
