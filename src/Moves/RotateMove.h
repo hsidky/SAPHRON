@@ -106,7 +106,7 @@ namespace SAPHRON
 			Energy de = ef.energy - ei.energy;
 
 			// Update neighbor list if needed.
-			w->CheckNeighborListUpdate(particle);
+			w->CheckNeighborListUpdate(particle->GetChildren());
 
 			// Get sim info for kB.
 			auto sim = SimInfo::Instance();

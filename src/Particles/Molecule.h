@@ -10,7 +10,6 @@ namespace SAPHRON
 		Director _director;
 		Position _checkpoint;
 		Position _position;
-		double _charge;
 
 	public:
 
@@ -19,19 +18,19 @@ namespace SAPHRON
 
 		
 		// Get molecule position based on center of mass.
-		inline virtual Position GetPosition() const override
+		virtual Position GetPosition() const override
 		{
 			return _position;			
 		}
 
 		// Get position reference.
-		inline virtual const Position& GetPositionRef() const override
+		virtual const Position& GetPositionRef() const override
 		{
 			return _position;
 		}
 
 		// Set molecule position. 
-		inline virtual void SetPosition(const Position& position) override
+		virtual void SetPosition(const Position& position) override
 		{
 			this->_pEvent.SetOldPosition(_position);
 			Position dij = position - _position;
@@ -43,7 +42,7 @@ namespace SAPHRON
 		}
 
 		// Sets molecule position.
-		inline virtual void SetPosition(Position&& position) override
+		virtual void SetPosition(Position&& position) override
 		{
 			this->_pEvent.SetOldPosition(_position);
 			Position dij = position - _position;
@@ -55,7 +54,7 @@ namespace SAPHRON
 		}
 
 		// Sets the molecule position.
-		inline virtual void SetPosition(double x, double y, double z) override
+		virtual void SetPosition(double x, double y, double z) override
 		{
 			this->_pEvent.SetOldPosition(_position);
 			Position dij {_position[0] - x, _position[1] - y, _position[2] - z};
@@ -69,37 +68,37 @@ namespace SAPHRON
 		}
 
 		// Set position checkpoint.
-		inline virtual void SetCheckpoint() override
+		virtual void SetCheckpoint() override
 		{
 			_checkpoint = _position;
 		}
 
 		// Get position checkpoint.
-		inline virtual const Position& GetCheckpoint() const override
+		virtual const Position& GetCheckpoint() const override
 		{
 			return _checkpoint;
 		}
 
 		// Get distance from checkpoint.
-		inline virtual Position GetCheckpointDist() const override
+		virtual Position GetCheckpointDist() const override
 		{
 			return _position - _checkpoint;
 		}
 
 		// Gets site director.
-		inline virtual Director GetDirector() const override
+		virtual Director GetDirector() const override
 		{
 			return _director;
 		}
 
 		// Get director reference.
-		inline virtual const Director& GetDirectorRef() const override
+		virtual const Director& GetDirectorRef() const override
 		{
 			return _director;
 		}
 
 		// Sets site director.
-		inline virtual void SetDirector(const Director& director) override
+		virtual void SetDirector(const Director& director) override
 		{
 			this->_pEvent.SetOldDirector(_director);
 			_director = director;
@@ -108,7 +107,7 @@ namespace SAPHRON
 		}
 
 		// Sets site director.
-		inline virtual void SetDirector(Director&& director) override
+		virtual void SetDirector(Director&& director) override
 		{
 			this->_pEvent.SetOldDirector(_director);
 			_director = director;
@@ -117,7 +116,7 @@ namespace SAPHRON
 		}
 		
 		// Sets site director.
-		inline virtual void SetDirector(double ux, double uy, double uz) override
+		virtual void SetDirector(double ux, double uy, double uz) override
 		{
 			this->_pEvent.SetOldDirector(_director);
 			_director[0] = ux;
@@ -127,29 +126,38 @@ namespace SAPHRON
 			this->NotifyObservers();
 		}
 
-		// Gets site charge.
-		inline virtual double GetCharge() const override
+		// Gets total molecule charge.
+		virtual double GetCharge() const override
 		{
-			return _charge;
+			double c = 0;
+			for(auto& child : *this)
+				c += child->GetCharge();
+
+			return c;
 		}
 
-		// Sets site charge
-		inline virtual void SetCharge(double charge) override
+		// Sets charge.
+		virtual void SetCharge(double) override
 		{
-			this->_pEvent.SetOldCharge(_charge);
-			_charge=charge;
-			this->_pEvent.charge = 1;
-			this->NotifyObservers();
+			std::cerr << "ERROR: Cannot set the charge for a molecule directly." << std::endl;
+			exit(-1);
 		}
 
 		// Get total mass of the molecule.
-		inline virtual double GetMass() override
+		virtual double GetMass() const override
 		{
 			double m = 0;
 			for(auto& child : *this)
 				m += child->GetMass();
 
 			return m;
+		}
+
+		// Sets mass.
+		virtual void SetMass(double) override
+		{
+			std::cerr << "ERROR: Cannot set the mass for a molecule directly." << std::endl;
+			exit(-1);
 		}
 
 		// Update center of mass.

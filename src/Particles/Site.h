@@ -12,27 +12,27 @@ namespace SAPHRON
 			Director _director;
 			Position _checkpoint;
 			double _charge;
+			double _mass;
 
 		public:
 
 			// Initializes a site at a given position with a given director and species.
-			Site(Position position, Director director, std::string species)
-				: Particle(species), _position(position), _director(director), _checkpoint(){}
+			Site(Position position, Director director, std::string species) : 
+			Particle(species), _position(position), _director(director), _checkpoint(),
+			_charge(0.0), _mass(1.0) 
+			{}
 
 			// Gets site position.
-			inline virtual Position GetPosition() const override
-			{
-				return _position;
-			}
+			virtual Position GetPosition() const override {	return _position; }
 
 			// Get position reference.
-			inline virtual const Position& GetPositionRef() const override
+			virtual const Position& GetPositionRef() const override
 			{
 				return _position;
 			}
 
 			// Sets site position.
-			inline virtual void SetPosition(const Position& position) override
+			virtual void SetPosition(const Position& position) override
 			{
 				this->_pEvent.SetOldPosition(_position);
 				_position = position;
@@ -41,7 +41,7 @@ namespace SAPHRON
 			}
 
 			// Sets site position.
-			inline virtual void SetPosition(Position&& position) override
+			virtual void SetPosition(Position&& position) override
 			{
 				this->_pEvent.SetOldPosition(_position);
 				_position = position;
@@ -50,7 +50,7 @@ namespace SAPHRON
 			}
 
 			// Sets site position
-			inline virtual void SetPosition(double x, double y, double z) override
+			virtual void SetPosition(double x, double y, double z) override
 			{
 				this->_pEvent.SetOldPosition(_position);
 				_position[0] = x;
@@ -61,37 +61,34 @@ namespace SAPHRON
 			}
 
 			// Set position checkpoint.
-			inline virtual void SetCheckpoint() override
+			virtual void SetCheckpoint() override
 			{
 				_checkpoint = _position;
 			}
 
 			// Get position checkpoint.
-			inline virtual const Position& GetCheckpoint() const override
+			virtual const Position& GetCheckpoint() const override
 			{
 				return _checkpoint;
 			}
 
 			// Get distance from checkpoint.
-			inline virtual Position GetCheckpointDist() const override
+			virtual Position GetCheckpointDist() const override
 			{
 				return _position - _checkpoint;
 			}
 
 			// Gets site director.
-			inline virtual Director GetDirector() const override
-			{
-				return _director;
-			}
+			virtual Director GetDirector() const override {	return _director; }
 
 			// Get director reference.
-			inline virtual const Director& GetDirectorRef() const override
-			{
-				return _director;
+			virtual const Director& GetDirectorRef() const override	
+			{ 
+				return _director;	
 			}
 
 			// Sets site director.
-			inline virtual void SetDirector(const Director& director) override
+			virtual void SetDirector(const Director& director) override
 			{
 				this->_pEvent.SetOldDirector(_director);
 				_director = director;
@@ -100,7 +97,7 @@ namespace SAPHRON
 			}
 
 			// Sets site director.
-			inline virtual void SetDirector(Director&& director) override
+			virtual void SetDirector(Director&& director) override
 			{
 				this->_pEvent.SetOldDirector(_director);
 				_director = director;
@@ -109,7 +106,7 @@ namespace SAPHRON
 			}
 			
 			// Sets site director.
-			inline virtual void SetDirector(double ux, double uy, double uz) override
+			virtual void SetDirector(double ux, double uy, double uz) override
 			{
 				this->_pEvent.SetOldDirector(_director);
 				_director[0] = ux;
@@ -120,13 +117,10 @@ namespace SAPHRON
  			}
 
  			// Gets site charge.
-			inline virtual double GetCharge() const override
-			{
-				return _charge;
-			}
+			virtual double GetCharge() const override {	return _charge;	}
 
 			// Sets site charge
-			inline virtual void SetCharge(double charge) override
+			virtual void SetCharge(double charge) override
 			{
 				this->_pEvent.SetOldCharge(_charge);
 				_charge=charge;
@@ -134,10 +128,11 @@ namespace SAPHRON
 				this->NotifyObservers();
 			}
 
- 			inline virtual double GetMass() override
- 			{
- 				return 1.0;
- 			}
+			// Get site mass.
+ 			virtual double GetMass() const override	{ return _mass;	}
+
+ 			// Set site mass.
+ 			virtual void SetMass(double m) override	{ _mass = m; }
 
 			virtual Particle* Clone() const override
 			{

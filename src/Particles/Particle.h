@@ -209,6 +209,9 @@ namespace SAPHRON
 				return id;
 			}
 
+			// Update center of mass.
+			virtual void UpdateCenterOfMass() {}
+
 			// Set particle parent.
 			void SetParent(Particle* particle) { _parent = particle; }
 
@@ -280,17 +283,14 @@ namespace SAPHRON
 			// Set a particle position.
 			virtual void SetPosition(double x, double y, double z) = 0;
 
-			// Update center of mass.
-			virtual void UpdateCenterOfMass() {}
-
-			// Sets a checkpoint where the particle records its position at that moment. 
-			virtual void SetCheckpoint() = 0;
-
 			// Gets a particle's position at the checkpoint.
 			virtual const Position& GetCheckpoint() const = 0;
 
 			// Get distance from checkpoint.
 			virtual Position GetCheckpointDist() const = 0;
+
+			// Sets a checkpoint where the particle records its position at that moment. 
+			virtual void SetCheckpoint() = 0;
 
 			// Get the particle director.
 			virtual Director GetDirector() const = 0;
@@ -308,7 +308,9 @@ namespace SAPHRON
 			virtual void SetDirector(double ux, double uy, double uz) = 0;
 
 			// Get the mass of a particle.
-			virtual double GetMass() = 0;
+			virtual double GetMass() const = 0;
+
+			virtual void SetMass(double m) = 0;
 
 			// Gets neighbor list iterator.
 			inline NeighborList& GetNeighbors()	{ return _neighbors; }
