@@ -104,9 +104,6 @@ namespace SAPHRON
 			// Particle event. 
 			ParticleEvent _pEvent;
 
-			// Update center of mass.
-			virtual void UpdateCenterOfMass() {}
-
 		public:
 			typedef ParticleList::iterator iterator;
 			typedef ParticleList::const_iterator const_iterator;
@@ -282,6 +279,9 @@ namespace SAPHRON
 
 			// Set a particle position.
 			virtual void SetPosition(double x, double y, double z) = 0;
+
+			// Update center of mass.
+			virtual void UpdateCenterOfMass() {}
 
 			// Sets a checkpoint where the particle records its position at that moment. 
 			virtual void SetCheckpoint() = 0;

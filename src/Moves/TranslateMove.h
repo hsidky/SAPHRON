@@ -136,10 +136,7 @@ namespace SAPHRON
 			}
 
 			// Returns maximum displacement.
-			double GetMaxDisplacement()
-			{
-				return _dx;
-			}
+			double GetMaxDisplacement() const { return _dx;	}
 
 			virtual double GetAcceptanceRatio() const override
 			{

@@ -11,30 +11,11 @@ namespace SAPHRON
 		Position _checkpoint;
 		Position _position;
 		double _charge;
-	protected:
-		virtual void UpdateCenterOfMass() override
-		{
-			// We don't fire event here because it's fired by the 
-			// caller.
-			this->_pEvent.SetOldPosition(_position);
-			this->_pEvent.position = 1;
-
-			_position = {0, 0, 0};
-			double m = 0; 
-			for(auto& child : *this)
-			{
-				_position += child->GetPositionRef()*child->GetMass();
-				m += child->GetMass();
-			}	
-
-			// Avoid divide by zero.
-			if(m) _position /= m;
-		}
 
 	public:
 
 		Molecule(std::string species) 
-		: Particle(species), _director{0,0,0}, _checkpoint() {}
+		: Particle(species), _director{0 ,0, 1.0}, _checkpoint() {}
 
 		
 		// Get molecule position based on center of mass.
@@ -169,6 +150,26 @@ namespace SAPHRON
 				m += child->GetMass();
 
 			return m;
+		}
+
+		// Update center of mass.
+		virtual void UpdateCenterOfMass() override
+		{
+			// We don't fire event here because it's fired by the 
+			// caller.
+			this->_pEvent.SetOldPosition(_position);
+			this->_pEvent.position = 1;
+
+			_position = {0, 0, 0};
+			double m = 0; 
+			for(auto& child : *this)
+			{
+				_position += child->GetPositionRef()*child->GetMass();
+				m += child->GetMass();
+			}	
+
+			// Avoid divide by zero.
+			if(m) _position /= m;
 		}
 
 		virtual Particle* Clone() const override

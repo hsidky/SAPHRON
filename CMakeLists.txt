@@ -265,6 +265,12 @@ target_include_directories(RandTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(RandTests googletest) 
 add_test(RandTests RandTests)
 
+add_executable(RotateMoveTests test/RotateMoveTests.cpp)
+target_link_libraries(RotateMoveTests ${TEST_DEPS})
+target_include_directories(RotateMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(RotateMoveTests googletest) 
+add_test(RotateMoveTests RotateMoveTests)
+
 add_executable(SimFlagsTests test/SimFlagsTests.cpp)
 target_link_libraries(SimFlagsTests ${TEST_DEPS})
 target_include_directories(SimFlagsTests PRIVATE "${GTEST_INCLUDE_DIR}")
