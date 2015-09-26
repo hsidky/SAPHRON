@@ -6,6 +6,7 @@ namespace SAPHRON
 {
 	// Typedefs from arma.
 	typedef arma::vec::fixed<3> Vector3D;
+	typedef arma::mat33 Matrix3D;
 	typedef Vector3D Director;
 	typedef Vector3D Position;
 

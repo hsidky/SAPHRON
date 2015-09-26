@@ -1,6 +1,10 @@
 #include "../src/Moves/RotateMove.h"
 #include "../src/Particles/Site.h"
 #include "../src/Particles/Molecule.h"
+#include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/WorldManager.h"
+#include "../src/Moves/MoveManager.h"
+#include "../src/ForceFields/ForceFieldManager.h"
 #include "gtest/gtest.h"
 #include <math.h>
 
@@ -68,4 +72,31 @@ TEST(RotateMove, MoleculeRotations)
 	ASSERT_TRUE(is_close(Director({-1, 0, 0}), s2->GetDirector(), 1e-11));
 	ASSERT_TRUE(is_close(Director({-1, 0, 0}), s3->GetDirector(), 1e-11));
 	ASSERT_TRUE(is_close(Director({-1, 0, 0}), s4->GetDirector(), 1e-11));
+}
+
+TEST(RotateMove, MoveInterface)
+{
+	SimpleWorld w(10.0, 10.0, 10.0, 2.0);
+
+	// Create a new site.
+	Site* s1 = new Site({0, 0, 0}, {0, 0, 1}, "T1");	
+	w.AddParticle(s1);
+
+	// Max rotation of 45 degrees.
+	RotateMove mv(M_PI/4.0);
+
+	MoveManager mm;
+	mm.AddMove(&mv);
+
+	ForceFieldManager ffm;
+	WorldManager wm;
+	wm.AddWorld(&w);
+
+	// Difference between directors should never exceed dmax.
+	for (int i = 0; i < 10000; ++i)
+	{
+		Director d = s1->GetDirector();
+		mv.Perform(&wm, &ffm, MoveOverride::ForceAccept);
+		ASSERT_LE(acos(arma::dot(d,s1->GetDirectorRef())), M_PI/4.0);
+	}
 }

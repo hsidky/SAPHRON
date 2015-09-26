@@ -2,6 +2,9 @@
 
 #include "Move.h"
 #include "../Rand.h"
+#include "../Worlds/WorldManager.h"
+#include "../ForceFields/ForceFieldManager.h"
+#include "../DensityOfStates/DOSOrderParameter.h"
 
 namespace SAPHRON
 {
@@ -22,9 +25,26 @@ namespace SAPHRON
 		{
 		}
 
-		// Roate a particle about an axis (x = 1, y = 2, z = 3) 
-		// "deg" degrees
-		void Rotate(Particle* particle, int axis, double deg)
+		// Rotate a particle and children given a rotation matrix R.
+		void Rotate(Particle* particle, const Matrix3D& R)
+		{
+			// First rotate particle director.
+			particle->SetDirector(R*particle->GetDirectorRef());
+
+			// Get COM.
+			auto& com = particle->GetPositionRef();
+
+			// Rotate particle children if it has any 
+			for(auto& child : *particle)
+			{
+				child->SetPosition(R*(child->GetPositionRef()-com) + com);
+				child->SetDirector(R*child->GetDirectorRef());
+			}
+		}
+
+		// Create a rotation matrix which will rotate a vector 
+		// abount an axis (x = 1, y = 2, z = 3) "deg" degrees.
+		Matrix3D GenRotationMatrix(int axis, double deg)
 		{
 			double phi = 0, theta = 0, psi = 0;
 
@@ -47,32 +67,114 @@ namespace SAPHRON
 			auto cpsi = cos(psi);
 			auto spsi = sin(psi);
 
-			// Build rotation matrix
-			arma::mat33 R {{ ctheta*cpsi, cphi*spsi+sphi*stheta*cpsi, sphi*spsi-cphi*stheta*cpsi},
-						   {-ctheta*spsi, cphi*cpsi-sphi*stheta*spsi, sphi*cpsi+cphi*stheta*spsi},
-						   {      stheta,               -sphi*ctheta,                cphi*ctheta}};
+			// Build rotation matrix. 
+			// TODO: CHECK RVO.
+			return {{ ctheta*cpsi, cphi*spsi+sphi*stheta*cpsi, sphi*spsi-cphi*stheta*cpsi},
+					{-ctheta*spsi, cphi*cpsi-sphi*stheta*spsi, sphi*cpsi+cphi*stheta*spsi},
+					{      stheta,               -sphi*ctheta,                cphi*ctheta}};
+		}	
 
-			// First rotate particle director.
-			particle->SetDirector(R*particle->GetDirectorRef());
+		// Roate a particle about an axis (x = 1, y = 2, z = 3) 
+		// "deg" degrees
+		void Rotate(Particle* particle, int axis, double deg)
+		{
+			Matrix3D R = GenRotationMatrix(axis, deg);
+			Rotate(particle, R);
+		}
 
-			// Get COM.
-			auto& com = particle->GetPositionRef();
+		// Perform rotation on a random particle from a random world.
+		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm, const MoveOverride& override) override
+		{
+			// Get random particle from random world.
+			World* w = wm->GetRandomWorld();
+			Particle* particle = w->DrawRandomParticle();
 
-			// Rotate particle children if it has any 
-			for(auto& child : *particle)
+			// Evaluate initial particle energy. 
+			auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+
+			// Choose random axis, and generate random angle.
+			int axis = _rand.int32() % 3 + 1;
+			double deg = (2.0*_rand.doub() - 1.0)*_dmax;
+			Matrix3D R = GenRotationMatrix(axis, deg);
+
+			// Rotate particle.
+			Rotate(particle, R);
+			++_performed;
+
+			// Evaluate final particle energy and get delta E. 
+			auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			Energy de = ef.energy - ei.energy;
+
+			// Update neighbor list if needed.
+			w->CheckNeighborListUpdate(particle);
+
+			// Get sim info for kB.
+			auto sim = SimInfo::Instance();
+
+			// Acceptance probability.
+			double p = exp(-de.total()/(w->GetTemperature()*sim.GetkB()));
+			p = p > 1.0 ? 1.0 : p;
+
+			// Reject or accept move.
+			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
-				child->SetPosition(R*(child->GetPositionRef()-com) + com);
-				child->SetDirector(R*child->GetDirectorRef());
+				// Rotate back. 
+				Rotate(particle, R.t());
+				++_rejected;
+			}
+			else
+			{
+				// Update energies and pressures.
+				w->IncrementEnergy(de);
+				w->IncrementPressure(ef.pressure - ei.pressure);
 			}
 		}
 
-		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm, const MoveOverride& override) override
-		{
-
-		}
-
+		// DOS interface for move.
 		virtual void Perform(World* w, ForceFieldManager* ffm, DOSOrderParameter* op , const MoveOverride& override) override
 		{
+			Particle* particle = w->DrawRandomParticle();
+
+			// Evaluate initial particle energy. 
+			auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto opi = op->EvaluateOrderParameter(*w);
+
+			// Choose random axis, and generate random angle.
+			int axis = _rand.int32() % 3 + 1;
+			double deg = (2.0*_rand.doub() - 1.0)*_dmax;
+			Matrix3D R = GenRotationMatrix(axis, deg);
+
+			// Rotate particle.
+			Rotate(particle, R);
+			++_performed;
+
+			// Evaluate final particle energy and get delta E. 
+			auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			Energy de = ef.energy - ei.energy;
+
+			// Update energies and pressures.
+			w->IncrementEnergy(de);
+			w->IncrementPressure(ef.pressure - ei.pressure);
+
+			auto opf = op->EvaluateOrderParameter(*w);
+			
+			// Update neighbor list if needed.
+			w->CheckNeighborListUpdate(particle);
+
+			// Acceptance probability.
+			double p = op->AcceptanceProbability(ei.energy, ef.energy, opi, opf, *w);
+
+			// Reject or accept move.
+			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
+			{
+				Rotate(particle, R.t());
+				
+				// Update energies and pressures.
+				w->IncrementEnergy(-1.0*de);
+				w->IncrementPressure(ei.pressure - ef.pressure);
+				
+				++_rejected;
+			}	
 
 		}
 
