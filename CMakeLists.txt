@@ -157,6 +157,12 @@ target_include_directories(DLSAConnectivityTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(DLSAConnectivityTests googletest) 
 add_test(DLSAConnectivityTests DLSAConnectivityTests)
 
+add_executable(DSFPointChargeFFTests test/DSFPointChargeFFTests.cpp)
+target_link_libraries(DSFPointChargeFFTests ${TEST_DEPS})
+target_include_directories(DSFPointChargeFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(DSFPointChargeFFTests googletest) 
+add_test(DSFPointChargeFFTests DSFPointChargeFFTests)
+
 add_executable(ElasticCoeffOPTests test/ElasticCoeffOPTests.cpp)
 target_link_libraries(ElasticCoeffOPTests ${TEST_DEPS})
 target_include_directories(ElasticCoeffOPTests PRIVATE "${GTEST_INCLUDE_DIR}")
