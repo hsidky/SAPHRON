@@ -234,8 +234,8 @@ namespace SAPHRON
 					{
 						auto* p = pcontainer.front();
 
-						p->SetMass(spec[p->GetSpecies()].get("mass", 1.0).asDouble());
-						p->SetCharge(spec[p->GetSpecies()].get("charge", 0.0).asDouble());
+						p->SetMass(spec["children"][k].get("mass", 1.0).asDouble());
+						p->SetCharge(spec["children"][k].get("charge", 0.0).asDouble());
 						
 						parent->AddChild(p);
 						pcontainer.pop();

@@ -68,9 +68,13 @@ namespace SAPHRON
 		}
 
 		// Set position checkpoint.
+		// Propogates to children.
 		virtual void SetCheckpoint() override
 		{
 			_checkpoint = _position;
+			
+			for(auto& c : *this)
+				c->SetCheckpoint();
 		}
 
 		// Get position checkpoint.

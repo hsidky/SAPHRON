@@ -7,8 +7,8 @@ using namespace SAPHRON;
 TEST(Molecule, DefaultBehavior)
 {
 	Site* s1 = new Site({1.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
-	Site* s2 = new Site({2.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
-	Site* s3 = new Site({3.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Site* s2 = new Site({2.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L2");
+	Site* s3 = new Site({3.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L3");
 
 	Molecule m("M1");
 
@@ -33,7 +33,7 @@ TEST(Molecule, DefaultBehavior)
 	// Remove children.
 	m.RemoveChild(s1);
 	pos = {4.0, 2.7, 8.3};
-	ASSERT_TRUE(is_close(pos, m.GetPosition(),1e-11));
+	ASSERT_TRUE(is_close(pos, m.GetPosition(),1e-10));
 
 	delete s1;
 }

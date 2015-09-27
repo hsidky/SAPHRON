@@ -40,27 +40,26 @@ namespace SAPHRON
 			void AddParticleComposition(Particle* particle);
 			void RemoveParticleComposition(Particle* particle);
 			void ModifyParticleComposition(const ParticleEvent& pEvent);
-			void UpdateNeighborList(Particle* p1, Particle* p2);
+			void UpdateNeighborList(Particle* particle, bool clear);
+
 
 			// Perform all the appropriate configuration for a new particle.
 			inline void ConfigureParticle(Particle* particle)
 			{
 				// Add this world as an observer.
+				// Propogates to children.
 				particle->AddObserver(this);
 
 				// Associate this world with particle.
+				// propogates to children.
 				particle->SetWorld(this);
-
-				// If particle has preexisiting neighbors, add it to them 
-				// to maintain symmetry. 
-				for(auto& neighbor : particle->GetNeighbors())
-					neighbor->AddNeighbor(particle);
 
 				// Add particle to the composition list.
 				AddParticleComposition(particle);
 
-				// Set particle checkpoint for neighbor lists.
-				particle->SetCheckpoint();
+				// Update particle neighbor list. This will clear old
+				// and create new for particle and children.
+				this->UpdateNeighborList(particle);
 			}
 
 		protected:
@@ -194,6 +193,8 @@ namespace SAPHRON
 				if(it != _particles.end())
 				{
 					particle->RemoveFromNeighbors();
+					particle->ClearNeighborList();
+
 					particle->RemoveObserver(this);
 					particle->SetWorld(nullptr);
 					RemoveParticleComposition(particle);

@@ -168,6 +168,7 @@ namespace SAPHRON
 			}
 
 			// Removes self from neighbors.
+			// Propogates to children.
 			void RemoveFromNeighbors()
 			{
 				// Remove particle from neighbor list. 
@@ -176,9 +177,13 @@ namespace SAPHRON
 					if(neighbor != NULL && neighbor != nullptr)
 						neighbor->RemoveNeighbor(this);
 				}
+
+				for(auto& c : *this)
+					c->RemoveFromNeighbors();
 			}
 
-			//Removes self from bondedneighbors list
+			// Removes self from bondedneighbors list.
+			// Propogates to children.
 			void RemoveFromBondedNeighbors()
 			{
 				for(auto& neighbor : _bondedneighbors)
@@ -186,6 +191,9 @@ namespace SAPHRON
 					if(neighbor != NULL && neighbor != nullptr)
 						neighbor->RemoveBondedNeighbor(this);
 				}
+
+				for(auto& c : *this)
+					c->RemoveFromBondedNeighbors();
 			}
 
 			// Get global particle ID.
@@ -338,8 +346,15 @@ namespace SAPHRON
 				return std::find(_neighbors.begin(), _neighbors.end(), &particle) != _neighbors.end();
 			}
 
-			// Clear the neighbor list.
-			inline void ClearNeighborList() { _neighbors.clear(); }
+			// Clear the neighbor list. 
+			// Propogates to children.
+			inline void ClearNeighborList() 
+			{ 
+				_neighbors.clear(); 
+				
+				for(auto& c : *this)
+					c->ClearNeighborList();
+			}
 
 			// Gets neighbor list iterator.
 			inline NeighborList& GetBondedNeighbors() {	return _bondedneighbors; }
@@ -388,7 +403,7 @@ namespace SAPHRON
 				return _connectivities;
 			}
 
-			// Add particle observer.
+			// Add particle observer. Propogates to children.
 			inline void AddObserver(ParticleObserver* observer)
 			{
 				_observers.push_back(observer);
@@ -396,7 +411,7 @@ namespace SAPHRON
 					c->AddObserver(observer);
 			}
 
-			// Remove particle observer.
+			// Remove particle observer. Propogates to children.
 			inline void RemoveObserver(ParticleObserver* observer)
 			{
 				_observers.remove(observer);
@@ -460,11 +475,13 @@ namespace SAPHRON
 
 					particle->ClearParent();
 					particle->SetWorld(nullptr);
-					UpdateCenterOfMass();
+					
 					for(auto& o : _observers)
 						particle->RemoveObserver(o);
 					_children.erase(it);
-
+					
+					UpdateCenterOfMass();
+					
 					// Fire event.
 					NotifyObservers();
 				}

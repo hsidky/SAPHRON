@@ -195,7 +195,7 @@ namespace SAPHRON
 		// Clear neighbor list before repopulating.
 		// We are operating exclusively on primitives
 		// so no need to check for children.
-		#pragma omp parallel for
+		//#pragma omp parallel for
 		for(int i = 0; i < n; ++i)
 		{
 			_primitives[i]->ClearNeighborList();
@@ -210,6 +210,12 @@ namespace SAPHRON
 			for(int j = i + 1; j < n; ++j)
 			{
 				auto pj = _primitives[j];
+
+				// Only add non-bonded.
+				if(pi->HasParent() && pj->HasParent() && 
+					(pi->GetParent() == pj->GetParent()))
+					continue;
+
 				const Position& posj = pj->GetPositionRef();
 
 				Position rij = posi - posj;
@@ -226,46 +232,48 @@ namespace SAPHRON
 
 	void SimpleWorld::UpdateNeighborList(Particle* particle)
 	{
-		particle->RemoveFromNeighbors();
-		particle->ClearNeighborList();
-		particle->SetCheckpoint();
-		
-		for(const auto& c : *particle)
-		{
-			c->RemoveFromNeighbors();
-			c->ClearNeighborList();
-			c->SetCheckpoint();
-		}
-
-		for(const auto& p : _particles)
-		{
-			// Don't count self...
-			if(p == particle)
-				continue;
-
-			UpdateNeighborList(particle, p);
-		}
+		UpdateNeighborList(particle, true);
 	}
 
-	// Update the neighbor list between particles p1 and p2.
-	inline void SimpleWorld::UpdateNeighborList(Particle* p1, Particle* p2)
+	// Internal method. Allows for efficiency of clearing neighbor lists 
+	// once.
+	void SimpleWorld::UpdateNeighborList(Particle* particle, bool clear)
 	{
-		if(p1->HasChildren())
-			for(auto& child : *p1)
-				UpdateNeighborList(child, p2);
-
-		if(p2->HasChildren())
-			for(auto& child : *p2)
-				UpdateNeighborList(p1, child);
-
-		// TODO: Check if this is elided. 
-		Position rij = p1->GetPositionRef() - p2->GetPositionRef();
-		ApplyMinimumImage(rij);
-
-		if(arma::dot(rij,rij) <= _ncutsq)
+		if(clear)
 		{
-			p1->AddNeighbor(p2);
-			p2->AddNeighbor(p1);
+			// These propogate to children.
+			particle->RemoveFromNeighbors();
+			particle->ClearNeighborList();
+			particle->SetCheckpoint();
 		}
+
+		// If particle has no child update it.
+		if(!particle->HasChildren())
+		{
+			const auto& pos = particle->GetPositionRef();
+			for(size_t i = 0; i < _primitives.size(); ++i)
+			{
+				auto pi = _primitives[i];
+
+				// Only add non-bonded.
+				if(particle->HasParent() && pi->HasParent() && 
+					(particle->GetParent() == pi->GetParent()))
+					continue;
+
+				const auto& posi = pi->GetPositionRef();
+
+				Position rij = pos - posi;
+				ApplyMinimumImage(rij);
+
+				if(arma::dot(rij,rij) <= _ncutsq)
+				{
+					pi->AddNeighbor(particle);
+					particle->AddNeighbor(pi);
+				}
+			}
+		}
+		
+		for(auto& c : *particle)
+			UpdateNeighborList(c, false);
 	}
 }
