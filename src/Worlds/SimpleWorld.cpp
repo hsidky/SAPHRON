@@ -211,7 +211,7 @@ namespace SAPHRON
 			{
 				auto pj = _primitives[j];
 
-				// Only add non-bonded.
+				// Only add inter (non same molecule).
 				if(pi->HasParent() && pj->HasParent() && 
 					(pi->GetParent() == pj->GetParent()))
 					continue;
@@ -253,11 +253,15 @@ namespace SAPHRON
 			const auto& pos = particle->GetPositionRef();
 			for(size_t i = 0; i < _primitives.size(); ++i)
 			{
-				auto pi = _primitives[i];
+				auto* pi = _primitives[i];
 
-				// Only add non-bonded.
+				// Only add inter (non same molecule).
 				if(particle->HasParent() && pi->HasParent() && 
 					(particle->GetParent() == pi->GetParent()))
+					continue;
+
+				// Skip self. 
+				if(particle == pi)
 					continue;
 
 				const auto& posi = pi->GetPositionRef();

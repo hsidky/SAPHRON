@@ -28,9 +28,9 @@ namespace SAPHRON
 		// Move particle from world 1 to world 2.
 		void MoveParticle(Particle* particle, World* w1, World* w2)
 		{
-			// Remove particle from its world. Clear neighbor list. 
+			// Remove particle from its world. 
+			// Neighbor list is cleared automatically.
 			w1->RemoveParticle(particle);
-			particle->ClearNeighborList();
 
 			// Generate a new random coordinate for the particle.
 			Position pf = w2->GetBoxVectors();
@@ -39,8 +39,9 @@ namespace SAPHRON
 			pf[2] *= _rand.doub();
 
 			particle->SetPosition(pf);
+
+			// Neighbor list is updated automatically.
 			w2->AddParticle(particle);
-			w2->UpdateNeighborList(particle);
 			++_performed;
 		}
 
@@ -69,28 +70,22 @@ namespace SAPHRON
 			double v1 = w1->GetVolume();
 			double v2 = w2->GetVolume();
 
-			// Get random particle, eval E, backup neighbor list and position.
+			// Get random particle, eval E.
 			Particle* particle = w1->DrawRandomParticle();
-
-			ParticleList pneighbors = particle->GetNeighbors();
 			Position pi = particle->GetPosition();
 			auto ei = ffm->EvaluateHamiltonian(*particle, w1->GetComposition(), v1);
 
 			// Move particle from w1 to w2.
 			MoveParticle(particle, w1, w2);			
-			double n1 = w1->GetParticleCount();
-			double n2 = w2->GetParticleCount();
+			double n1 = w1->GetPrimitiveCount();
+			double n2 = w2->GetPrimitiveCount();
 
 			// Evaluate new energy and accept/reject.
 			auto ef = ffm->EvaluateHamiltonian(*particle, w2->GetComposition(), v2);
 			double de = ef.energy.total() - ei.energy.total();
 			
-			// TODO: particle numbers should be number of PRIMITIVE particles, 
-			// not parent molecules. Needs to be fixed.
-
 			// The acceptance rule is from Frenkel & Smit Eq. 8.3.4.
 			// However, it was modified for *final* particle numbers.
-			
 			SimInfo sim = SimInfo::Instance();
 			double beta = 1.0/(sim.GetkB()*w2->GetTemperature());
 			double p = (n1 - 1.0)*v2/(n2*v1)*exp(-beta*de);
@@ -99,8 +94,6 @@ namespace SAPHRON
 			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
 				w2->RemoveParticle(particle);
-				auto& nneighbors = particle->GetNeighbors();
-				nneighbors = pneighbors;
 				particle->SetPosition(pi);
 				w1->AddParticle(particle);
 				++_rejected;

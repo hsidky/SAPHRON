@@ -19,6 +19,8 @@ TEST(ParticleSwapMove, DefaultBehavior)
 	// Pack the worlds. 
 	liquid.PackWorld({&s}, {1.0}, 200, 0.1);
 	vapor.PackWorld({&s}, {1.0}, 200, 0.01);
+	liquid.UpdateNeighborList();
+	vapor.UpdateNeighborList();
 
 	ASSERT_EQ(200, liquid.GetParticleCount());
 	ASSERT_EQ(200, vapor.GetParticleCount());
@@ -38,12 +40,12 @@ TEST(ParticleSwapMove, DefaultBehavior)
 	ParticleSwapMove move;
 
 	// Let's perform the move but force reject and ensure everything is the same.
-	for (int i = 0; i < 1000; ++i)
+	for(int i = 0; i < 100000; ++i)
 	{
 		move.Perform(&wm, &ffm, MoveOverride::ForceReject);
 		ASSERT_EQ(200, liquid.GetParticleCount());
 		ASSERT_EQ(200, vapor.GetParticleCount());
-		ASSERT_EQ(H1.energy, ffm.EvaluateHamiltonian(liquid).energy);
+		ASSERT_NEAR(H1.energy.total(), ffm.EvaluateHamiltonian(liquid).energy.total(), 1e-11);
 		ASSERT_EQ(H2.energy, ffm.EvaluateHamiltonian(vapor).energy);
 	}
 	
