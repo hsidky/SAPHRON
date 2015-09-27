@@ -17,7 +17,7 @@ namespace SAPHRON
 	// Abstract base class for a force field. Represents the scalar interaction potential between
 	// two bodies (particles). It calculates energy and intermolecular virial contribution. 
 	// The virial contribution is written as in Allan & Tildesley Eq. 2.60 and 2.63.
-	// The forcefield implementation should return w(r)/r^2.
+	// The forcefield implementation should return w(r)/r^2. This corresponds to 1/r*dv(r)/dr.
 	class ForceField
 	{
 	public:

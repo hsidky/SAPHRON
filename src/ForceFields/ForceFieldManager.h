@@ -46,7 +46,7 @@ namespace SAPHRON
 			double rcut = (world == nullptr) ? std::numeric_limits<double>::infinity() : world->GetCutoffRadius();
 			if(!particle.HasChildren())
 			{
-				#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pxz,pyy,pyz,pzz)
+				//#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pxz,pyy,pyz,pzz)
 				for(size_t k = 0; k < neighbors.size(); ++k)
 				{
 					auto* neighbor = neighbors[k];
@@ -93,7 +93,7 @@ namespace SAPHRON
 						interij = ff->Evaluate(particle, *neighbor, rij, rcut);
 
 					//Electrostatics containing energy and virial
-					if(it2 != _electrostaticforcefield.end() && particle.GetCharge() && neighbor->GetCharge())
+					if(it2 != _electrostaticforcefield.end())
 						electroij = eff->Evaluate(particle, *neighbor, rij, rcut);
 					
 					intere += interij.energy; // Sum nonbonded van der Waal energy.
@@ -165,7 +165,7 @@ namespace SAPHRON
 							world->ApplyMinimumImage(rij);
 
 						//Electrostatics containing energy and virial
-						if(it2 != _electrostaticforcefield.end() && particle.GetCharge() && sibling->GetCharge())
+						if(it2 != _electrostaticforcefield.end())
 						{
 							auto ij = eff->Evaluate(particle, *sibling, rij, rcut);
 
