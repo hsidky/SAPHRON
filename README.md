@@ -35,7 +35,7 @@ Simply comment out the line that says `#define ARMA_USE_WRAPPER` and you're good
 
 ##### OpenMP 
 
-SAPHRON uses OpenMP to parallelize energy and neighbor list calculations. It relies on compilers that support the `-fopenmp` flag. Any recent C++11 compatible compiler should support this, including GCC 4.9.x and Clang 3.4+.
+SAPHRON uses OpenMP to parallelize energy and neighbor list calculations. It relies on compilers that support the `-fopenmp` flag. Any recent C++11 compatible compiler should support this, including GCC 4.9.x at **minimum** (required for regex support) and Clang 3.4+.
 
 ##### Additional information
 
