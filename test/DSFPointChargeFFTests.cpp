@@ -42,6 +42,13 @@ TEST(DSFFF, NISTConfig1)
 
 	ParticleList particles;
 
+	try {
+		Particle::BuildParticles(root["particles"], root["components"], particles);
+	} catch(BuildException& e) {
+		for(auto& err : e.GetErrors())
+			std::cout << err << std::endl;
+	}
+
 	// Build particles.
 	ASSERT_NO_THROW(Particle::BuildParticles(root["particles"], root["components"], particles));
 	ASSERT_EQ(100, particles.size());
@@ -101,6 +108,95 @@ TEST(DSFFF, NISTConfig1)
 
 	delete w;
 }
+
+
+// Validating SPCE water results against 
+// literature PVT data.
+TEST(DSFFF, PVTValidation1)
+{
+	// Set boltzmann to give real units of energy. 
+	auto& sim = SimInfo::Instance();
+	sim.SetkB(sim.GetkBDefault());
+
+	int N = 400;
+	double eps = 78.19743111*sim.GetkB();
+	double sig = 3.16555789;
+	double T = 298.15; // (K)
+	double rcut = 8; // Angstrom.
+
+	// Prototype molecule.
+	Site* O = new Site({0.72707694246,0.62783284768,0.88326560728},{0,0,1}, "O");
+	O->SetMass(15.9994);
+	O->SetCharge(-0.84760);
+	Site* H1 = new Site({0, 0, 1.16108755587}, {0, 0, 1}, "H1");
+	H1->SetMass(1.00794);
+	H1->SetCharge(0.42380);
+	Site* H2 = new Site({1.09689283867, 0.33960018140, 0}, {0, 0, 1}, "H2");
+	H2->SetMass(1.00794);
+	H2->SetCharge(0.42380);
+	
+	Molecule h2o("H2O");	
+	h2o.AddChild(O);
+	h2o.AddChild(H1);
+	h2o.AddChild(H2);
+
+	// Add lj atom to world and initialize in simple lattice configuration.
+	// World volume is adjusted by packworld.
+	SimpleWorld liquid(1, 1, 1, rcut);
+	liquid.SetNeighborRadius(rcut + 3.0);
+	liquid.PackWorld({&h2o}, {1.0}, N, 0.033356);
+	liquid.SetTemperature(T);
+	liquid.UpdateNeighborList();
+	
+	WorldManager wm;
+	wm.AddWorld(&liquid);
+
+	std::cout << liquid.GetBoxVectors() << std::endl;
+
+	ASSERT_EQ(N, liquid.GetParticleCount());
+	// 0.997 g/cm^3.
+	ASSERT_NEAR(0.0553889, liquid.GetDensity(), 1e-6);
+
+	// Initialize forcefields.
+	LennardJonesFF lj(eps, sig);
+	DSFFF dsf(0.20);
+ 
+	ForceFieldManager ffm;
+	ffm.AddNonBondedForceField("O", "O", lj);
+	ffm.AddElectrostaticForceField("O", "O", dsf);
+	ffm.AddElectrostaticForceField("O", "H1", dsf);
+	ffm.AddElectrostaticForceField("O", "H2", dsf);
+	ffm.AddElectrostaticForceField("H1", "H1", dsf);
+	ffm.AddElectrostaticForceField("H1", "H2", dsf);
+	ffm.AddElectrostaticForceField("H2", "H2", dsf);
+
+	// Initialize moves. 
+	TranslateMove translate(0.40);
+	RotateMove rotate(0.66);
+
+	MoveManager mm;
+	mm.AddMove(&translate, 50);
+	mm.AddMove(&rotate, 50);
+
+	// Initialize observer.
+	SimFlags flags;
+	//flags.temperature = 1;
+	flags.iteration = 1;
+	flags.world = 63;
+	flags.simulation = 15;
+
+	// Initialize accumulator. 
+	TestAccumulator accumulator(flags, 10, 30000);
+	CSVObserver csv("test", flags, 10);
+
+	// Initialize ensemble. 
+	StandardEnsemble ensemble(&wm, &ffm, &mm);
+	ensemble.AddObserver(&accumulator);
+	ensemble.AddObserver(&csv);
+	ensemble.Run(1000);
+}
+
+/*
 
 // Validating SPCE water results against 
 // NIST benchmark simulations.
@@ -195,3 +291,4 @@ TEST(DSFFF, NISTValidation1)
 	ensemble.AddObserver(&csv);
 	ensemble.Run(1000);
 }
+*/

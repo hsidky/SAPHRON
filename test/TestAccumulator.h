@@ -64,9 +64,9 @@ namespace SAPHRON
 					}
 
 					if(_density.find(world) == _density.end())
-						_density[world]  = world->GetDensity();
+						_density[world]  = world->GetNumberDensity();
 					else
-						_density[world] += world->GetDensity();
+						_density[world] += world->GetNumberDensity();
 				}
 
 				

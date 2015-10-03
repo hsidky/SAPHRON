@@ -195,7 +195,7 @@ namespace SAPHRON
 		// Clear neighbor list before repopulating.
 		// We are operating exclusively on primitives
 		// so no need to check for children.
-		//#pragma omp parallel for
+		#pragma omp parallel for
 		for(int i = 0; i < n; ++i)
 		{
 			_primitives[i]->ClearNeighborList();

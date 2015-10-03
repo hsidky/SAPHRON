@@ -257,7 +257,7 @@ namespace SAPHRON
 			if(this->Flags.world_volume)
 				*fs << setw(_w) << w->GetVolume() << _dlm;
 			if(this->Flags.world_density)
-				*fs << setw(_w) << w->GetDensity() << _dlm;
+				*fs << setw(_w) << w->GetNumberDensity() << _dlm;
 			if(this->Flags.world_energy)
 				*fs << setw(_w) << w->GetEnergy().total() << _dlm;
 			if(this->Flags.world_composition)

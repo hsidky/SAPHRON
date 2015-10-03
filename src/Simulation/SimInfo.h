@@ -18,6 +18,9 @@ namespace SAPHRON
 
 		// Elementary charge (C).
 		double _elem = 1.602176565E-19;
+
+		// Avogadro's constant.
+		double _na = 6.02214129E+23;
 	public:
 
 		// Get singleton (I know, I know...) instance of 
@@ -30,6 +33,9 @@ namespace SAPHRON
 
 		// Get Boltzmann constant in default units (J/K).
 		double GetkBDefault() const { return _KB; }
+
+		// Get Avogadro's constant.
+		double GetNa() const { return _na; }
 		
 		// Get/set Boltzmann constant.
 		double GetkB() const { return _kb; }

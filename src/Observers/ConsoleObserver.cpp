@@ -121,7 +121,7 @@ namespace SAPHRON
 		if(this->Flags.world_count)
 			cout << setw(20) << left << world->GetParticleCount();
 		if(this->Flags.world_density)
-			cout << setw(20) << left << setprecision(5) << scientific << world->GetDensity();
+			cout << setw(20) << left << setprecision(5) << scientific << world->GetNumberDensity();
 		if(this->Flags.world_volume)
 			cout << setw(20) << left << setprecision(5) << scientific << world->GetVolume();
 

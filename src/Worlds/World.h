@@ -167,9 +167,16 @@ namespace SAPHRON
 		}	
 
 		// Get the system number density.
-		double GetDensity() const
+		double GetNumberDensity() const
 		{
 			return (double)GetParticleCount()/GetVolume();
+		}
+
+		// Get system density (mol/cm^3)
+		double GetDensity() const 
+		{
+			auto& sim = SimInfo::Instance();
+			return 1.0e24*(double)GetParticleCount()/(sim.GetNa()*GetVolume());
 		}
 
 		// Gets the optional string ID for a world.
