@@ -151,8 +151,6 @@ TEST(DSFFF, PVTValidation1)
 	WorldManager wm;
 	wm.AddWorld(&liquid);
 
-	std::cout << liquid.GetBoxVectors() << std::endl;
-
 	ASSERT_EQ(N, liquid.GetParticleCount());
 	// 0.997 g/cm^3.
 	ASSERT_NEAR(0.0553889, liquid.GetDensity(), 1e-6);
@@ -171,8 +169,8 @@ TEST(DSFFF, PVTValidation1)
 	ffm.AddElectrostaticForceField("H2", "H2", dsf);
 
 	// Initialize moves. 
-	TranslateMove translate(0.40);
-	RotateMove rotate(0.66);
+	TranslateMove translate(0.35);
+	RotateMove rotate(0.50);
 
 	MoveManager mm;
 	mm.AddMove(&translate, 50);
@@ -193,7 +191,13 @@ TEST(DSFFF, PVTValidation1)
 	StandardEnsemble ensemble(&wm, &ffm, &mm);
 	ensemble.AddObserver(&accumulator);
 	ensemble.AddObserver(&csv);
-	ensemble.Run(1000);
+	ensemble.Run(10000);
+
+	// "Conservation" of energy and pressure.
+	liquid.UpdateNeighborList();
+	EPTuple H = ffm.EvaluateHamiltonian(liquid);
+	ASSERT_NEAR(H.pressure.isotropic(), liquid.GetPressure().isotropic()-liquid.GetPressure().ideal, 1e-10);
+	ASSERT_NEAR(H.energy.total(), liquid.GetEnergy().total(), 1e-10);
 }
 
 /*

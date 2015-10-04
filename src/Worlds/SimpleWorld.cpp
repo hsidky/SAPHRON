@@ -193,13 +193,14 @@ namespace SAPHRON
 		int n = this->GetPrimitiveCount();
 
 		// Clear neighbor list before repopulating.
-		// We are operating exclusively on primitives
-		// so no need to check for children.
+		// We need to do this for parent particles
+		// (it propogates to children) because parent 
+		// checkpoints are used to check for nlist updates.
 		#pragma omp parallel for
-		for(int i = 0; i < n; ++i)
+		for(int i = 0; i < this->GetParticleCount(); ++i)
 		{
-			_primitives[i]->ClearNeighborList();
-			_primitives[i]->SetCheckpoint();
+			_particles[i]->ClearNeighborList();
+			_particles[i]->SetCheckpoint();
 		}
 		
 		for(int i = 0; i < n - 1; ++i)
