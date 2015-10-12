@@ -21,11 +21,41 @@
 
 using namespace SAPHRON;
 
+// Validation of potential. 
+/*TEST(DSFFF, Potential)
+{
+	Site p1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "LJ");
+	Site p2({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "LJ");
+	p1.AddNeighbor(&p2);
+	p2.AddNeighbor(&p1);
+	p1.SetCharge(0.5);
+	p2.SetCharge(0.5);
+
+	DSFFF dsf(0.2);
+	LennardJonesFF ff(1.0, 1.0);
+	ForceFieldManager ffm;
+	ffm.SetDefaultCutoff(100.0);
+	ffm.AddNonBondedForceField("LJ", "LJ", ff);
+	ffm.AddElectrostaticForceField("LJ", "LJ", dsf);
+	for(int i = 0; i < 300; ++i)
+	{
+		auto x = (1.0 + i*0.01) ;
+		p2.SetPosition({x, 0, 0});
+		auto E =  ffm.EvaluateHamiltonian(p1, {}, 1.0);
+		std::cout << x << " " << E.energy.total() << std::endl;
+	}
+}
+*/
+
 // Validate closeness of DSF potential to NIST 
 // values provided for SPCE water. See ref:
 // http://www.nist.gov/mml/csd/informatics_research/spce_refcalcs.cfm
 TEST(DSFFF, NISTConfig1)
 {
+	// Set to real units.
+	auto& sim = SimInfo::Instance();
+	sim.SetUnits(real);
+
 	// Load file (assumes we are in build folder.
 	std::ifstream t("../test/nist_spce_config1.json");
 	std::stringstream buffer;
@@ -88,7 +118,7 @@ TEST(DSFFF, NISTConfig1)
 	ASSERT_DOUBLE_EQ(1.00794, children[2]->GetMass());
 
 	// Initialize forcefields.
-	LennardJonesFF lj(78.19743111, 3.16555789);
+	LennardJonesFF lj(78.19743111*sim.GetkB(), 3.16555789);
 	DSFFF dsf(0.20);
 
 	ForceFieldManager ffm;
@@ -103,20 +133,20 @@ TEST(DSFFF, NISTConfig1)
 	auto E = ffm.EvaluateHamiltonian(*w);
 	// Values are checked to 6 sig figs.
 	// Cannot directly compare ewald energy to DSF. TBC.
-	ASSERT_NEAR(9.95387E+04-8.23715E+02, E.energy.intervdw, 1e-1);
+	ASSERT_NEAR(9.95387E+04-8.23715E+02, E.energy.intervdw/sim.GetkB(), 1e-1);
 	ASSERT_EQ(0, E.energy.intravdw);
 
 	delete w;
 }
 
-
+/*
 // Validating SPCE water results against 
 // literature PVT data.
 TEST(DSFFF, PVTValidation1)
 {
-	// Set boltzmann to give real units of energy. 
+	// Set to real units.
 	auto& sim = SimInfo::Instance();
-	sim.SetkB(sim.GetkBDefault());
+	sim.SetUnits(real);
 
 	int N = 400;
 	double eps = 78.19743111*sim.GetkB();
@@ -199,16 +229,16 @@ TEST(DSFFF, PVTValidation1)
 	ASSERT_NEAR(H.pressure.isotropic(), liquid.GetPressure().isotropic()-liquid.GetPressure().ideal, 1e-10);
 	ASSERT_NEAR(H.energy.total(), liquid.GetEnergy().total(), 1e-10);
 }
-
+*/
 /*
-
 // Validating SPCE water results against 
 // NIST benchmark simulations.
 TEST(DSFFF, NISTValidation1)
 {
-	// Set boltzmann to give real units of energy. 
+
+	// Set system to real units.
 	auto& sim = SimInfo::Instance();
-	sim.SetkB(sim.GetkBDefault());
+	sim.SetUnits(real);
 
 	int N = 264;
 	double eps = 78.19743111*sim.GetkB();

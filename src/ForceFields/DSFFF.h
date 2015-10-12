@@ -27,7 +27,7 @@ namespace SAPHRON
 		{
 			// Calculate charge (q) reduced units conversion.
 			auto& sim = SimInfo::Instance();
-			_qdim = sim.GetElemCharge()*sqrt(sim.GetkB())/sqrt(4.0*M_PI*sim.GetVacPerm()*sim.GetkBDefault());
+			_qdim = sim.GetChargeConv();
 		}
 
 		virtual Interaction Evaluate(const Particle& p1,
@@ -40,18 +40,18 @@ namespace SAPHRON
 			auto r = norm(rij);
 			auto rsq = r*r;
 			auto rcsq = rc*rc;
-			auto q1 = p1.GetCharge()*_qdim;
-			auto q2 = p2.GetCharge()*_qdim;
+			auto q1 = p1.GetCharge();
+			auto q2 = p2.GetCharge();
 			auto erfcar = erfc(_alpha*r);
 			auto erfcarc = erfc(_alpha*rc);
 			auto exparcsq = exp(-_alphasq*rcsq);
 
 			Interaction ep;
-			ep.energy = q1*q2*(
+			ep.energy = _qdim*q1*q2*(
 				erfcar/r - erfcarc/rc + (erfcarc/rcsq + _pre*exparcsq/rc)*(r-rc)
 			);
 
-			ep.virial = q1*q2/r*(
+			ep.virial = _qdim*q1*q2/r*(
 				(erfcarc/rcsq + _pre*exparcsq/rc) - (erfcar/rsq + _pre*exp(-_alphasq*rsq)/r)
 			);
 
