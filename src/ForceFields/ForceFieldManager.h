@@ -33,6 +33,9 @@ namespace SAPHRON
 		FFMap _uniquebffs;
 		FFMap _uniqueeffs;
 
+		// Default cutoff.
+		double _rcdefault = 10e10;
+
 		// Evaluate intermolecular interactions of a particle including energy and virial pressure contribution.
 		// Implementation follows Allen and Tildesley. See Forcefield.h. Tail corrections are also summed in.
 		// Pressure tail contribution is added to isotropic pressure parts only!
@@ -43,7 +46,7 @@ namespace SAPHRON
 			// Calculate energy with neighbors.
 			World* world = particle.GetWorld();
 			auto& neighbors = particle.GetNeighbors();
-			double rcut = (world == nullptr) ? std::numeric_limits<double>::infinity() : world->GetCutoffRadius();
+			double rcut = (world == nullptr) ? _rcdefault : world->GetCutoffRadius();
 			if(!particle.HasChildren())
 			{
 				#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pxz,pyy,pyz,pzz)
@@ -329,5 +332,11 @@ namespace SAPHRON
 
 		// Get (unique) bonded forcefields.
 		const FFMap& GetBondedForceFields() const { return _uniquebffs;	}
+
+		// Get default cutoff radius.
+		double GetDefaultCutoff() const { return _rcdefault; }
+
+		// Set default cutoff radius.
+		void SetDefaultCutoff(double rc) { _rcdefault = rc; }
 	};
 }
