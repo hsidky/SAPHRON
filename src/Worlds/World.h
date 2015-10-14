@@ -203,6 +203,7 @@ namespace SAPHRON
 			auto p = _pressure;
 			auto& sim = SimInfo::Instance();
 			p.ideal = GetParticleCount()*sim.GetkB()*_temperature/GetVolume(); 
+			p *= sim.GetPressureConv();
 			return p; 
 		}
 		

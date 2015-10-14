@@ -33,11 +33,15 @@ namespace SAPHRON
 		// Avogadro's constant (atoms/mol).
 		double _na = 6.02214129E+23;
 
+		// Pressure conversion to bar from J*atom/(mol*angstrom^3).
+		double _pconv = 1.0e30/(6.02214129E+23*1.0e5);
+
 		/********************************
 		 * These are what the user gets * 
 		 ********************************/
 		double _echarge = 1.0;
 		double _ekb = 1.0;
+		double _epconv = 1.0;
 
 	public:
 
@@ -56,6 +60,7 @@ namespace SAPHRON
 			{
 				_echarge = _charge;
 				_ekb = _kb;
+				_epconv = _pconv;
 			}
 			else
 			{
@@ -78,5 +83,8 @@ namespace SAPHRON
 
 		// Get/set elementary charge.
 		double GetElemCharge() const { return _elem; }
+
+		// Get pressure conversion factor (bar).
+		double GetPressureConv() const { return _epconv; };
 	};
 }
