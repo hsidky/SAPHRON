@@ -68,6 +68,145 @@ namespace SAPHRON
 		return world;
 	}
 
+	void World::AddParticleComposition(Particle* particle)
+	{
+		int id = particle->GetSpeciesID();
+		if(_composition.find(id) == _composition.end())
+			_composition[id] = 1;
+		else
+			++_composition[id];
+
+		// If it's a primitive, add it to the primitives list. 
+		if(!particle->HasChildren())
+			_primitives.push_back(particle);
+
+		for(auto& child : particle->GetChildren())
+			AddParticleComposition(child);
+	}
+
+	void World::RemoveParticleComposition(Particle* particle)
+	{
+		int id = particle->GetSpeciesID();
+		assert(_composition.find(id) != _composition.end());
+		--_composition[id];
+
+		if(!particle->HasChildren())
+			_primitives.erase(
+				std::remove(_primitives.begin(), _primitives.end(), particle),
+				_primitives.end()
+			);
+
+		for(auto& child : particle->GetChildren())
+			RemoveParticleComposition(child);
+	}
+
+	void World::ModifyParticleComposition(const ParticleEvent& pEvent)
+	{
+		int oldID = pEvent.GetOldSpecies();
+		int id = pEvent.GetParticle()->GetSpeciesID();
+		assert(_composition.find(oldID) != _composition.end());
+		--_composition[oldID];
+
+		if(_composition.find(id) == _composition.end())
+			_composition[id] = 1;
+		else
+			++_composition[id];
+	}
+
+	void World::UpdateNeighborList()
+	{
+		int n = this->GetPrimitiveCount();
+
+		// Clear neighbor list before repopulating.
+		// We need to do this for parent particles
+		// (it propogates to children) because parent 
+		// checkpoints are used to check for nlist updates.
+		#pragma omp parallel for
+		for(int i = 0; i < this->GetParticleCount(); ++i)
+		{
+			_particles[i]->ClearNeighborList();
+			_particles[i]->SetCheckpoint();
+		}
+		
+		for(int i = 0; i < n - 1; ++i)
+		{
+			auto* pi = _primitives[i];
+			const Position& posi = pi->GetPositionRef();
+			
+			for(int j = i + 1; j < n; ++j)
+			{
+				auto pj = _primitives[j];
+
+				// Only add inter (non same molecule).
+				if(pi->HasParent() && pj->HasParent() && 
+					(pi->GetParent() == pj->GetParent()))
+					continue;
+
+				const Position& posj = pj->GetPositionRef();
+
+				Position rij = posi - posj;
+				ApplyMinimumImage(rij);
+
+				if(arma::dot(rij,rij) <= _ncutsq)
+				{
+					pj->AddNeighbor(pi);
+					pi->AddNeighbor(pj);
+				}
+			}
+		}
+	}
+
+	void World::UpdateNeighborList(Particle* particle)
+	{
+		UpdateNeighborList(particle, true);
+	}
+
+	// Internal method. Allows for efficiency of clearing neighbor lists 
+	// once.
+	void World::UpdateNeighborList(Particle* particle, bool clear)
+	{
+		if(clear)
+		{
+			// These propogate to children.
+			particle->RemoveFromNeighbors();
+			particle->ClearNeighborList();
+			particle->SetCheckpoint();
+		}
+
+		// If particle has no child update it.
+		if(!particle->HasChildren())
+		{
+			const auto& pos = particle->GetPositionRef();
+			for(size_t i = 0; i < _primitives.size(); ++i)
+			{
+				auto* pi = _primitives[i];
+
+				// Only add inter (non same molecule).
+				if(particle->HasParent() && pi->HasParent() && 
+					(particle->GetParent() == pi->GetParent()))
+					continue;
+
+				// Skip self. 
+				if(particle == pi)
+					continue;
+
+				const auto& posi = pi->GetPositionRef();
+
+				Position rij = pos - posi;
+				ApplyMinimumImage(rij);
+
+				if(arma::dot(rij,rij) <= _ncutsq)
+				{
+					pi->AddNeighbor(particle);
+					particle->AddNeighbor(pi);
+				}
+			}
+		}
+		
+		for(auto& c : *particle)
+			UpdateNeighborList(c, false);
+	}
+
 	// Initialize global world ID.
 	int World::_nextID = 0;
 }
