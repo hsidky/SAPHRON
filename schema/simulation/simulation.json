@@ -1,0 +1,26 @@
+{
+	"type": "object",
+	"properties" : {
+		"units" : {
+			"type" : "string",
+			"enum" : ["real", "reduced"]
+		},
+		"simtype" : {
+			"type" : "string",
+			"enum" : ["standard", "DOS"]
+		},
+		"sweeps" : {
+			"type" : "integer",
+			"minimum" : 1
+		},
+		"mps" : {
+			"type" : "integer",
+			"minimum" : 1
+		},
+		"seed" : {
+			"type" : "integer",
+			"minimum" : 0
+		}
+	},
+	"required" : ["simtype", "sweeps"]
+}

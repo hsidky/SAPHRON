@@ -46,7 +46,7 @@ namespace SAPHRON
 				_worlds.push_back(world);
 
 				// Print notices.
-				notices.push_back("Built world \"" + world->GetStringID() + "\".");
+				notices.push_back("Building world \"" + world->GetStringID() + "\"...");
 				auto dim = world->GetBoxVectors();
 				notices.push_back("Setting size to [" +  
 					to_string(dim[0]) + ", " + 
@@ -59,6 +59,9 @@ namespace SAPHRON
 
 				notices.push_back("Setting seed to " + 
 					to_string(world->GetSeed()) + ".");
+
+				notices.push_back("Setting temperature to " + 
+					to_string(world->GetTemperature()) + "K.");
 
 				// Make sure some particles were initialized.
 				if(world->GetParticleCount() == 0)

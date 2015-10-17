@@ -75,6 +75,9 @@ namespace SAPHRON
 				world->AddParticle(p);
 		}
 
+		// Load temperature.
+		world->SetTemperature(json.get("temperature", 0).asDouble());
+
 		return world;
 	}
 

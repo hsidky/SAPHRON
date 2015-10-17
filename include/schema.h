@@ -8,6 +8,7 @@ namespace SAPHRON
 	{
 	public:
 		//INSERT_DEC_HERE
+		static std::string Simulation;
 		static std::string ForceFields;
 		static std::string LebwholLasher;
 		static std::string LennardJones;
@@ -27,9 +28,6 @@ namespace SAPHRON
 		static std::string Moves;
 		static std::string RandomIdentityMove;
 		static std::string FlipSpinMove;
-		static std::string GibbsNVTEnsemble;
-		static std::string NVTEnsemble;
-		static std::string Ensembles;
 		static std::string P2SAConnectivity;
 		static std::string Connectivities;
 		

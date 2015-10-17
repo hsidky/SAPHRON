@@ -1,5 +1,32 @@
 {
+    "units" : "real",
     "worlds" : [
+        {
+            "type" : "Simple",
+            "temperature": 0,
+            "dimensions" : [32, 32, 32],
+            "seed": 300,
+            "r_cutoff": 10.0,
+            "skin_thickness": 2,
+            "components" : {
+                "LJ" : {
+                    "count": 1,
+                    "children": [
+                        {
+                            "species" : "LJ2"
+                        },
+                        {
+                            "species" : "LJ3"
+                        }
+                    ]
+                }
+            },
+            
+            "particles" : [
+                [1, "LJ2", "LJ", [1,2,3], [0.0, 0.0, 0.0]],
+                [2, "LJ3", "LJ", [1,2,3], [0.0, 0.0, 0.0]]
+            ]
+        },
         {
             "type" : "Simple",
             "dimensions" : [32, 32, 32],

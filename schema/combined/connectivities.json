@@ -2,14 +2,17 @@
     "items": {
         "oneOf": [
             {
-                "required": [
-                    "type",
-                    "coefficient",
-                    "director",
-                    "selector"
-                ],
                 "properties": {
                     "selector": {},
+                    "director": {
+                        "items": {
+                            "type": "number"
+                        },
+                        "maxItems": 3,
+                        "minItems": 3,
+                        "type": "array",
+                        "additionalItems": false
+                    },
                     "coefficient": {
                         "type": "number"
                     },
@@ -18,19 +21,16 @@
                         "enum": [
                             "P2SA"
                         ]
-                    },
-                    "director": {
-                        "minItems": 3,
-                        "additionalItems": false,
-                        "items": {
-                            "type": "number"
-                        },
-                        "maxItems": 3,
-                        "type": "array"
                     }
                 },
-                "type": "object",
-                "additionalProperties": false
+                "additionalProperties": false,
+                "required": [
+                    "type",
+                    "coefficient",
+                    "director",
+                    "selector"
+                ],
+                "type": "object"
             }
         ]
     },

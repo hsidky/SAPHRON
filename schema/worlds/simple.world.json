@@ -25,6 +25,10 @@
 		},
 		"components" : {
 			"type" : "object"
+		},
+		"temperature": {
+			"type" : "number",
+			"minimum" : 0
 		}
 	},
 	"required" : ["type", "dimensions", "r_cutoff", "components"]

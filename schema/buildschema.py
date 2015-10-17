@@ -21,9 +21,6 @@ schemac = '../src/schema.cpp'
 files = [
 	("connectivities/connectivities.json", "Connectivities"),
 	("connectivities/P2SA.connectivity.json", "P2SAConnectivity"),
-	("ensembles/ensembles.json", "Ensembles"),
-	("ensembles/nvt.ensemble.json", "NVTEnsemble"),
-	("ensembles/gibbsnvt.ensemble.json", "GibbsNVTEnsemble"),
 	("moves/flipspin.move.json", "FlipSpinMove"),
 	("moves/randomidentity.move.json", "RandomIdentityMove"),
 	("moves/moves.json", "Moves"),
@@ -42,13 +39,13 @@ files = [
 	("worlds/worlds.json", "Worlds"),
 	("forcefields/lennardjones.forcefield.json", "LennardJones"),
 	("forcefields/lebwohllasher.forcefield.json", "LebwholLasher"),
-	("forcefields/forcefields.json", "ForceFields")
+	("forcefields/forcefields.json", "ForceFields"),
+	("simulation/simulation.json", "Simulation")
 	]
 
 # Files to generate combined
 cfiles = [
 	("connectivities/connectivities.json", cdir + "connectivities.json"),
-	("ensembles/ensembles.json", cdir + "ensembles.json"),
 	("moves/moves.json", cdir + "moves.json"),
 	("worlds/worlds.json", cdir + "worlds.json"),
 	("particles/particles.json", cdir + "particles.json")
