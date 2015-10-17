@@ -1,12 +1,19 @@
 {
     "oneOf": [
         {
-            "additionalProperties": false,
-            "type": "object",
+            "required": [
+                "type",
+                "temperature"
+            ],
             "properties": {
-                "sweeps": {
-                    "minimum": 1,
+                "seed": {
+                    "minimum": 0,
                     "type": "integer"
+                },
+                "temperature": {
+                    "minimum": 0,
+                    "type": "number",
+                    "exclusiveMinimum": "true"
                 },
                 "type": {
                     "type": "string",
@@ -14,28 +21,28 @@
                         "NVT"
                     ]
                 },
+                "sweeps": {
+                    "minimum": 1,
+                    "type": "integer"
+                }
+            },
+            "type": "object",
+            "additionalProperties": false
+        },
+        {
+            "required": [
+                "type",
+                "temperature"
+            ],
+            "properties": {
+                "seed": {
+                    "minimum": 0,
+                    "type": "integer"
+                },
                 "temperature": {
                     "minimum": 0,
                     "type": "number",
                     "exclusiveMinimum": "true"
-                },
-                "seed": {
-                    "minimum": 0,
-                    "type": "integer"
-                }
-            },
-            "required": [
-                "type",
-                "temperature"
-            ]
-        },
-        {
-            "additionalProperties": false,
-            "type": "object",
-            "properties": {
-                "sweeps": {
-                    "minimum": 1,
-                    "type": "integer"
                 },
                 "type": {
                     "type": "string",
@@ -43,20 +50,13 @@
                         "GibbsNVT"
                     ]
                 },
-                "temperature": {
-                    "minimum": 0,
-                    "type": "number",
-                    "exclusiveMinimum": "true"
-                },
-                "seed": {
-                    "minimum": 0,
+                "sweeps": {
+                    "minimum": 1,
                     "type": "integer"
                 }
             },
-            "required": [
-                "type",
-                "temperature"
-            ]
+            "type": "object",
+            "additionalProperties": false
         }
     ]
 }

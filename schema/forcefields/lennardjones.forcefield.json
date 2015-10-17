@@ -17,5 +17,5 @@
 		"species" : "@file(nonbonded.forcefield.json)"
 	},
 	"additionalProperties" : false,
-	"required" : ["type", "sigma", "epsilon", "rcut", "species"]
+	"required" : ["type", "sigma", "epsilon",  "species"]
 }

@@ -70,22 +70,6 @@ TEST(DSFFF, NISTConfig1)
 	ASSERT_NO_THROW(w = World::Build(root["worlds"][0]));
 	ASSERT_NE(nullptr, w);
 
-	ParticleList particles;
-
-	try {
-		Particle::BuildParticles(root["particles"], root["components"], particles);
-	} catch(BuildException& e) {
-		for(auto& err : e.GetErrors())
-			std::cout << err << std::endl;
-	}
-
-	// Build particles.
-	ASSERT_NO_THROW(Particle::BuildParticles(root["particles"], root["components"], particles));
-	ASSERT_EQ(100, particles.size());
-
-	for(auto& p : particles)
-		w->AddParticle(p);
-
 	ASSERT_EQ(100, w->GetParticleCount());
 	ASSERT_EQ(300, w->GetPrimitiveCount());
 	w->UpdateNeighborList();

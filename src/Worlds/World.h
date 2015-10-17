@@ -378,7 +378,7 @@ namespace SAPHRON
 		 ***********************************/
 
 		// Particle observer to update world composition.
-		void ParticleUpdate(const ParticleEvent& pEvent)
+		virtual void ParticleUpdate(const ParticleEvent& pEvent) override
 		{
 			if(pEvent.species)
 				ModifyParticleComposition(pEvent);

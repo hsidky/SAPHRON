@@ -19,7 +19,13 @@
 			"type" : "number",
 			"minimum" : 0,
 			"exclusiveMinimum" : true
+		},
+		"particles" : {
+			"type": "array"
+		},
+		"components" : {
+			"type" : "object"
 		}
 	},
-	"required" : ["type", "dimensions", "r_cutoff"]
+	"required" : ["type", "dimensions", "r_cutoff", "components"]
 }

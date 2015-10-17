@@ -65,6 +65,16 @@ namespace SAPHRON
 				world->SetNeighborRadius(ncut);
 		}
 
+		// Initialize particles.
+		if(json.isMember("particles"))
+		{ 
+			ParticleList particles;
+			Particle::BuildParticles(json["particles"], json["components"], particles);
+			
+			for(auto& p : particles)
+				world->AddParticle(p);
+		}
+
 		return world;
 	}
 

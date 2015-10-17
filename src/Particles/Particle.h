@@ -262,7 +262,7 @@ namespace SAPHRON
 			inline std::string GetSpecies() const {	return _species; }
 
 			// Get species list.
-			static SpeciesList& GetSpeciesList() { return _speciesList;	}
+			static const SpeciesList& GetSpeciesList() { return _speciesList;	}
 
 			// Set the species of a particle.
 			void SetSpecies(std::string species);

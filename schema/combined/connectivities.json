@@ -1,10 +1,13 @@
 {
-    "type": "array",
     "items": {
         "oneOf": [
             {
-                "additionalProperties": false,
-                "type": "object",
+                "required": [
+                    "type",
+                    "coefficient",
+                    "director",
+                    "selector"
+                ],
                 "properties": {
                     "selector": {},
                     "coefficient": {
@@ -17,22 +20,19 @@
                         ]
                     },
                     "director": {
-                        "maxItems": 3,
+                        "minItems": 3,
                         "additionalItems": false,
-                        "type": "array",
                         "items": {
                             "type": "number"
                         },
-                        "minItems": 3
+                        "maxItems": 3,
+                        "type": "array"
                     }
                 },
-                "required": [
-                    "type",
-                    "coefficient",
-                    "director",
-                    "selector"
-                ]
+                "type": "object",
+                "additionalProperties": false
             }
         ]
-    }
+    },
+    "type": "array"
 }

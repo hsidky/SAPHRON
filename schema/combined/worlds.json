@@ -1,17 +1,24 @@
 {
-    "type": "array",
+    "minItems": 1,
     "items": {
-        "type": "object",
+        "required": [
+            "type",
+            "dimensions",
+            "r_cutoff",
+            "components"
+        ],
         "properties": {
-            "dimensions": {
-                "maxItems": 3,
-                "additionalItems": false,
-                "type": "array",
-                "items": {
-                    "minimum": 0,
-                    "type": "number"
-                },
-                "minItems": 3
+            "seed": {
+                "minimum": 0,
+                "type": "integer"
+            },
+            "components": {
+                "type": "object"
+            },
+            "r_cutoff": {
+                "minimum": 0,
+                "type": "number",
+                "exclusiveMinimum": true
             },
             "type": {
                 "type": "string",
@@ -19,26 +26,26 @@
                     "Simple"
                 ]
             },
-            "r_cutoff": {
-                "minimum": 0,
-                "type": "number",
-                "exclusiveMinimum": true
+            "dimensions": {
+                "minItems": 3,
+                "additionalItems": false,
+                "items": {
+                    "minimum": 0,
+                    "type": "number"
+                },
+                "maxItems": 3,
+                "type": "array"
+            },
+            "particles": {
+                "type": "array"
             },
             "nlist_cutoff": {
                 "minimum": 0,
                 "type": "number",
                 "exclusiveMinimum": true
-            },
-            "seed": {
-                "minimum": 0,
-                "type": "integer"
             }
         },
-        "required": [
-            "type",
-            "dimensions",
-            "r_cutoff"
-        ]
+        "type": "object"
     },
-    "minItems": 1
+    "type": "array"
 }

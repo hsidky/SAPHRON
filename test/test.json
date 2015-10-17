@@ -4,24 +4,27 @@
             "type" : "Simple",
             "dimensions" : [32, 32, 32],
             "seed": 300,
-            "nlist_cutoff" : 10,
-            "skin_thickness": 2
+            "r_cutoff": 10.0,
+            "skin_thickness": 2,
+            "components" : {
+                "LJ" : {
+                    "count": 1,
+                    "children": [
+                        {
+                            "species" : "LJ2"
+                        },
+                        {
+                            "species" : "LJ3"
+                        }
+                    ]
+                }
+            },
+            
+            "particles" : [
+                [1, "LJ2", "LJ", [1,2,3], [0.0, 0.0, 0.0]],
+                [2, "LJ3", "LJ", [1,2,3], [0.0, 0.0, 0.0]]
+            ]
         }
-    ],
-
-    "components" : {
-        "LJ" : {
-            "count": 1,
-            "children": {
-                "LJ2" : {},
-                "LJ3" : {}
-            }
-        }
-    },
-
-    "particles" : [
-        [1, "LJ2", "LJ", [1,2,3], [0.0, 0.0, 0.0]],
-        [2, "LJ3", "LJ", [1,2,3], [0.0, 0.0, 0.0]]
     ],
 
     "forcefields" : {
@@ -30,7 +33,6 @@
                 "type"  : "LennardJones",
                 "sigma" : 3.1,
                 "epsilon": 4.4,
-                "rcut": 1.1,
                 "species": ["LJ", "LJ"] 
             }
         ]

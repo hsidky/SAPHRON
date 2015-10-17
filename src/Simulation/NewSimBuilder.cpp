@@ -46,6 +46,7 @@ namespace SAPHRON
 				_worlds.push_back(world);
 
 				// Print notices.
+				notices.push_back("Built world \"" + world->GetStringID() + "\".");
 				auto dim = world->GetBoxVectors();
 				notices.push_back("Setting size to [" +  
 					to_string(dim[0]) + ", " + 
@@ -59,6 +60,19 @@ namespace SAPHRON
 				notices.push_back("Setting seed to " + 
 					to_string(world->GetSeed()) + ".");
 
+				// Make sure some particles were initialized.
+				if(world->GetParticleCount() == 0)
+				{
+					DumpErrorsToConsole({"No particles have been specified."}, _notw);
+					return false;
+				}
+
+				// Write particle species notices.
+				auto& slist = Particle::GetSpeciesList();
+				for(auto& s : world->GetComposition())
+					notices.push_back("Initialized " + to_string(s.second) + 
+							  " particle(s) of type \"" + slist[s.first] + "\".");
+				
 			} catch(BuildException& e) {
 				DumpErrorsToConsole(e.GetErrors(), _notw);
 				return false;
@@ -73,41 +87,6 @@ namespace SAPHRON
 			DumpErrorsToConsole({"No worlds have been specified."}, _notw);
 			return false;
 		}
-		DumpNoticesToConsole(notices, "",_notw);
-		notices.clear();
-
-
-		// Build particle(s).
-		map<string, int> pcount;
-		cerr << setw(_msgw) << left << " > Building particle(s)...";
-		
-		try {
-			Particle::BuildParticles(root["particles"], root["components"], _particles);
-		} catch(BuildException& e) {
-			DumpErrorsToConsole(e.GetErrors(), _notw);
-			return false;
-		} catch(exception& e) {
-			DumpErrorsToConsole({e.what()}, _notw);
-			return false;
-		}
-		
-		if(_particles.size() == 0)
-		{
-			DumpErrorsToConsole({"No particles have been specified."}, _notw);
-			return false;
-		}
-
-		for(auto& p : _particles)
-			if(pcount.find(p->GetSpecies()) == pcount.end())
-				pcount[p->GetSpecies()] = 1;
-			else
-				++pcount[p->GetSpecies()];
-			
-		// Write particle species notices.
-		for(auto& s : pcount)
-			notices.push_back("Initialized " + to_string(s.second) + 
-							  " particle(s) of type \"" + s.first + "\".");
-
 		DumpNoticesToConsole(notices, "",_notw);
 		notices.clear();
 
