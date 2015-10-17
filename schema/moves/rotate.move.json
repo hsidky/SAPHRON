@@ -1,0 +1,22 @@
+{
+	"type" : "object",
+	"properties" : {
+		"type" : {
+			"type" : "string",
+			"enum" : ["Rotate"]
+		},
+		"maxangle" : {
+			"type" : "number", 
+			"minimum" : 0,
+			"maximum" : 6.283185307179586,
+			"exclusiveMinimum" : true
+		},
+		"seed" : {
+			"type" : "integer",
+			"minimum" : 0
+		}
+	},
+
+	"required" : ["type", "maxangle"],
+	"additionalProperties" : false
+}

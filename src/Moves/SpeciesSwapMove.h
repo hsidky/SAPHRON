@@ -11,6 +11,8 @@ namespace SAPHRON
 {
 	// Species swap move. This move swaps the species identity between two particles. Note this does not 
 	// alter the underlying structure of the particles, but merely exchanges their species identifier.
+	// WARNING: This is intended for use on lattice/spin or simple single atom systems. Use on molecular 
+	// systems may result in undesirable behavior.
 	class SpeciesSwapMove : public Move
 	{
 	private:

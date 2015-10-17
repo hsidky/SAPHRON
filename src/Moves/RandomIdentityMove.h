@@ -9,8 +9,10 @@
 
 namespace SAPHRON
 {
-	// Random identity move. Assigns a random identity (species) to a primitive 
-	// (atom/spin) type from a list of identities. 
+	// Random identity move. Assigns a random identity from a pre-provided 
+	// list to a random primitive (atom/spin). WARNING: this is primarily 
+	// for use with spin lattice systems. Randomly changing the identity 
+	// on a molecule primitive may result in unexpected behavior.
 	class RandomIdentityMove : public Move
 	{
 	private:
@@ -31,7 +33,7 @@ namespace SAPHRON
 			{
 				if(id >= (int)list.size())
 				{
-					std::cerr << "Specied ID provided does not exist." << std::endl;
+					std::cerr << "Species ID provided does not exist." << std::endl;
 					exit(-1);
 				}
 				_identities.push_back(id);
@@ -49,7 +51,7 @@ namespace SAPHRON
 				auto it = std::find(list.begin(), list.end(), id);
 				if(it == list.end())
 				{
-					std::cerr << "Specied ID provided does not exist." << std::endl;
+					std::cerr << "Species ID provided does not exist." << std::endl;
 					exit(-1);
 				}
 				_identities.push_back(it - list.begin());
@@ -67,7 +69,7 @@ namespace SAPHRON
 		{
 			// Get random particle from random world.
 			World* w = wm->GetRandomWorld();
-			Particle* particle = w->DrawRandomParticle();
+			Particle* particle = w->DrawRandomPrimitive();
 			
 			// Get initial species and evaluate energy.
 			auto si = particle->GetSpeciesID();
@@ -102,7 +104,7 @@ namespace SAPHRON
 		// Perform move using DOS interface.
 		virtual void Perform(World* world, ForceFieldManager* ffm, DOSOrderParameter* op , const MoveOverride& override) override
 		{
-			Particle* particle = world->DrawRandomParticle();
+			Particle* particle = world->DrawRandomPrimitive();
 
 			// Get initial species and evaluate energy and OP.
 			auto si = particle->GetSpeciesID();

@@ -10,6 +10,11 @@
 #include "FlipSpinMove.h"
 #include "TranslateMove.h"
 #include "DirectorRotateMove.h"
+#include "ParticleSwapMove.h"
+#include "RandomIdentityMove.h"
+#include "RotateMove.h"
+#include "SpeciesSwapMove.h"
+#include "VolumeSwapMove.h"
 
 using namespace Json;
 
@@ -31,7 +36,22 @@ namespace SAPHRON
 		// Get move type. 
 		std::string type = json.get("type", "none").asString();
 
-		if(type == "FlipSpin")
+		if(type == "DirectorRotate")
+		{
+			reader.parse(JsonSchema::DirectorRotateMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			srand(time(NULL));
+			int seed = json.get("seed", rand()).asInt();
+
+			move = new DirectorRotateMove(seed);
+		}
+		else if(type == "FlipSpin")
 		{
 			reader.parse(JsonSchema::FlipSpinMove, schema);
 			validator.Parse(schema, path);
@@ -41,7 +61,76 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			move = new FlipSpinMove();
+			srand(time(NULL));
+			int seed = json.get("seed", rand()).asInt();
+
+			move = new FlipSpinMove(seed);
+		}
+		else if(type == "ParticleSwap")
+		{
+			reader.parse(JsonSchema::ParticleSwapMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			srand(time(NULL));
+			int seed = json.get("seed", rand()).asInt();
+
+			move = new ParticleSwapMove(seed);
+		}
+		else if(type == "RandomIdentity")
+		{
+			reader.parse(JsonSchema::RandomIdentityMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			std::vector<std::string> identities;
+			for(auto& i : json["identities"])
+				identities.push_back(i.asString());
+
+			srand(time(NULL));
+			int seed = json.get("seed", rand()).asInt();
+
+			move = new RandomIdentityMove(identities, seed);
+		}
+		else if(type == "Rotate")
+		{
+			reader.parse(JsonSchema::RotateMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			double dmax = json["maxangle"].asDouble();
+
+			srand(time(NULL));
+			int seed = json.get("seed", rand()).asInt();
+
+			move = new RotateMove(dmax, seed);
+		}
+		else if(type == "SpeciesSwap")
+		{
+			reader.parse(JsonSchema::SpeciesSwapMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			srand(time(NULL));
+			int seed = json.get("seed", rand()).asInt();
+
+			move = new SpeciesSwapMove(seed);
 		}
 		else if(type == "Translate")
 		{
@@ -59,20 +148,21 @@ namespace SAPHRON
 
 			move = new TranslateMove(dx, seed);
 		}
-		else if(type == "DirectorRotate")
+		else if(type == "VolumeSwap")
 		{
-			reader.parse(JsonSchema::DirectorRotateMove, schema);
+			reader.parse(JsonSchema::VolumeSwapMove, schema);
 			validator.Parse(schema, path);
 
-			// Validate inputs.
+			// Validate inputs. 
 			validator.Validate(json, path);
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
+			double dv = json["dv"].asDouble();
 			srand(time(NULL));
 			int seed = json.get("seed", rand()).asInt();
 
-			move = new DirectorRotateMove(seed);
+			move = new VolumeSwapMove(dv, seed);
 		}
 		else
 		{

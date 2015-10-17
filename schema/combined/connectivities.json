@@ -1,28 +1,9 @@
 {
+    "type": "array",
     "items": {
         "oneOf": [
             {
-                "properties": {
-                    "selector": {},
-                    "director": {
-                        "items": {
-                            "type": "number"
-                        },
-                        "maxItems": 3,
-                        "minItems": 3,
-                        "type": "array",
-                        "additionalItems": false
-                    },
-                    "coefficient": {
-                        "type": "number"
-                    },
-                    "type": {
-                        "type": "string",
-                        "enum": [
-                            "P2SA"
-                        ]
-                    }
-                },
+                "type": "object",
                 "additionalProperties": false,
                 "required": [
                     "type",
@@ -30,9 +11,28 @@
                     "director",
                     "selector"
                 ],
-                "type": "object"
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "P2SA"
+                        ]
+                    },
+                    "selector": {},
+                    "coefficient": {
+                        "type": "number"
+                    },
+                    "director": {
+                        "additionalItems": false,
+                        "type": "array",
+                        "maxItems": 3,
+                        "minItems": 3,
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                }
             }
         ]
-    },
-    "type": "array"
+    }
 }
