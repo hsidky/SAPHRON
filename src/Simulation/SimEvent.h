@@ -8,6 +8,14 @@ namespace SAPHRON
 	{
 		public:
 			SimFlags() : simulation(0), world(0), histogram(0), particle(0) {}
+
+			void simulation_on() { simulation = 15;	}
+			void world_on() { world = 63; }
+			void energy_on() {energy_components = 63; }
+			void pressure_on() { pressure_tensor = 255; }
+			void histogram_on() { histogram = 63; }
+			void particle_on() { particle = 127; }
+
 			union
 			{
 				struct
@@ -25,14 +33,47 @@ namespace SAPHRON
 			{
 				struct
 				{
-					unsigned int world_temperature: 1;
+
 					unsigned int world_pressure: 1;
 					unsigned int world_volume : 1;
 					unsigned int world_density : 1;
-					unsigned int world_energy : 1;
+					unsigned int world_temperature: 1;
 					unsigned int world_composition: 1;
+					unsigned int world_energy : 1;
 				};
+				
 				unsigned int world;
+			};
+
+			union
+			{
+				struct
+				{
+					unsigned int eintervdw: 1;
+					unsigned int eintravdw: 1;
+					unsigned int einterelect: 1;
+					unsigned int eintraelect: 1;
+					unsigned int ebonded: 1;
+					unsigned int econnectivity: 1;
+				};
+				unsigned int energy_components;
+			};
+
+			union
+			{
+				struct
+				{
+					unsigned int pideal : 1;
+					unsigned int pxx: 1;
+					unsigned int pxy: 1;
+					unsigned int pxz: 1;
+					unsigned int pyy: 1;
+					unsigned int pyz: 1;
+					unsigned int pzz: 1;
+					unsigned int ptail: 1;
+				};
+			
+				unsigned int pressure_tensor;
 			};
 
 			union

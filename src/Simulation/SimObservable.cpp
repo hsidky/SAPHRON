@@ -15,7 +15,7 @@ namespace SAPHRON
 	}
 
 	// Notify all observers of a simulation event.
-	void SimObservable::NotifyObservers(SimEvent event)
+	void SimObservable::NotifyObservers(const SimEvent& event)
 	{
 		for(auto& observer : _observers)
 			observer->Update(event);

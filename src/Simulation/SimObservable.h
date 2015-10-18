@@ -22,6 +22,6 @@ namespace SAPHRON
 			virtual void RemoveObserver(SimObserver* observer);
 
 			// Notify registered observers of a change.
-			void NotifyObservers(SimEvent event);
+			void NotifyObservers(const SimEvent& event);
 	};
 }
