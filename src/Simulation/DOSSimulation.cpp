@@ -1,8 +1,8 @@
-#include "DOSEnsemble.h"
+#include "DOSSimulation.h"
 
 namespace SAPHRON
 {
-	void DOSEnsemble::Iterate()
+	void DOSSimulation::Iterate()
 	{
 		_flatness = _hist->CalculateFlatness();
 		while(_flatness < GetTargetFlatness())
@@ -36,7 +36,7 @@ namespace SAPHRON
 	}
 
 	// Run the DOS algorithm for a specified number of scale factor reductions.
-	void DOSEnsemble::Run(int iterations)
+	void DOSSimulation::Run(int iterations)
 	{
 		this->NotifyObservers(SimEvent(this, this->GetIteration()));
 		for(int i = 0; i < iterations; ++i)

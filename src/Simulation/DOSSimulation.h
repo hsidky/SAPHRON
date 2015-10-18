@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "Ensemble.h"
+#include "Simulation.h"
 #include "../DensityOfStates/DOSOrderParameter.h"
 #include "../Worlds/WorldManager.h"
 #include "../ForceFields/ForceFieldManager.h"
@@ -14,7 +14,7 @@ namespace SAPHRON
 	// Generalized Density-of-States (DOS) sampling. Based on original WL algorithm.
 	// [1] Wang, F., & Landau, D. P. (2001). Physical Review Letters, 86, 2050–2053.
 	// [2] Wang, F., & Landau, D. P. (2001). Physical Review E, 64, 1–16.
-	class DOSEnsemble : public Ensemble
+	class DOSSimulation : public Simulation
 	{
 		private: 
 			// Pointer to world manager.
@@ -67,7 +67,7 @@ namespace SAPHRON
 			}
 
 		public:
-			DOSEnsemble(WorldManager* wm, 
+			DOSSimulation(WorldManager* wm, 
 						ForceFieldManager* ffm, 
 						MoveManager* mm, 
 						DOSOrderParameter* dop,
@@ -140,6 +140,6 @@ namespace SAPHRON
 				VisitChildren(v);
 			}
 
-			~DOSEnsemble() {};
+			~DOSSimulation() {};
 	};
 }

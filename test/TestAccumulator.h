@@ -1,6 +1,6 @@
 #pragma once 
 #include "../src/Simulation/SimObserver.h"
-#include "../src/Ensembles/Ensemble.h"
+#include "../src/Simulation/Simulation.h"
 #include "../src/Properties/Pressure.h"
 #include "../src/Properties/Energy.h"
 #include "../src/Worlds/World.h"
@@ -24,7 +24,7 @@ namespace SAPHRON
 			SimObserver(flags, frequency), _temperature(0),	_counter(0), _start(start),
 			_density(), _energy(), _pressure() {}
 
-			virtual void Visit(const Ensemble& e) override
+			virtual void Visit(const Simulation& e) override
 			{
 				if(e.GetIteration() < _start)
 					return;
@@ -33,7 +33,7 @@ namespace SAPHRON
 				
 			}
 
-			virtual void Visit(const DOSEnsemble&) override
+			virtual void Visit(const DOSSimulation&) override
 			{
 
 			}

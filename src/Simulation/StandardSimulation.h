@@ -5,14 +5,14 @@
 #include "../Worlds/WorldManager.h"
 #include "../Rand.h"
 #include "../Worlds/World.h"
-#include "Ensemble.h"
+#include "Simulation.h"
 #include <cmath>
 
 namespace SAPHRON
 {
-	// Class for a simple ensemble. Depending on the moves, this may 
+	// Class for a standard simulation. Depending on the moves, this may 
 	// represent the NVT, NPT, \muVT, Gibbs, etc.. ensemble. 
-	class StandardEnsemble : public Ensemble
+	class StandardSimulation : public Simulation
 	{
 	private:
 
@@ -48,7 +48,7 @@ namespace SAPHRON
 
 	public:
 
-		StandardEnsemble(WorldManager* wm, ForceFieldManager* ffm, MoveManager* mm) :
+		StandardSimulation(WorldManager* wm, ForceFieldManager* ffm, MoveManager* mm) :
 			_wmanager(wm), _ffmanager(ffm), _mmanager(mm), _accmap()
 		{
 			// Moves per iteration.

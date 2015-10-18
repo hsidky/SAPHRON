@@ -1,6 +1,6 @@
 #include "../src/ForceFields/FENEFF.h"
 #include "../src/ForceFields/ForceFieldManager.h"
-#include "../src/Ensembles/NVTEnsemble.h"
+#include "../src/Simulation/NVTSimulation.h"
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Particles/Site.h"

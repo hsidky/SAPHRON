@@ -1,5 +1,5 @@
-#include "../Ensembles/Ensemble.h"
-#include "../Ensembles/DOSEnsemble.h"
+#include "../Simulation/Simulation.h"
+#include "../Simulation/DOSSimulation.h"
 #include "../Particles/Particle.h"
 #include "ConsoleObserver.h"
 #include <algorithm>
@@ -57,7 +57,7 @@ namespace SAPHRON
 		cout << endl;
 	}
 
-	void ConsoleObserver::Visit(DOSEnsemble* e)
+	void ConsoleObserver::Visit(DOSSimulation* e)
 	{
 		Visit((Ensemble*) e);
 

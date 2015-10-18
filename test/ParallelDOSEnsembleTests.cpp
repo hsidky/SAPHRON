@@ -1,5 +1,5 @@
-#include "../src/Ensembles/ParallelDOSEnsemble.h"
-#include "../src/Ensembles/WangLandauDOSEnsemble.h"
+#include "../src/Simulation/ParallelDOSSimulation.h"
+#include "../src/Simulation/WangLandauDOSSimulation.h"
 #include "../src/Models/LebwohlLasherModel.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
 #include "gtest/gtest.h"
@@ -7,12 +7,12 @@
 using namespace Ensembles;
 
 // Testing the default constructor on Parallel DOS.
-TEST(ParallelDOSEnsemble, DefaultConstructor)
+TEST(ParallelDOSSimulation, DefaultConstructor)
 {
 	int n = 10;
 	Models::LebwohlLasherModel model(n, n, n);
 
-	ParallelDOSEnsemble<Site, WangLandauDOSEnsemble<Site> >
+	ParallelDOSSimulation<Site, WangLandauDOSSimulation<Site> >
 	ensemble(model, -1.9, -0.5, (int) 10000, 5, 0.5);
 
 	// Check intervals
@@ -50,13 +50,13 @@ TEST(ParallelDOSEnsemble, DefaultConstructor)
 }
 
 // Test parallel behavior.
-TEST(ParallelDOSEnsemble, ParallelBehavior)
+TEST(ParallelDOSSimulation, ParallelBehavior)
 {
 	int n = 10;
 	Models::LebwohlLasherModel model(n, n, n);
 	Moves::SphereUnitVectorMove move;
 
-	ParallelDOSEnsemble<Site, WangLandauDOSEnsemble<Site> >
+	ParallelDOSSimulation<Site, WangLandauDOSSimulation<Site> >
 	ensemble(model, -1.9, -0.5, 2000, 4, 0.5);
 
 	ensemble.AddMove(move);

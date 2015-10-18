@@ -1,4 +1,4 @@
-#include "../src/Ensembles/ProtonationMDEnsemble.h"
+#include "../src/Simulation/ProtonationMDSimulation.h"
 #include "../src/ForceFields/ForceFieldManager.h"
 #include "../src/ForceFields/DebyeHuckelFF.h"
 #include "../src/Moves/MoveManager.h"

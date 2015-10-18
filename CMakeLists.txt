@@ -90,10 +90,6 @@ include_directories("${ARMA_INCLUDE}")
 set(SOURCE
 	src/jsoncpp.cpp
 	src/schema.cpp
-	src/Ensembles/DOSEnsemble.cpp
-	src/Ensembles/Ensemble.cpp
-	src/Ensembles/StandardEnsemble.cpp
-#	src/Ensembles/ProtonationMDEnsemble.cpp
 	src/ForceFields/ForceField.cpp
 	src/ForceFields/ForceFieldManager.cpp
 	src/Moves/Move.cpp
@@ -103,6 +99,9 @@ set(SOURCE
 	src/Particles/Particle.cpp
 	src/Simulation/SimObservable.cpp
 	src/Simulation/SimObserver.cpp
+	src/Simulation/DOSSimulation.cpp
+	src/Simulation/Simulation.cpp
+	src/Simulation/StandardSimulation.cpp
 	src/Worlds/SimpleWorld.cpp
 	src/Worlds/World.cpp
 	src/Validator/RequirementLoader.cpp
@@ -114,8 +113,7 @@ target_link_libraries(libsaphron ${SAPH_LIBS})
 
 add_executable(saphron 
 	src/main.cpp 
-#	src/Simulation/SimBuilder.cpp
-	src/Simulation/NewSimBuilder.cpp
+	src/Simulation/SimBuilder.cpp
 )
 target_link_libraries(saphron ${SAPH_LIBS} libsaphron)
 
@@ -252,12 +250,6 @@ target_link_libraries(ParticleSwapMoveTests ${TEST_DEPS})
 target_include_directories(ParticleSwapMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(ParticleSwapMoveTests googletest) 
 add_test(ParticleSwapMoveTests ParticleSwapMoveTests)
-
-#add_executable(ProtonationEnsembleTests test/ProtonationEnsembleTests.cpp)
-#target_link_libraries(ProtonationEnsembleTests ${TEST_DEPS})
-#target_include_directories(ProtonationEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
-#add_dependencies(ProtonationEnsembleTests googletest) 
-#add_test(ProtonationEnsembleTests ProtonationEnsembleTests)
 
 add_executable(RandomIdentityMoveTests test/RandomIdentityMoveTests.cpp)
 target_link_libraries(RandomIdentityMoveTests ${TEST_DEPS})

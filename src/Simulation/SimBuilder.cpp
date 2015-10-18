@@ -1,4 +1,4 @@
-#include "NewSimBuilder.h"
+#include "SimBuilder.h"
 
 using namespace std;
 
@@ -22,7 +22,7 @@ namespace SAPHRON
 			cout << prefix << " * " << msg << "\n";
 	}
 
-	bool NewSimBuilder::BuildSimulation(istream& is)
+	bool SimBuilder::BuildSimulation(istream& is)
 	{
 		Json::Reader reader;
 		Json::Value root;

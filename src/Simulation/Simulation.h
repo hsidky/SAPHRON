@@ -10,10 +10,10 @@
 
 namespace SAPHRON
 {
-	// Base class for simulation Ensembles. An ensemble is provided with a reference to a World and a
+	// Base class for standard simulation. An simulation is provided with a reference to a World and a
 	// ForceFieldManager. The World is responsible for handling the "box" geometry and particles. The
 	// ForeceFieldManager contains the forcefield data for all Particle types and interactions.
-	class Ensemble : public SimObservable
+	class Simulation : public SimObservable
 	{
 		private:
 			// Iteration counter.
@@ -36,9 +36,9 @@ namespace SAPHRON
 		public:
 			typedef std::map<std::string, double> AcceptanceMap;
 
-			Ensemble() : _iterations(0), _mpi(0) {}
+			Simulation() : _iterations(0), _mpi(0) {}
 
-			// Run the Ensemble simulation for a specified number of iterations.
+			// Run the simulation for a specified number of iterations.
 			virtual void Run(int iterations) = 0;
 
 			/* Getters and setters */
@@ -69,6 +69,6 @@ namespace SAPHRON
 			virtual std::string GetName() const = 0;
 			virtual AcceptanceMap GetAcceptanceRatio() const { return {}; }
 
-			virtual ~Ensemble(){}
+			virtual ~Simulation(){}
 	};
 }

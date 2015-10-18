@@ -3,8 +3,8 @@
 namespace SAPHRON
 {
 	// Forward declare.
-	class Ensemble;
-	class DOSEnsemble;
+	class Simulation;
+	class DOSSimulation;
 	class WorldManager;
 	class Particle;
 	class MoveManager;
@@ -15,8 +15,8 @@ namespace SAPHRON
 	{
 		// Abstract base class for a visiting object that traverses visitables.
 		public:
-			virtual void Visit(const Ensemble& e) = 0;
-			virtual void Visit(const DOSEnsemble& e) = 0;
+			virtual void Visit(const Simulation& e) = 0;
+			virtual void Visit(const DOSSimulation& e) = 0;
 			virtual void Visit(const WorldManager& wm) = 0;
 			virtual void Visit(const Particle& p) = 0;
 			virtual void Visit(const MoveManager& mm) = 0;

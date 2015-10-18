@@ -3,7 +3,7 @@
 #include <string>
 #include <iomanip>
 
-#include "Simulation/NewSimBuilder.h"
+#include "Simulation/SimBuilder.h"
 
 using namespace SAPHRON;
 
@@ -22,7 +22,7 @@ int main(int argc, char const* argv[])
 	             " ******************************************************************      \n" << 
 	             "                                                                         \n";
 
-	NewSimBuilder builder;
+	SimBuilder builder;
 	builder.BuildSimulation(std::cin);
 
 	return 0;

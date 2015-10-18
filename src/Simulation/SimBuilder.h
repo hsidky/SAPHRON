@@ -13,7 +13,7 @@
 namespace SAPHRON
 {
 	// Class for creating, managing and running a simulation. 
-	class NewSimBuilder
+	class SimBuilder
 	{
 	private: 
 		WorldList _worlds;
@@ -25,14 +25,14 @@ namespace SAPHRON
 		int _ltot, _msgw, _notw;
 
 	public:
-		NewSimBuilder() : 
+		SimBuilder() : 
 		_worlds(0), _particles(0), _forcefields(0), _moves(0), _ffm(), 
 		_mm(), _ltot(77), _msgw(47), _notw(_ltot - _msgw)
 		{}
 		
 		bool BuildSimulation(std::istream& is);
 
-		~NewSimBuilder()
+		~SimBuilder()
 		{
 			for(auto& world : _worlds)
 				delete world;

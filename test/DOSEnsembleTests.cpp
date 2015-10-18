@@ -1,4 +1,4 @@
-#include "../src/Ensembles/DOSEnsemble.h"
+#include "../src/Simulation/DOSSimulation.h"
 #include "../src/DensityOfStates/WangLandauOP.h"
 #include "../src/ForceFields/ForceFieldManager.h"
 #include "../src/ForceFields/LebwohlLasherFF.h"
@@ -13,7 +13,7 @@
 
 using namespace SAPHRON;
 
-TEST(DOSEnsemble, DefaultBehavior)
+TEST(DOSSimulation, DefaultBehavior)
 {
 	double n = 20;
 	// Initialize world.
@@ -50,7 +50,7 @@ TEST(DOSEnsemble, DefaultBehavior)
 	WorldManager wm;
 	wm.AddWorld(&world);
 
-	DOSEnsemble ensemble(&wm, &ffm, &mm, &op, &hist);
+	DOSSimulation ensemble(&wm, &ffm, &mm, &op, &hist);
 	ensemble.AddObserver(&co);
 	ensemble.Run(20);
 }

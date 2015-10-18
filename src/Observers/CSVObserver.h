@@ -32,8 +32,8 @@ namespace SAPHRON
         // Printed headers?
         bool _printedH;
 
-        void InitializeEnsemble(const Ensemble& e);
-        void InitializeDOSEnsemble(const DOSEnsemble& e);
+        void InitializeEnsemble(const Simulation& e);
+        void InitializeDOSSimulation(const DOSSimulation& e);
         void InitializeWorlds(const WorldManager& wm);
         void InitializeParticles(const WorldManager& wm);
         void InitializeHistogram(const Histogram& hist);
@@ -41,8 +41,8 @@ namespace SAPHRON
 	public:
 		CSVObserver(std::string prefix, SimFlags flags, unsigned int frequency = 1);
 
-		virtual void Visit(const Ensemble& e) override;
-		virtual void Visit(const DOSEnsemble& e) override;
+		virtual void Visit(const Simulation& e) override;
+		virtual void Visit(const DOSSimulation& e) override;
 		virtual void Visit(const WorldManager& wm) override;
 		virtual void Visit(const MoveManager& mm) override;
 		virtual void Visit(const ForceFieldManager& ffm) override;

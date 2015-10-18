@@ -1,6 +1,6 @@
 #include "JSONObserver.h"
-#include "../Ensembles/NVTEnsemble.h"
-#include "../Ensembles/DOSEnsemble.h"
+#include "../Simulation/NVTSimulation.h"
+#include "../Simulation/DOSSimulation.h"
 #include "../Moves/TranslateMove.h"
 #include "../Worlds/World.h"
 #include "../ForceFields/ForceFieldManager.h"
@@ -69,7 +69,7 @@ namespace SAPHRON
 		_root["ensemble"]["pressure"] = ensemble->GetPressure().isotropic();
 	}
 
-	void JSONObserver::Visit(SAPHRON::DOSEnsemble*)
+	void JSONObserver::Visit(SAPHRON::DOSSimulation*)
 	{
 	}
 

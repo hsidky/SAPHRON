@@ -1,4 +1,4 @@
-#include "../src/Ensembles/StandardEnsemble.h"
+#include "../src/Simulation/StandardSimulation.h"
 #include "../src/ForceFields/ForceFieldManager.h"
 #include "../src/ForceFields/LebwohlLasherFF.h"
 #include "../src/Moves/MoveManager.h"
@@ -45,11 +45,11 @@ TEST(NVTEnsemble, DefaultBehavior)
 	//ConsoleObserver co(flags, 100);
 
 	// Initialize ensemble.
-	StandardEnsemble ensemble(&wm, &ffm, &mm);
+	StandardSimulation ensemble(&wm, &ffm, &mm);
 	//ensemble.AddObserver(&co);
 
 	// Run
-	ensemble.Run(30000000);
+	ensemble.Run(1000);
 
 	double finalE = world.GetEnergy().total()/world.GetParticleCount();
 	ASSERT_NEAR(-1.59, finalE, 1e-2);

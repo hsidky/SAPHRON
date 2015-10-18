@@ -14,7 +14,7 @@
 #include "../src/Moves/MoveManager.h"
 #include "TestAccumulator.h"
 #include "../src/Observers/CSVObserver.h"
-#include "../src/Ensembles/StandardEnsemble.h"
+#include "../src/Simulation/StandardSimulation.h"
 #include "json/json.h"
 #include "gtest/gtest.h"
 #include <iostream>
@@ -199,7 +199,7 @@ TEST(DSFFF, PVTValidation1)
 	CSVObserver csv("test", flags, 10);
 
 	// Initialize ensemble. 
-	StandardEnsemble ensemble(&wm, &ffm, &mm);
+	StandardSimulation ensemble(&wm, &ffm, &mm);
 	ensemble.AddObserver(&accumulator);
 	ensemble.AddObserver(&csv);
 	ensemble.Run(10000);
@@ -301,7 +301,7 @@ TEST(DSFFF, NISTValidation1)
 	CSVObserver csv("test", flags, 10);
 
 	// Initialize ensemble. 
-	StandardEnsemble ensemble(&wm, &ffm, &mm);
+	StandardSimulation ensemble(&wm, &ffm, &mm);
 	ensemble.AddObserver(&accumulator);
 	ensemble.AddObserver(&csv);
 	ensemble.Run(1000);

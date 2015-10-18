@@ -2,8 +2,8 @@
 #include <iomanip>
 #include "CSVObserver.h"
 #include "../Particles/Particle.h"
-#include "../Ensembles/Ensemble.h"
-#include "../Ensembles/DOSEnsemble.h"
+#include "../Simulation/Simulation.h"
+#include "../Simulation/DOSSimulation.h"
 #include "../Worlds/WorldManager.h"
 #include "../Worlds/World.h"
 #include "../Histogram.h"
@@ -18,7 +18,7 @@ namespace SAPHRON
 	{
 	}
 
-	void CSVObserver::InitializeEnsemble(const Ensemble& e)
+	void CSVObserver::InitializeEnsemble(const Simulation& e)
 	{
 		if(!this->Flags.simulation)
 			return;
@@ -40,7 +40,7 @@ namespace SAPHRON
 		*_simfs << endl;
 	}
 
-	void CSVObserver::InitializeDOSEnsemble(const DOSEnsemble &e)
+	void CSVObserver::InitializeDOSSimulation(const DOSSimulation &e)
 	{
 		if(!this->Flags.simulation)
 			return;
@@ -173,7 +173,7 @@ namespace SAPHRON
 		*_histfs << endl;
 	}
 
-	void CSVObserver::Visit(const Ensemble& e)
+	void CSVObserver::Visit(const Simulation& e)
 	{
 		// Flags sim is checked in init ensemble.
 		if(!_printedH)
@@ -189,10 +189,10 @@ namespace SAPHRON
 				*_simfs << setw(_w) << acceptance.second << _dlm;
 	}
 
-	void CSVObserver::Visit(const DOSEnsemble& e)
+	void CSVObserver::Visit(const DOSSimulation& e)
 	{
 		if(!_printedH)
-			InitializeDOSEnsemble(e);
+			InitializeDOSSimulation(e);
 
 		if(!this->Flags.simulation)	
 			return;

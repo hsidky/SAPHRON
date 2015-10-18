@@ -1,6 +1,6 @@
 #include "../src/ForceFields/LennardJonesFF.h"
 #include "../src/ForceFields/ForceFieldManager.h"
-#include "../src/Ensembles/StandardEnsemble.h"
+#include "../src/Simulation/StandardSimulation.h"
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Particles/Site.h"
@@ -156,7 +156,7 @@ TEST(LennardJonesFF, NISTValidation1)
 	TestAccumulator accumulator(flags, 10, 20000);
 
 	// Initialize ensemble. 
-	StandardEnsemble ensemble(&wm, &ffm, &mm);
+	StandardSimulation ensemble(&wm, &ffm, &mm);
 	ensemble.AddObserver(&accumulator);
 
 	// Run 

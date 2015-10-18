@@ -1,8 +1,8 @@
-#include "StandardEnsemble.h"
+#include "StandardSimulation.h"
 
 namespace SAPHRON
 {
-	inline void StandardEnsemble::Iterate()
+	inline void StandardSimulation::Iterate()
 	{
 		_mmanager->ResetMoveAcceptances();
 		
@@ -19,7 +19,7 @@ namespace SAPHRON
 	}
 
 	// Run the NVT ensemble for a specified number of iterations.
-	void StandardEnsemble::Run(int iterations)
+	void StandardSimulation::Run(int iterations)
 	{
 		this->NotifyObservers(SimEvent(this, this->GetIteration()));
 		for(int i = 0; i < iterations; ++i)

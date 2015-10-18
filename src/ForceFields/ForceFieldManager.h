@@ -2,7 +2,6 @@
 
 #include "../Particles/Particle.h"
 #include "../Worlds/World.h"
-#include "../Ensembles/Ensemble.h"
 #include "../Observers/Visitable.h"
 #include "ForceField.h"
 #include <math.h>

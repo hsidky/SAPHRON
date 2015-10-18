@@ -5,7 +5,7 @@
 #include "../src/Moves/VolumeSwapMove.h"
 #include "../src/Moves/ParticleSwapMove.h"
 #include "../src/Particles/Site.h"
-#include "../src/Ensembles/StandardEnsemble.h"
+#include "../src/Simulation/StandardSimulation.h"
 #include "../src/Worlds/WorldManager.h"
 #include "../src/Worlds/SimpleWorld.h"
 #include "TestAccumulator.h"
@@ -76,7 +76,7 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 	TestAccumulator accumulator(flags, 10, 30000);
 
 	// Initialize ensemble. 
-	StandardEnsemble ensemble(&wm, &ffm, &mm);
+	StandardSimulation ensemble(&wm, &ffm, &mm);
 	ensemble.AddObserver(&accumulator);
 	
 	// Run 
