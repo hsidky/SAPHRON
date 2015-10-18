@@ -5,7 +5,7 @@
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Particles/Site.h"
 #include "../src/Observers/ConsoleObserver.h"
-#include "../src/Observers/CSVObserver.h"
+#include "../src/Observers/DLMFileObserver.h"
 #include "../src/Observers/JSONObserver.h"
 #include "TestAccumulator.h"
 #include "../src/Worlds/SimpleWorld.h"

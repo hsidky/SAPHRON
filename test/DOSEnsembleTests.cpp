@@ -5,7 +5,7 @@
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/DirectorRotateMove.h"
 #include "../src/Particles/Site.h"
-#include "../src/Observers/CSVObserver.h"
+#include "../src/Observers/DLMFileObserver.h"
 #include "../src/Worlds/SimpleWorld.h"
 #include "../src/Worlds/WorldManager.h"
 #include "gtest/gtest.h"
@@ -34,11 +34,11 @@ TEST(DOSSimulation, DefaultBehavior)
 
 	// Initialize observer.
 	SimFlags flags;
-	flags.simulation = 15;
-	flags.histogram = 63;
-	flags.world = 63;
+	flags.simulation_on();
+	flags.histogram_on();
+	flags.world_on();
 
-	CSVObserver co("test", flags, 1000);
+	DLMFileObserver co("test", flags, 1000);
 
 	// Initialize histogram. 
 	Histogram hist(-1.8*n*n*n, 0.3*n*n*n, 7000);

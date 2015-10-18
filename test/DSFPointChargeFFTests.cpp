@@ -13,7 +13,7 @@
 #include "../src/Moves/VolumeSwapMove.h"
 #include "../src/Moves/MoveManager.h"
 #include "TestAccumulator.h"
-#include "../src/Observers/CSVObserver.h"
+#include "../src/Observers/DLMFileObserver.h"
 #include "../src/Simulation/StandardSimulation.h"
 #include "json/json.h"
 #include "gtest/gtest.h"
@@ -191,12 +191,14 @@ TEST(DSFFF, PVTValidation1)
 	SimFlags flags;
 	//flags.temperature = 1;
 	flags.iteration = 1;
-	flags.world = 63;
-	flags.simulation = 15;
+	flags.world_on();
+	flags.simulation_on();
+	flags.pressure_on();
+	flags.energy_on();
 
 	// Initialize accumulator. 
 	TestAccumulator accumulator(flags, 10, 30000);
-	CSVObserver csv("test", flags, 10);
+	DLMFileObserver csv("test", flags, 10);
 
 	// Initialize ensemble. 
 	StandardSimulation ensemble(&wm, &ffm, &mm);
@@ -298,7 +300,7 @@ TEST(DSFFF, NISTValidation1)
 
 	// Initialize accumulator. 
 	TestAccumulator accumulator(flags, 10, 30000);
-	CSVObserver csv("test", flags, 10);
+	DLMFileObserver csv("test", flags, 10);
 
 	// Initialize ensemble. 
 	StandardSimulation ensemble(&wm, &ffm, &mm);

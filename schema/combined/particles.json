@@ -15,30 +15,30 @@
             },
             {
                 "minItems": 3,
+                "maxItems": 3,
                 "items": {
                     "minimum": 0,
                     "type": "number"
                 },
-                "additionalItems": false,
-                "maxItems": 3,
-                "type": "array"
+                "type": "array",
+                "additionalItems": false
             },
             {
                 "minItems": 3,
+                "maxItems": 3,
                 "items": {
                     "type": "number"
                 },
-                "additionalItems": false,
-                "maxItems": 3,
-                "type": "array"
+                "type": "array",
+                "additionalItems": false
             },
             {
                 "type": "string"
             }
         ],
-        "additionalItems": false,
-        "type": "array"
+        "type": "array",
+        "additionalItems": false
     },
-    "additionalItems": false,
-    "type": "array"
+    "type": "array",
+    "additionalItems": false
 }

@@ -14,8 +14,8 @@ namespace SAPHRON
 	protected:
 
 		// Calculate Wang-Landau acceptance probability.
-		virtual double CalcAcceptanceProbability(const Energy& ei, 
-												 const Energy& ef, 
+		virtual double CalcAcceptanceProbability(const Energy&, 
+												 const Energy&, 
 												 double opi, 
 												 double opf,
 												 const World&) const override

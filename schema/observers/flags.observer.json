@@ -1,0 +1,220 @@
+{
+	"type" : "object",
+	"properties" : {
+		"simulation" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"world" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"energy_components" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"pressure_tensor" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"histogram" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"particle" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"iteration" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"move_acceptances" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"dos_factor" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"dos_flatness" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"world_pressure" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"world_volume" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"world_density" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"world_temperature" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"world_composition" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"world_energy" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"energy_intervdw" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},		
+		"energy_intravdw" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"energy_interelect" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"energy_intraelect" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"energy_bonded" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"energy_connectivity" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"pressure_ideal" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"pressure_pxx" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"pressure_pxy" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"pressure_pxz" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"pressure_pyy" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"pressure_pyz" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"pressure_pzz" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"pressure_tail" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"hist_interval" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"hist_bin_count" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"hist_lower_outliers" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"hist_upper_outliers" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"hist_values" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"hist_counts" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"particle_id" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"particle_species" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"particle_parent_id" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"particle_parent_species" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"particle_position" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"particle_director" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"particle_neighbors" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		}
+	}
+}

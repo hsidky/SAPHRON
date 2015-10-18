@@ -1,0 +1,30 @@
+{
+	"properties" : {
+		"type" : {
+			"type" : "string",
+			"enum" : ["DLMFile"]
+		},
+		"prefix" : {
+			"type" : "string"
+		},
+		"colwidth" : {
+			"type" : "integer",
+			"minimum" : 1
+		},
+		"fixedwmode" : {
+			"type" : "boolean"
+		},
+		"delimiter" : {
+			"type" : "string"
+		},
+		"frequency" : {
+			"type" : "integer",
+			"minimum" : 1
+		},
+		"extension" : {
+			"type" : "string"
+		},
+		"flags" : "@file(flags.observer.json)"
+	},
+	"required" : ["type", "prefix", "frequency", "flags"]
+}

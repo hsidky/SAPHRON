@@ -9,7 +9,7 @@
 
 namespace SAPHRON 
 {
-	class CSVObserver : public SimObserver
+	class DLMFileObserver : public SimObserver
 	{
 	private: 
 		std::unique_ptr<std::ofstream> _simfs;
@@ -38,8 +38,23 @@ namespace SAPHRON
         void InitializeParticles(const WorldManager& wm);
         void InitializeHistogram(const Histogram& hist);
 
+        template<typename T>
+        void WriteStream(std::ofstream& stream, const T& data);
+
 	public:
-		CSVObserver(std::string prefix, SimFlags flags, unsigned int frequency = 1);
+		DLMFileObserver(const std::string& prefix, const SimFlags& flags, unsigned int frequency = 1);
+
+		// Sets the column width in fixed with mode.
+		void SetWidth(unsigned int width) { _w = width; }
+
+		// Set fixed width mode (true = on, false = off).
+		void SetFixedWithMode(bool fixed) { _fixl = fixed; }
+
+		// Set delimiter.
+		void SetDelimiter(const std::string& dlm) { _dlm = dlm; }
+
+		// Set file extension
+		void SetExtension(const std::string& ext) { _ext = ext; }
 
 		virtual void Visit(const Simulation& e) override;
 		virtual void Visit(const DOSSimulation& e) override;
@@ -64,7 +79,7 @@ namespace SAPHRON
 			_printedH = true;
 		}
 
-		~CSVObserver()
+		~DLMFileObserver()
 		{
 			if(_simfs)
 				_simfs->close();

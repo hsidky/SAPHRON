@@ -93,7 +93,7 @@ set(SOURCE
 	src/ForceFields/ForceField.cpp
 	src/ForceFields/ForceFieldManager.cpp
 	src/Moves/Move.cpp
-	src/Observers/CSVObserver.cpp
+	src/Observers/DLMFileObserver.cpp
 #	src/Observers/ConsoleObserver.cpp
 #	src/Observers/JSONObserver.cpp
 	src/Particles/Particle.cpp

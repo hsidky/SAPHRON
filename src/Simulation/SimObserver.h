@@ -3,6 +3,8 @@
 #include "../Observers/Visitor.h"
 #include "SimEvent.h"
 #include <mutex>
+#include <vector>
+#include "json/json.h"
 
 namespace SAPHRON
 {
@@ -48,6 +50,7 @@ namespace SAPHRON
 			}
 
 		public:
+			typedef std::vector<SimObserver*> ObserverList;
 
 			// Initialize a SimObserver class with a specified observation frequency.
 			SimObserver(SimFlags flags, unsigned int frequency = 1)
@@ -62,7 +65,21 @@ namespace SAPHRON
 			// Called after visitors complete.
 			virtual void PostVisit(){}
 
-			virtual ~SimObserver(){}
+			// Static builder method for simobserver. If return value is nullptr, 
+			// then an unknown error occurred. It will throw a BuildException on 
+			// failure.  Object lifetime is caller's responsibility!
+			static SimObserver* BuildObserver(const Json::Value& json, const std::string& path);
+			
+			// Static builder method for simobserver. If return value is nullptr, 
+			// then an unknown error occurred. It will throw a BuildException on 
+			// failure.  Object lifetime is caller's responsibility!
+			static SimObserver* BuildObserver(const Json::Value& json);
+			
+			// Static builder method for sim observers. ObserverList is a vector
+			// which will be populated with initialized observers. Object lifetime
+			// is caller's responsibility!
+			static void BuildObservers(const Json::Value& json, ObserverList& ol);
 
+			virtual ~SimObserver(){}	
 	};
 }

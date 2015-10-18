@@ -1,8 +1,0 @@
-{
-	"properties" : {
-		"file_prefix" : {
-			"type" : "string"
-		}
-	},
-	"required" : ["file_prefix"]
-}

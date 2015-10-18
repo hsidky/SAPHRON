@@ -20,8 +20,8 @@ namespace SAPHRON
 		static std::string Components;
 		static std::string Selector;
 		static std::string Director;
-		static std::string Observer;
-		static std::string CSVObserver;
+		static std::string Observers;
+		static std::string DLMFileObserver;
 		static std::string VolumeSwapMove;
 		static std::string RotateMove;
 		static std::string TranslateMove;
