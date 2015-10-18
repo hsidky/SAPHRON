@@ -1,0 +1,16 @@
+{
+	"type" : "object",
+	"properties" : {
+		"type" : {
+			"type" : "string",
+			"enum" : ["DSF"]
+		},
+		"alpha" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"species" : "@file(nonbonded.forcefield.json)"
+	},
+	"additionalProperties" : false,
+	"required" : ["type", "alpha", "species"]
+}

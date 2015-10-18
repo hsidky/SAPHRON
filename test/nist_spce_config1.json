@@ -1,4 +1,47 @@
 {
+	"forcefields" : {
+		"nonbonded" : [
+			{
+				"type" : "LennardJones",
+				"epsilon" : 6.501694011808411e+02,
+				"sigma" : 3.16555789,
+				"species" : ["O", "O"]
+			}
+		],
+		"electrostatic" : [
+			{
+				"type" : "DSF",
+				"alpha" : 0.20,
+				"species": ["O", "O"]
+			},
+			{
+				"type" : "DSF",
+				"alpha" : 0.20,
+				"species": ["O", "H1"]
+			},
+			{
+				"type" : "DSF",
+				"alpha" : 0.20,
+				"species": ["O", "H2"]
+			},
+			{
+				"type" : "DSF",
+				"alpha" : 0.20,
+				"species": ["H1", "H1"]
+			},
+			{
+				"type" : "DSF",
+				"alpha" : 0.20,
+				"species": ["H1", "H2"]
+			},
+			{
+				"type" : "DSF",
+				"alpha" : 0.20,
+				"species": ["H2", "H2"]
+			}
+		]
+	},
+
 	"worlds" : [
 		{
 			"type": "Simple",

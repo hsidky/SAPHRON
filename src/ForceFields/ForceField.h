@@ -47,6 +47,17 @@ namespace SAPHRON
 										  ForceFieldManager* ffm, 
 										  const std::string& path);
 
+		// Build an electrostatic forcefield from a JSON node. Returns a pointer to the built 
+		// FF in addition to adding it to the FFM. If return value is nullptr, then an 
+		// unknown error occurred. Will throw BuildException on failure. Object lifetime 
+		// is the caller's responsibility.
+		static ForceField* BuildElectrostatic(const Json::Value& json, ForceFieldManager* ffm);
+
+		// Overloaded function allowing JSON path specification.
+		static ForceField* BuildElectrostatic(const Json::Value& json, 
+										 	  ForceFieldManager* ffm, 
+										  	  const std::string& path);
+
 		// Builds forcefields from base tree root["forcefields"] and adds them to the Forcefield manager.
 		// It also adds all initialized pointers to the fflist array passed in. Throws exception on 
 		// failure. Object lifetime management is caller's responsibility.

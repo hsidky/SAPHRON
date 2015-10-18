@@ -39,8 +39,9 @@ files = [
 	("particles/particles.json", "Particles"),
 	("worlds/simple.world.json", "SimpleWorld"),
 	("worlds/worlds.json", "Worlds"),
-	("forcefields/lennardjones.forcefield.json", "LennardJones"),
-	("forcefields/lebwohllasher.forcefield.json", "LebwholLasher"),
+	("forcefields/lennardjones.forcefield.json", "LennardJonesFF"),
+	("forcefields/lebwohllasher.forcefield.json", "LebwholLasherFF"),
+	("forcefields/dsf.forcefield.json", "DSFFF"),
 	("forcefields/forcefields.json", "ForceFields"),
 	("simulation/simulation.json", "Simulation")
 	]

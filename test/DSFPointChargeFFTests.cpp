@@ -102,22 +102,19 @@ TEST(DSFFF, NISTConfig1)
 	ASSERT_DOUBLE_EQ(1.00794, children[2]->GetMass());
 
 	// Initialize forcefields.
-	LennardJonesFF lj(78.19743111*sim.GetkB(), 3.16555789);
-	DSFFF dsf(0.20);
-
+	std::vector<ForceField*> fflist;
 	ForceFieldManager ffm;
-	ffm.AddNonBondedForceField("O", "O", lj);
-	ffm.AddElectrostaticForceField("O", "O", dsf);
-	ffm.AddElectrostaticForceField("O", "H1", dsf);
-	ffm.AddElectrostaticForceField("O", "H2", dsf);
-	ffm.AddElectrostaticForceField("H1", "H1", dsf);
-	ffm.AddElectrostaticForceField("H1", "H2", dsf);
-	ffm.AddElectrostaticForceField("H2", "H2", dsf);
+
+	ASSERT_NO_THROW(ForceField::BuildForceFields(root["forcefields"], &ffm, fflist));
 
 	auto E = ffm.EvaluateHamiltonian(*w);
 	// Values are checked to 6 sig figs.
 	// Cannot directly compare ewald energy to DSF. TBC.
-	ASSERT_NEAR(9.95387E+04-8.23715E+02, E.energy.intervdw/sim.GetkB(), 1e-1);
+	E.energy /= sim.GetkB();
+	ASSERT_NEAR(9.95387E+04-8.23715E+02, E.energy.intervdw, 1e-1);
+
+	// This is from DSF.
+	ASSERT_NEAR(-5.77108E+5, E.energy.interelectrostatic, 1e-1);
 	ASSERT_EQ(0, E.energy.intravdw);
 
 	delete w;

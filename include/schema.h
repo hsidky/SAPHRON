@@ -10,8 +10,9 @@ namespace SAPHRON
 		//INSERT_DEC_HERE
 		static std::string Simulation;
 		static std::string ForceFields;
-		static std::string LebwholLasher;
-		static std::string LennardJones;
+		static std::string DSFFF;
+		static std::string LebwholLasherFF;
+		static std::string LennardJonesFF;
 		static std::string Worlds;
 		static std::string SimpleWorld;
 		static std::string Particles;
