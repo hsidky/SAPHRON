@@ -9,9 +9,9 @@ namespace Json
 	public:
 		virtual void Reset() {}
 
-		virtual void Parse(Value, std::string) {}
+		virtual void Parse(Value, const std::string&) {}
 
-		virtual void Validate(const Value& json, std::string path)
+		virtual void Validate(const Value& json, const std::string& path)
 		{
 			if(!json.isNull())
 				PushError(path + ": Must be a null value");

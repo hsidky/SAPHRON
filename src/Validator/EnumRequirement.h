@@ -17,14 +17,14 @@ namespace Json
 			_enum.clear();
 		}
 
-		virtual void Parse(Value json, std::string) 
+		virtual void Parse(Value json, const std::string&) 
 		{
 			if(json.isArray())
 				for(auto& val : json)
 					_enum.push_back(val);
 		}
 
-		virtual void Validate(const Value& json, std::string path)
+		virtual void Validate(const Value& json, const std::string& path)
 		{
 			bool found = false;
 

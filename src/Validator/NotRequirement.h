@@ -37,7 +37,7 @@ namespace Json
 			delete _req;			
 		}
 
-		virtual void Parse(Value json, std::string path) override
+		virtual void Parse(Value json, const std::string& path) override
 		{
 			Reset();
 			RequirementLoader loader;
@@ -47,7 +47,7 @@ namespace Json
 				_req->Parse(head, path);
 		}
 
-		virtual void Validate(const Value& json, std::string path) override
+		virtual void Validate(const Value& json, const std::string& path) override
 		{
 			_req->Validate(json, path);
 			if(!_req->HasErrors())

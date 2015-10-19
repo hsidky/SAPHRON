@@ -13,14 +13,14 @@ namespace Json
 		std::vector<std::string> _notices;
 
 	protected:
-		void PushError(std::string error) { _errors.push_back(error); }
+		void PushError(const std::string& error) { _errors.push_back(error); }
 
-		void PushNotice(std::string notice) { _notices.push_back(notice); }
+		void PushNotice(const std::string& notice) { _notices.push_back(notice); }
 	
 	public:
-		virtual void Parse(Value json, std::string path) = 0;
+		virtual void Parse(Value json, const std::string& path) = 0;
 
-		virtual void Validate(const Value& json, std::string path) = 0;
+		virtual void Validate(const Value& json, const std::string& path) = 0;
 
 		virtual void Reset() = 0;
 

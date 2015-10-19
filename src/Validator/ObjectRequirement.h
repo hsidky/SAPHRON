@@ -106,7 +106,7 @@ namespace Json
 			_dependency = nullptr;
 		}
 
-		virtual void Parse(Value json, std::string path) override
+		virtual void Parse(Value json, const std::string& path) override
 		{
 			Reset();
 			RequirementLoader loader;
@@ -198,7 +198,7 @@ namespace Json
 			}
 		}
 
-		virtual void Validate(const Value& json, std::string path) override
+		virtual void Validate(const Value& json, const std::string& path) override
 		{
 			if(!json.isObject())
 			{
