@@ -22,6 +22,11 @@ namespace SAPHRON
 			cout << prefix << " * " << msg << "\n";
 	}
 
+	void PrintBoldNotice(const string& notice, int msgw)
+	{
+		cerr << setw(msgw + 8) << left << "\033[1m" + notice + "\033[0m";
+	}
+
 	bool SimBuilder::BuildSimulation(istream& is)
 	{
 		Json::Reader reader;
@@ -29,7 +34,8 @@ namespace SAPHRON
 		vector<string> notices;
 
 		// Parse JSON.
-		cerr << setw(_msgw) << left << " > Validating JSON...";
+		PrintBoldNotice(" > Validating JSON...", _msgw);
+
 		if(!reader.parse(is, root))
 		{
 			DumpErrorsToConsole({reader.getFormattedErrorMessages()}, _notw);
@@ -38,7 +44,7 @@ namespace SAPHRON
 		cout << setw(_notw) << right << "\033[32mOK!\033[0m\n";
 
 		// Build world(s).
-		cerr << setw(_msgw) << left << " > Building world(s)...";
+		PrintBoldNotice(" > Building world(s)...", _msgw); 
 		for(auto& jworld : root["worlds"])
 		{
 			try{
@@ -97,7 +103,7 @@ namespace SAPHRON
 		notices.clear();
 
 		// Build forcefield(s).
-		cerr << setw(_msgw) << left << " > Building forcefield(s)...";
+		PrintBoldNotice(" > Building forcefield(s)...", _msgw); 
 		try{
 			ForceField::BuildForceFields(
 					root.get("forcefields", Json::arrayValue), 
@@ -124,7 +130,7 @@ namespace SAPHRON
 		notices.clear();
 
 		// Build move(s).
-		cerr << setw(_msgw) << left << " > Building move(s)...";
+		PrintBoldNotice(" > Building move(s)...", _msgw); 
 		try{
 			Move::BuildMoves(root.get("moves", Json::arrayValue), &_mm, _moves);
 		} catch(BuildException& e) {
@@ -149,7 +155,7 @@ namespace SAPHRON
 		notices.clear();
 
 		// Build observers.
-		cerr << setw(_msgw) << left << " > Building observer(s)...";
+		PrintBoldNotice(" > Building observer(s)...", _msgw); 
 		try{
 			SimObserver::BuildObservers(root.get("observers", Json::arrayValue), _observers);
 		} catch(BuildException& e) {
@@ -175,6 +181,28 @@ namespace SAPHRON
 
 		DumpNoticesToConsole(notices, "",_notw);
 		notices.clear();
+
+		if(root.isMember("histogram")) 
+		{
+			PrintBoldNotice(" > Building histogram...", _msgw); 
+			try{
+				_hist = Histogram::BuildHistogram(root["histogram"]);
+			} catch(BuildException& e) {
+				DumpErrorsToConsole(e.GetErrors(), _notw);
+				return false;
+			} catch(exception& e) {
+				DumpErrorsToConsole({e.what()}, _notw);
+				return false;
+			}
+
+			notices.push_back("Initialized histogram range [" + 
+				to_string(_hist->GetMinimum()) + ", " + 
+				to_string(_hist->GetMaximum()) + "].");
+			notices.push_back("Initialized " + to_string(_hist->GetBinCount()) + " bins.");
+
+			DumpNoticesToConsole(notices, "",_notw);
+			notices.clear();
+		}
 
 		return true;
 	}

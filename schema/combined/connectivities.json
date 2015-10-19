@@ -1,17 +1,13 @@
 {
+    "type": "array",
     "items": {
         "oneOf": [
             {
+                "additionalProperties": false,
+                "type": "object",
                 "properties": {
-                    "selector": {},
-                    "director": {
-                        "minItems": 3,
-                        "maxItems": 3,
-                        "items": {
-                            "type": "number"
-                        },
-                        "type": "array",
-                        "additionalItems": false
+                    "coefficient": {
+                        "type": "number"
                     },
                     "type": {
                         "type": "string",
@@ -19,12 +15,17 @@
                             "P2SA"
                         ]
                     },
-                    "coefficient": {
-                        "type": "number"
-                    }
+                    "director": {
+                        "maxItems": 3,
+                        "type": "array",
+                        "additionalItems": false,
+                        "minItems": 3,
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "selector": {}
                 },
-                "type": "object",
-                "additionalProperties": false,
                 "required": [
                     "type",
                     "coefficient",
@@ -33,6 +34,5 @@
                 ]
             }
         ]
-    },
-    "type": "array"
+    }
 }

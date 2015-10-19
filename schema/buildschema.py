@@ -15,7 +15,7 @@ from sys import exit
 currd = os.path.dirname(os.path.abspath(__file__))
 cdir = "combined/"
 schemah = '../include/schema.h'
-schemac = '../src/schema.cpp'
+schemac = '../src/JSON/schema.cpp'
 
 # All files
 files = [
@@ -43,7 +43,8 @@ files = [
 	("forcefields/lebwohllasher.forcefield.json", "LebwholLasherFF"),
 	("forcefields/dsf.forcefield.json", "DSFFF"),
 	("forcefields/forcefields.json", "ForceFields"),
-	("simulation/simulation.json", "Simulation")
+	("simulation/simulation.json", "Simulation"),
+	("utils/histogram.json", "Histogram")
 	]
 
 # Files to generate combined

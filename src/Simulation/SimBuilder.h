@@ -7,9 +7,9 @@
 #include "Moves/MoveManager.h"
 #include "Simulation/SimException.h"
 #include "SimObserver.h"
+#include "../Utils/Histogram.h"
 #include <iostream>
 #include <iomanip>
-
 
 namespace SAPHRON
 {
@@ -24,12 +24,14 @@ namespace SAPHRON
 		ForceFieldManager _ffm;
 		MoveManager _mm;
 		ObserverList _observers;
+		Histogram* _hist;
 		int _ltot, _msgw, _notw;
 
 	public:
 		SimBuilder() : 
 		_worlds(0), _particles(0), _forcefields(0), _moves(0), _ffm(), 
-		_mm(), _ltot(77), _msgw(47), _notw(_ltot - _msgw)
+		_mm(), _observers(0), _hist(nullptr), _ltot(77), _msgw(47), 
+		_notw(_ltot - _msgw)
 		{}
 		
 		bool BuildSimulation(std::istream& is);
@@ -55,6 +57,8 @@ namespace SAPHRON
 			for(auto& o : _observers)
 				delete o;
 			_observers.clear();
+
+			delete _hist;
 		}
 	};
 }

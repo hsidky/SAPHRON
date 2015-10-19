@@ -99,11 +99,6 @@ namespace SAPHRON
 			return _values[bin];
 		}
 
-		// Gets vector of bin values.
-		const std::vector<double>& GetValues() const { return _values; }
-
-		const std::vector<unsigned int>& GetHistogram() const { return _counts;	}
-
 		// Update associated values in a bin.
 		void UpdateValue(int bin, double value)
 		{
@@ -125,6 +120,22 @@ namespace SAPHRON
 
 			return _counts[bin];
 		}
+
+		// Set the bin count.
+		void SetCount(int bin, unsigned int count)
+		{
+			if(bin >= _binCount)
+				bin = _binCount - 1;
+			if(bin < 0)
+				bin = 0;
+
+			_counts[bin] = count;
+		} 
+
+		// Gets vector of bin values.
+		const std::vector<double>& GetValues() const { return _values; }
+
+		const std::vector<unsigned int>& GetHistogram() const { return _counts;	}
 
 		// Gets the number of bins in the histogram.
 		int GetBinCount() const { return _counts.size(); }
@@ -181,5 +192,7 @@ namespace SAPHRON
 		// If return value is nullptr, then an unknown error occurred. It will throw 
 		// a BuildException on failure. Object lifetime is the caller's responsibility. 
 		static Histogram* BuildHistogram(const Json::Value& json);
+
+		virtual ~Histogram(){}
 	};
 }

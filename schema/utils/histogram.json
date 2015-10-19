@@ -1,0 +1,36 @@
+{
+	"type" : "object", 
+	"properties" : 
+	{
+		"min" : {
+			"type" : "number"
+		}, 
+		"max" : {
+			"type" : "number"
+		}, 
+		"bincount" : {
+			"type" : "integer",
+			"minimum" : 1
+		},
+		"binwidth" : {
+			"type" : "number",
+			"minimum" : 0,
+			"exclusiveMinimum" : true
+		},
+		"values" : {
+			"type" : "array",
+			"items" : {
+				"type" : "number"
+			}
+		},
+		"counts" : {
+			"type" : "array", 
+			"items" : { 
+				"type" : "integer", 
+				"minimum" : 0
+			}
+		}
+	},
+	"required" : ["min", "max"],
+	"additionalProperties" : false
+}

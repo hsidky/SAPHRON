@@ -1,9 +1,16 @@
 {
     "units" : "real",
+    "histogram" : {
+        "min" : 10,
+        "max" : 20,
+        "bincount" : 5,
+        "values" : [0.1, 1.2, 2.2, 3.4, 4.5],
+        "counts" : [0, 1, 2, 3, 2]
+    },
     "worlds" : [
         {
             "type" : "Simple",
-            "temperature": 0,
+            "temperature": 300,
             "dimensions" : [32, 32, 32],
             "seed": 300,
             "r_cutoff": 10.0,
@@ -33,6 +40,7 @@
             "seed": 300,
             "r_cutoff": 10.0,
             "skin_thickness": 2,
+            "temperature": 300,
             "components" : {
                 "LJ" : {
                     "count": 1,

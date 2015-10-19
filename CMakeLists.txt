@@ -102,6 +102,7 @@ set(SOURCE
 	src/Simulation/DOSSimulation.cpp
 	src/Simulation/Simulation.cpp
 	src/Simulation/StandardSimulation.cpp
+	src/Utils/Histogram.cpp
 	src/Worlds/SimpleWorld.cpp
 	src/Worlds/World.cpp
 	src/Validator/RequirementLoader.cpp
