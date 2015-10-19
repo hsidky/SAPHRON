@@ -57,6 +57,10 @@ namespace SAPHRON
 					to_string(world->GetNeighborRadius()) + 
 					" \u212B.");
 
+				notices.push_back("Setting cutoff radius to " + 
+					to_string(world->GetCutoffRadius()) + 
+					" \u212B.");
+
 				notices.push_back("Setting seed to " + 
 					to_string(world->GetSeed()) + ".");
 
@@ -74,8 +78,7 @@ namespace SAPHRON
 				auto& slist = Particle::GetSpeciesList();
 				for(auto& s : world->GetComposition())
 					notices.push_back("Initialized " + to_string(s.second) + 
-							  " particle(s) of type \"" + slist[s.first] + "\".");
-				
+							  " particle(s) of type \"" + slist[s.first] + "\".");				
 			} catch(BuildException& e) {
 				DumpErrorsToConsole(e.GetErrors(), _notw);
 				return false;
@@ -115,7 +118,8 @@ namespace SAPHRON
 			return false;
 		}
 
-		//TODO: ADD FORCEFIELD INITIALIZATION MESSAGE
+		notices.push_back("Initialized " +  to_string(_forcefields.size()) + " forcefield(s).");
+
 		DumpNoticesToConsole(notices, "",_notw);
 		notices.clear();
 
@@ -138,6 +142,36 @@ namespace SAPHRON
 			return false;
 		}
 
+		for(auto& m : _moves)
+			notices.push_back("Initialized " + m->GetName() + " move.");
+
+		DumpNoticesToConsole(notices, "",_notw);
+		notices.clear();
+
+		// Build observers.
+		cerr << setw(_msgw) << left << " > Building observer(s)...";
+		try{
+			SimObserver::BuildObservers(root.get("observers", Json::arrayValue), _observers);
+		} catch(BuildException& e) {
+			DumpErrorsToConsole(e.GetErrors(), _notw);
+			return false;
+		} catch(exception& e) {
+			DumpErrorsToConsole({e.what()}, _notw);
+			return false;
+		}
+
+		// Make sure we've created at least one observer.
+		if(_observers.size() == 0)
+		{
+			DumpErrorsToConsole({"No observers have been specified."}, _notw);
+			return false;
+		}
+
+		for(auto& o : _observers)
+		{
+			notices.push_back("Initialized " + o->GetName() + " observer.");
+			notices.push_back("Set sampling frequency to " + to_string(o->GetFrequency()) +  " sweeps.");
+		}
 
 		DumpNoticesToConsole(notices, "",_notw);
 		notices.clear();

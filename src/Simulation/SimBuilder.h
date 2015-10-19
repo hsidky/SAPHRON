@@ -6,6 +6,7 @@
 #include "ForceFields/ForceFieldManager.h"
 #include "Moves/MoveManager.h"
 #include "Simulation/SimException.h"
+#include "SimObserver.h"
 #include <iostream>
 #include <iomanip>
 
@@ -22,6 +23,7 @@ namespace SAPHRON
 		MoveList _moves;
 		ForceFieldManager _ffm;
 		MoveManager _mm;
+		ObserverList _observers;
 		int _ltot, _msgw, _notw;
 
 	public:
@@ -49,6 +51,10 @@ namespace SAPHRON
 			for(auto& m : _moves)
 				delete m;
 			_moves.clear();
+
+			for(auto& o : _observers)
+				delete o;
+			_observers.clear();
 		}
 	};
 }

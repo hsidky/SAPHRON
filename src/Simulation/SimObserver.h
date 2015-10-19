@@ -8,6 +8,9 @@
 
 namespace SAPHRON
 {
+	class SimObserver; 
+	typedef std::vector<SimObserver*> ObserverList;
+
 	// Abstract class for objects wanting to observe a simulation.
 	class SimObserver : public Visitor
 	{
@@ -25,11 +28,7 @@ namespace SAPHRON
 				return _event;
 			}
 
-			// Get logging frequency.
-			unsigned int GetFrequency()
-			{
-				return _frequency;
-			}
+			
 
 			// Set logging frequency.
 			unsigned int SetFrequency(int f)
@@ -50,14 +49,21 @@ namespace SAPHRON
 			}
 
 		public:
-			typedef std::vector<SimObserver*> ObserverList;
-
 			// Initialize a SimObserver class with a specified observation frequency.
 			SimObserver(SimFlags flags, unsigned int frequency = 1)
 				: _frequency(frequency), _event(nullptr, 0), Flags(flags){}
 
 			// Update observer when simulation has changed.
 			void Update(const SimEvent& e);
+
+			// Get flags.
+			SimFlags GetFlags() const { return Flags; }
+
+			// Get logging frequency.
+			unsigned int GetFrequency() const { return _frequency; }
+
+			// Get name. 
+			virtual std::string GetName() const = 0;
 
 			// Called before visitors invokes.
 			virtual void PreVisit(){}

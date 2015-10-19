@@ -56,6 +56,9 @@ namespace SAPHRON
 		// Set file extension
 		void SetExtension(const std::string& ext) { _ext = ext; }
 
+		// Get Observer name.
+		virtual std::string GetName() const override{ return "DLMFile"; }
+
 		virtual void Visit(const Simulation& e) override;
 		virtual void Visit(const DOSSimulation& e) override;
 		virtual void Visit(const WorldManager& wm) override;

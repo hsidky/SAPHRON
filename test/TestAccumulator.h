@@ -24,6 +24,8 @@ namespace SAPHRON
 			SimObserver(flags, frequency), _temperature(0),	_counter(0), _start(start),
 			_density(), _energy(), _pressure() {}
 
+			virtual std::string GetName() const override { return "TestAccumulator"; }
+
 			virtual void Visit(const Simulation& e) override
 			{
 				if(e.GetIteration() < _start)

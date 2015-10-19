@@ -71,5 +71,16 @@
             "dx" : 1.0,
             "seed" : 253
         }
+    ],
+
+    "observers" : [
+        {
+            "type" : "DLMFile",
+            "frequency": 10, 
+            "prefix" : "test",
+            "flags" : {
+                "simulation" : 1
+            }
+        }
     ]
 }
