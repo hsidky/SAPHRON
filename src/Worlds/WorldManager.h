@@ -1,7 +1,7 @@
 #pragma once 
 
 #include "World.h"
-#include "../Rand.h"
+#include "../Utils/Rand.h"
 #include "../Observers/Visitable.h"
 
 namespace SAPHRON

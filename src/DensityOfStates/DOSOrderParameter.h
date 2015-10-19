@@ -1,5 +1,5 @@
 #pragma once 
-#include "Histogram.h"
+#include "Utils/Histogram.h"
 
 namespace SAPHRON
 {

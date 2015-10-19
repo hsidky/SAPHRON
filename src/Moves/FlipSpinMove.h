@@ -5,7 +5,7 @@
 #include "../ForceFields/ForceFieldManager.h"
 #include "../Simulation/SimInfo.h"
 #include "../DensityOfStates/DOSOrderParameter.h"
-#include "../Rand.h"
+#include "../Utils/Rand.h"
 
 
 namespace SAPHRON

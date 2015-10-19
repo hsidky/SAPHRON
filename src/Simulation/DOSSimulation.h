@@ -5,7 +5,7 @@
 #include "../Worlds/WorldManager.h"
 #include "../ForceFields/ForceFieldManager.h"
 #include "../Moves/MoveManager.h"
-#include "../Histogram.h"
+#include "../Utils/Histogram.h"
 
 namespace SAPHRON
 {
@@ -68,10 +68,10 @@ namespace SAPHRON
 
 		public:
 			DOSSimulation(WorldManager* wm, 
-						ForceFieldManager* ffm, 
-						MoveManager* mm, 
-						DOSOrderParameter* dop,
-						Histogram* hist) : 
+						  ForceFieldManager* ffm, 
+						  MoveManager* mm, 
+						  DOSOrderParameter* dop,
+						  Histogram* hist) : 
 				_wmanager(wm), _ffmanager(ffm), _mmanager(mm), _orderp(dop), _hist(hist),
 				_accmap(), _hreset(0), _f(1.0), _flatness(0.0), _targetFlatness(0.80)			
 			{

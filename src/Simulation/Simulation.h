@@ -4,6 +4,7 @@
 #include "../Properties/Energy.h"
 #include "../Properties/Pressure.h"
 #include "../Worlds/World.h"
+#include "../DensityOfStates/DOSOrderParameter.h"
 #include "json/json.h"
 #include <map>
 #include <vector>
@@ -69,6 +70,17 @@ namespace SAPHRON
 			virtual std::string GetName() const = 0;
 			virtual AcceptanceMap GetAcceptanceRatio() const { return {}; }
 
+			/* Static Builder methods */
+
+			// Builds a simulation from a JSON node, along with the
+			// required dependencies. If a dependency is not needed/initialized, 
+			// simply pass a nullptr. I
+			static Simulation* BuildSimulation(const Json::Value& json,
+											   WorldManager* wm, 
+											   ForceFieldManager* ffm,
+											   MoveManager* mm, 
+											   DOSOrderParameter* dop,
+											   Histogram* hist);
 			virtual ~Simulation(){}
 	};
 }

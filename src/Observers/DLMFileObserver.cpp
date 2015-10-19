@@ -6,7 +6,7 @@
 #include "../Simulation/DOSSimulation.h"
 #include "../Worlds/WorldManager.h"
 #include "../Worlds/World.h"
-#include "../Histogram.h"
+#include "../Utils/Histogram.h"
 
 using namespace std;
 

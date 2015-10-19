@@ -1,4 +1,4 @@
-#include "../src/Histogram.h"
+#include "../src/Utils/Histogram.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;

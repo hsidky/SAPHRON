@@ -88,10 +88,10 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${ARMA_INCLUDE}")
 
 set(SOURCE
-	src/jsoncpp.cpp
-	src/schema.cpp
 	src/ForceFields/ForceField.cpp
 	src/ForceFields/ForceFieldManager.cpp
+	src/JSON/jsoncpp.cpp
+	src/JSON/schema.cpp
 	src/Moves/Move.cpp
 	src/Observers/DLMFileObserver.cpp
 #	src/Observers/ConsoleObserver.cpp

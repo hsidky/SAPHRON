@@ -1,4 +1,4 @@
-#include "../src/Rand.h"
+#include "../src/Utils/Rand.h"
 #include "gtest/gtest.h"
 
 // Test to for expected values from each of the methods in the random number

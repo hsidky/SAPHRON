@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Particles/Particle.h"
-#include "../Rand.h"
+#include "../Utils/Rand.h"
 #include "World.h"
 #include <cmath>
 #include <memory>

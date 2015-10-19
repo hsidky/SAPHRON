@@ -1,7 +1,7 @@
 #include "../src/DensityOfStates/ElasticCoeffOP.h"
 #include "../src/Particles/Site.h"
 #include "../src/Worlds/SimpleWorld.h"
-#include "../src/Histogram.h"
+#include "../src/Utils/Histogram.h"
 #include "gtest/gtest.h"
 
 

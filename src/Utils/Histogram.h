@@ -5,6 +5,7 @@
 #include <cmath>
 #include <vector>
 #include <limits>
+#include "json/json.h"
 
 namespace SAPHRON
 {
@@ -176,5 +177,9 @@ namespace SAPHRON
 			v.Visit(*this);
 		}
 
+		// Builds a histogram from a JSON node. Returns a pointer to the built Histogram.
+		// If return value is nullptr, then an unknown error occurred. It will throw 
+		// a BuildException on failure. Object lifetime is the caller's responsibility. 
+		static Histogram* BuildHistogram(const Json::Value& json);
 	};
 }

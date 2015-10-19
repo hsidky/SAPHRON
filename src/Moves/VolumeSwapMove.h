@@ -4,7 +4,7 @@
 #include "../Simulation/SimInfo.h"
 #include "../Worlds/WorldManager.h"
 #include "../ForceFields/ForceFieldManager.h"
-#include "../Rand.h"
+#include "../Utils/Rand.h"
 
 namespace SAPHRON
 {

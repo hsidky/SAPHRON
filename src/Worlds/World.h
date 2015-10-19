@@ -4,7 +4,7 @@
 #include "../Particles/Particle.h"
 #include "../Observers/Visitable.h"
 #include "../Properties/EPTuple.h"
-#include "../Rand.h"
+#include "../Utils/Rand.h"
 #include "json/json.h"
 #include <memory>
 #include <functional>
