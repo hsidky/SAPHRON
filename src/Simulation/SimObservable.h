@@ -11,7 +11,7 @@ namespace SAPHRON
 	class SimObservable : public Visitable
 	{
 		private:
-			std::list<SimObserver*> _observers;
+			std::vector<SimObserver*> _observers;
 
 		public:
 

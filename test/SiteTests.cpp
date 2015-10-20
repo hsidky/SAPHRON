@@ -99,9 +99,9 @@ TEST(Site, Neighbors)
 	std::vector<std::string> vals = {"L2", "L3", "L4"};
 	auto& neighbors = s1.GetNeighbors();
 	int i = 0;
-	for(NeighborIterator neighbor = neighbors.begin(); neighbor != neighbors.end(); ++neighbor)
+	for(auto& neighbor: neighbors)
 	{
-		auto id = (*neighbor)->GetSpecies();
+		auto id = neighbor->GetSpecies();
 
 		ASSERT_EQ(vals[i], id);
 		i++;

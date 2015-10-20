@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
-#include <list>
 #include <string>
 #include <vector>
 #include <map>
@@ -33,10 +32,8 @@ namespace SAPHRON
 	}
 
 	typedef std::vector<Particle*> NeighborList;
-	typedef std::vector<Particle*>::iterator NeighborIterator;
 	typedef std::vector<std::string> SpeciesList;
-	typedef std::list<Connectivity*> ConnectivityList;
-	typedef std::list<Connectivity*>::iterator ConnectivityIterator;
+	typedef std::vector<Connectivity*> ConnectivityList;
 	typedef std::vector<Particle*> ParticleList;
 	typedef std::map<int, Particle*> ParticleMap;
 
@@ -395,7 +392,9 @@ namespace SAPHRON
 			// Remove a connectivity from the particle.
 			void RemoveConnectivity(Connectivity* connectivity)
 			{
-				_connectivities.remove(connectivity);
+				_connectivities.erase(
+					std::remove(_connectivities.begin(), _connectivities.end(), connectivity),
+					_connectivities.end());
 			}
 
 			// Gets connectivity list.

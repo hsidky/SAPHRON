@@ -21,7 +21,7 @@ namespace Json
 		std::vector<Requirement*> _extended;
 		DependencyRequirement* _dependency;
 
-		std::list<std::string> _required;
+		std::vector<std::string> _required;
 		bool _moreProps, _setMin, _setMax;
 		unsigned int _min, _max;
 
@@ -262,7 +262,7 @@ namespace Json
 				else if(!_moreProps)
 					PushError(path + ": Invalid property \"" + names[i] + "\" specified");
 
-				rprops.remove(names[i]);
+				rprops.erase(std::remove(rprops.begin(), rprops.end(),names[i]),rprops.end());
 				++i;
 			}
 
