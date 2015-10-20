@@ -1,5 +1,6 @@
 #pragma once 
 #include "Utils/Histogram.h"
+#include "json/json.h"
 
 namespace SAPHRON
 {
@@ -52,6 +53,15 @@ namespace SAPHRON
 
 			return CalcAcceptanceProbability(ei, ef, opi, opf, w);
 		}
+
+		// Builds a density-of-states order parameter from JSON node. 
+		// Requires histogram and world manager which contain dependencies 
+		// for some/all order parameters. Returns pointer to OP. Throws 
+		// BuildException upon failure. If nullptr is returned, unknown 
+		// error occurred. Object lifetime is caller's responsibility!
+		static DOSOrderParameter* Build(const Json::Value& json, 
+										Histogram* hist,
+										WorldManager* wm);
 		
 		virtual ~DOSOrderParameter(){}
 	};

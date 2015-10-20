@@ -51,6 +51,9 @@ namespace SAPHRON
 				auto* world = World::Build(jworld);
 				_worlds.push_back(world);
 
+				// Add world to world manager.
+				_wm.AddWorld(world);
+
 				// Print notices.
 				notices.push_back("Building world \"" + world->GetStringID() + "\"...");
 				auto dim = world->GetBoxVectors();
@@ -198,7 +201,24 @@ namespace SAPHRON
 			notices.push_back("Initialized histogram range [" + 
 				to_string(_hist->GetMinimum()) + ", " + 
 				to_string(_hist->GetMaximum()) + "].");
-			notices.push_back("Initialized " + to_string(_hist->GetBinCount()) + " bins.");
+			notices.push_back("Created " + to_string(_hist->GetBinCount()) + " bins.");
+
+			DumpNoticesToConsole(notices, "",_notw);
+			notices.clear();
+		}
+
+		if(root.isMember("orderparameter"))
+		{
+			PrintBoldNotice(" > Building order parameter...", _msgw);
+			try{
+				_orderp = DOSOrderParameter::Build(root["orderparameter"], _hist, &_wm);
+			} catch(BuildException& e) {
+				DumpErrorsToConsole(e.GetErrors(), _notw);
+				return false;
+			} catch(exception& e) {
+				DumpErrorsToConsole({e.what()}, _notw);
+				return false;
+			}
 
 			DumpNoticesToConsole(notices, "",_notw);
 			notices.clear();

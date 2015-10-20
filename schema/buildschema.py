@@ -44,7 +44,9 @@ files = [
 	("forcefields/dsf.forcefield.json", "DSFFF"),
 	("forcefields/forcefields.json", "ForceFields"),
 	("simulation/simulation.json", "Simulation"),
-	("utils/histogram.json", "Histogram")
+	("utils/histogram.json", "Histogram"),
+	("dos/wanglandau.op.json", "WangLandauOP"),
+	("dos/elasticcoeff.op.json", "ElasticCoeffOP")
 	]
 
 # Files to generate combined

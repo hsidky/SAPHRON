@@ -8,6 +8,8 @@ namespace SAPHRON
 	{
 	public:
 		//INSERT_DEC_HERE
+		static std::string ElasticCoeffOP;
+		static std::string WangLandauOP;
 		static std::string Histogram;
 		static std::string Simulation;
 		static std::string ForceFields;

@@ -88,6 +88,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${ARMA_INCLUDE}")
 
 set(SOURCE
+	src/DensityOfStates/DOSOrderParameter.cpp
 	src/ForceFields/ForceField.cpp
 	src/ForceFields/ForceFieldManager.cpp
 	src/JSON/jsoncpp.cpp

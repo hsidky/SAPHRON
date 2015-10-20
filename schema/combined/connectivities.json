@@ -3,12 +3,15 @@
     "items": {
         "oneOf": [
             {
-                "additionalProperties": false,
                 "type": "object",
+                "required": [
+                    "type",
+                    "coefficient",
+                    "director",
+                    "selector"
+                ],
+                "additionalProperties": false,
                 "properties": {
-                    "coefficient": {
-                        "type": "number"
-                    },
                     "type": {
                         "type": "string",
                         "enum": [
@@ -16,22 +19,19 @@
                         ]
                     },
                     "director": {
-                        "maxItems": 3,
                         "type": "array",
-                        "additionalItems": false,
+                        "maxItems": 3,
                         "minItems": 3,
+                        "additionalItems": false,
                         "items": {
                             "type": "number"
                         }
                     },
+                    "coefficient": {
+                        "type": "number"
+                    },
                     "selector": {}
-                },
-                "required": [
-                    "type",
-                    "coefficient",
-                    "director",
-                    "selector"
-                ]
+                }
             }
         ]
     }
