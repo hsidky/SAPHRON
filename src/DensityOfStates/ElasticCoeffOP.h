@@ -18,10 +18,10 @@ namespace SAPHRON
 	class ElasticCoeffOP : public DOSOrderParameter, public ParticleObserver
 	{
 	private:
-		arma::mat _Q;
+		Matrix3D _Q;
 		EFilterFunc _efunc;
-		arma::cx_vec _eigval;
-		arma::cx_mat _eigvec;
+		arma::cx_colvec3 _eigval;
+		arma::cx_mat33 _eigvec;
 		arma::uword _imax;
 		
 		// Particle count for averaging.
@@ -50,14 +50,15 @@ namespace SAPHRON
 		// Initialize ElasticCoeffOP class. A user supplied filter function will determine which 
 		// particles will contribute to the elastic order parameter (true for include, false otherwise).
 		// The value h represents the length over which to compute the derivative (dni/dxj).
-		ElasticCoeffOP(const Histogram& hist, const World& world, double dxj, EFilterFunc efunc) : 
-			DOSOrderParameter(hist), _Q(3,3,arma::fill::zeros), _efunc(efunc), _eigval(3, arma::fill::zeros), 
-			_eigvec(3,3,arma::fill::zeros), _imax(0), _pcount(0), _dxj(dxj)
+		ElasticCoeffOP(const Histogram& hist, World* world, double dxj, EFilterFunc efunc) : 
+			DOSOrderParameter(hist), _Q(arma::fill::zeros), _efunc(efunc), _eigval(arma::fill::zeros), 
+			_eigvec(arma::fill::zeros), _imax(0), _pcount(0), _dxj(dxj)
 		{
 
-			for (int i = 0; i < world.GetParticleCount(); ++i)
+			for (int i = 0; i < world->GetParticleCount(); ++i)
 			{
-				auto* p = world.SelectParticle(i);
+				auto* p = world->SelectParticle(i);
+				p->AddObserver(this);
 
 				// Particle is counted.
 				if(_efunc(p))

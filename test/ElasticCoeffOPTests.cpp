@@ -3,7 +3,7 @@
 #include "../src/Worlds/SimpleWorld.h"
 #include "../src/Utils/Histogram.h"
 #include "gtest/gtest.h"
-
+#include <iostream>
 
 using namespace SAPHRON;
 
@@ -16,11 +16,10 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 	world.ConfigureParticles({&site1}, {1.0});
 	world.UpdateNeighborList();
 
-
 	// Initialize ElasticCoeffOP 
 	Histogram hist(-0.02, 0.02, 200);
 	int middle = ceil(n/2);
-	ElasticCoeffOP op(hist, world, n - middle, [=](const Particle* p){
+	ElasticCoeffOP op(hist, &world, n - middle, [=](const Particle* p){
 		auto& pos = p->GetPositionRef();
 		return pos[0] == middle; 
 	});
@@ -35,11 +34,7 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 		auto* p = world.SelectParticle(i);
 		auto& pos = p->GetPositionRef();
 		if(pos[0] == middle)
-		{
-			p->AddObserver(&op);
 			++count;
-			//idx = i;
-		}
 
 		// Modify angle of particle.
 		p->SetDirector({0, 1.0, 0.0});

@@ -66,7 +66,7 @@ namespace SAPHRON
 			ParticleList _children;
 
 			// Observer list. 
-			std::list<ParticleObserver*> _observers;
+			std::vector<ParticleObserver*> _observers;
 
 			// Global identifier.
 			int _globalID;
@@ -119,6 +119,7 @@ namespace SAPHRON
 				SetSpecies(species);
 				_neighbors.reserve(100);
 				_bondedneighbors.reserve(10);
+				_observers.reserve(10);
 			}
 
 			// Copy constructor.
@@ -414,7 +415,10 @@ namespace SAPHRON
 			// Remove particle observer. Propogates to children.
 			inline void RemoveObserver(ParticleObserver* observer)
 			{
-				_observers.remove(observer);
+				_observers.erase(
+					std::remove(_observers.begin(), _observers.end(),observer), 
+					_observers.end()
+				);
 				for(auto& c : _children)
 					c->RemoveObserver(observer);
 			}

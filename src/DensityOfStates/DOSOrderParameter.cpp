@@ -84,7 +84,7 @@ namespace SAPHRON
 			auto mid = boxvec[0] - 0.5*(xmax - xmin);
 
 			// Initialize order parameter.
-			op = new ElasticCoeffOP(*hist, *w, mid, filter);
+			op = new ElasticCoeffOP(*hist, w, mid, filter);
 		}
 		else
 		{
