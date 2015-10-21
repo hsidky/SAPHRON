@@ -6,9 +6,9 @@
 #include "../Properties/EPTuple.h"
 #include "../Utils/Rand.h"
 #include "json/json.h"
+#include "vecmap.h"
 #include <memory>
 #include <functional>
-#include <map>
 
 namespace SAPHRON
 {

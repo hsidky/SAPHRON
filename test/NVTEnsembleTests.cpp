@@ -49,7 +49,7 @@ TEST(NVTEnsemble, DefaultBehavior)
 	//ensemble.AddObserver(&co);
 
 	// Run
-	ensemble.Run(1000);
+	ensemble.Run(1100);
 
 	double finalE = world.GetEnergy().total()/world.GetParticleCount();
 	ASSERT_NEAR(-1.59, finalE, 1e-2);

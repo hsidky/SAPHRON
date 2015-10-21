@@ -5,13 +5,13 @@
 #include "ParticleObserver.h"
 #include "ParticleEvent.h"
 #include "../Properties/Vector3D.h"
+#include "vecmap.h"
 #include "json/json.h"
 #include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <map>
 
 namespace SAPHRON
 {
@@ -35,7 +35,7 @@ namespace SAPHRON
 	typedef std::vector<std::string> SpeciesList;
 	typedef std::vector<Connectivity*> ConnectivityList;
 	typedef std::vector<Particle*> ParticleList;
-	typedef std::map<int, Particle*> ParticleMap;
+	typedef vecmap<int, Particle*> ParticleMap;
 
 	// Forward declare.
 	class World;

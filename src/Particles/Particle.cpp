@@ -252,6 +252,6 @@ namespace SAPHRON
 
 
 	SpeciesList Particle::_speciesList(0);
-	std::map<int, Particle*> Particle::_identityList {};
+	ParticleMap Particle::_identityList {};
 	int Particle::_nextID = 0;
 }

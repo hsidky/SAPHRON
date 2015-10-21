@@ -4,6 +4,7 @@
 #include "../Worlds/World.h"
 #include "../Observers/Visitable.h"
 #include "ForceField.h"
+#include "vecmap.h"
 #include <math.h>
 #include <map>
 #include <iterator>
@@ -12,7 +13,7 @@
 namespace SAPHRON
 {
 	typedef std::pair<int, int> SpeciesPair;
-	typedef std::map<SpeciesPair, ForceField*> FFMap;
+	typedef vecmap<SpeciesPair, ForceField*> FFMap;
 
 	// Class responsible for managing forcefields and evaluating energies of particles.
 	class ForceFieldManager : public Visitable
@@ -53,13 +54,6 @@ namespace SAPHRON
 				{
 					auto* neighbor = neighbors[k];
 
-					Interaction interij, electroij;
-
-					auto it = _nonbondedforcefields.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
-					auto it2 = _electrostaticforcefield.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
-
-					auto* ff = it->second;
-					auto* eff = it2->second;
 					Position rij = particle.GetPositionRef() - neighbor->GetPositionRef();
 												
 					if(world != nullptr)
@@ -89,14 +83,25 @@ namespace SAPHRON
 						if(world != nullptr)
 							world->ApplyMinimumImage(rab);
 					}
-				
+
+					auto it = _nonbondedforcefields.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
+					auto it2 = _electrostaticforcefield.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
+
+					Interaction interij, electroij;
+
 					// Interaction containing energy and virial.
 					if(it != _nonbondedforcefields.end())
+					{
+						auto* ff = it->second;
 						interij = ff->Evaluate(particle, *neighbor, rij, rcut);
+					}
 
 					//Electrostatics containing energy and virial
 					if(it2 != _electrostaticforcefield.end())
+					{
+						auto* eff = it2->second;
 						electroij = eff->Evaluate(particle, *neighbor, rij, rcut);
+					}
 					
 					intere += interij.energy; // Sum nonbonded van der Waal energy.
 					electroe += electroij.energy; // Sum electrostatic energy

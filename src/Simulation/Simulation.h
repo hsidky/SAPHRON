@@ -6,7 +6,7 @@
 #include "../Worlds/World.h"
 #include "../DensityOfStates/DOSOrderParameter.h"
 #include "json/json.h"
-#include <map>
+#include "vecmap.h"
 #include <vector>
 
 namespace SAPHRON
@@ -35,7 +35,7 @@ namespace SAPHRON
 			virtual void VisitChildren(Visitor& v) const = 0;
 
 		public:
-			typedef std::map<std::string, double> AcceptanceMap;
+			typedef vecmap<std::string, double> AcceptanceMap;
 
 			Simulation() : _iterations(0), _mpi(0) {}
 
@@ -68,7 +68,7 @@ namespace SAPHRON
 
 			/* Properties */
 			virtual std::string GetName() const = 0;
-			virtual AcceptanceMap GetAcceptanceRatio() const { return {}; }
+			virtual AcceptanceMap GetAcceptanceRatio() const { return AcceptanceMap{}; }
 
 			/* Static Builder methods */
 

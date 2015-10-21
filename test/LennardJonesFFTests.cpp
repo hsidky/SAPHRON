@@ -26,10 +26,8 @@ TEST(LennardJonesFF, DefaultBehavior)
 	ForceFieldManager ffm;
 	ffm.AddNonBondedForceField("L1", "L1", ff);
 
-	CompositionList compositions = 
-	{
-		{s1.GetSpeciesID(), 1000}
-	};
+	CompositionList compositions;
+	compositions[s1.GetSpeciesID()] = 1000;
 
 	// Validate invidual components first.
 	auto NB = ff.Evaluate(s1, s2, s1.GetPosition() - s2.GetPosition(), rcut);
