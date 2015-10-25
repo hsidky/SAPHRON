@@ -224,6 +224,21 @@ namespace SAPHRON
 			notices.clear();
 		}
 
+		// Build simulation.
+		PrintBoldNotice(" > Building simulation...", _msgw);
+		try{
+			_sim = Simulation::BuildSimulation(root, &_wm, &_ffm, &_mm, _orderp, _hist);
+		} catch(BuildException& e) {
+			DumpErrorsToConsole(e.GetErrors(), _notw);
+			return false;
+		} catch(exception& e) {
+			DumpErrorsToConsole({e.what()}, _notw);
+			return false;
+		}
+
+		DumpNoticesToConsole(notices, "",_notw);
+		notices.clear();
+
 		return true;
 	}
 }

@@ -18,10 +18,13 @@ namespace SAPHRON
 	{
 		private:
 			// Iteration counter.
-			int _iterations = 0;
+			int _iterations;
 
 			// Moves per iteration.
-			int _mpi = 0;
+			int _mpi ;
+
+			// Target iterations.
+			int _targetit;
 
 		protected:
 
@@ -37,7 +40,10 @@ namespace SAPHRON
 		public:
 			typedef vecmap<std::string, double> AcceptanceMap;
 
-			Simulation() : _iterations(0), _mpi(0) {}
+			Simulation() : _iterations(0), _mpi(0), _targetit(0) {}
+
+			// Run the simulation target iteration number of times.
+			void Run() { Run(_targetit); }
 
 			// Run the simulation for a specified number of iterations.
 			virtual void Run(int iterations) = 0;
@@ -58,6 +64,12 @@ namespace SAPHRON
 			{
 				_iterations = 0;
 			}
+
+			// Set number of target iterations.
+			void SetTargetIterations(int targetit) { _targetit = targetit; }
+
+			// Get number of target iterations.
+			int GetTargetIterations() { return _targetit; }
 
 			// Accept a visitor.
 			virtual void AcceptVisitor(Visitor& v) const override

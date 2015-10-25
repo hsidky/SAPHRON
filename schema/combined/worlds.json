@@ -10,44 +10,44 @@
             "components"
         ],
         "properties": {
+            "dimensions": {
+                "additionalItems": false,
+                "maxItems": 3,
+                "type": "array",
+                "minItems": 3,
+                "items": {
+                    "type": "number",
+                    "minimum": 0
+                }
+            },
+            "particles": {
+                "type": "array"
+            },
+            "temperature": {
+                "type": "number",
+                "minimum": 0
+            },
             "type": {
-                "type": "string",
                 "enum": [
                     "Simple"
-                ]
+                ],
+                "type": "string"
             },
-            "r_cutoff": {
-                "type": "number",
-                "exclusiveMinimum": true,
-                "minimum": 0
+            "components": {
+                "type": "object"
             },
             "nlist_cutoff": {
                 "type": "number",
                 "exclusiveMinimum": true,
                 "minimum": 0
             },
-            "components": {
-                "type": "object"
-            },
-            "temperature": {
-                "type": "number",
-                "minimum": 0
-            },
-            "particles": {
-                "type": "array"
-            },
-            "dimensions": {
-                "type": "array",
-                "maxItems": 3,
-                "minItems": 3,
-                "additionalItems": false,
-                "items": {
-                    "type": "number",
-                    "minimum": 0
-                }
-            },
             "seed": {
                 "type": "integer",
+                "minimum": 0
+            },
+            "r_cutoff": {
+                "type": "number",
+                "exclusiveMinimum": true,
                 "minimum": 0
             }
         }

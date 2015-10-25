@@ -152,7 +152,7 @@ namespace SAPHRON
 			EPTuple ep(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 			World* world = particle.GetWorld();
-			double rcut = (world == nullptr) ? std::numeric_limits<double>::infinity() : world->GetCutoffRadius();
+			double rcut = (world == nullptr) ? _rcdefault : world->GetCutoffRadius();
 
     		// Go to particle parent and evaluate non-bonded interactions with siblings.
             if(particle.HasParent())
@@ -161,26 +161,26 @@ namespace SAPHRON
                 {
                     if(!particle.IsBondedNeighbor(sibling) && sibling != &particle)
                     {
-                    	auto it = _nonbondedforcefields.find({particle.GetSpeciesID(),sibling->GetSpeciesID()});
-						auto it2 = _electrostaticforcefield.find({particle.GetSpeciesID(),sibling->GetSpeciesID()});
-
-						auto* ff = it->second;
-						auto* eff = it2->second;
+                    	
                     	Position rij = particle.GetPositionRef() - sibling->GetPositionRef();
     					
     					if(world != nullptr)
 							world->ApplyMinimumImage(rij);
 
+						auto it = _nonbondedforcefields.find({particle.GetSpeciesID(),sibling->GetSpeciesID()});
+						auto it2 = _electrostaticforcefield.find({particle.GetSpeciesID(),sibling->GetSpeciesID()});
+
 						//Electrostatics containing energy and virial
 						if(it2 != _electrostaticforcefield.end())
 						{
+							auto* eff = it2->second;
 							auto ij = eff->Evaluate(particle, *sibling, rij, rcut);
-
 							ep.energy.intraelectrostatic+=ij.energy;
 						}		
 
 						if(it != _nonbondedforcefields.end())
 						{
+							auto* ff = it->second;
 							auto ij = ff->Evaluate(particle, *sibling, rij, rcut);
 
 							ep.energy.intravdw += ij.energy; // Sum nonbonded energy.

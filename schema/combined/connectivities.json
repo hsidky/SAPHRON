@@ -10,28 +10,28 @@
                     "director",
                     "selector"
                 ],
-                "additionalProperties": false,
                 "properties": {
-                    "type": {
-                        "type": "string",
-                        "enum": [
-                            "P2SA"
-                        ]
-                    },
-                    "director": {
-                        "type": "array",
-                        "maxItems": 3,
-                        "minItems": 3,
-                        "additionalItems": false,
-                        "items": {
-                            "type": "number"
-                        }
-                    },
                     "coefficient": {
                         "type": "number"
                     },
-                    "selector": {}
-                }
+                    "type": {
+                        "enum": [
+                            "P2SA"
+                        ],
+                        "type": "string"
+                    },
+                    "selector": {},
+                    "director": {
+                        "additionalItems": false,
+                        "maxItems": 3,
+                        "type": "array",
+                        "minItems": 3,
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "additionalProperties": false
             }
         ]
     }

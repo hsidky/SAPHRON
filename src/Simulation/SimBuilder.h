@@ -10,6 +10,7 @@
 #include "SimObserver.h"
 #include "../Utils/Histogram.h"
 #include "../DensityOfStates/DOSOrderParameter.h"
+#include "Simulation.h"
 #include <iostream>
 #include <iomanip>
 
@@ -29,17 +30,19 @@ namespace SAPHRON
 		ObserverList _observers;
 		Histogram* _hist;
 		DOSOrderParameter* _orderp;
+		Simulation* _sim;
 		int _ltot, _msgw, _notw;
 
 	public:
 		SimBuilder() : 
 		_worlds(0), _particles(0), _forcefields(0), _moves(0), _ffm(), 
 		_mm(), _wm(), _observers(0), _hist(nullptr), _orderp(nullptr), 
-		_ltot(77), _msgw(47), _notw(_ltot - _msgw)
+		_sim(nullptr), _ltot(77), _msgw(47), _notw(_ltot - _msgw)
 		{}
 		
 		bool BuildSimulation(std::istream& is);
-
+		Simulation* GetSimulation() { return _sim; }
+		
 		~SimBuilder()
 		{
 			for(auto& world : _worlds)
@@ -64,6 +67,7 @@ namespace SAPHRON
 
 			delete _hist;
 			delete _orderp;
+			delete _sim;
 		}
 	};
 }

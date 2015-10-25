@@ -22,8 +22,24 @@ int main(int argc, char const* argv[])
 	             " ******************************************************************      \n" << 
 	             "                                                                         \n";
 
+	int validate_only = 0;
+	for(int i = 1; i < argc; ++i)
+	{
+		if(strcmp(argv[i], "-v") == 0)
+		{
+			validate_only = 1;
+		}
+	}
+
 	SimBuilder builder;
-	builder.BuildSimulation(std::cin);
+	if(!builder.BuildSimulation(std::cin))
+		return -1;
+
+	if(validate_only == 0)
+	{
+		auto* sim = builder.GetSimulation();
+		sim->Run();
+	}
 
 	return 0;
 }	

@@ -1,5 +1,7 @@
 {
     "units" : "real",
+    "simtype" : "DOS",
+    "iterations" : 10,
     "histogram" : {
         "min" : 10,
         "max" : 20,
