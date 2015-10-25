@@ -89,6 +89,12 @@ namespace SAPHRON
 			this->UpdateNeighborList(particle);
 		}
 
+		// Methods for parallel neighbor list.
+		void rect(int i0, int i1, int j0, int j1);
+		void triangle(int n0, int n1);
+		void AddNeighbor(Particle* pi, Particle*pj);
+
+
 	protected:
 
 		// World optional string ID.

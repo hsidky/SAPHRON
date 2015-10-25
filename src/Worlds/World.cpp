@@ -126,6 +126,83 @@ namespace SAPHRON
 			++_composition[id];
 	}
 
+	inline void World::AddNeighbor(Particle* pi, Particle* pj)
+	{
+		// Only add inter (non same molecule).
+		if(pi->HasParent() && pj->HasParent() && 
+		  (pi->GetParent() == pj->GetParent()))
+			return;
+
+		const Position& posi = pi->GetPositionRef();
+		const Position& posj = pj->GetPositionRef();
+
+		Position rij = posi - posj;
+		ApplyMinimumImage(rij);
+
+		if(arma::dot(rij,rij) <= _ncutsq)
+		{
+			pj->AddNeighbor(pi);
+			pi->AddNeighbor(pj);
+		}
+	}
+
+	void World::rect(int i0, int i1, int j0, int j1)
+	{
+		int di = i1 - i0;
+		int dj = j1 - j0;
+		constexpr int threshold = 32;
+		if(di > threshold && dj > threshold)
+		{
+			int im = i0 + di/2;
+			int jm = j0 + dj/2;
+			#pragma omp task
+			{ rect(i0, im, j0, jm); }
+			rect(im, i1, jm, j1);
+			#pragma omp taskwait
+			
+			#pragma omp task 
+			{ rect(i0, im, jm, j1); }
+			rect(im, i1, j0, jm);
+			#pragma omp taskwait
+		}
+		else
+		{
+			for(int i = i0; i < i1; ++i)
+				for(int j = j0; j < j1; ++j) 
+				{
+					auto* pi = _primitives[i];
+					auto* pj = _primitives[j];
+					AddNeighbor(pi, pj);
+				}			
+		}
+	}
+
+	void World::triangle(int n0, int n1)
+	{
+        int dn = n1 - n0;
+		constexpr int threshold = 32;   
+        if(dn > threshold)
+        {
+        	int nm = n0 + dn/2;
+			#pragma omp task
+        	{ triangle(n0, nm); }
+			triangle(nm, n1);
+			#pragma omp taskwait
+     
+			rect(n0, nm, nm, n1);
+		}
+		else
+		{
+			for(int i = n0; i < n1; ++i)
+				for(int j = i+1; j < n1; ++j) 
+				{
+					auto* pi = _primitives[i];
+					auto* pj = _primitives[j];
+					AddNeighbor(pi, pj);
+				}
+		}
+	}
+
 	void World::UpdateNeighborList()
 	{
 		int n = this->GetPrimitiveCount();
@@ -134,39 +211,16 @@ namespace SAPHRON
 		// We need to do this for parent particles
 		// (it propogates to children) because parent 
 		// checkpoints are used to check for nlist updates.
-		#pragma omp parallel for
+		#pragma omp parallel for schedule(static)
 		for(int i = 0; i < this->GetParticleCount(); ++i)
 		{
 			_particles[i]->ClearNeighborList();
 			_particles[i]->SetCheckpoint();
 		}
 		
-		for(int i = 0; i < n - 1; ++i)
-		{
-			auto* pi = _primitives[i];
-			const Position& posi = pi->GetPositionRef();
-			
-			for(int j = i + 1; j < n; ++j)
-			{
-				auto pj = _primitives[j];
-
-				// Only add inter (non same molecule).
-				if(pi->HasParent() && pj->HasParent() && 
-					(pi->GetParent() == pj->GetParent()))
-					continue;
-
-				const Position& posj = pj->GetPositionRef();
-
-				Position rij = posi - posj;
-				ApplyMinimumImage(rij);
-
-				if(arma::dot(rij,rij) <= _ncutsq)
-				{
-					pj->AddNeighbor(pi);
-					pi->AddNeighbor(pj);
-				}
-			}
-		}
+		#pragma omp parallel
+		#pragma omp single
+		triangle(0, n);
 	}
 
 	void World::UpdateNeighborList(Particle* particle)
