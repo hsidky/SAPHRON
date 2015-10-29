@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../Utils/Rand.h"
 #include "Move.h"
+#include "../Utils/Rand.h"
 #include "../Observers/Visitable.h"
+#include "../JSON/Serializable.h"
 #include <numeric>
 #include <algorithm>
 
@@ -11,7 +12,7 @@ namespace SAPHRON
 	// Class for managing moves. Moves are added with integer relative 
 	// probabilities which are converted into a probability distribution 
 	// between [0, 1]. 
-	class MoveManager : public Visitable
+	class MoveManager : public Visitable, public Serializable
 	{
 	private:
 		typedef std::vector<Move*> MoveList;
@@ -98,6 +99,17 @@ namespace SAPHRON
 
 		// Get seed.
 		int GetSeed() const	{ return _seed; }
+
+		// Serialize.
+		virtual void Serialize(Json::Value& root) const override
+		{
+			auto& moves = root["moves"];
+			for(size_t i = 0; i < _moves.size(); ++i)
+			{
+				_moves[i]->Serialize(root);
+				moves[moves.size() - 1]["weight"] = _prob[i];
+			}
+		}
 
 		// Accept a visitor.
 		virtual void AcceptVisitor(Visitor& v) const override

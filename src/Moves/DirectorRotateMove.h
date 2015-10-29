@@ -134,6 +134,15 @@ namespace SAPHRON
 			_rejected = 0;
 		}
 
+		// Serialize.
+		virtual void Serialize(Json::Value& root) const override
+		{
+			Json::Value val;
+			val["type"] = "DirectorRotate";
+			val["seed"] = _seed;
+			root["moves"].append(val);
+		}
+
 		// Get seed.
 		virtual int GetSeed() const override { return _seed; }
 

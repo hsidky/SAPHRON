@@ -2,6 +2,7 @@
 
 #include "../Particles/Particle.h"
 #include "../Worlds/World.h"
+#include "../JSON/Serializable.h"
 
 // Forward declare.
 namespace Json {
@@ -28,7 +29,7 @@ namespace SAPHRON
 	typedef std::vector<Move*> MoveList; 
 	
 	// Abstract base class for a Monte Carlo move.
-	class Move
+	class Move: public Serializable
 	{
 	public:
 		virtual ~Move(){}
@@ -55,6 +56,9 @@ namespace SAPHRON
 
 		// Clone a move.
 		virtual Move* Clone() const = 0;
+
+		// Serialize.
+		virtual void Serialize(Json::Value& root) const = 0;
 
 		// Builds a move from a JSON node. Returns a pointer to the built Move in addition to adding it 
 		// to the move manager. If return value is nullptr, then an unknown error occurred. It will throw 

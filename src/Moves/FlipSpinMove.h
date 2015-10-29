@@ -17,11 +17,12 @@ namespace SAPHRON
 		Rand _rand;
 		int _rejected;
 		int _performed;
+		int _seed;
 
 	public:
 
 		FlipSpinMove(int seed = 76345) 
-		: _rand(seed), _rejected(0), _performed(0) {} 
+		: _rand(seed), _rejected(0), _performed(0), _seed(seed) {} 
 
 		void Perform(Particle* p, const Director& d)
 		{
@@ -119,6 +120,15 @@ namespace SAPHRON
 		{
 			_performed = 0;
 			_rejected = 0;
+		}
+
+		// Serialize.
+		virtual void Serialize(Json::Value& root) const override
+		{
+			Json::Value val;
+			val["type"] = "FlipSpin";
+			val["seed"] = _seed;
+			root["moves"].append(val);
 		}
 
 		// Get move name.

@@ -13,15 +13,16 @@ namespace SAPHRON
 	{
 	private:
 		// Maximum angle displacement [0,2*pi].
-		double _dmax;
+		double _maxangle;
 		Rand _rand;
 		int _rejected;
 		int _performed;
 		int _seed;
 
 	public:
-		RotateMove(double dmax, int seed = 98476) : 
-		_dmax(dmax), _rand(seed), _rejected(0), _performed(0), _seed(seed)
+		RotateMove(double maxangle, int seed = 98476) : 
+		_maxangle(maxangle), _rand(seed), 
+		_rejected(0), _performed(0), _seed(seed)
 		{
 		}
 
@@ -94,7 +95,7 @@ namespace SAPHRON
 
 			// Choose random axis, and generate random angle.
 			int axis = _rand.int32() % 3 + 1;
-			double deg = (2.0*_rand.doub() - 1.0)*_dmax;
+			double deg = (2.0*_rand.doub() - 1.0)*_maxangle;
 			Matrix3D R = GenRotationMatrix(axis, deg);
 
 			// Rotate particle.
@@ -141,7 +142,7 @@ namespace SAPHRON
 
 			// Choose random axis, and generate random angle.
 			int axis = _rand.int32() % 3 + 1;
-			double deg = (2.0*_rand.doub() - 1.0)*_dmax;
+			double deg = (2.0*_rand.doub() - 1.0)*_maxangle;
 			Matrix3D R = GenRotationMatrix(axis, deg);
 
 			// Rotate particle.
@@ -178,7 +179,7 @@ namespace SAPHRON
 
 		}
 
-		double GetMaxAngle() const { return _dmax; }
+		double GetMaxAngle() const { return _maxangle; }
 
 		virtual double GetAcceptanceRatio() const override
 		{
@@ -189,6 +190,16 @@ namespace SAPHRON
 		{
 			_performed = 0;
 			_rejected = 0;
+		}
+
+		// Serialize.
+		virtual void Serialize(Json::Value& root) const override
+		{
+			Json::Value val;
+			val["type"] = "Rotate";
+			val["seed"] = _seed;
+			val["maxangle"] = _maxangle;
+			root["moves"].append(val);
 		}
 
 		// Get seed.
