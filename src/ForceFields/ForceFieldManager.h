@@ -3,6 +3,7 @@
 #include "../Particles/Particle.h"
 #include "../Worlds/World.h"
 #include "../Observers/Visitable.h"
+#include "../JSON/Serializable.h"
 #include "ForceField.h"
 #include "vecmap.h"
 #include <math.h>
@@ -16,7 +17,7 @@ namespace SAPHRON
 	typedef vecmap<SpeciesPair, ForceField*> FFMap;
 
 	// Class responsible for managing forcefields and evaluating energies of particles.
-	class ForceFieldManager : public Visitable
+	class ForceFieldManager : public Visitable, public Serializable
 	{
 	private:
 		//non-bonded forcefields
@@ -329,6 +330,33 @@ namespace SAPHRON
 		virtual void AcceptVisitor(Visitor& v) const override
 		{
 			v.Visit(*this);
+		}
+
+		// Serialize forcefield manager.
+		virtual void Serialize(Json::Value& root) const override
+		{
+			auto& species = Particle::GetSpeciesList();
+
+			// Go through non-bonded FF.
+			auto& nonbonded = root["forcefields"]["nonbonded"];
+			for(auto& ff : _uniquenbffs)
+			{
+				auto& pair = ff.first;
+				ff.second->Serialize(root);
+				auto& last = nonbonded[nonbonded.size() - 1];
+				last["species"][0] = species[pair.first];
+				last["species"][1] = species[pair.second];
+			}
+
+			auto& bonded = root["forcefields"]["bonded"];
+			for(auto& ff : _uniquebffs)
+			{
+				auto& pair = ff.first;
+				ff.second->Serialize(root);
+				auto& last = bonded[bonded.size() - 1];
+				last["species"][0] = species[pair.first];
+				last["species"][1] = species[pair.second];
+			}
 		}
 
 		// Get (unique) non-bonded forcefields.

@@ -4,6 +4,7 @@
 #include "../Properties/Energy.h"
 #include "../Properties/Pressure.h"
 #include "../Properties/EPTuple.h"
+#include "../JSON/Serializable.h"
 
 namespace SAPHRON
 {
@@ -35,6 +36,9 @@ namespace SAPHRON
 
 		// Evalutes the pressure tail correction term.
 		virtual double PressureTailCorrection(double) { return 0.0; }
+
+		// Serialize 
+		virtual void Serialize(Json::Value& root) const = 0;
 
 		// Build a non-bonded forcefield from a JSON node. Returns a pointer to the built 
 		// FF in addition to adding it to the FFM. If return value is nullptr, then an 

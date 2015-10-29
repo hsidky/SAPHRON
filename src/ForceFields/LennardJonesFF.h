@@ -49,6 +49,16 @@ namespace SAPHRON
 			return 8.0*_epsilon*_sigma3*(2.0/3.0*(_sigma3*_sigma3*_sigma3)/rcut9-_sigma3/rcut3); 
 		}
 
+		// Serialize LJ.
+		virtual void Serialize(Json::Value& root) const override
+		{
+			Json::Value val; 
+			val["type"] = "LennardJones";
+			val["sigma"] = sqrt(_sigmasq);
+			val["epsilon"] = _epsilon;
+			root["forcefields"]["nonbonded"].append(val);
+		}
+
 		double GetEpsilon() const { return _epsilon; }
 		double GetSigma() const { return sqrt(_sigmasq); }
 	};

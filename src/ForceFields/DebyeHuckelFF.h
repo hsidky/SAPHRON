@@ -41,6 +41,16 @@ namespace SAPHRON
 				return ep;
 			}
 
+			// Serialize DebyeHuckel.
+			virtual void Serialize(Json::Value& root) const override
+			{
+				Json::Value val; 
+				val["type"] = "DebeyeHuckel";
+				val["bjerrum"] = _bjerrum;
+				val["debye"] = _debye;
+				root["forcefields"]["electrostatics"].append(val);
+			}
+
 			double GetBjerrum() { return _bjerrum; }
 			double GetDebye() { return _debye; }
 	};

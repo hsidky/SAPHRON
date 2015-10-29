@@ -58,6 +58,15 @@ namespace SAPHRON
 			return ep;
 		}
 
+		// Serialize DSF.
+		virtual void Serialize(Json::Value& root) const override
+		{
+			Json::Value val; 
+			val["type"] = "DSF";
+			val["alpha"] = _alpha;
+			root["forcefields"]["electrostatics"].append(val);
+		}
+
 		double GetAlpha() const { return _alpha; }
 	};
 }

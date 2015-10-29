@@ -25,7 +25,6 @@ TEST(ForceFieldManager, DefaultBehavior)
 	FENEFF Fff(1.0, 2.0, 3.0, 4.0);
 	FENEFF Fff2(4.0, 3.0, 2.0, 1.0);
 
-
 	// Define ff manager.
 	ForceFieldManager ffm;
 
@@ -37,8 +36,6 @@ TEST(ForceFieldManager, DefaultBehavior)
 	// Note: cannot set volume to zero (or else D.B.Z).
 	ASSERT_EQ(-4.0, ffm.EvaluateHamiltonian(s1, CompositionList{}, 10).energy.total());
 	ASSERT_EQ(0.0, ffm.EvaluateHamiltonian(s1, CompositionList{}, 10).pressure.isotropic());
-
-	// TODO: Need to add a test for FENEFF?
 }
 
 TEST(ForceFieldManager, FFIterator)
