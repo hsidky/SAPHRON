@@ -67,6 +67,8 @@ namespace SAPHRON
 		virtual void Visit(const Particle& p) override;
 		virtual void Visit(const Histogram& hist) override;
 
+		virtual void Serialize(Json::Value& json) const override;
+
 		// Post visit, mark printed bools as true.
 		virtual void PostVisit() override
 		{

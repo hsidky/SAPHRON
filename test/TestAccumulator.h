@@ -94,6 +94,11 @@ namespace SAPHRON
 				
 			}
 
+			virtual void Serialize(Json::Value&) const override
+			{
+				
+			}
+
 			std::map<World*, Energy> GetAverageEnergies()
 			{
 				auto emap = _energy;

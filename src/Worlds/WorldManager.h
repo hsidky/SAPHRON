@@ -3,11 +3,12 @@
 #include "World.h"
 #include "../Utils/Rand.h"
 #include "../Observers/Visitable.h"
+#include "../JSON/Serializable.h"
 
 namespace SAPHRON
 {
 	// WorldManager class that manages worlds for simulations. 
-	class WorldManager : public Visitable
+	class WorldManager : public Visitable, public Serializable
 	{
 	private:
 		// List of worlds. 
@@ -106,6 +107,13 @@ namespace SAPHRON
 			v.Visit(*this);
 			for(auto& w : _worlds)
 				w->AcceptVisitor(v);
+		}
+
+		virtual void Serialize(Json::Value& json) const override
+		{
+			auto& worlds = json["worlds"];
+			for(int i = 0; i < (int)_worlds.size(); ++i)
+				_worlds[i]->Serialize(worlds[i]);
 		}
 
 		// Iterators.

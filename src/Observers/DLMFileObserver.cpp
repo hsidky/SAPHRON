@@ -402,4 +402,12 @@ namespace SAPHRON
 
 		*fs << "\n";
 	}
+
+	void DLMFileObserver::Serialize(Json::Value& json) const
+	{
+		json["type"] = "DLMFile";
+		json["frequency"] = GetFrequency();
+		json["prefix"] = _prefix;
+		this->Flags.Serialize(json["flags"]);
+	}
 }

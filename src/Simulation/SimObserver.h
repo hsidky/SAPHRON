@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Observers/Visitor.h"
+#include "../JSON/Serializable.h"
 #include "SimEvent.h"
 #include <mutex>
 #include <vector>
@@ -12,7 +13,7 @@ namespace SAPHRON
 	typedef std::vector<SimObserver*> ObserverList;
 
 	// Abstract class for objects wanting to observe a simulation.
-	class SimObserver : public Visitor
+	class SimObserver : public Visitor, public Serializable
 	{
 		private:
 			unsigned int _frequency = 1;
@@ -70,6 +71,9 @@ namespace SAPHRON
 
 			// Called after visitors complete.
 			virtual void PostVisit(){}
+
+			// Serialize observer.
+			virtual void Serialize(Json::Value& json) const = 0;
 
 			// Static builder method for simobserver. If return value is nullptr, 
 			// then an unknown error occurred. It will throw a BuildException on 
