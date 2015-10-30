@@ -74,6 +74,7 @@ TEST(DSFFF, NISTConfig1)
 	ASSERT_EQ(300, w->GetPrimitiveCount());
 	w->UpdateNeighborList();
 	ASSERT_EQ(10.0, w->GetCutoffRadius());
+	ASSERT_EQ(0.0, w->GetSkinThickness());
 	auto L = w->GetBoxVectors();
 	ASSERT_EQ(20, L[0]);
 	ASSERT_EQ(20, L[1]);

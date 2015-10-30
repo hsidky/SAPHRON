@@ -4,6 +4,7 @@
 #include "../Particles/Particle.h"
 #include "../Observers/Visitable.h"
 #include "../Properties/EPTuple.h"
+#include "../JSON/Serializable.h"
 #include "../Utils/Rand.h"
 #include "json/json.h"
 #include "vecmap.h"
@@ -21,7 +22,7 @@ namespace SAPHRON
 	// updating negihbor lists on particles. World implements ParticleObserver so it can "listen in" 
 	// on it's particles if it needs it. Note: it is the World implementation's responsibility to register 
 	// itself with particles if it needs it, and to remove this when a particle is removed.
-	class World : public ParticleObserver, public Visitable
+	class World : public ParticleObserver, public Visitable, public Serializable
 	{
 	private:
 		// Cutoff radius.
@@ -400,6 +401,53 @@ namespace SAPHRON
 		virtual void AcceptVisitor(Visitor &v) const override
 		{
 			VisitChildren(v);
+		}
+
+		virtual void Serialize(Json::Value& json) const override
+		{
+			// TODO: Fix this.
+			json["type"] = "Simple";
+			json["temperature"] = this->GetTemperature();
+
+			auto box = this->GetBoxVectors();
+			json["dimensions"][0] = box[0];
+			json["dimensions"][1] = box[1];
+			json["dimensions"][2] = box[2];
+
+			json["seed"] = this->GetSeed();
+			json["r_cutoff"] = this->GetCutoffRadius();
+			json["skin_thickness"] = this->GetSkinThickness();
+
+			// Serialize primitives and build blueprint.
+			for(int i = 0; i < (int)_primitives.size(); ++i)
+			{
+				auto& p = _primitives[i];
+				
+				// Particles.
+				auto& last = json["particles"][i];
+				p->Serialize(last);
+
+				// Components
+				// If primitive has no parent it belongs in components.
+				if(p->HasParent())
+				{
+					auto& component = json["components"][p->GetParent()->GetSpecies()];
+					if(component == Json::nullValue)
+					{
+						component["count"] = _composition.at(p->GetParent()->GetSpeciesID());
+						p->GetParent()->GetBlueprint(component);
+					}
+				}
+				else
+				{
+					auto& component = json["components"][p->GetSpecies()];
+					if(component == Json::nullValue)
+					{
+						component["count"] = _composition.at(p->GetSpeciesID());
+						p->GetBlueprint(component);
+					}
+				}
+			}
 		}
 
 		/**********************************

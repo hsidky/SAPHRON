@@ -60,14 +60,6 @@ TEST(LennardJonesFF, ConfigurationValues)
 	ASSERT_NO_THROW(w = World::Build(root["worlds"][0]));
 	ASSERT_NE(nullptr, w);
 
-	ParticleList particles;
-	// Build particles.
-	ASSERT_NO_THROW(Particle::BuildParticles(root["particles"], root["components"], particles));
-	ASSERT_EQ(800, particles.size());
-
-	for(auto& p : particles)
-		w->AddParticle(p);
-
 	ASSERT_EQ(800, w->GetParticleCount());
 	w->UpdateNeighborList();
 	ASSERT_EQ(3.0, w->GetCutoffRadius());

@@ -48,7 +48,7 @@
 			"dimensions": [20, 20, 20],
 			"seed": 300,
 			"r_cutoff": 10.0,
-			"skin_thickness": 0.5,
+			"nlist_cutoff": 10.0,
 			"components" : {
 				"SPCE" : {
 					"count" : 100,

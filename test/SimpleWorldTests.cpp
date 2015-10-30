@@ -156,7 +156,7 @@ TEST(SimpleWorld, VolumeScaling)
 	Particle* p = world.DrawRandomParticle();
 	Position newpos = 2.0*p->GetPosition(); // we will scale by 2
 	world.SetBoxVectors(2.0*box[0], 2.0*box[1], 2.0*box[2], true);
-	ASSERT_TRUE(is_close(newpos, p->GetPosition(),1e-11))	;
+	ASSERT_TRUE(is_close(newpos, p->GetPosition(),1e-11));
 }
 
 TEST(SimpleWorld, NeighborList)

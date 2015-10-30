@@ -44,7 +44,7 @@ namespace SAPHRON
 	// Abstract class Particle represents either a composite or primitive object, from an atom/site to
 	// a molecule to a collection of molecules. It represents an common interface allowing the manipulation
 	// of all of the above through a common interface.
-	class Particle : public Visitable
+	class Particle : public Visitable, public Serializable
 	{
 		private:
 
@@ -505,6 +505,43 @@ namespace SAPHRON
 
 			// Clone particle.
 			virtual Particle* Clone() const = 0;
+
+			// Get particle blueprint.
+			void GetBlueprint(Json::Value& json) const
+			{
+				if(!HasChildren())
+				{
+					json["species"] = GetSpecies();
+					json["charge"] = GetCharge();
+					json["mass"] = GetMass();
+				}
+				else
+				{
+					for(int i = 0; i < (int)_children.size(); ++i)
+					{
+						auto& last = json["children"][i];
+						_children[i]->GetBlueprint(last);
+					}
+				}
+			}
+
+			// Serialize particle.
+			virtual void Serialize(Json::Value& json) const override
+			{
+				json[0] = GetGlobalIdentifier();
+				json[1] = GetSpecies();
+				json[2] = HasParent() ? GetParent()->GetSpecies() : GetSpecies();
+
+				auto& pos = GetPositionRef();
+				json[3][0] = pos[0];
+				json[3][1] = pos[1];
+				json[3][2] = pos[2];
+
+				auto& dir = GetDirectorRef();
+				json[4][0] = dir[0];
+				json[4][1] = dir[1];
+				json[4][2] = dir[2];
+			}
 
 			// Build a particle. This builds a particle from JSON array and the blueprint. 
 			// If the particle is a composite object, an commensurate number of particles 
