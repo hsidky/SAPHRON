@@ -123,12 +123,10 @@ namespace SAPHRON
 		}
 
 		// Serialize.
-		virtual void Serialize(Json::Value& root) const override
+		virtual void Serialize(Json::Value& json) const override
 		{
-			Json::Value val;
-			val["type"] = "FlipSpin";
-			val["seed"] = _seed;
-			root["moves"].append(val);
+			json["type"] = "FlipSpin";
+			json["seed"] = _seed;
 		}
 
 		// Get move name.

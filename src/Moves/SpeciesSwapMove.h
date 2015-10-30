@@ -133,12 +133,10 @@ namespace SAPHRON
 		}
 
 		// Serialize.
-		virtual void Serialize(Json::Value& root) const override
+		virtual void Serialize(Json::Value& json) const override
 		{
-			Json::Value val;
-			val["type"] = "SpeciesSwap";
-			val["seed"] = _seed;
-			root["moves"].append(val);
+			json["type"] = "SpeciesSwap";
+			json["seed"] = _seed;
 		}
 
 		virtual int GetSeed() const override { return _seed; }

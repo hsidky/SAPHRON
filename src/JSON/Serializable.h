@@ -8,9 +8,7 @@ namespace SAPHRON
 	{
 
 	public:
-
-	// Serialize the class. Write to root relative
-	// to base path.
-	virtual void Serialize(Json::Value& root) const = 0;
+		// Serialize the class.
+		virtual void Serialize(Json::Value& json) const = 0;
 	};
 }

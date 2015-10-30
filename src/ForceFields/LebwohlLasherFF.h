@@ -32,13 +32,11 @@ namespace SAPHRON
 		}
 
 		// Serialize LJ.
-		virtual void Serialize(Json::Value& root) const override
+		virtual void Serialize(Json::Value& json) const override
 		{
-			Json::Value val; 
-			val["type"] = "LebwohlLasher";
-			val["gamma"] = _gamma;
-			val["epsilon"] = _eps;
-			root["forcefields"]["nonbonded"].append(val);
+			json["type"] = "LebwohlLasher";
+			json["gamma"] = _gamma;
+			json["epsilon"] = _eps;
 		}
 
 		double GetEpsilon() { return _eps; }

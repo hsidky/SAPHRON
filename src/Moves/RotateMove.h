@@ -193,13 +193,11 @@ namespace SAPHRON
 		}
 
 		// Serialize.
-		virtual void Serialize(Json::Value& root) const override
+		virtual void Serialize(Json::Value& json) const override
 		{
-			Json::Value val;
-			val["type"] = "Rotate";
-			val["seed"] = _seed;
-			val["maxangle"] = _maxangle;
-			root["moves"].append(val);
+			json["type"] = "Rotate";
+			json["seed"] = _seed;
+			json["maxangle"] = _maxangle;
 		}
 
 		// Get seed.

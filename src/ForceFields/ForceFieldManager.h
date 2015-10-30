@@ -333,27 +333,27 @@ namespace SAPHRON
 		}
 
 		// Serialize forcefield manager.
-		virtual void Serialize(Json::Value& root) const override
+		virtual void Serialize(Json::Value& json) const override
 		{
 			auto& species = Particle::GetSpeciesList();
 
 			// Go through non-bonded FF.
-			auto& nonbonded = root["forcefields"]["nonbonded"];
+			auto& nonbonded = json["forcefields"]["nonbonded"];
 			for(auto& ff : _uniquenbffs)
 			{
+				auto& last = nonbonded[nonbonded.size()];
+				ff.second->Serialize(last);
 				auto& pair = ff.first;
-				ff.second->Serialize(root);
-				auto& last = nonbonded[nonbonded.size() - 1];
 				last["species"][0] = species[pair.first];
 				last["species"][1] = species[pair.second];
 			}
 
-			auto& bonded = root["forcefields"]["bonded"];
+			auto& bonded = json["forcefields"]["bonded"];
 			for(auto& ff : _uniquebffs)
 			{
 				auto& pair = ff.first;
-				ff.second->Serialize(root);
-				auto& last = bonded[bonded.size() - 1];
+				auto& last = bonded[bonded.size()];
+				ff.second->Serialize(last);
 				last["species"][0] = species[pair.first];
 				last["species"][1] = species[pair.second];
 			}

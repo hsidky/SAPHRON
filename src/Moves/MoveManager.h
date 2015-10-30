@@ -101,13 +101,13 @@ namespace SAPHRON
 		int GetSeed() const	{ return _seed; }
 
 		// Serialize.
-		virtual void Serialize(Json::Value& root) const override
+		virtual void Serialize(Json::Value& json) const override
 		{
-			auto& moves = root["moves"];
-			for(size_t i = 0; i < _moves.size(); ++i)
+			auto& moves = json["moves"];
+			for(int i = 0; i < (int)_moves.size(); ++i)
 			{
-				_moves[i]->Serialize(root);
-				moves[moves.size() - 1]["weight"] = _prob[i];
+				_moves[i]->Serialize(moves[i]);
+				moves[i]["weight"] = _prob[i];
 			}
 		}
 

@@ -58,7 +58,7 @@ namespace SAPHRON
 		virtual Move* Clone() const = 0;
 
 		// Serialize.
-		virtual void Serialize(Json::Value& root) const = 0;
+		virtual void Serialize(Json::Value& json) const = 0;
 
 		// Builds a move from a JSON node. Returns a pointer to the built Move in addition to adding it 
 		// to the move manager. If return value is nullptr, then an unknown error occurred. It will throw 

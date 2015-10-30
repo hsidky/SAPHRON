@@ -1,12 +1,13 @@
 #pragma once
 
-#include "../Observers/Visitable.h"
-#include "../Connectivities/Connectivity.h"
 #include "ParticleObserver.h"
 #include "ParticleEvent.h"
-#include "../Properties/Vector3D.h"
 #include "vecmap.h"
 #include "json/json.h"
+#include "../Observers/Visitable.h"
+#include "../Connectivities/Connectivity.h"
+#include "../Properties/Vector3D.h"
+#include "../JSON/Serializable.h"
 #include <algorithm>
 #include <cassert>
 #include <iostream>

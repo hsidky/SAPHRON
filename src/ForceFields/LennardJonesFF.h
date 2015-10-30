@@ -50,13 +50,11 @@ namespace SAPHRON
 		}
 
 		// Serialize LJ.
-		virtual void Serialize(Json::Value& root) const override
-		{
-			Json::Value val; 
-			val["type"] = "LennardJones";
-			val["sigma"] = sqrt(_sigmasq);
-			val["epsilon"] = _epsilon;
-			root["forcefields"]["nonbonded"].append(val);
+		virtual void Serialize(Json::Value& json) const override
+		{	
+			json["type"] = "LennardJones";
+			json["sigma"] = sqrt(_sigmasq);
+			json["epsilon"] = _epsilon;
 		}
 
 		double GetEpsilon() const { return _epsilon; }

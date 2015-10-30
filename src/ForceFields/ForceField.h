@@ -38,7 +38,7 @@ namespace SAPHRON
 		virtual double PressureTailCorrection(double) { return 0.0; }
 
 		// Serialize 
-		virtual void Serialize(Json::Value& root) const = 0;
+		virtual void Serialize(Json::Value& json) const = 0;
 
 		// Build a non-bonded forcefield from a JSON node. Returns a pointer to the built 
 		// FF in addition to adding it to the FFM. If return value is nullptr, then an 

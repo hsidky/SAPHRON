@@ -151,17 +151,14 @@ namespace SAPHRON
 		}
 
 		// Serialize.
-		virtual void Serialize(Json::Value& root) const override
+		virtual void Serialize(Json::Value& json) const override
 		{
-			Json::Value val;
-			val["type"] = "RandomIdentity";
-			val["seed"] = _seed;
+			json["type"] = "RandomIdentity";
+			json["seed"] = _seed;
 			
 			auto& species = Particle::GetSpeciesList();
 			for(auto& id : _identities)
-				val["identities"].append(species[id]);
-
-			root["moves"].append(val);
+				json["identities"].append(species[id]);
 		}
 
 		// Get seed.

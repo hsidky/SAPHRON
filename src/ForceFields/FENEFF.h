@@ -55,15 +55,13 @@ namespace SAPHRON
 			}
 
 			// Serialize FENE.
-			virtual void Serialize(Json::Value& root) const override
+			virtual void Serialize(Json::Value& json) const override
 			{
-				Json::Value val; 
-				val["type"] = "FENE";
-				val["epsilon"] = _epsilon;
-				val["sigma"] = sqrt(_sigmasq);
-				val["kspring"] = _kspring;
-				val["rmax"] = sqrt(_rmaxsq);
-				root["forcefields"]["bonded"].append(val);
+				json["type"] = "FENE";
+				json["epsilon"] = _epsilon;
+				json["sigma"] = sqrt(_sigmasq);
+				json["kspring"] = _kspring;
+				json["rmax"] = sqrt(_rmaxsq);
 			}
 
 			double GetEpsilon() { return _epsilon; }
