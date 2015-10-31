@@ -17,11 +17,13 @@ namespace SAPHRON
 	typedef std::vector<World*> WorldList;
 	typedef std::vector<int> WorldIndexList;
 	
-	// Public interface representing the "World" in which particles live. A World object is
-	// responsible for setting up the "box" and associated geometry, handling boundary conditions and
-	// updating negihbor lists on particles. World implements ParticleObserver so it can "listen in" 
-	// on it's particles if it needs it. Note: it is the World implementation's responsibility to register 
-	// itself with particles if it needs it, and to remove this when a particle is removed.
+	// Public interface representing the "World" in which particles live. 
+	// A World object is responsible for setting up the "box" and associated 
+	// geometry, handling boundary conditions and updating negihbor lists on
+	// particles. World implements ParticleObserver so it can "listen in" 
+	// on it's particles if it needs it. Note: it is the World implementation's 
+	// responsibility to register itself with particles if it needs it, and to 
+	// remove this when a particle is removed.
 	class World : public ParticleObserver, public Visitable, public Serializable
 	{
 	private:
@@ -136,7 +138,7 @@ namespace SAPHRON
 		// Draw random particles from the world and inserts them into particles. 
 		// NOTE: this method clears the list before adding new elements.
 		void DrawRandomParticles(ParticleList& particles, 
-										 unsigned int count = 1) 
+								 unsigned int count = 1) 
 		{
 			particles.resize(count);
 			unsigned int n = this->_particles.size();
@@ -181,7 +183,7 @@ namespace SAPHRON
 		}
 
 		// Get a specific particle based on location (const).
-		const Particle*  SelectParticle(int location) const
+		const Particle* SelectParticle(int location) const
 		{
 			return _particles[location];
 		}
@@ -234,14 +236,6 @@ namespace SAPHRON
 
 				_particles.erase(it);
 			}
-		}
-
-		// Remove particle(s) based on a supplied filter.
-		// TODO: NEEDS UPDATING TO CARRY OUT IMPORTANT OPERATIONS. SEE ABOVE!
-		void RemoveParticle(std::function<bool(Particle*)> filter)
-		{
-			_particles.erase(std::remove_if(_particles.begin(), _particles.end(), filter), 
-							_particles.end());
 		}
 
 		// Applies periodic boundaries to positions.
@@ -363,10 +357,11 @@ namespace SAPHRON
 		// Increment world energy (e += de).
 		void IncrementEnergy(const Energy& de) { _energy += de; }
 
-		// Sets the box vectors (box volume) and if scale is true, scale the coordinates of the 
-		// particles in the system. Energy recalculation after this procedure is recommended.
-		// If scaling is not applied, periodic boundary conditions are applied to all particles.
-		// The neighbor list is auto regenerated.
+		// Sets the box vectors (box volume) and if scale is true, 
+		// scale the coordinates of the particles in the system. 
+		// Energy recalculation after this procedure is recommended.
+		// If scaling is not applied, periodic boundary conditions 
+		// are applied to all particles. The neighbor list is auto regenerated.
 		virtual void SetBoxVectors(double x, double y, double z, bool scale) = 0;
 
 		// Get box vectors.
@@ -456,8 +451,9 @@ namespace SAPHRON
 		 *                                *
 		 **********************************/
 
-		// Builds a world from JSON value. Returns a pointer to world object, or throws a 
-		// BuildException if validation fails. Object lifetime is caller's responsibility!
+		// Builds a world from JSON value. Returns a pointer to world object, 
+		// or throws a BuildException if validation fails. Object lifetime 
+		// is caller's responsibility!
 		static World* Build(const Json::Value& json);
 		static World* Build(std::istream& stream);
 
