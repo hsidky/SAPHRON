@@ -171,7 +171,8 @@ namespace SAPHRON
 
 		// Add to appropriate species pair.
 		try{
-				mm->AddMove(move);
+				int weight = json.get("weight", 1).asUInt();
+				mm->AddMove(move, weight);
 			} catch(std::exception& e) {
 				delete move;
 				throw BuildException({

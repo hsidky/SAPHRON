@@ -62,7 +62,25 @@ namespace SAPHRON
 			   hist == nullptr || hist == NULL)
 				throw BuildException({"#/simulation: DOS simulation requires "
 									  "initialized histogram and order parameter."});
-			sim = new DOSSimulation(wm, ffm, mm, dop, hist);
+
+			// Additional parameters for DOS.
+			// Parse schema.
+			reader.parse(JsonSchema::DOSSimulation, schema);
+			validator.Parse(schema, "#");
+
+			// Validate input. 
+			validator.Validate(json, "#");
+
+			auto resetfreq = json.get("reset_freq", 0).asInt();
+			auto conv = json.get("convergence_factor", 1.0).asDouble();
+			auto flatness = json.get("target_flatness", 0.80).asDouble();
+
+			auto* dos = new DOSSimulation(wm, ffm, mm, dop, hist);
+			dos->SetHistogramResetFrequency(resetfreq);
+			dos->SetConvergenceFactor(conv);
+			dos->SetTargetFlatness(flatness);
+
+			sim = static_cast<Simulation*>(dos);
 		}
 		else
 		{

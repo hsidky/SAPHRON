@@ -45,6 +45,7 @@ files = [
 	("forcefields/dsf.forcefield.json", "DSFFF"),
 	("forcefields/forcefields.json", "ForceFields"),
 	("simulation/simulation.json", "Simulation"),
+	("simulation/dos.simulation.json", "DOSSimulation"),
 	("utils/histogram.json", "Histogram"),
 	("dos/wanglandau.op.json", "WangLandauOP"),
 	("dos/elasticcoeff.op.json", "ElasticCoeffOP")

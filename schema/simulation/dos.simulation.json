@@ -1,0 +1,22 @@
+{
+	"type" : "object", 
+	"properties" : {
+		"reset_freq" : {
+			"type" : "integer",
+			"minimum" : 0
+		},
+		"convergence_factor" : {
+			"type" : "number",
+			"minimum" : 0,
+			"exclusiveMinimum" : true
+		},
+		"target_flatness" : {
+			"type" : "number",
+			"minimum" : 0,
+			"maximum" : 1,
+			"exclusiveMinimum" : true,
+			"exclusiveMaximum" : true
+		}
+	},
+	"additionalProperties" : false
+}

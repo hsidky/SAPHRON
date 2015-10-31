@@ -37,8 +37,10 @@ int main(int argc, char const* argv[])
 
 	if(validate_only == 0)
 	{
+		std::cerr << std::setw(47 + 8) << std::left << "\033[1m > Running simulation... \033[0m";
 		auto* sim = builder.GetSimulation();
 		sim->Run();
+		std::cout << std::setw(30) << std::right << "\033[32mComplete!\033[0m\n";
 	}
 
 	return 0;

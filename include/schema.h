@@ -11,6 +11,7 @@ namespace SAPHRON
 		static std::string ElasticCoeffOP;
 		static std::string WangLandauOP;
 		static std::string Histogram;
+		static std::string DOSSimulation;
 		static std::string Simulation;
 		static std::string ForceFields;
 		static std::string DSFFF;

@@ -338,34 +338,43 @@ namespace SAPHRON
 			auto& species = Particle::GetSpeciesList();
 
 			// Go through non-bonded FF.
-			auto& nonbonded = json["forcefields"]["nonbonded"];
-			for(auto& ff : _uniquenbffs)
+			if(_uniquenbffs.size() != 0)
 			{
-				auto& last = nonbonded[nonbonded.size()];
-				ff.second->Serialize(last);
-				auto& pair = ff.first;
-				last["species"][0] = species[pair.first];
-				last["species"][1] = species[pair.second];
+				auto& nonbonded = json["forcefields"]["nonbonded"];
+				for(auto& ff : _uniquenbffs)
+				{
+					auto& last = nonbonded[nonbonded.size()];
+					ff.second->Serialize(last);
+					auto& pair = ff.first;
+					last["species"][0] = species[pair.first];
+					last["species"][1] = species[pair.second];
+				}
 			}
 
-			auto& bonded = json["forcefields"]["bonded"];
-			for(auto& ff : _uniquebffs)
+			if(_uniquebffs.size() != 0)
 			{
-				auto& pair = ff.first;
-				auto& last = bonded[bonded.size()];
-				ff.second->Serialize(last);
-				last["species"][0] = species[pair.first];
-				last["species"][1] = species[pair.second];
+				auto& bonded = json["forcefields"]["bonded"];
+				for(auto& ff : _uniquebffs)
+				{
+					auto& pair = ff.first;
+					auto& last = bonded[bonded.size()];
+					ff.second->Serialize(last);
+					last["species"][0] = species[pair.first];
+					last["species"][1] = species[pair.second];
+				}
 			}
 
-			auto& electro = json["forcefields"]["electrostatic"];
-			for(auto& ff : _uniqueeffs)
+			if(_uniqueeffs.size() != 0)
 			{
-				auto& pair = ff.first;
-				auto& last = electro[bonded.size()];
-				ff.second->Serialize(last);
-				last["species"][0] = species[pair.first];
-				last["species"][1] = species[pair.second];
+				auto& electro = json["forcefields"]["electrostatic"];
+				for(auto& ff : _uniqueeffs)
+				{
+					auto& pair = ff.first;
+					auto& last = electro[electro.size()];
+					ff.second->Serialize(last);
+					last["species"][0] = species[pair.first];
+					last["species"][1] = species[pair.second];
+				}
 			}
 		}
 

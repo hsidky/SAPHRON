@@ -8,6 +8,10 @@
 		"seed" : {
 			"type" : "integer",
 			"minimum" : 0
+		},
+		"weight" : {
+			"type" : "integer",
+			"minimum" : 1
 		}
 	},
 	"required": ["type"],

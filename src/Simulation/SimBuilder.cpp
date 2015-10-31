@@ -228,6 +228,11 @@ namespace SAPHRON
 		PrintBoldNotice(" > Building simulation...", _msgw);
 		try{
 			_sim = Simulation::BuildSimulation(root, &_wm, &_ffm, &_mm, _orderp, _hist);
+
+			// Add observers.
+			for(auto& o  : _observers)
+				_sim->AddObserver(o);
+
 		} catch(BuildException& e) {
 			DumpErrorsToConsole(e.GetErrors(), _notw);
 			return false;

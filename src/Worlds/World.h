@@ -416,7 +416,7 @@ namespace SAPHRON
 
 			json["seed"] = this->GetSeed();
 			json["r_cutoff"] = this->GetCutoffRadius();
-			json["skin_thickness"] = this->GetSkinThickness();
+			json["nlist_cutoff"] = this->GetNeighborRadius();
 
 			// Serialize primitives and build blueprint.
 			for(int i = 0; i < (int)_primitives.size(); ++i)

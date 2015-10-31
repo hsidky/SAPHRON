@@ -128,7 +128,7 @@ namespace SAPHRON
         	double GetHistogramResetFrequency() const { return _hreset; }
 
         	// Set histogram reset frequency. 
-        	void SetHistogramResetFrequency(double hreset) { _hreset = hreset; }
+        	void SetHistogramResetFrequency(int hreset) { _hreset = hreset; }
 
         	// Get ensemble name.
 			virtual std::string GetName() const override { return "DOS"; }
