@@ -55,7 +55,7 @@ namespace SAPHRON
 				{
 					auto* neighbor = neighbors[k];
 
-					Position rij = particle.GetPositionRef() - neighbor->GetPositionRef();
+					Position rij = particle.GetPosition() - neighbor->GetPosition();
 												
 					if(world != nullptr)
 						world->ApplyMinimumImage(rij);
@@ -68,19 +68,19 @@ namespace SAPHRON
 					Position rab = rij;
 					if(particle.HasParent() && neighbor->HasParent())
 					{
-						rab = particle.GetParent()->GetPositionRef() - neighbor->GetParent()->GetPositionRef();
+						rab = particle.GetParent()->GetPosition() - neighbor->GetParent()->GetPosition();
 						if(world != nullptr)
 							world->ApplyMinimumImage(rab);
 
 					}
 					else if(neighbor->HasParent() && !particle.HasParent()) 
 					{
-						rab = particle.GetPositionRef() - neighbor->GetParent()->GetPositionRef();
+						rab = particle.GetPosition() - neighbor->GetParent()->GetPosition();
 						if(world != nullptr)
 							world->ApplyMinimumImage(rab);
 					}
 					else if(!neighbor->HasParent() && particle.HasParent()) {
-						rab = particle.GetParent()->GetPositionRef() - neighbor->GetPositionRef();
+						rab = particle.GetParent()->GetPosition() - neighbor->GetPosition();
 						if(world != nullptr)
 							world->ApplyMinimumImage(rab);
 					}
@@ -163,7 +163,7 @@ namespace SAPHRON
                     if(!particle.IsBondedNeighbor(sibling) && sibling != &particle)
                     {
                     	
-                    	Position rij = particle.GetPositionRef() - sibling->GetPositionRef();
+                    	Position rij = particle.GetPosition() - sibling->GetPosition();
     					
     					if(world != nullptr)
 							world->ApplyMinimumImage(rij);
@@ -197,7 +197,7 @@ namespace SAPHRON
 				if(it != _bondedforcefields.end())
 				{
 					auto ff = it->second;
-					Position rij = particle.GetPositionRef() - bondedneighbor->GetPositionRef();
+					Position rij = particle.GetPosition() - bondedneighbor->GetPosition();
 					
 					// Minimum image convention.
 					if(world != nullptr)

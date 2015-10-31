@@ -74,7 +74,7 @@ namespace SAPHRON
 			if(mode == "twist")
 			{
 				filter = [=](const Particle* p) -> bool {
-					auto& pos = p->GetPositionRef();
+					auto& pos = p->GetPosition();
 					return pos[0] >= xmin && pos[0] <= xmax;
 				};
 			}

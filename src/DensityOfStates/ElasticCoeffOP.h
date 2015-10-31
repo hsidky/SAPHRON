@@ -64,7 +64,7 @@ namespace SAPHRON
 				if(_efunc(p))
 				{
 					++_pcount;
-					auto& dir = p->GetDirectorRef();
+					auto& dir = p->GetDirector();
 					_Q += arma::kron(dir.t(), dir) - 1.0/3.0*arma::eye(3,3);
 				}
 			}
@@ -95,7 +95,7 @@ namespace SAPHRON
 				return;
 
 			const auto& pdir = pEvent.GetOldDirector();
-			const auto& dir = p->GetDirectorRef();
+			const auto& dir = p->GetDirector();
 			_Q += 3.0/(2.0*_pcount)*(arma::kron(dir.t(), dir) - arma::kron(pdir.t(), pdir));
 
 			// Eager decomposition. Only on appropriate update.

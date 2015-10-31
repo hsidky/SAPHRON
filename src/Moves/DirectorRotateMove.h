@@ -141,9 +141,6 @@ namespace SAPHRON
 			json["seed"] = _seed;
 		}
 
-		// Get seed.
-		virtual int GetSeed() const override { return _seed; }
-
 		virtual std::string GetName() const override { return "DirectorRotate";	}
 
 		// Clone move.

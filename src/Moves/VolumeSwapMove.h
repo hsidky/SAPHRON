@@ -158,9 +158,6 @@ namespace SAPHRON
 			json["dv"] = _dvmax;
 		}
 
-		// Get seed.
-		virtual int GetSeed() const override { return _seed; }
-
 		// Get move name.
 		virtual std::string GetName() const override { return "VolumeSwap"; }
 

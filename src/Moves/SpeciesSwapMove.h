@@ -30,8 +30,8 @@ namespace SAPHRON
 		{
 			int i1 = p1->GetSpeciesID();
 			int i2 = p2->GetSpeciesID();
-			p1->SetSpecies(i2);
-			p2->SetSpecies(i1);
+			p1->SetSpeciesID(i2);
+			p2->SetSpeciesID(i1);
 		};
 
 		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm, const MoveOverride& override) override
@@ -138,8 +138,6 @@ namespace SAPHRON
 			json["type"] = "SpeciesSwap";
 			json["seed"] = _seed;
 		}
-
-		virtual int GetSeed() const override { return _seed; }
 
 		virtual std::string GetName() const override { return "SpeciesSwap"; }
 

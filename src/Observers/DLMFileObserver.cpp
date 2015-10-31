@@ -378,7 +378,7 @@ namespace SAPHRON
 			WriteStream(*fs, p.GetParent()->GetSpecies());
 		if(this->Flags.particle_position) 
 		{
-			const auto& pos = p.GetPositionRef();
+			const auto& pos = p.GetPosition();
 			*fs << scientific; 
 			WriteStream(*fs, pos[0]);
 			WriteStream(*fs, pos[1]);
@@ -387,7 +387,7 @@ namespace SAPHRON
 		}
 		if(this->Flags.particle_director) 
 		{
-			const auto& dir = p.GetDirectorRef();
+			const auto& dir = p.GetDirector();
 			*fs << scientific; 
 			WriteStream(*fs, dir[0]);
 			WriteStream(*fs, dir[1]);

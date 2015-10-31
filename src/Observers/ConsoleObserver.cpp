@@ -161,7 +161,7 @@ namespace SAPHRON
 		}
 		if (this->Flags.particle_director)
 	    {
-	    	auto& dir = p->GetDirectorRef();
+	    	auto& dir = p->GetDirector();
 	    	cout << left << setw(14) << dir.x << setw(14)  << dir.y << setw(14) << dir.z;
 	    }
 		if (this->Flags.particle_neighbors)

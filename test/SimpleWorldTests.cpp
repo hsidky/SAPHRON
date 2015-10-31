@@ -35,7 +35,7 @@ TEST(SimpleWorld, DefaultBehavior)
 	for(int i = 0; i < world.GetParticleCount(); ++i)
 	{
 		auto* particle = world.SelectParticle(i);
-		const Position& coords = particle->GetPositionRef();
+		const Position& coords = particle->GetPosition();
 
 		// Check neighbors
 		Position n1 =
@@ -56,7 +56,7 @@ TEST(SimpleWorld, DefaultBehavior)
 
 		for(auto& neighbor : neighbors)
 		{
-			auto& np = neighbor->GetPositionRef();
+			auto& np = neighbor->GetPosition();
 			ASSERT_TRUE(
 			        is_close(np, n1, 1e-11) ||
 			        is_close(np, n2, 1e-11) ||
@@ -73,7 +73,7 @@ TEST(SimpleWorld, DefaultBehavior)
 	for(int i = 0; i < world.GetParticleCount(); ++i)
 	{
 		auto* particle = world.SelectParticle(i);
-		const Position& coords = particle->GetPositionRef();
+		const Position& coords = particle->GetPosition();
 
 		// Check neighbors
 		Position n1 =
@@ -94,7 +94,7 @@ TEST(SimpleWorld, DefaultBehavior)
 
 		for(auto& neighbor : neighbors)
 		{
-			auto& np = neighbor->GetPositionRef();
+			auto& np = neighbor->GetPosition();
 			ASSERT_TRUE(
 			        is_close(np, n1, 1e-11) ||
 			        is_close(np, n2, 1e-11) ||
@@ -123,7 +123,7 @@ TEST(SimpleWorld, DefaultBehavior)
 
 	int previd = pr->GetSpeciesID();
 	int newid = (previd == 0) ? 1 : 0;
-	pr->SetSpecies(newid);
+	pr->SetSpeciesID(newid);
 	ASSERT_EQ(9001, composition.at(newid));
 	ASSERT_EQ(8999, composition.at(previd));
 }

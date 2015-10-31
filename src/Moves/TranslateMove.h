@@ -28,7 +28,7 @@ namespace SAPHRON
 			// This is for unit testing convenience. It is not part of the interface.
 			void Perform(Particle* particle)
 			{
-				auto& pos = particle->GetPositionRef();
+				auto& pos = particle->GetPosition();
 				particle->SetPosition(pos[0] + _dx*(_rand.doub()-0.5), 
 									   pos[1] + _dx*(_rand.doub()-0.5), 
 									   pos[2] + _dx*(_rand.doub()-0.5));
@@ -156,8 +156,6 @@ namespace SAPHRON
 				json["seed"] = _seed;
 				json["dx"] = _dx;
 			}
-			// Get seed.
-			virtual int GetSeed() const override { return _seed; }
 
 			virtual std::string GetName() const override { return "Translate"; }
 

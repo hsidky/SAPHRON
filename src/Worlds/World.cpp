@@ -133,8 +133,8 @@ namespace SAPHRON
 		  (pi->GetParent() == pj->GetParent()))
 			return;
 
-		const Position& posi = pi->GetPositionRef();
-		const Position& posj = pj->GetPositionRef();
+		const Position& posi = pi->GetPosition();
+		const Position& posj = pj->GetPosition();
 
 		Position rij = posi - posj;
 		ApplyMinimumImage(rij);
@@ -243,7 +243,7 @@ namespace SAPHRON
 		// If particle has no child update it.
 		if(!particle->HasChildren())
 		{
-			const auto& pos = particle->GetPositionRef();
+			const auto& pos = particle->GetPosition();
 			for(size_t i = 0; i < _primitives.size(); ++i)
 			{
 				auto* pi = _primitives[i];
@@ -257,7 +257,7 @@ namespace SAPHRON
 				if(particle == pi)
 					continue;
 
-				const auto& posi = pi->GetPositionRef();
+				const auto& posi = pi->GetPosition();
 
 				Position rij = pos - posi;
 				ApplyMinimumImage(rij);

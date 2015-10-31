@@ -51,9 +51,6 @@ namespace SAPHRON
 		// Get move name. 
 		virtual std::string GetName() const = 0;
 
-		// Get seed.
-		virtual int GetSeed() const { return 0; }
-
 		// Clone a move.
 		virtual Move* Clone() const = 0;
 

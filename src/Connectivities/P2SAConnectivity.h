@@ -21,7 +21,7 @@ namespace SAPHRON
 			// Evaluate Hamiltonian.
 			virtual double EvaluateEnergy(const Particle& p) override
 			{
-				auto& dir = p.GetDirectorRef();
+				auto& dir = p.GetDirector();
 				double dot = arma::dot(_dir, dir);
 				return -1*_coeff*(1.5*dot*dot - 0.5);
 			}

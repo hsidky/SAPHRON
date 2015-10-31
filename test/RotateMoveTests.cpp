@@ -97,6 +97,6 @@ TEST(RotateMove, MoveInterface)
 	{
 		Director d = s1->GetDirector();
 		mv.Perform(&wm, &ffm, MoveOverride::ForceAccept);
-		ASSERT_LE(acos(arma::dot(d,s1->GetDirectorRef())), M_PI/4.0);
+		ASSERT_LE(acos(arma::dot(d,s1->GetDirector())), M_PI/4.0);
 	}
 }

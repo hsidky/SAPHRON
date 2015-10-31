@@ -23,8 +23,8 @@ namespace SAPHRON
 											const Position&,
 											double) override
 		{
-			auto& n1 = p1.GetDirectorRef();
-			auto& n2 = p2.GetDirectorRef();
+			auto& n1 = p1.GetDirector();
+			auto& n2 = p2.GetDirector();
 
 			double dot = arma::dot(n1,n2);
 

@@ -61,7 +61,7 @@ namespace SAPHRON
 		// Reassigns the species of a site with a new random one.
 		void Perform(Particle* particle)
 		{
-			particle->SetSpecies(_identities[_rand.int32() % _identities.size()]);
+			particle->SetSpeciesID(_identities[_rand.int32() % _identities.size()]);
 			++_performed;
 		}
 
@@ -90,7 +90,7 @@ namespace SAPHRON
 			// Reject or accept move.
 			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
-				particle->SetSpecies(si);
+				particle->SetSpeciesID(si);
 				++_rejected;
 			}
 			else
@@ -128,7 +128,7 @@ namespace SAPHRON
 			// Reject or accept move.
 			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
-				particle->SetSpecies(si);
+				particle->SetSpeciesID(si);
 
 				// Update energies and pressures.
 				world->IncrementEnergy(-1.0*de);
@@ -160,9 +160,6 @@ namespace SAPHRON
 			for(auto& id : _identities)
 				json["identities"].append(species[id]);
 		}
-
-		// Get seed.
-		virtual int GetSeed() const override { return _seed; }
 
 		virtual std::string GetName() const override { return "RandomIdentity"; }
 

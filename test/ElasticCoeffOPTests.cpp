@@ -20,7 +20,7 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 	Histogram hist(-0.02, 0.02, 200);
 	int middle = ceil(n/2);
 	ElasticCoeffOP op(hist, &world, n - middle, [=](const Particle* p){
-		auto& pos = p->GetPositionRef();
+		auto& pos = p->GetPosition();
 		return pos[0] == middle; 
 	});
 
@@ -32,7 +32,7 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 	for(int i = 0; i < world.GetParticleCount(); ++i)
 	{
 		auto* p = world.SelectParticle(i);
-		auto& pos = p->GetPositionRef();
+		auto& pos = p->GetPosition();
 		if(pos[0] == middle)
 			++count;
 

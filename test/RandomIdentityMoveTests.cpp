@@ -29,6 +29,6 @@ TEST(RandomIdentityMove, DefaultBehavior)
 	// Swap, verify, undo, verify.
 	int prev = s.GetSpeciesID();
 	m.Perform(&s);
-	s.SetSpecies(prev);
+	s.SetSpeciesID(prev);
 	ASSERT_EQ(prev, s.GetSpeciesID());
 }

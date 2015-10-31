@@ -96,7 +96,7 @@ namespace SAPHRON
 					#pragma omp parallel for
 					for(auto it = World::begin(); it < World::end(); ++it)
 					{
-						const auto& pos = (*it)->GetPositionRef();
+						const auto& pos = (*it)->GetPosition();
 						(*it)->SetPosition(xs*pos[0], ys*pos[1], zs*pos[2]);
 					}
 

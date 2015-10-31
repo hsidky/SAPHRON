@@ -30,16 +30,16 @@ namespace SAPHRON
 		void Rotate(Particle* particle, const Matrix3D& R)
 		{
 			// First rotate particle director.
-			particle->SetDirector(R*particle->GetDirectorRef());
+			particle->SetDirector(R*particle->GetDirector());
 
 			// Get COM.
-			auto& com = particle->GetPositionRef();
+			auto& com = particle->GetPosition();
 
 			// Rotate particle children if it has any 
 			for(auto& child : *particle)
 			{
-				child->SetPosition(R*(child->GetPositionRef()-com) + com);
-				child->SetDirector(R*child->GetDirectorRef());
+				child->SetPosition(R*(child->GetPosition()-com) + com);
+				child->SetDirector(R*child->GetDirector());
 			}
 		}
 
@@ -199,9 +199,6 @@ namespace SAPHRON
 			json["seed"] = _seed;
 			json["maxangle"] = _maxangle;
 		}
-
-		// Get seed.
-		virtual int GetSeed() const override { return _seed; }
 
 		virtual std::string GetName() const override { return "Rotate"; }
 

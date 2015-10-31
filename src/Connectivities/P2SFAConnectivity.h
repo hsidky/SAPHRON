@@ -28,7 +28,7 @@ namespace SAPHRON
 			// Evaluate Hamiltonian.
 			virtual double EvaluateEnergy(const Particle& p) override
 			{
-				auto& dir = p.GetDirectorRef();
+				auto& dir = p.GetDirector();
 				
 				// Calculate dir based on user supplied func.
 				_func(p, _dir);

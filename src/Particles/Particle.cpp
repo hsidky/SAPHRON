@@ -30,7 +30,7 @@ namespace SAPHRON
 	}
 
 	// Set the species of the particle.
-	void Particle::SetSpecies(int speciesID)
+	void Particle::SetSpeciesID(int speciesID)
 	{
 		assert(speciesID < (int)_speciesList.size());
 		_pEvent.SetOldSpecies(_speciesID);
@@ -40,6 +40,72 @@ namespace SAPHRON
 		NotifyObservers();
 	}
 
+	void Particle::AddChild(Particle *child)
+	{
+		child->SetParent(this);
+		child->SetWorld(_world);
+		_children.push_back(child);
+	
+		this->_pEvent.SetChild(child);
+		this->_pEvent.child_add = 1;
+
+		UpdateCenterOfMass();
+
+		// Add all the same observers for children.
+		for(auto& o : _observers)
+			child->AddObserver(o);
+
+		// Fire event. 
+		NotifyObservers();
+	}
+
+	void Particle::RemoveChild(Particle* particle)
+	{
+		auto it = std::remove(_children.begin(), _children.end(), particle);
+		if(it != _children.end())
+		{
+			this->_pEvent.SetChild(particle);
+			this->_pEvent.child_remove = 1;
+
+			particle->ClearParent();
+			particle->SetWorld(nullptr);
+			
+			for(auto& o : _observers)
+				particle->RemoveObserver(o);
+			_children.erase(it);
+			
+			UpdateCenterOfMass();
+			
+			// Fire event.
+			NotifyObservers();
+		}
+	}
+
+	void Particle::RemoveFromNeighbors()
+	{
+		// Remove particle from neighbor list. 
+		for(auto& neighbor : _neighbors)
+		{
+			if(neighbor != NULL && neighbor != nullptr)
+				neighbor->RemoveNeighbor(this);
+		}
+
+		for(auto& c : *this)
+			c->RemoveFromNeighbors();
+	}
+
+	void Particle::RemoveFromBondedNeighbors()
+	{
+		for(auto& neighbor : _bondedneighbors)
+		{
+			if(neighbor != NULL && neighbor != nullptr)
+				neighbor->RemoveBondedNeighbor(this);
+		}
+
+		for(auto& c : *this)
+			c->RemoveFromBondedNeighbors();
+	}
+			
 	Particle* Particle::BuildParticle(const Json::Value& particles, const Json::Value& blueprints)
 	{
 		ArrayRequirement pvalidator;

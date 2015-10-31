@@ -18,15 +18,9 @@ namespace SAPHRON
 
 		
 		// Get molecule position based on center of mass.
-		virtual Position GetPosition() const override
+		virtual const Position& GetPosition() const override
 		{
 			return _position;			
-		}
-
-		// Get position reference.
-		virtual const Position& GetPositionRef() const override
-		{
-			return _position;
 		}
 
 		// Set molecule position. 
@@ -90,13 +84,7 @@ namespace SAPHRON
 		}
 
 		// Gets site director.
-		virtual Director GetDirector() const override
-		{
-			return _director;
-		}
-
-		// Get director reference.
-		virtual const Director& GetDirectorRef() const override
+		virtual const Director& GetDirector() const override
 		{
 			return _director;
 		}
@@ -176,7 +164,7 @@ namespace SAPHRON
 			double m = 0; 
 			for(auto& child : *this)
 			{
-				_position += child->GetPositionRef()*child->GetMass();
+				_position += child->GetPosition()*child->GetMass();
 				m += child->GetMass();
 			}	
 
