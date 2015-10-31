@@ -3,6 +3,12 @@ cmake_minimum_required(VERSION 2.8.5)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
+# SAPHRON version number.
+set(SAPHRON_VERSION_MAJOR "0")
+set(SAPHRON_VERSION_MINOR "0")
+set(SAPHRON_VERSION_TINY "7")  
+
+# Default type is release
 if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Release")
 endif()
@@ -36,6 +42,30 @@ message(STATUS "*** SAPHRON will use the following libraries:")
 message(STATUS "*** SAPH_LIBS = ${SAPH_LIBS}")
 message(STATUS "")
 # END - Identify linear algebra dependencies.
+
+# Get Git Information. Taken from OpenMD.
+find_package(Git)
+if(GIT_FOUND) 
+  include(GetGitRevisionDescription)
+  get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+  MESSAGE(STATUS "Current revision is ${GIT_SHA1}")
+  macro(make_release_tarball targetname releasename)
+    add_custom_target(${targetname} COMMAND ${GIT_EXECUTABLE} archive --prefix="${releasename}/" --format=tar HEAD --output "${releasename}.tar")
+  endmacro()
+  make_release_tarball("openmd_release" "openmd-${VERSION_MAJOR}.${VERSION_MINOR}")
+else()
+  SET(GIT_SHA1 Release)
+endif()
+
+# Build config header
+configure_file (
+  "${PROJECT_SOURCE_DIR}/src/config.h.in"
+  "${PROJECT_BINARY_DIR}/config.h"
+)
+ 
+# add the binary tree to the search path for include files
+# so that we will find TutorialConfig.h
+include_directories("${PROJECT_BINARY_DIR}")
 
 # Find Google Test Framework 
 include(ExternalProject)
@@ -80,7 +110,6 @@ message(STATUS "*** Google Test Framework will be used for unit tests")
 message(STATUS "*** GTEST_LIBRARY_PATH = ${GTEST_LIBRARY_PATH}")
 message(STATUS "*** GTEST_INCLUDE_DIR  = ${GTEST_INCLUDE_DIR}")
 message(STATUS "")
-
 # End gtest
 
 include_directories("${PROJECT_SOURCE_DIR}/src")
@@ -121,7 +150,7 @@ target_link_libraries(saphron ${SAPH_LIBS} libsaphron)
 
 # Configure flags 
 # - Globals 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math -fopenmp -pthread -std=c++11 -include ${PROJECT_SOURCE_DIR}/include/gcc-preinclude.h")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math -fopenmp -pthread -std=c++11")
 set_target_properties(libsaphron saphron PROPERTIES COMPILE_FLAGS "-Wall -Wextra")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-as-needed -fopenmp")
 

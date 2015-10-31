@@ -4,22 +4,36 @@
 #include <iomanip>
 
 #include "Simulation/SimBuilder.h"
+#include "config.h"
 
 using namespace SAPHRON;
 
 int main(int argc, char const* argv[])
 {
+
+  	std::string rev(GIT_SHA1, strnlen(GIT_SHA1, 40));
+  	std::string revision;
+
+  	if (!rev.empty())
+  		revision.assign(" Revision: " + rev );
+  
+	revision.resize(53,' ');
+
 	std::cout << "                                                                         \n" << 
-	             " ******************************************************************      \n" << 
-	             " *       ____      _     ____   _   _  ____    ___   _   _        *      \n" << 
-	             " *      / ___|    / \\   |  _ \\ | | | ||  _ \\  / _ \\ | \\ | |       * \n" << 
-	             " *      \\___ \\   / _ \\  | |_) || |_| || |_) || | | ||  \\| |       *  \n" << 
-	             " *       ___) | / ___ \\ |  __/ |  _  ||  _ < | |_| || |\\  |       *    \n" << 
-	             " *      |____/ /_/   \\_\\|_|    |_| |_||_| \\_\\ \\___/ |_| \\_|       *\n" << 
-	             " *                                                                *      \n" << 
-	             " * \033[1mS\033[0mtatistical \033[1mA\033[0mpplied \033[1mPH\033[0mysics "   <<
-	             "through \033[1mR\033[0mandom \033[1mO\033[0mn-the-fly \033[1mN\033[0mumerics *\n" << 
-	             " ******************************************************************      \n" << 
+	             " **********************************************************************      \n" << 
+	             " *         ____      _     ____   _   _  ____    ___   _   _          *      \n" << 
+	             " *        / ___|    / \\   |  _ \\ | | | ||  _ \\  / _ \\ | \\ | |         * \n" << 
+	             " *        \\___ \\   / _ \\  | |_) || |_| || |_) || | | ||  \\| |         *  \n" << 
+	             " *         ___) | / ___ \\ |  __/ |  _  ||  _ < | |_| || |\\  |         *    \n" << 
+	             " *        |____/ /_/   \\_\\|_|    |_| |_||_| \\_\\ \\___/ |_| \\_|         *\n" << 
+	             " *                                                                    *      \n" << 
+	             " *   \033[1mS\033[0mtatistical \033[1mA\033[0mpplied \033[1mPH\033[0mysics "   <<
+	             "through \033[1mR\033[0mandom \033[1mO\033[0mn-the-fly \033[1mN\033[0mumerics   *\n" << 
+	             " *                                                                    *     \n" << 
+	             " *  Version " << SAPHRON_VERSION_MAJOR << "." << 
+	             			   SAPHRON_VERSION_MINOR << "." << 
+	             			   SAPHRON_VERSION_TINY  << revision << "*      \n" << 
+	             " **********************************************************************      \n" << 
 	             "                                                                         \n";
 
 	int validate_only = 0;
@@ -44,4 +58,4 @@ int main(int argc, char const* argv[])
 	}
 
 	return 0;
-}	
+}

@@ -37,7 +37,7 @@ namespace SAPHRON
 		SimBuilder() : 
 		_worlds(0), _particles(0), _forcefields(0), _moves(0), _ffm(), 
 		_mm(), _wm(), _observers(0), _hist(nullptr), _orderp(nullptr), 
-		_sim(nullptr), _ltot(77), _msgw(47), _notw(_ltot - _msgw)
+		_sim(nullptr), _ltot(81), _msgw(51), _notw(_ltot - _msgw)
 		{}
 		
 		bool BuildSimulation(std::istream& is);
