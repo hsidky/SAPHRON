@@ -24,6 +24,7 @@ namespace SAPHRON
 		static std::string Selector;
 		static std::string Director;
 		static std::string Observers;
+		static std::string JSONObserver;
 		static std::string DLMFileObserver;
 		static std::string VolumeSwapMove;
 		static std::string RotateMove;

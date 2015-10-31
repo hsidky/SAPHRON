@@ -1,38 +1,38 @@
 {
+    "type": "array",
     "items": {
         "oneOf": [
             {
                 "additionalProperties": false,
-                "type": "object",
-                "properties": {
-                    "director": {
-                        "minItems": 3,
-                        "items": {
-                            "type": "number"
-                        },
-                        "type": "array",
-                        "additionalItems": false,
-                        "maxItems": 3
-                    },
-                    "selector": {},
-                    "type": {
-                        "enum": [
-                            "P2SA"
-                        ],
-                        "type": "string"
-                    },
-                    "coefficient": {
-                        "type": "number"
-                    }
-                },
                 "required": [
                     "type",
                     "coefficient",
                     "director",
                     "selector"
-                ]
+                ],
+                "type": "object",
+                "properties": {
+                    "selector": {},
+                    "coefficient": {
+                        "type": "number"
+                    },
+                    "director": {
+                        "maxItems": 3,
+                        "additionalItems": false,
+                        "minItems": 3,
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "P2SA"
+                        ]
+                    }
+                }
             }
         ]
-    },
-    "type": "array"
+    }
 }

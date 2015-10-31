@@ -133,6 +133,15 @@ namespace SAPHRON
         	// Get ensemble name.
 			virtual std::string GetName() const override { return "DOS"; }
 
+			virtual void Serialize(Json::Value& json) const override
+			{
+				// Call parent first.
+				Simulation::Serialize(json);
+
+				// Serialize DOS Order parameter.
+				_orderp->Serialize(json["orderparameter"]);
+			}
+
          	// Accept a visitor.
 			virtual void AcceptVisitor(Visitor& v) const override
 			{

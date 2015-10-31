@@ -408,6 +408,11 @@ namespace SAPHRON
 		json["type"] = "DLMFile";
 		json["frequency"] = GetFrequency();
 		json["prefix"] = _prefix;
+		json["colwidth"] = _w;
+		json["fixedwmode"] = _fixl;
+		json["delimiter"] = _dlm;
+		json["extension"] = _ext;
+
 		this->Flags.Serialize(json["flags"]);
 	}
 }

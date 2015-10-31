@@ -1,56 +1,56 @@
 {
     "minItems": 1,
+    "type": "array",
     "items": {
         "additionalProperties": false,
-        "type": "object",
-        "properties": {
-            "seed": {
-                "minimum": 0,
-                "type": "integer"
-            },
-            "r_cutoff": {
-                "minimum": 0,
-                "type": "number",
-                "exclusiveMinimum": true
-            },
-            "type": {
-                "enum": [
-                    "Simple"
-                ],
-                "type": "string"
-            },
-            "components": {
-                "type": "object"
-            },
-            "dimensions": {
-                "minItems": 3,
-                "items": {
-                    "minimum": 0,
-                    "type": "number"
-                },
-                "type": "array",
-                "additionalItems": false,
-                "maxItems": 3
-            },
-            "particles": {
-                "type": "array"
-            },
-            "temperature": {
-                "minimum": 0,
-                "type": "number"
-            },
-            "nlist_cutoff": {
-                "minimum": 0,
-                "type": "number",
-                "exclusiveMinimum": true
-            }
-        },
         "required": [
             "type",
             "dimensions",
             "r_cutoff",
             "components"
-        ]
-    },
-    "type": "array"
+        ],
+        "type": "object",
+        "properties": {
+            "seed": {
+                "type": "integer",
+                "minimum": 0
+            },
+            "nlist_cutoff": {
+                "exclusiveMinimum": true,
+                "type": "number",
+                "minimum": 0
+            },
+            "components": {
+                "type": "object"
+            },
+            "particles": {
+                "type": "array"
+            },
+            "dimensions": {
+                "maxItems": 3,
+                "additionalItems": false,
+                "minItems": 3,
+                "type": "array",
+                "items": {
+                    "type": "number",
+                    "minimum": 0
+                }
+            },
+            "r_cutoff": {
+                "exclusiveMinimum": true,
+                "type": "number",
+                "minimum": 0
+            },
+            "type": {
+                "type": "string",
+                "enum": [
+                    "Simple"
+                ]
+            },
+            "temperature": {
+                "type": "number",
+                "minimum": 0
+            }
+        }
+    }
 }

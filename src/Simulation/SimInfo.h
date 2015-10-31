@@ -14,6 +14,8 @@ namespace SAPHRON
 	class SimInfo
 	{
 	private:
+		SimUnits _units;
+
 		/***************************
 		 *    These are defaults   * 
 		 ***************************/
@@ -61,13 +63,18 @@ namespace SAPHRON
 				_echarge = _charge;
 				_ekb = _kb;
 				_epconv = _pconv;
+				_units = real;
 			}
 			else
 			{
 				_echarge = 1.0;
 				_ekb = 1.0;
+				_units = reduced;
 			}
 		}
+
+		// Get sim units.
+		SimUnits GetUnits() const  { return _units; }
 
 		// Get Avogadro's constant.
 		double GetNa() const { return _na; }

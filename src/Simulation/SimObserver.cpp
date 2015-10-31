@@ -6,6 +6,7 @@
 #include "../Validator/ArrayRequirement.h"
 #include "SimException.h"
 #include "../Observers/DLMFileObserver.h"
+#include "../Observers/JSONObserver.h"
 
 using namespace Json;
 
@@ -132,6 +133,26 @@ namespace SAPHRON
 			dlm->SetFixedWithMode(fixedw);
 			dlm->SetDelimiter(delimiter);
 			dlm->SetExtension(extension);
+			obs = static_cast<SimObserver*>(dlm);
+		}
+		else if(type == "JSON")
+		{
+			reader.parse(JsonSchema::JSONObserver, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs. 
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			// Initialize flags.
+			SimFlags flags;
+
+			// Initialize JSON specific options.
+			auto prefix = json.get("prefix", "unnamed").asString();
+			auto frequency = json.get("frequency", 1).asInt();
+
+			auto* dlm = new JSONObserver(prefix, flags, frequency);
 			obs = static_cast<SimObserver*>(dlm);
 		}
 		else

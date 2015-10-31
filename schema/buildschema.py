@@ -31,6 +31,7 @@ files = [
 	("moves/rotate.move.json", "RotateMove"),
 	("moves/volumeswap.move.json", "VolumeSwapMove"),
 	("observers/dlmfile.observer.json", "DLMFileObserver"),
+	("observers/json.observer.json", "JSONObserver"),
 	("observers/observers.json", "Observers"),
 	("particles/director.particle.json", "Director"),
 	("particles/selector.particle.json", "Selector"),

@@ -357,6 +357,16 @@ namespace SAPHRON
 				last["species"][0] = species[pair.first];
 				last["species"][1] = species[pair.second];
 			}
+
+			auto& electro = json["forcefields"]["electrostatic"];
+			for(auto& ff : _uniqueeffs)
+			{
+				auto& pair = ff.first;
+				auto& last = electro[bonded.size()];
+				ff.second->Serialize(last);
+				last["species"][0] = species[pair.first];
+				last["species"][1] = species[pair.second];
+			}
 		}
 
 		// Get (unique) non-bonded forcefields.

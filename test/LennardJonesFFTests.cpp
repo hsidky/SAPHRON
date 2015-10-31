@@ -11,6 +11,7 @@
 #include "json/json.h"
 #include "gtest/gtest.h"
 #include <fstream>
+#include "../src/Observers/JSONObserver.h"
 
 using namespace SAPHRON;
 
@@ -144,10 +145,11 @@ TEST(LennardJonesFF, NISTValidation1)
 
 	// Initialize accumulator. 
 	TestAccumulator accumulator(flags, 10, 20000);
-
+	JSONObserver json("jlog", flags, 10);
 	// Initialize ensemble. 
 	StandardSimulation ensemble(&wm, &ffm, &mm);
 	ensemble.AddObserver(&accumulator);
+	ensemble.AddObserver(&json);
 
 	// Run 
 	ensemble.Run(50000);

@@ -26,5 +26,6 @@
 		},
 		"flags" : "@file(flags.observer.json)"
 	},
-	"required" : ["type", "prefix", "frequency", "flags"]
+	"required" : ["type", "prefix", "frequency", "flags"],
+	"additionalProperties": false
 }

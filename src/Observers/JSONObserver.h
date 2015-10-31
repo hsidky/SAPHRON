@@ -13,21 +13,25 @@ namespace SAPHRON
 	{
 	private:
 		std::unique_ptr<std::ofstream> _jsonfs;
-		unsigned int _counter;
 		std::string _prefix;
 		Json::Value _root;
-		std::vector<int> _cspecies; // Species counter.
 
 	public:
 		JSONObserver(std::string prefix, SimFlags flags, unsigned int frequency = 1 );
 
-		virtual void Visit(Ensemble* e) override;
-		virtual void Visit(DOSSimulation* e) override;
-		virtual void Visit(World* w) override;
-		virtual void Visit(Particle* p) override;
-		virtual void Visit(MoveManager* mm) override;
-		virtual void Visit(ForceFieldManager* fmm) override;
+				// Get Observer name.
+		virtual std::string GetName() const override{ return "JSON"; }
 
+		virtual void Visit(const Simulation& e) override;
+		virtual void Visit(const DOSSimulation& e) override;
+		virtual void Visit(const WorldManager& wm) override;
+		virtual void Visit(const MoveManager& mm) override;
+		virtual void Visit(const ForceFieldManager& ffm) override;
+		virtual void Visit(const Particle& p) override;
+		virtual void Visit(const Histogram& hist) override;
+
+		virtual void Serialize(Json::Value& json) const override;
+		
 		virtual void PreVisit() override;
 		virtual void PostVisit() override;
 

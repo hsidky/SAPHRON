@@ -1,6 +1,7 @@
 #pragma once 
 #include "Utils/Histogram.h"
 #include "json/json.h"
+#include "../JSON/Serializable.h"
 
 namespace SAPHRON
 {
@@ -8,7 +9,7 @@ namespace SAPHRON
 	class World;
 	struct Energy;
 
-	class DOSOrderParameter
+	class DOSOrderParameter: public Serializable
 	{
 	private: 
 		Histogram const* _hist;
@@ -53,6 +54,9 @@ namespace SAPHRON
 
 			return CalcAcceptanceProbability(ei, ef, opi, opf, w);
 		}
+
+		// Serialize.
+		virtual void Serialize(Json::Value& json) const = 0;
 
 		// Builds a density-of-states order parameter from JSON node. 
 		// Requires histogram and world manager which contain dependencies 

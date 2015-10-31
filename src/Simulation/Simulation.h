@@ -5,6 +5,7 @@
 #include "../Properties/Pressure.h"
 #include "../Worlds/World.h"
 #include "../DensityOfStates/DOSOrderParameter.h"
+#include "../JSON/Serializable.h"
 #include "json/json.h"
 #include "vecmap.h"
 #include <vector>
@@ -14,7 +15,7 @@ namespace SAPHRON
 	// Base class for standard simulation. An simulation is provided with a reference to a World and a
 	// ForceFieldManager. The World is responsible for handling the "box" geometry and particles. The
 	// ForeceFieldManager contains the forcefield data for all Particle types and interactions.
-	class Simulation : public SimObservable
+	class Simulation : public SimObservable, public Serializable
 	{
 		private:
 			// Iteration counter.
@@ -69,7 +70,7 @@ namespace SAPHRON
 			void SetTargetIterations(int targetit) { _targetit = targetit; }
 
 			// Get number of target iterations.
-			int GetTargetIterations() { return _targetit; }
+			int GetTargetIterations() const { return _targetit; }
 
 			// Accept a visitor.
 			virtual void AcceptVisitor(Visitor& v) const override
@@ -81,6 +82,18 @@ namespace SAPHRON
 			/* Properties */
 			virtual std::string GetName() const = 0;
 			virtual AcceptanceMap GetAcceptanceRatio() const { return AcceptanceMap{}; }
+
+			// Serialize
+			virtual void Serialize(Json::Value& json) const override
+			{
+				auto& sim = SimInfo::Instance();
+				json["units"] = (sim.GetUnits() == real) ? "real" : "reduced";
+				json["simtype"] = GetName();
+				json["iterations"] = GetTargetIterations();
+				json["mpi"] = GetMovesPerIteration();
+
+				SerializeObservers(json["observers"]);
+			}
 
 			/* Static Builder methods */
 

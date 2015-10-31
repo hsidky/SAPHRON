@@ -76,6 +76,6 @@ namespace SAPHRON
 			return _accmap;
 		}
 
-		virtual std::string GetName() const override { return "Standard"; }
+		virtual std::string GetName() const override { return "standard"; }
 	};
 }

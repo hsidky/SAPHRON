@@ -33,6 +33,13 @@ namespace SAPHRON
 			return w.GetEnergy().total();
 		}
 
+		// Serialize.
+		virtual void Serialize(Json::Value& json) const override
+		{
+			json["type"] = "WangLandau";
+		}
+
+
 		~WangLandauOP(){};	
 	};
 }

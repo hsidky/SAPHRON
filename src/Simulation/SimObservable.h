@@ -10,18 +10,25 @@ namespace SAPHRON
 	// Abstract class for observables in a simulation.
 	class SimObservable : public Visitable
 	{
-		private:
-			std::vector<SimObserver*> _observers;
+	private:
+		std::vector<SimObserver*> _observers;
 
-		public:
+	protected:
+		void SerializeObservers(Json::Value& json) const
+		{
+			for(int i = 0; i < (int)_observers.size(); ++i)
+				_observers[i]->Serialize(json[i]);
+		}
 
-			// Add simulation observer.
-			virtual void AddObserver(SimObserver* observer);
+	public:
 
-			// Remove simulation observer.
-			virtual void RemoveObserver(SimObserver* observer);
+		// Add simulation observer.
+		virtual void AddObserver(SimObserver* observer);
 
-			// Notify registered observers of a change.
-			void NotifyObservers(const SimEvent& event);
+		// Remove simulation observer.
+		virtual void RemoveObserver(SimObserver* observer);
+
+		// Notify registered observers of a change.
+		void NotifyObservers(const SimEvent& event);
 	};
 }

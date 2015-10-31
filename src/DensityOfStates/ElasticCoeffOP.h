@@ -105,6 +105,17 @@ namespace SAPHRON
 			_eigval.max(_imax);
 		}
 
+		// Serialize.
+		virtual void Serialize(Json::Value& json) const override
+		{
+			json["type"] = "ElasticCoeff";
+			json["mode"] = "twist";
+			json["xrange"] = _dxj;
+			
+			// TODO: fix this.
+			json["world"] = 0;
+		}
+
 		// Get layer director.
 		Director GetDirector()
 		{

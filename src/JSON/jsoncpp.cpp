@@ -69,7 +69,7 @@ license you like.
 // //////////////////////////////////////////////////////////////////////
 
 
-
+#include <iostream>
 
 
 
@@ -3509,8 +3509,8 @@ bool Value::removeIndex(ArrayIndex index, Value* removed) {
   ArrayIndex oldSize = size();
   // shift left all items left, into the place of the "removed"
   for (ArrayIndex i = index; i < (oldSize - 1); ++i){
-    CZString key(i);
-    (*value_.map_)[key] = (*this)[i + 1];
+    CZString lkey(i);
+    (*value_.map_)[lkey] = (*this)[i + 1];
   }
   // erase the last one ("leftover")
   CZString keyLast(oldSize - 1);
@@ -4374,7 +4374,7 @@ void StyledWriter::writeValue(const Value& value) {
 }
 
 void StyledWriter::writeArrayValue(const Value& value) {
-  unsigned size = value.size();
+  unsigned size = value.size();  
   if (size == 0)
     pushValue("[]");
   else {
@@ -4781,7 +4781,7 @@ BuiltStyledStreamWriter::BuiltStyledStreamWriter(
       std::string const& colonSymbol,
       std::string const& nullSymbol,
       std::string const& endingLineFeedSymbol)
-  : rightMargin_(74)
+  : rightMargin_(80)
   , indentation_(indentation)
   , cs_(cs)
   , colonSymbol_(colonSymbol)
