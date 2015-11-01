@@ -138,6 +138,10 @@ namespace SAPHRON
 				// Call parent first.
 				Simulation::Serialize(json);
 
+				json["reset_freq"] = _hreset;
+				json["convergence_factor"] = _f; 
+				json["target_flatness"] = _targetFlatness;
+				
 				// Serialize DOS Order parameter.
 				_orderp->Serialize(json["orderparameter"]);
 			}
