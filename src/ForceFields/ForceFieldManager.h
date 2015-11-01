@@ -58,7 +58,7 @@ namespace SAPHRON
 					Position rij = particle.GetPosition() - neighbor->GetPosition();
 												
 					if(world != nullptr)
-						world->ApplyMinimumImage(rij);
+						world->ApplyMinimumImage(&rij);
 
 					// skip if exceeds cutoff.
 					if(arma::norm(rij) > rcut)
@@ -70,19 +70,19 @@ namespace SAPHRON
 					{
 						rab = particle.GetParent()->GetPosition() - neighbor->GetParent()->GetPosition();
 						if(world != nullptr)
-							world->ApplyMinimumImage(rab);
+							world->ApplyMinimumImage(&rab);
 
 					}
 					else if(neighbor->HasParent() && !particle.HasParent()) 
 					{
 						rab = particle.GetPosition() - neighbor->GetParent()->GetPosition();
 						if(world != nullptr)
-							world->ApplyMinimumImage(rab);
+							world->ApplyMinimumImage(&rab);
 					}
 					else if(!neighbor->HasParent() && particle.HasParent()) {
 						rab = particle.GetParent()->GetPosition() - neighbor->GetPosition();
 						if(world != nullptr)
-							world->ApplyMinimumImage(rab);
+							world->ApplyMinimumImage(&rab);
 					}
 
 					auto it = _nonbondedforcefields.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
@@ -166,7 +166,7 @@ namespace SAPHRON
                     	Position rij = particle.GetPosition() - sibling->GetPosition();
     					
     					if(world != nullptr)
-							world->ApplyMinimumImage(rij);
+							world->ApplyMinimumImage(&rij);
 
 						auto it = _nonbondedforcefields.find({particle.GetSpeciesID(),sibling->GetSpeciesID()});
 						auto it2 = _electrostaticforcefield.find({particle.GetSpeciesID(),sibling->GetSpeciesID()});
@@ -201,7 +201,7 @@ namespace SAPHRON
 					
 					// Minimum image convention.
 					if(world != nullptr)
-						world->ApplyMinimumImage(rij);
+						world->ApplyMinimumImage(&rij);
 
 					auto ij = ff->Evaluate(particle, *bondedneighbor, rij, rcut);
 					ep.energy.bonded += ij.energy; // Sum bonded energy.

@@ -5,7 +5,7 @@
 #include "../src/Particles/Site.h"
 #include "../src/Simulation/SimInfo.h"
 #include "../src/Simulation/SimException.h"
-#include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Moves/RotateMove.h"
@@ -75,10 +75,10 @@ TEST(DSFFF, NISTConfig1)
 	w->UpdateNeighborList();
 	ASSERT_EQ(10.0, w->GetCutoffRadius());
 	ASSERT_EQ(0.0, w->GetSkinThickness());
-	auto L = w->GetBoxVectors();
-	ASSERT_EQ(20, L[0]);
-	ASSERT_EQ(20, L[1]);
-	ASSERT_EQ(20, L[2]);
+	auto L = w->GetHMatrix();
+	ASSERT_EQ(20, L(0,0));
+	ASSERT_EQ(20, L(1,1));
+	ASSERT_EQ(20, L(2,2));
 
 	// Get random particle and check structure. 
 	Particle* p = w->DrawRandomParticle();

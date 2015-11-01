@@ -4,7 +4,7 @@
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/DirectorRotateMove.h"
 #include "../src/Particles/Site.h"
-#include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
 #include "gtest/gtest.h"
 
@@ -13,9 +13,9 @@ using namespace SAPHRON;
 TEST(NVTEnsemble, DefaultBehavior)
 {
 	// Initialize world and manager.
-	SimpleWorld world(30, 30, 30, 1);
+	World world(30, 30, 30, 1);
 	Site site1({0, 0, 0}, {1.0, 0, 0}, "E1");
-	world.ConfigureParticles({&site1}, {1.0});
+	world.PackWorld({&site1}, {1.0});
 	world.UpdateNeighborList();
 	world.SetTemperature(1.0);
 
@@ -32,21 +32,8 @@ TEST(NVTEnsemble, DefaultBehavior)
 	MoveManager mm;
 	mm.AddMove(&move1);
 
-	// Initialize observer.
-	//SimFlags flags;
-	//flags.temperature = 1;
-	//flags.iterations = 1;
-	//flags.identifier = 1;
-	//flags.energy = 1;
-	// flags.particle_species = 1;
-	// flags.particle_director = 1;
-	// flags.particle_neighbors = 1;
-	// flags.particle_position = 1;
-	//ConsoleObserver co(flags, 100);
-
 	// Initialize ensemble.
 	StandardSimulation ensemble(&wm, &ffm, &mm);
-	//ensemble.AddObserver(&co);
 
 	// Run
 	ensemble.Run(1100);

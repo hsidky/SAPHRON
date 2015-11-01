@@ -1,6 +1,6 @@
 #include "../src/DensityOfStates/ElasticCoeffOP.h"
 #include "../src/Particles/Site.h"
-#include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/World.h"
 #include "../src/Utils/Histogram.h"
 #include "gtest/gtest.h"
 #include <iostream>
@@ -11,9 +11,9 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 {
 	int n = 25;
 	// Initialize world.
-	SimpleWorld world(n, n, n, 1);
+	World world(n, n, n, 1);
 	Site site1({0, 0, 0}, {0, 0, 1.0}, "E1");
-	world.ConfigureParticles({&site1}, {1.0});
+	world.PackWorld({&site1}, {1.0});
 	world.UpdateNeighborList();
 
 	// Initialize ElasticCoeffOP 

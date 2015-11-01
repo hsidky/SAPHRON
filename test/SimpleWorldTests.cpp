@@ -1,7 +1,6 @@
 #include "../src/Particles/Site.h"
-#include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/World.h"
 #include "gtest/gtest.h"
-
 #include <map>
 
 using namespace SAPHRON;
@@ -9,12 +8,12 @@ using namespace SAPHRON;
 TEST(SimpleWorld, DefaultBehavior)
 {
 	int n = 30;
-	SimpleWorld world(n, n, n, 1.0);
+	World world(n, n, n, 1.0);
 	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
 	Site site2({0, 0, 0}, {0, 1, 0}, "E2");
 	Site site3({0, 0, 0}, {0, 0, 1}, "E3");
 
-	world.ConfigureParticles({&site1, &site2, &site3}, {1.0/3.0, 1.0/3.0, 1.0/3.0});
+	world.PackWorld({&site1, &site2, &site3}, {1.0/3.0, 1.0/3.0, 1.0/3.0});
 
 	ASSERT_EQ(27000, world.GetParticleCount());
 	ASSERT_EQ(27000, world.GetPrimitiveCount());
@@ -131,7 +130,7 @@ TEST(SimpleWorld, DefaultBehavior)
 TEST(SimpleWorld, MoveParticleSemantics)
 {
 	int n = 30;
-	SimpleWorld world(n, n, n, 1);
+	World world(n, n, n, 1);
 
 	ASSERT_EQ(0, world.GetParticleCount());
 	world.AddParticle(new Site({0,0,0}, {1,0,0}, "E1"));
@@ -145,17 +144,17 @@ TEST(SimpleWorld, MoveParticleSemantics)
 TEST(SimpleWorld, VolumeScaling)
 {
 	int n = 30;
-	SimpleWorld world(n, n, n, 1);
+	World world(n, n, n, 1);
 	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
 	world.PackWorld({&site1}, {1.0}, 500, 1.0);
 	ASSERT_EQ(500, world.GetParticleCount());
 	ASSERT_EQ(500, world.GetPrimitiveCount());
 
 	// Get random coordinate and check it afterwards.
-	auto box = world.GetBoxVectors();
+	auto box = world.GetHMatrix();
 	Particle* p = world.DrawRandomParticle();
 	Position newpos = 2.0*p->GetPosition(); // we will scale by 2
-	world.SetBoxVectors(2.0*box[0], 2.0*box[1], 2.0*box[2], true);
+	world.SetVolume(8*world.GetVolume(), true);
 	ASSERT_TRUE(is_close(newpos, p->GetPosition(),1e-11));
 }
 
@@ -163,7 +162,7 @@ TEST(SimpleWorld, NeighborList)
 {
 	// create world with specified nlist. 
 	double rcut = 1.5;
-	SimpleWorld world(30, 30, 30, rcut);
+	World world(30, 30, 30, rcut);
 	ASSERT_EQ(rcut, world.GetCutoffRadius());
 	ASSERT_DOUBLE_EQ(1.3*rcut, world.GetNeighborRadius());
 	ASSERT_DOUBLE_EQ(0.3*rcut, world.GetSkinThickness());

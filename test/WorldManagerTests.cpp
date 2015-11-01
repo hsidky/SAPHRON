@@ -1,5 +1,5 @@
 #include "../src/Worlds/WorldManager.h"
-#include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/World.h"
 #include "gtest/gtest.h"
 
 
@@ -8,8 +8,8 @@ using namespace SAPHRON;
 TEST(WorldManager, DefaultBehavior)
 {
 	// Create dummy worlds.
-	SimpleWorld w1(10.0, 10.0, 10.0, 1.0);
-	SimpleWorld w2(10.0, 10.0, 10.0, 1.0);
+	World w1(10.0, 10.0, 10.0, 1.0);
+	World w2(10.0, 10.0, 10.0, 1.0);
 
 	// Initialize WorldManager.
 	WorldManager sim;

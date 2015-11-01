@@ -64,8 +64,10 @@ namespace SAPHRON
 			if(xmin > xmax)
 				throw BuildException({"#orderparameter/xrange: xmin cannot exceed xmax."});
 
-			auto boxvec = w->GetBoxVectors();
-			if(xmin < 0 || xmax > boxvec[0])
+			// TODO: Generalize (in particular lambda fxn) for
+			// many geometries.
+			const auto& boxvec = w->GetHMatrix();
+			if(xmin < 0 || xmax > boxvec(0,0))
 				throw BuildException({"#orderparameter/xrange: xmin and xmax must be within world."});
 
 			// Write filter function for proper deformation coordinate.

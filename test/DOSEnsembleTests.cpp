@@ -6,7 +6,7 @@
 #include "../src/Moves/DirectorRotateMove.h"
 #include "../src/Particles/Site.h"
 #include "../src/Observers/DLMFileObserver.h"
-#include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
 #include "gtest/gtest.h"
 
@@ -17,9 +17,9 @@ TEST(DOSSimulation, DefaultBehavior)
 {
 	double n = 20;
 	// Initialize world.
-	SimpleWorld world(n, n, n, 1.0);
+	World world(n, n, n, 1.0);
 	Site site1({0, 0, 0}, {1.0, 0, 0}, "E1");
-	world.ConfigureParticles({&site1}, {1.0});
+	world.PackWorld({&site1}, {1.0});
 	world.UpdateNeighborList();
 
 	// Initialize forcefields.

@@ -32,13 +32,10 @@ namespace SAPHRON
 			// Neighbor list is cleared automatically.
 			w1->RemoveParticle(particle);
 
-			// Generate a new random coordinate for the particle.
-			Position pf = w2->GetBoxVectors();
-			pf[0] *= _rand.doub();
-			pf[1] *= _rand.doub();
-			pf[2] *= _rand.doub();
-
-			particle->SetPosition(pf);
+			// Generate random position for particle insertion.
+			const auto& H = w2->GetHMatrix();
+			Vector3D pr{_rand.doub(), _rand.doub(), _rand.doub()};
+			particle->SetPosition(H*pr);
 
 			// Neighbor list is updated automatically.
 			w2->AddParticle(particle);

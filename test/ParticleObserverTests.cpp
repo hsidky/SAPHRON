@@ -1,7 +1,7 @@
 #include "../src/Particles/Site.h"
 #include "../src/Particles/Molecule.h"
 #include "../src/Particles/ParticleObserver.h"
-#include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/World.h"
 #include "gtest/gtest.h"
 
 namespace SAPHRON
@@ -65,7 +65,7 @@ TEST(ParticleObserver, DefaultBehavior)
 
 TEST(ParticleObserver, AddRemoveChild)
 {
-	SimpleWorld sw(10.0, 10.0, 10.0, 1.0);
+	World sw(10.0, 10.0, 10.0, 1.0);
 
 	Site* s1 = new Site({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "S1");
 	Site* s2 = new Site({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "S1");

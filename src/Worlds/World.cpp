@@ -1,5 +1,4 @@
 #include "World.h"
-#include "SimpleWorld.h"
 #include "../Simulation/SimException.h"
 #include "../Validator/ObjectRequirement.h"
 #include "schema.h"
@@ -10,77 +9,6 @@ using namespace Json;
 
 namespace SAPHRON
 {
-	World* World::Build(std::istream& stream)
-	{
-		Reader reader;
-		Value root;
-		if(!reader.parse(stream, root))
-			throw BuildException({reader.getFormattedErrorMessages()});
-
-		return Build(root);
-	}
-
-	World* World::Build(const Value& json)
-	{
-		ObjectRequirement validator;
-		Value schema;
-		Reader reader;
-
-		World* world = nullptr;
-
-		// Validation success.
-		if(json["type"].asString() == "Simple")
-		{
-			// Parse schema.
-			reader.parse(JsonSchema::SimpleWorld, schema);
-			validator.Parse(schema, "#/worlds");
-
-			// Validate input.
-			validator.Validate(json, "#/worlds");
-
-			if(validator.HasErrors())
-				throw BuildException(validator.GetErrors());
-
-			Position dim{json["dimensions"][0].asDouble(), 
-						 json["dimensions"][1].asDouble(),
-						 json["dimensions"][2].asDouble()};
-
-			// Neighbor list cutoff check.
-			double ncut = json.get("nlist_cutoff",0.0).asDouble();
-			if(ncut > dim[0]/2.0 || ncut > dim[1]/2.0 || ncut > dim[2]/2.0)
-				throw BuildException({"Neighbor list cutoff must not exceed "
-									  "half the shortest box vector."});
-			
-			// Skin thickness check.
-			double rcut = json["r_cutoff"].asDouble();
-			if(ncut && rcut > ncut)
-				throw BuildException({"Cutoff radius must not exceed neighbor list cutoff."});
-
-			srand(time(NULL));
-			int seed = json.isMember("seed") ? json["seed"].asInt() : rand();
-
-			
-			world = new SimpleWorld(dim[0], dim[1], dim[2], rcut, seed);
-			if(ncut)
-				world->SetNeighborRadius(ncut);
-		}
-
-		// Initialize particles.
-		if(json.isMember("particles"))
-		{ 
-			ParticleList particles;
-			Particle::BuildParticles(json["particles"], json["components"], particles);
-			
-			for(auto& p : particles)
-				world->AddParticle(p);
-		}
-
-		// Load temperature.
-		world->SetTemperature(json.get("temperature", 0).asDouble());
-
-		return world;
-	}
-
 	void World::AddParticleComposition(Particle* particle)
 	{
 		int id = particle->GetSpeciesID();
@@ -137,7 +65,7 @@ namespace SAPHRON
 		const Position& posj = pj->GetPosition();
 
 		Position rij = posi - posj;
-		ApplyMinimumImage(rij);
+		ApplyMinimumImage(&rij);
 
 		if(arma::dot(rij,rij) <= _ncutsq)
 		{
@@ -260,7 +188,7 @@ namespace SAPHRON
 				const auto& posi = pi->GetPosition();
 
 				Position rij = pos - posi;
-				ApplyMinimumImage(rij);
+				ApplyMinimumImage(&rij);
 
 				if(arma::dot(rij,rij) <= _ncutsq)
 				{
@@ -272,6 +200,304 @@ namespace SAPHRON
 		
 		for(auto& c : *particle)
 			UpdateNeighborList(c, false);
+	}
+
+	void World::PackWorld(const std::vector<Particle*>& particles,
+		                  const std::vector<double>& fractions, 
+		                  int n, double density)
+	{
+
+		if(particles.size() != fractions.size())
+		{
+			std::cerr << "ERROR: Particle and fraction count mismatch." << std::endl;
+			exit(-1);
+		}
+
+		auto fracs = fractions;
+		int nspecies = (int)particles.size();
+
+		// Normalize
+		double norm = 0;
+		for(int i = 0; i < nspecies; i++)
+			norm += fracs[i];
+
+		for(int i = 0; i < nspecies; i++)
+			fracs[i] /= norm;
+
+		// Initialize counts.
+		std::vector<int> counts(nspecies);
+		for(int i = 0; i < nspecies-1; i++)
+			counts[i] = (int)std::round(fracs[i]*n);
+
+		// Make sure rounding above works out to perfect numbers.
+		counts[nspecies-1] = n;
+		for(int i = 0; i < nspecies-1; i++)
+			counts[nspecies-1] -= counts[i];
+
+		// New volume.
+		double vn = (double)n/density;
+		_H *= std::cbrt(vn/GetVolume());
+
+		// Get corresponding box size.
+		double L = std::cbrt(vn);
+
+		// Find the lowest perfect cube greater than or equal to the number of particles.
+		int nCube = 2;
+		while(pow(nCube, 3) < n)
+			++nCube;
+
+		// Coordinates.
+		int x = 0;
+		int y = 0;
+		int z = 0;
+
+		// Assign particle positions.
+		for (int i = 0; i < n; ++i)
+		{
+			for(int j = 0; j < nspecies; j++)
+				if(counts[j] > 0 )
+				{
+					Particle* pnew = particles[j]->Clone();
+					double mult = (L/nCube);
+					Position pos = {mult*(x+0.5),mult*(y+0.5),mult*(z+0.5)};
+					pnew->SetPosition(pos);
+					AddParticle(pnew);
+					--counts[j];
+					break;
+				}
+
+			if(++x == nCube)
+			{	
+				x = 0;
+				if(++y == nCube)
+				{
+					y = 0;
+					++z;
+				}
+			}
+		}
+	}
+
+	// Configure Particles in the lattice. For n particles and n fractions, 
+	// the lattice will be initialized with the appropriate composition.
+	void World::PackWorld(const std::vector<Particle*>& particles,
+						  const std::vector<double>& fractions, int max)
+	{
+		if(particles.size() != fractions.size())
+		{
+			std::cerr << "ERROR: Particle and fraction count mismatch." << std::endl;
+			exit(-1);
+		}
+
+		auto fracs = fractions;
+		int cnt = (int)particles.size();
+
+		// Normalize
+		double norm = 0;
+		for(int i = 0; i < cnt; i++)
+			norm += fracs[i];
+
+		for(int i = 0; i < cnt; i++)
+			fracs[i] /= norm;
+
+		// Initialize counts.
+		std::vector<int> counts(cnt);
+		for(int i = 0; i < cnt-1; i++)
+			counts[i] = (int)std::round(fracs[i]*GetVolume());
+
+		counts[cnt-1] = GetVolume();
+		for(int i = 0; i < cnt-1; i++)
+			counts[cnt-1] -= counts[i];
+
+		// Loop though and initialize
+		double x = 1;
+		double y = 1;
+		double z = 1;
+		for(int i = 0; i < GetVolume(); i++)
+		{
+			if(z > _H(2,2))
+				z = 1.0;
+			if(y > _H(1,1))
+				y = 1.0;
+			if(x > _H(0,0))
+				x = 1.0;
+
+			for(int j = 0; j < cnt; j++)
+				if(counts[j] > 0 )
+				{
+					Particle* pnew = particles[j]->Clone();
+					pnew->SetPosition({x,y,z});
+					AddParticle(pnew);
+					--counts[j];
+					break;
+				}
+
+			// Increment counters.
+			x += floor((y + z) / (round(_H(2,2)) + round(_H(1,1))));
+			y += floor(z / round(_H(2,2)));
+			z += 1.0;
+
+			if(max != 0 && i >= max - 1)
+				return;
+		}
+	}
+
+	void World::SetVolume(double v, bool scale)
+	{
+		auto l = pow(v, 1.0/3.0);
+
+		if(scale)
+		{
+			auto xs = l/_H(0,0);
+			auto ys = l/_H(1,1);
+			auto zs = l/_H(2,2);
+
+			#pragma omp parallel for schedule(static)
+			for(auto it = _particles.begin(); it < _particles.end(); ++it)
+			{
+				const auto& pos = (*it)->GetPosition();
+				(*it)->SetPosition(xs*pos[0], ys*pos[1], zs*pos[2]);
+			}
+
+			_H(0,0) = l;
+			_H(1,1) = l;
+			_H(2,2) = l;
+		}
+		else
+		{
+			_H(0,0) = l;
+			_H(1,1) = l;
+			_H(2,2) = l;
+
+			#pragma omp parallel for schedule(static)
+			for(auto it = _particles.begin(); it < _particles.end(); ++it)
+			{
+				auto pos = (*it)->GetPosition();
+				ApplyPeriodicBoundaries(&pos);
+				(*it)->SetPosition(pos);
+			}
+		}
+		
+		// Regenerate neighbor list.
+		UpdateNeighborList();
+	}
+
+	void World::Serialize(Json::Value& json) const
+	{
+		// TODO: Fix this.
+		json["type"] = "Simple";
+		json["temperature"] = this->GetTemperature();
+
+		const auto& box = this->GetHMatrix();
+		json["dimensions"][0] = box(0,0);
+		json["dimensions"][1] = box(1,1);
+		json["dimensions"][2] = box(2,2);
+
+		json["seed"] = this->GetSeed();
+		json["r_cutoff"] = this->GetCutoffRadius();
+		json["nlist_cutoff"] = this->GetNeighborRadius();
+
+		// Serialize primitives and build blueprint.
+		for(int i = 0; i < (int)_primitives.size(); ++i)
+		{
+			auto& p = _primitives[i];
+			
+			// Particles.
+			auto& last = json["particles"][i];
+			p->Serialize(last);
+
+			// Components
+			// If primitive has no parent it belongs in components.
+			if(p->HasParent())
+			{
+				auto& component = json["components"][p->GetParent()->GetSpecies()];
+				if(component == Json::nullValue)
+				{
+					component["count"] = _composition.at(p->GetParent()->GetSpeciesID());
+					p->GetParent()->GetBlueprint(component);
+				}
+			}
+			else
+			{
+				auto& component = json["components"][p->GetSpecies()];
+				if(component == Json::nullValue)
+				{
+					component["count"] = _composition.at(p->GetSpeciesID());
+					p->GetBlueprint(component);
+				}
+			}
+		}
+	}
+
+	World* World::Build(std::istream& stream)
+	{
+		Reader reader;
+		Value root;
+		if(!reader.parse(stream, root))
+			throw BuildException({reader.getFormattedErrorMessages()});
+
+		return Build(root);
+	}
+
+	World* World::Build(const Value& json)
+	{
+		ObjectRequirement validator;
+		Value schema;
+		Reader reader;
+
+		World* world = nullptr;
+
+		// Validation success.
+		if(json["type"].asString() == "Simple")
+		{
+			// Parse schema.
+			reader.parse(JsonSchema::SimpleWorld, schema);
+			validator.Parse(schema, "#/worlds");
+
+			// Validate input.
+			validator.Validate(json, "#/worlds");
+
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			Position dim{json["dimensions"][0].asDouble(), 
+						 json["dimensions"][1].asDouble(),
+						 json["dimensions"][2].asDouble()};
+
+			// Neighbor list cutoff check.
+			double ncut = json.get("nlist_cutoff",0.0).asDouble();
+			if(ncut > dim[0]/2.0 || ncut > dim[1]/2.0 || ncut > dim[2]/2.0)
+				throw BuildException({"Neighbor list cutoff must not exceed "
+									  "half the shortest box vector."});
+			
+			// Skin thickness check.
+			double rcut = json["r_cutoff"].asDouble();
+			if(ncut && rcut > ncut)
+				throw BuildException({"Cutoff radius must not exceed neighbor list cutoff."});
+
+			srand(time(NULL));
+			int seed = json.isMember("seed") ? json["seed"].asInt() : rand();
+
+			
+			world = new World(dim[0], dim[1], dim[2], rcut, seed);
+			if(ncut)
+				world->SetNeighborRadius(ncut);
+		}
+
+		// Initialize particles.
+		if(json.isMember("particles"))
+		{ 
+			ParticleList particles;
+			Particle::BuildParticles(json["particles"], json["components"], particles);
+			
+			for(auto& p : particles)
+				world->AddParticle(p);
+		}
+
+		// Load temperature.
+		world->SetTemperature(json.get("temperature", 0).asDouble());
+
+		return world;
 	}
 
 	// Initialize global world ID.

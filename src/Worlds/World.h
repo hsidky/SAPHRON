@@ -10,6 +10,7 @@
 #include "vecmap.h"
 #include <memory>
 #include <functional>
+#include <armadillo>
 
 namespace SAPHRON
 {
@@ -32,6 +33,12 @@ namespace SAPHRON
 
 		// Neighbor list cutoff radius.
 		double _ncut, _ncutsq;
+
+		// Box matrix.
+		Matrix3D _H;
+
+		// Is diagoanl?
+		bool _diag;
 
 		// Skin thickness (calculated).
 		double _skin, _skinsq;
@@ -107,16 +114,21 @@ namespace SAPHRON
 		typedef ParticleList::iterator iterator;
 		typedef ParticleList::const_iterator const_iterator;
 
-		World(double rcut, int seed = 1) : 
-		_rcut(rcut), _rcutsq(rcut*rcut), _ncut(0), _ncutsq(0), _skin(0), _skinsq(0), 
-		_temperature(0.0), _particles(0), _primitives(0), _rand(seed), _composition(),
-		_seed(seed), _id(++_nextID)
+		// Initialize an orthorhombic world.
+		World(double xl, double yl, double zl, double rcut, int seed = 1) : 
+		_rcut(rcut), _rcutsq(rcut*rcut), _ncut(0), _ncutsq(0), 
+		_H(arma::fill::zeros), _diag(true), _skin(0), _skinsq(0), 
+		_temperature(0.0), _particles(0), _primitives(0), 
+		_rand(seed), _composition(), _seed(seed), _id(++_nextID)
 		{
 			_stringid = "world" + std::to_string(_id);
 			_skin = 0.30 * _rcut;
 			_skinsq = _skin * _skin;
 			_ncut = _rcut + _skin;
 			_ncutsq = (_rcut + _skin)*(_rcut + _skin);
+			_H(0,0) = xl;
+			_H(1,1) = yl;
+			_H(2,2) = zl;
 		}
 
 		// Draw a random particle from the world.
@@ -158,7 +170,7 @@ namespace SAPHRON
 			for(auto& particle : particles)
 			{
 				auto dist = particle->GetCheckpointDist();
-				ApplyMinimumImage(dist);
+				ApplyMinimumImage(&dist);
 				if(dot(dist,dist) > _skinsq/4.0)
 				{	
 					UpdateNeighborList();
@@ -171,7 +183,7 @@ namespace SAPHRON
 		void CheckNeighborListUpdate(Particle* p)
 		{
 			auto dist = p->GetCheckpointDist();
-			ApplyMinimumImage(dist);
+			ApplyMinimumImage(&dist);
 			if(dot(dist,dist) > _skinsq/4.0)	
 				UpdateNeighborList();
 		}
@@ -239,10 +251,44 @@ namespace SAPHRON
 		}
 
 		// Applies periodic boundaries to positions.
-		virtual void ApplyPeriodicBoundaries(Position* position) const = 0;
+		inline void ApplyPeriodicBoundaries(Position* position) const 
+		{
+			(*position)[0] -= _H(0,0)*ffloor((*position)[0]/_H(0,0));
+			(*position)[1] -= _H(1,1)*ffloor((*position)[1]/_H(1,1));
+			(*position)[2] -= _H(2,2)*ffloor((*position)[2]/_H(2,2));
+		}
 	
 		// Applies minimum image convention to distances. 
-		virtual void ApplyMinimumImage(Position& position) const = 0;
+		inline void ApplyMinimumImage(Position* position) const
+		{
+			if((*position)[0] > _H(0,0)/2.0)
+				(*position)[0] -= _H(0,0);
+			else if((*position)[0] < -_H(0,0)/2.0)
+				(*position)[0] += _H(0,0);
+			
+			if((*position)[1] > _H(1,1)/2.0)
+				(*position)[1] -= _H(1,1);
+			else if((*position)[1] < -_H(1,1)/2.0)
+				(*position)[1] += _H(1,1);
+
+			if((*position)[2] > _H(2,2)/2.0)
+				(*position)[2] -= _H(2,2);
+			else if((*position)[2] < -_H(2,2)/2.0)
+				(*position)[2] += _H(2,2);
+		}
+
+		// Packs a world with the given particle blueprints and 
+		// compositions to with "count" total particles and a 
+		// specified density.
+		void PackWorld(const std::vector<Particle*>& particles,
+					   const std::vector<double>& fractions, 
+					   int count, double density);
+
+		// Configure Particles in the lattice. For n particles and n fractions, 
+		// the lattice will be initialized with the appropriate composition.  
+		// If max is set, it will stop at that number.
+		void PackWorld(const std::vector<Particle*>& particles,
+					   const std::vector<double>& fractions, int max = 0);
 
 		/***************************
 		 *                         *		
@@ -298,9 +344,7 @@ namespace SAPHRON
 		{
 			return _composition;
 		}
-		// Get system volume.
-		virtual double GetVolume() const = 0;
-
+		
 		// Get the system number density.
 		double GetNumberDensity() const
 		{
@@ -357,15 +401,21 @@ namespace SAPHRON
 		// Increment world energy (e += de).
 		void IncrementEnergy(const Energy& de) { _energy += de; }
 
-		// Sets the box vectors (box volume) and if scale is true, 
+		// Get H matrix.
+		inline const Matrix3D& GetHMatrix() const { return _H; }
+
+		// Get system volume.
+		inline double GetVolume() const
+		{
+			return _H(0,0)*_H(1,1)*_H(2,2);
+		}
+
+		// Sets the volume of the world isotropically and if scale is true, 
 		// scale the coordinates of the particles in the system. 
 		// Energy recalculation after this procedure is recommended.
 		// If scaling is not applied, periodic boundary conditions 
 		// are applied to all particles. The neighbor list is auto regenerated.
-		virtual void SetBoxVectors(double x, double y, double z, bool scale) = 0;
-
-		// Get box vectors.
-		virtual Position GetBoxVectors() const = 0;
+		void SetVolume(double v, bool scale);
 
 		// Iterators.
 		iterator begin() { return _particles.begin(); }
@@ -398,52 +448,8 @@ namespace SAPHRON
 			VisitChildren(v);
 		}
 
-		virtual void Serialize(Json::Value& json) const override
-		{
-			// TODO: Fix this.
-			json["type"] = "Simple";
-			json["temperature"] = this->GetTemperature();
-
-			auto box = this->GetBoxVectors();
-			json["dimensions"][0] = box[0];
-			json["dimensions"][1] = box[1];
-			json["dimensions"][2] = box[2];
-
-			json["seed"] = this->GetSeed();
-			json["r_cutoff"] = this->GetCutoffRadius();
-			json["nlist_cutoff"] = this->GetNeighborRadius();
-
-			// Serialize primitives and build blueprint.
-			for(int i = 0; i < (int)_primitives.size(); ++i)
-			{
-				auto& p = _primitives[i];
-				
-				// Particles.
-				auto& last = json["particles"][i];
-				p->Serialize(last);
-
-				// Components
-				// If primitive has no parent it belongs in components.
-				if(p->HasParent())
-				{
-					auto& component = json["components"][p->GetParent()->GetSpecies()];
-					if(component == Json::nullValue)
-					{
-						component["count"] = _composition.at(p->GetParent()->GetSpeciesID());
-						p->GetParent()->GetBlueprint(component);
-					}
-				}
-				else
-				{
-					auto& component = json["components"][p->GetSpecies()];
-					if(component == Json::nullValue)
-					{
-						component["count"] = _composition.at(p->GetSpeciesID());
-						p->GetBlueprint(component);
-					}
-				}
-			}
-		}
+		// Serialize world.
+		virtual void Serialize(Json::Value& json) const override;
 
 		/**********************************
 		 *                                *

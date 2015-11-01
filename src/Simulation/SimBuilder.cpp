@@ -56,11 +56,12 @@ namespace SAPHRON
 
 				// Print notices.
 				notices.push_back("Building world \"" + world->GetStringID() + "\"...");
-				auto dim = world->GetBoxVectors();
+				auto dim = world->GetHMatrix();
+
 				notices.push_back("Setting size to [" +  
-					to_string(dim[0]) + ", " + 
-					to_string(dim[1]) + ", " + 
-					to_string(dim[2]) + "] \u212B.");
+					to_string(dim(0,0)) + ", " + 
+					to_string(dim(1,1)) + ", " + 
+					to_string(dim(2,2)) + "] \u212B.");
 				
 				notices.push_back("Setting neighbor list radius to " + 
 					to_string(world->GetNeighborRadius()) + 

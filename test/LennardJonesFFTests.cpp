@@ -5,7 +5,7 @@
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Particles/Site.h"
 #include "../src/Particles/Molecule.h"
-#include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
 #include "TestAccumulator.h"
 #include "json/json.h"
@@ -113,7 +113,7 @@ TEST(LennardJonesFF, NISTValidation1)
 
 	// Add lj atom to world and initialize in simple lattice configuration.
 	// World volume is adjusted by packworld.
-	SimpleWorld world(1, 1, 1, rcut);
+	World world(1, 1, 1, rcut);
 	world.SetNeighborRadius(rcut + 1.0);
 	world.PackWorld({ljatom}, {1.0}, N, rdensity);
 	world.UpdateNeighborList();

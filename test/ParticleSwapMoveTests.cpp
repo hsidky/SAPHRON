@@ -1,7 +1,7 @@
 #include "../src/Moves/ParticleSwapMove.h"
 #include "../src/ForceFields/ForceFieldManager.h"
 #include "../src/ForceFields/LennardJonesFF.h"
-#include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
 #include "../src/Particles/Site.h"
 #include "gtest/gtest.h"
@@ -13,8 +13,8 @@ TEST(ParticleSwapMove, DefaultBehavior)
 	Site s({0, 0, 0},{0,0,0}, "LJ");
 
 	// "Liquid-like" world. Volumes adjusted by packworld.
-	SimpleWorld liquid(1, 1, 1,  4.0);
-	SimpleWorld vapor(1, 1, 1,  4.0);
+	World liquid(1, 1, 1,  4.0);
+	World vapor(1, 1, 1,  4.0);
 
 	// Pack the worlds. 
 	liquid.PackWorld({&s}, {1.0}, 200, 0.1);

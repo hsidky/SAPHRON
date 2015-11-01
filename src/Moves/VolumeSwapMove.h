@@ -39,10 +39,8 @@ namespace SAPHRON
 			double v1n = v*exp(lnvn)/(1+exp(lnvn));
 			double v2n = v - v1n;
 			
-			double b1 = pow(v1n, 1.0/3.0);
-			double b2 = pow(v2n, 1.0/3.0);
-			w1->SetBoxVectors(b1, b1, b1, true);
-			w2->SetBoxVectors(b2, b2, b2, true);
+			w1->SetVolume(v1n, true);
+			w2->SetVolume(v2n, true);
 			++_performed;
 		}
 
@@ -111,10 +109,8 @@ namespace SAPHRON
 			// Undo move if it doesn't meet probability.
 			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
-				double b1 = pow(vi1, 1.0/3.0);
-				double b2 = pow(vi2, 1.0/3.0);
-				w1->SetBoxVectors(b1, b1, b1, true);
-				w2->SetBoxVectors(b2, b2, b2, true);
+				w1->SetVolume(vi1, true);
+				w2->SetVolume(vi2, true);
 				++_rejected;
 			}
 			else

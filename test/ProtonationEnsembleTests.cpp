@@ -7,7 +7,7 @@
 #include "../src/Moves/ImplicitProtonationMove.h"
 #include "../src/Moves/ChargeSwapMove.h"
 #include "../src/Observers/ConsoleObserver.h"
-#include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/World.h"
 #include "TestAccumulator.h"
 #include "gtest/gtest.h"
 
@@ -16,7 +16,7 @@ using namespace SAPHRON;
 TEST(ProtonationMDEnsemble, HighChemical)
 {
 	// Initialize world.
-	SimpleWorld world(1000, 1000, 1000, 100);
+	World world(1000, 1000, 1000, 100);
 	Site* site1= new Site({0, 1, 0}, {0, 0, 0}, "Monomer");
 	Site* site2= new Site({0, 0, 0}, {0, 0, 0}, "Monomer");
 	Site* site3= new Site({1, 0, 0}, {0, 0, 0}, "Monomer");
@@ -84,7 +84,7 @@ TEST(ProtonationMDEnsemble, HighChemical)
 TEST(ProtonationMDEnsemble, LowChemical)
 {
 	// Initialize world.
-	SimpleWorld world(1000, 1000, 1000, 100);
+	World world(1000, 1000, 1000, 100);
 	Site* site1= new Site({0, 1, 0}, {0, 0, 0}, "Monomer");
 	Site* site2= new Site({0, 0, 0}, {0, 0, 0}, "Monomer");
 	Site* site3= new Site({1, 0, 0}, {0, 0, 0}, "Monomer");
@@ -152,7 +152,7 @@ TEST(ProtonationMDEnsemble, LowChemical)
 TEST(ProtonationMDEnsemble, ChargeSwap)
 {
 	// Initialize world.
-	SimpleWorld world(1000, 1000, 1000, 100);
+	World world(1000, 1000, 1000, 100);
 	Site* site1= new Site({0, 1, 0}, {0, 0, 0}, "Monomer");
 	site1->SetCharge(1.0);
 	Site* site2= new Site({0, 0, 0}, {0, 0, 0}, "Monomer");

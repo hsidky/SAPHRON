@@ -1,7 +1,7 @@
 #include "../src/Moves/RotateMove.h"
 #include "../src/Particles/Site.h"
 #include "../src/Particles/Molecule.h"
-#include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
 #include "../src/Moves/MoveManager.h"
 #include "../src/ForceFields/ForceFieldManager.h"
@@ -76,7 +76,7 @@ TEST(RotateMove, MoleculeRotations)
 
 TEST(RotateMove, MoveInterface)
 {
-	SimpleWorld w(10.0, 10.0, 10.0, 2.0);
+	World w(10.0, 10.0, 10.0, 2.0);
 
 	// Create a new site.
 	Site* s1 = new Site({0, 0, 0}, {0, 0, 1}, "T1");	

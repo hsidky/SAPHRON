@@ -7,7 +7,7 @@
 #include "../src/Particles/Site.h"
 #include "../src/Simulation/StandardSimulation.h"
 #include "../src/Worlds/WorldManager.h"
-#include "../src/Worlds/SimpleWorld.h"
+#include "../src/Worlds/World.h"
 #include "TestAccumulator.h"
 #include "gtest/gtest.h"
 
@@ -28,13 +28,13 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 
 	// Add lj atom to world and initialize in simple lattice configuration.
 	// World volume is adjusted by packworld.
-	SimpleWorld liquid(1, 1, 1, rcut);
+	World liquid(1, 1, 1, rcut);
 	liquid.SetNeighborRadius(rcut + 1.0);
 	liquid.PackWorld({&ljatom}, {1.0}, N/2, 0.30);
 	liquid.SetTemperature(T);
 	liquid.UpdateNeighborList();
 
-	SimpleWorld vapor(1, 1, 1, rcut);
+	World vapor(1, 1, 1, rcut);
 	vapor.SetNeighborRadius(rcut + 1.0);
 	vapor.PackWorld({&ljatom}, {1.0}, N/2, 0.30);
 	vapor.SetTemperature(T);
