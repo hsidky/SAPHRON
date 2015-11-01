@@ -1,26 +1,15 @@
 {
     "items": {
-        "additionalProperties": false,
-        "required": [
-            "type",
-            "dimensions",
-            "r_cutoff",
-            "components"
-        ],
-        "type": "object",
         "properties": {
-            "seed": {
-                "type": "integer",
+            "temperature": {
+                "type": "number",
                 "minimum": 0
             },
-            "components": {
-                "type": "object"
-            },
             "type": {
+                "type": "string",
                 "enum": [
                     "Simple"
-                ],
-                "type": "string"
+                ]
             },
             "dimensions": {
                 "items": {
@@ -28,28 +17,39 @@
                     "minimum": 0
                 },
                 "minItems": 3,
+                "maxItems": 3,
                 "type": "array",
-                "additionalItems": false,
-                "maxItems": 3
+                "additionalItems": false
             },
-            "nlist_cutoff": {
-                "type": "number",
+            "components": {
+                "type": "object"
+            },
+            "r_cutoff": {
                 "exclusiveMinimum": true,
+                "type": "number",
                 "minimum": 0
             },
-            "temperature": {
+            "nlist_cutoff": {
+                "exclusiveMinimum": true,
                 "type": "number",
                 "minimum": 0
             },
             "particles": {
                 "type": "array"
             },
-            "r_cutoff": {
-                "type": "number",
-                "exclusiveMinimum": true,
+            "seed": {
+                "type": "integer",
                 "minimum": 0
             }
-        }
+        },
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+            "type",
+            "dimensions",
+            "r_cutoff",
+            "components"
+        ]
     },
     "minItems": 1,
     "type": "array"
