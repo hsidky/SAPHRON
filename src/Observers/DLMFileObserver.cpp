@@ -19,11 +19,23 @@ namespace SAPHRON
 			stream << setw(_w) << data << _dlm;
 		else
 			stream << data << _dlm;
+	}	
+
+	template<typename T>
+	void DLMFileObserver::WriteStream(ofstream& stream, const T& data, int width)
+	{
+		if(_fixl)
+			stream << setw(width) << data << _dlm;
+		else
+			stream << data << _dlm;
 	}
 
-	DLMFileObserver::DLMFileObserver(const string& prefix, const SimFlags& flags, unsigned int frequency) : 
-		SimObserver(flags, frequency), _worldfs(0), _particlefs(), _dlm(" "), _ext(".dat"), 
-		_fixl(true), _w(15), _prefix(prefix), _printedH(false)
+	DLMFileObserver::DLMFileObserver(const string& prefix, 
+									 const SimFlags& flags, 
+									 unsigned int frequency) : 
+	SimObserver(flags, frequency), _worldfs(0), _particlefs(),
+	_dlm(" "), _ext(".dat"), _fixl(true), _w(15), _prefix(prefix), 
+	_printedH(false)
 	{
 	}
 
@@ -60,7 +72,6 @@ namespace SAPHRON
 			);
 		_simfs->precision(8);
 		*_simfs << scientific;
-
 
 		if(this->Flags.iteration)
 			WriteStream(*_simfs, "Iteration");
@@ -261,6 +272,7 @@ namespace SAPHRON
 		if(!this->Flags.histogram)
 			return;
 
+
 		if(this->Flags.iteration)
 			WriteStream(*_histfs, this->GetIteration());
 		if(this->Flags.hist_interval)
@@ -275,8 +287,16 @@ namespace SAPHRON
 		if(this->Flags.hist_upper_outliers)
 			WriteStream(*_histfs, hist.GetUpperOutlierCount());
 		if(this->Flags.hist_values)
+		{
+			// We need high precision for histogram values.
+			_histfs->precision(16);
+			int w = 22;
+			
 			for(const auto& v : hist.GetValues())
-				WriteStream(*_histfs, v);
+				WriteStream(*_histfs, v, w);
+			
+			_histfs->precision(8);
+		}
 	}
 
 	void DLMFileObserver::Visit(const WorldManager &wm)

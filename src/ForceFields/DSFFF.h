@@ -23,7 +23,7 @@ namespace SAPHRON
 	public:
 		DSFFF(double alpha) : 
 		_alpha(alpha), _alphasq(alpha*alpha), _pre(2.0*_alpha/sqrt(M_PI)),
-		_qdim(0)
+		_qdim(1.0)
 		{
 			// Calculate charge (q) reduced units conversion.
 			auto& sim = SimInfo::Instance();

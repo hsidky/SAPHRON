@@ -41,8 +41,13 @@ namespace SAPHRON
         template<typename T>
         void WriteStream(std::ofstream& stream, const T& data);
 
+        template<typename T>
+        void WriteStream(std::ofstream& stream, const T& data, int width);
+
 	public:
-		DLMFileObserver(const std::string& prefix, const SimFlags& flags, unsigned int frequency = 1);
+		DLMFileObserver(const std::string& prefix, 
+						const SimFlags& flags, 
+						unsigned int frequency = 1);
 
 		// Sets the column width in fixed with mode.
 		void SetWidth(unsigned int width) { _w = width; }

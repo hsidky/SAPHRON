@@ -10,7 +10,7 @@ using namespace SAPHRON;
 
 TEST(ThreeInteractions, DefaultBehavior)
 {
-	DebyeHuckelFF ffe(1.2, 4, 2);
+	DebyeHuckelFF ffe(0.001);
 	FENEFF ffb(2,2.5,8,10);
 	LennardJonesFF ffnb(5,1.5);
 
@@ -95,16 +95,16 @@ TEST(ThreeInteractions, DefaultBehavior)
 	auto NB = ffm.EvaluateHamiltonian(m, compositions, 0.0);
 	auto NB2 = ffm.EvaluateHamiltonian(*s1, compositions, 0.0);
 
-	ASSERT_NEAR(1.124989931, NB2.energy.interelectrostatic, 1e-3);
-	ASSERT_NEAR(0.3778932422, NB2.energy.intraelectrostatic, 1e-3);
+	ASSERT_NEAR(0.8410, NB2.energy.interelectrostatic, 1e-3);
+	ASSERT_NEAR(0.332335, NB2.energy.intraelectrostatic, 1e-3);
 
 	ASSERT_NEAR(-3.3932724443, NB2.energy.intervdw, 1e-3);
 	ASSERT_NEAR(-0.3076171875, NB2.energy.intravdw, 1e-3);
 
 	ASSERT_NEAR(56.4083121427, NB2.energy.bonded, 1e-3);
 
-	ASSERT_NEAR(1.7923968707, NB.energy.interelectrostatic, 1e-3);
-	ASSERT_NEAR(0.3778932422, NB.energy.intraelectrostatic,1e-3);
+	ASSERT_NEAR(1.45935, NB.energy.interelectrostatic, 1e-3);
+	ASSERT_NEAR(0.332335, NB.energy.intraelectrostatic,1e-3);
 
 	ASSERT_NEAR(-10.4407366487, NB.energy.intervdw, 1e-3);
 	ASSERT_NEAR(-0.3076171875, NB.energy.intravdw, 1e-3);
