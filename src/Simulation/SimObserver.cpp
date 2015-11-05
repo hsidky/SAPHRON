@@ -130,7 +130,7 @@ namespace SAPHRON
 
 			auto* dlm = new DLMFileObserver(prefix, flags, frequency);
 			dlm->SetWidth(colwidth);
-			dlm->SetFixedWithMode(fixedw);
+			dlm->SetFixedWidthMode(fixedw);
 			dlm->SetDelimiter(delimiter);
 			dlm->SetExtension(extension);
 			obs = static_cast<SimObserver*>(dlm);

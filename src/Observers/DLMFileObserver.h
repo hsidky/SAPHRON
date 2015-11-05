@@ -53,7 +53,7 @@ namespace SAPHRON
 		void SetWidth(unsigned int width) { _w = width; }
 
 		// Set fixed width mode (true = on, false = off).
-		void SetFixedWithMode(bool fixed) { _fixl = fixed; }
+		void SetFixedWidthMode(bool fixed) { _fixl = fixed; }
 
 		// Set delimiter.
 		void SetDelimiter(const std::string& dlm) { _dlm = dlm; }
@@ -93,7 +93,7 @@ namespace SAPHRON
 		{
 			if(_simfs)
 				_simfs->close();
-			
+
 			for(auto& w : _worldfs)
 				w->close();
 
@@ -102,6 +102,7 @@ namespace SAPHRON
 
 			if(_dosfs)
 				_dosfs->close();
+
 			if(_histfs)
 				_histfs->close();
 		}
