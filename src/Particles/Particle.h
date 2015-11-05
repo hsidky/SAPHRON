@@ -496,17 +496,16 @@ namespace SAPHRON
 		{
 			json[0] = GetGlobalIdentifier();
 			json[1] = GetSpecies();
-			json[2] = HasParent() ? GetParent()->GetSpecies() : GetSpecies();
 
 			auto& pos = GetPosition();
-			json[3][0] = pos[0];
-			json[3][1] = pos[1];
-			json[3][2] = pos[2];
+			json[2][0] = pos[0];
+			json[2][1] = pos[1];
+			json[2][2] = pos[2];
 
 			auto& dir = GetDirector();
-			json[4][0] = dir[0];
-			json[4][1] = dir[1];
-			json[4][2] = dir[2];
+			json[3][0] = dir[0];
+			json[3][1] = dir[1];
+			json[3][2] = dir[2];
 		}
 
 
@@ -529,12 +528,14 @@ namespace SAPHRON
 		static Particle* BuildParticle(const Json::Value& particles, 
 									   const Json::Value& blueprint);
 
-		// Build particles. This builds particles from JSON array and the blueprint. 
-		// It then stores the created particles in pvector. Object lifetime is the 
-		// responsibility of the caller! If an exception is thrown the caller must 
-		// clean up instantiated object in pvector.
+		// Build particles. This builds particles from a JSON array of primitive
+		// particles, molecule blueprints, and component counts. It then stores the 
+		// created particles in pvector. Object lifetime is the responsibility of 
+		// the caller! If an exception is thrown the caller must clean up instantiated 
+		// object in pvector.
 		static void BuildParticles(const Json::Value& particles, 
-								   const Json::Value& blueprints, 
+								   const Json::Value& blueprints,
+								   const Json::Value& components,
 								   ParticleList& pvector);
 
 		// Iterators.

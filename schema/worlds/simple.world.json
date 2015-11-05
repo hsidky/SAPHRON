@@ -23,12 +23,13 @@
 		"particles" : {
 			"type": "array"
 		},
-		"components" : {
-			"type" : "object"
-		},
+		"components" : "@file(components.world.json)",
 		"temperature": {
 			"type" : "number",
 			"minimum" : 0
+		},
+		"pack" : {
+			"type" : "object"
 		}
 	},
 	"required" : ["type", "dimensions", "r_cutoff", "components"],

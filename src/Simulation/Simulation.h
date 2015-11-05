@@ -92,6 +92,26 @@ namespace SAPHRON
 				json["iterations"] = GetTargetIterations();
 				json["mpi"] = GetMovesPerIteration();
 
+				auto& blueprint = json["blueprints"];
+				// Serialize particle blueprint. 
+				for(auto& it : Particle::GetParticleMap())
+				{
+					auto& p = it.second;
+					// If primitive has no parent it belongs in components.
+					if(p->HasParent())
+					{
+						auto& component = blueprint[p->GetParent()->GetSpecies()];
+						if(component == Json::nullValue)
+							p->GetParent()->GetBlueprint(component);
+					}
+					else
+					{
+						auto& component = blueprint[p->GetSpecies()];
+						if(component == Json::nullValue)
+							p->GetBlueprint(component);
+					}
+				}
+
 				SerializeObservers(json["observers"]);
 			}
 

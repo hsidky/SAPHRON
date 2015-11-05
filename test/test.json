@@ -24,24 +24,16 @@
             "dimensions" : [32, 32, 32],
             "seed": 300,
             "r_cutoff": 10.0,
-            "skin_thickness": 2,
+            "nlist_cutoff": 12,
             "components" : {
                 "LJ" : {
-                    "count": 1,
-                    "children": [
-                        {
-                            "species" : "LJ2"
-                        },
-                        {
-                            "species" : "LJ3"
-                        }
-                    ]
+                    "count": 1
                 }
             },
             
             "particles" : [
-                [1, "LJ2", "LJ", [1,2,3], [2.0, 0.0, 0.0]],
-                [2, "LJ3", "LJ", [1,2,3], [2.0, 0.0, 0.0]]
+                [1, "LJ2", [1,2,3], [2.0, 0.0, 0.0]],
+                [2, "LJ3", [1,2,3], [2.0, 0.0, 0.0]]
             ]
         },
         {
@@ -49,25 +41,17 @@
             "dimensions" : [32, 32, 32],
             "seed": 300,
             "r_cutoff": 10.0,
-            "skin_thickness": 2,
+            "nlist_cutoff": 12,
             "temperature": 300,
             "components" : {
                 "LJ" : {
-                    "count": 1,
-                    "children": [
-                        {
-                            "species" : "LJ2"
-                        },
-                        {
-                            "species" : "LJ3"
-                        }
-                    ]
+                    "count": 1
                 }
             },
             
             "particles" : [
-                [1, "LJ2", "LJ", [1,2,3], [0.0, 0.0, 0.0]],
-                [2, "LJ3", "LJ", [1,2,3], [0.0, 0.0, 0.0]]
+                [1, "LJ2", [1,2,3], [0.0, 0.0, 0.0]],
+                [2, "LJ3", [1,2,3], [0.0, 0.0, 0.0]]
             ]
         }
     ],
@@ -81,6 +65,19 @@
                 "species": ["LJ", "LJ"] 
             }
         ]
+    },
+
+    "blueprints" : {
+        "LJ" : {
+            "children" : [
+                {
+                    "species" : "LJ2"
+                },
+                {
+                    "species" : "LJ3"
+                }
+            ]
+        }  
     },
 
     "moves" : [

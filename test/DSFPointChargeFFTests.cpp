@@ -67,7 +67,7 @@ TEST(DSFFF, NISTConfig1)
 
 	// Build world.
 	World* w = nullptr;
-	ASSERT_NO_THROW(w = World::Build(root["worlds"][0]));
+	ASSERT_NO_THROW(w = World::Build(root["worlds"][0], root["blueprints"]));
 	ASSERT_NE(nullptr, w);
 
 	ASSERT_EQ(100, w->GetParticleCount());

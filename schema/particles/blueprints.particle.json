@@ -34,9 +34,6 @@
 				},
 				"charge" : {
 					"type" : "number"
-				},
-				"species" : {
-					"type" : "string"
 				}
 			},
 			"required": ["count"],

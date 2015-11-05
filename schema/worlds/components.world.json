@@ -1,0 +1,19 @@
+{
+	"components" : {
+		"type" : "object",
+		"patternProperties" : {
+			"^[A-z][A-z0-9]+$" : {
+				"type" : "object",
+				"properties" : {
+					"count" : {
+						"type" : "integer",
+						"minimum" : 1
+					}
+				},
+				"required" : ["count"]
+			}
+		},
+		"minProperties" : 1,
+		"additionalProperties": false
+	}
+}

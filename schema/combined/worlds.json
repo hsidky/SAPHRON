@@ -1,9 +1,52 @@
 {
     "items": {
         "properties": {
+            "seed": {
+                "type": "integer",
+                "minimum": 0
+            },
             "temperature": {
                 "type": "number",
                 "minimum": 0
+            },
+            "dimensions": {
+                "items": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "maxItems": 3,
+                "type": "array",
+                "minItems": 3,
+                "additionalItems": false
+            },
+            "particles": {
+                "type": "array"
+            },
+            "nlist_cutoff": {
+                "exclusiveMinimum": true,
+                "type": "number",
+                "minimum": 0
+            },
+            "components": {
+                "components": {
+                    "patternProperties": {
+                        "^[A-z][A-z0-9]+$": {
+                            "properties": {
+                                "count": {
+                                    "type": "integer",
+                                    "minimum": 1
+                                }
+                            },
+                            "required": [
+                                "count"
+                            ],
+                            "type": "object"
+                        }
+                    },
+                    "minProperties": 1,
+                    "type": "object",
+                    "additionalProperties": false
+                }
             },
             "type": {
                 "type": "string",
@@ -11,46 +54,24 @@
                     "Simple"
                 ]
             },
-            "dimensions": {
-                "items": {
-                    "type": "number",
-                    "minimum": 0
-                },
-                "minItems": 3,
-                "maxItems": 3,
-                "type": "array",
-                "additionalItems": false
-            },
-            "components": {
+            "pack": {
                 "type": "object"
             },
             "r_cutoff": {
                 "exclusiveMinimum": true,
                 "type": "number",
                 "minimum": 0
-            },
-            "nlist_cutoff": {
-                "exclusiveMinimum": true,
-                "type": "number",
-                "minimum": 0
-            },
-            "particles": {
-                "type": "array"
-            },
-            "seed": {
-                "type": "integer",
-                "minimum": 0
             }
         },
-        "type": "object",
-        "additionalProperties": false,
         "required": [
             "type",
             "dimensions",
             "r_cutoff",
             "components"
-        ]
+        ],
+        "type": "object",
+        "additionalProperties": false
     },
-    "minItems": 1,
-    "type": "array"
+    "type": "array",
+    "minItems": 1
 }

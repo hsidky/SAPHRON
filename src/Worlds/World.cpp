@@ -412,34 +412,19 @@ namespace SAPHRON
 			{
 				auto& component = json["components"][p->GetParent()->GetSpecies()];
 				if(component == Json::nullValue)
-				{
 					component["count"] = _composition.at(p->GetParent()->GetSpeciesID());
-					p->GetParent()->GetBlueprint(component);
-				}
 			}
 			else
 			{
 				auto& component = json["components"][p->GetSpecies()];
 				if(component == Json::nullValue)
-				{
 					component["count"] = _composition.at(p->GetSpeciesID());
-					p->GetBlueprint(component);
-				}
 			}
 		}
 	}
 
-	World* World::Build(std::istream& stream)
-	{
-		Reader reader;
-		Value root;
-		if(!reader.parse(stream, root))
-			throw BuildException({reader.getFormattedErrorMessages()});
-
-		return Build(root);
-	}
-
-	World* World::Build(const Value& json)
+	World* World::Build(const Value& json,
+						const Value& blueprints)
 	{
 		ObjectRequirement validator;
 		Value schema;
@@ -488,7 +473,10 @@ namespace SAPHRON
 		if(json.isMember("particles"))
 		{ 
 			ParticleList particles;
-			Particle::BuildParticles(json["particles"], json["components"], particles);
+			Particle::BuildParticles(json["particles"], 
+									 blueprints,
+									 json["components"], 
+									 particles);
 			
 			for(auto& p : particles)
 				world->AddParticle(p);

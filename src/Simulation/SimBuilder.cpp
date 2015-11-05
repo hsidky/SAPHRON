@@ -48,7 +48,7 @@ namespace SAPHRON
 		for(auto& jworld : root["worlds"])
 		{
 			try{
-				auto* world = World::Build(jworld);
+				auto* world = World::Build(jworld, root["blueprints"]);
 				_worlds.push_back(world);
 
 				// Add world to world manager.

@@ -106,10 +106,11 @@ namespace SAPHRON
 			c->RemoveFromBondedNeighbors();
 	}
 			
-	Particle* Particle::BuildParticle(const Json::Value& particles, const Json::Value& blueprints)
+	Particle* Particle::BuildParticle(const Json::Value& particles, 
+									  const Json::Value& blueprints)
 	{
-		ArrayRequirement pvalidator;
-		ObjectRequirement bvalidator;
+		ArrayRequirement arrayvalid;
+		ObjectRequirement objvalid;
 		Value pschema, bschema; 
 		Reader reader;
 
@@ -120,27 +121,31 @@ namespace SAPHRON
 
 		// Parse schemas.
 		reader.parse(JsonSchema::Site, pschema);
-		pvalidator.Parse(pschema, "#/particles");
+		arrayvalid.Parse(pschema, "#/particles");
 		reader.parse(JsonSchema::Components, bschema);
-		bvalidator.Parse(bschema, "#/components");
+		objvalid.Parse(bschema, "#/components");
 
 		// Validate inputs. 
-		pvalidator.Validate(particles, "#/particles");
-		if(pvalidator.HasErrors())
-				throw BuildException(pvalidator.GetErrors());
+		arrayvalid.Validate(particles, "#/particles");
+		if(arrayvalid.HasErrors())
+				throw BuildException(arrayvalid.GetErrors());
 
-		bvalidator.Validate(blueprints, "#/components");
-		if(bvalidator.HasErrors())
-			throw BuildException(bvalidator.GetErrors());
+		objvalid.Validate(blueprints, "#/components");
+		if(objvalid.HasErrors())
+			throw BuildException(objvalid.GetErrors());
 
 		// Declare all variables of interest. 
 		int id = particles[0].asInt();
 		std::string species = particles[1].asString();
 		std::string component = particles[2].asString();
-		Position pos{particles[3][0].asDouble(), particles[3][1].asDouble(), particles[3][2].asDouble()};
+		Position pos{particles[3][0].asDouble(), 
+					 particles[3][1].asDouble(), 
+					 particles[3][2].asDouble()};
 		Director dir;
 		if(particles.size() > 4)
-			dir = {particles[4][0].asDouble(), particles[4][1].asDouble(), particles[4][2].asDouble()};
+			dir = {particles[4][0].asDouble(), 
+				   particles[4][1].asDouble(), 
+				   particles[4][2].asDouble()};
 
 		// Check that we have a proper blueprint.
 		if(blueprints.isMember(species) && blueprints[species].isMember("children"))
@@ -159,87 +164,100 @@ namespace SAPHRON
 		return particle;
 	}
 	
-	void Particle::BuildParticles(const Json::Value &particles, 
-								  const Json::Value &blueprints, 
+	void Particle::BuildParticles(const Json::Value& particles, 
+								  const Json::Value& blueprints, 
+								  const Json::Value& components,
 								  ParticleList &pvector)
 	{
-		ArrayRequirement pvalidator;
-		ObjectRequirement bvalidator;
-		Value pschema, bschema; 
+		ArrayRequirement arrayvalid;
+		ObjectRequirement objvalid;
+		Value pschema, bschema, cschema; 
 		Reader reader;
 
 		pvector.clear();
 
 		// Parse schemas.
 		reader.parse(JsonSchema::Particles, pschema);
-		pvalidator.Parse(pschema, "#/particles");
-		reader.parse(JsonSchema::Components, bschema);
-		bvalidator.Parse(bschema, "#/components");
+		arrayvalid.Parse(pschema, "#/particles");
+		reader.parse(JsonSchema::Blueprints, bschema);
+		arrayvalid.Parse(bschema, "#/blueprints");
+		reader.parse(JsonSchema::Components, cschema);
+		objvalid.Parse(cschema, "#/components");
 
 		// Validate inputs via schemas. 
-		pvalidator.Validate(particles, "#/particles");
-		if(pvalidator.HasErrors())
-			throw BuildException(pvalidator.GetErrors());
+		arrayvalid.Validate(particles, "#/particles");
+		if(arrayvalid.HasErrors())
+			throw BuildException(arrayvalid.GetErrors());
 
-		bvalidator.Validate(blueprints, "#/components");
-		if(bvalidator.HasErrors())
-			throw BuildException(bvalidator.GetErrors());
+		objvalid.Validate(blueprints, "#/blueprints");
+		if(objvalid.HasErrors())
+			throw BuildException(objvalid.GetErrors());
+
+		objvalid.Validate(components, "#/components");
+		if(objvalid.HasErrors())
+			throw BuildException(objvalid.GetErrors());
 
 		// Perform semantic validation first, then initialize all particles. 
 		// This is to avoid having to free memory on error(s).
 		std::vector<int> uid;
+		uid.reserve(particles.size() + 1);
 
-		// Verify particle counts.			
 		int i = 0;
-		for(auto& bp : blueprints.getMemberNames())
+		// Verify that components have blueprints and that 
+		// particles in the particles array match up with the 
+		// blueprint and component counts.
+		for(auto& ctype : components.getMemberNames())
 		{
-			int count = blueprints[bp]["count"].asInt();
-			int ccount = blueprints[bp].isMember("children") ? blueprints[bp]["children"].size() : 0;
+			auto& component = components[ctype];
+			if(!blueprints.isMember(ctype))
+				throw BuildException({"Particle type \"" + 
+					ctype + "\" not delcared in blueprints."});	
+			auto& blueprint = blueprints[ctype];
+
+			// Get parent particle counts.
+			int count = component["count"].asInt();
+			// Get potential children counts.
+			int ccount = blueprint.isMember("children") ? blueprint["children"].size() : 0;
+			// Compute actual number of particles.
 			int pcount = ccount ? count * ccount : count;
 
-			// Loop though particles and validate type and order.
+			// Loop through particles and validate type and order.
 			for(int j = i; j < i + pcount; ++j)
 			{
 				if((i + pcount) > (int)particles.size())
-					throw BuildException({"Component \"" + bp + "\" count mismatch: " 
+					throw BuildException({"Component \"" + ctype + "\" count mismatch: " 
 						"expecting " + std::to_string(i + pcount) + " particles."});
 
+				// Get particle.
 				auto& p = particles[j];
+				auto id = p[0].asInt();
+				auto species = p[1].asString();
 
-				int id = p[0].asInt();
-				std::string species = p[1].asString();
-				std::string component = p[2].asString();
-				
-				// Make sure ID is unique.
+				// Make sure particle ID is unique.
 				if(std::find(uid.begin(), uid.end(), id) != uid.end())
 					throw BuildException(
 						{"Particle " + std::to_string(id) + ": must have unique ID."}
 					);
 				uid.push_back(id);
 
-				// Validate component.
-				if(component != bp)
-					throw BuildException(
-						{"Particle " + std::to_string(id) + ": must belong to component \"" + bp + "\"."}
-					);
-
 				// Validate species by determining what the current component should be.
 				if(ccount) // component has child.
 				{
 					int sindex = (j - i) % ccount;
-					auto& children = blueprints[bp]["children"];
-					if(species != children[sindex]["species"].asString())
+					auto child = blueprint["children"][sindex]["species"].asString();
+					if(species != child)
 						throw BuildException(
 							{
 								"Particle " + std::to_string(id) + ": expected type \"" 
-								+ children[sindex]["species"].asString() + "\"."
+								+ child + "\"."
 							}
 						);
 				}
 				else
-					if(species != bp)
+					if(species != ctype)
 						throw BuildException(
-							{"Particle " + std::to_string(id) + ": expected type \"" + bp + "\"."}
+							{"Particle " + std::to_string(id) + 
+							": expected type \"" + ctype + "\"."}
 						);
 			}
 			i += pcount;
@@ -261,11 +279,10 @@ namespace SAPHRON
 		{
 			int id = p[0].asInt();
 			std::string species = p[1].asString();
-			std::string component = p[2].asString();
-			Position pos{p[3][0].asDouble(), p[3][1].asDouble(), p[3][2].asDouble()};
+			Position pos{p[2][0].asDouble(), p[2][1].asDouble(), p[2][2].asDouble()};
 			Director dir;
-			if(p.size() > 4)
-				dir = {p[4][0].asDouble(), p[4][1].asDouble(), p[4][2].asDouble()};
+			if(p.size() > 3)
+				dir = {p[3][0].asDouble(), p[3][1].asDouble(), p[3][2].asDouble()};
 
 			// Create the particle.
 			Particle* particle = new Site(pos, dir, species);
@@ -275,10 +292,10 @@ namespace SAPHRON
 
 		// Create parent particles and add to output container.
 		// Here we also assign charges and masses from blueprints.
-		for(auto& bp : blueprints.getMemberNames())
+		for(auto& component : components.getMemberNames())
 		{
-			auto& spec = blueprints[bp];
-			int count = spec["count"].asInt();
+			auto& spec = blueprints[component];
+			int count = components[component]["count"].asInt();
 			int ccount = spec.isMember("children") ? spec["children"].size() : 0;
 
 			for(int j = 0; j < count; ++j)
@@ -295,7 +312,7 @@ namespace SAPHRON
 				else
 				{
 					// Pop children.
-					Particle* parent = new Molecule(bp);
+					Particle* parent = new Molecule(component);
 					for(int k = 0; k < ccount; ++k)
 					{
 						auto* p = pcontainer.front();

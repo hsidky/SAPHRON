@@ -460,8 +460,8 @@ namespace SAPHRON
 		// Builds a world from JSON value. Returns a pointer to world object, 
 		// or throws a BuildException if validation fails. Object lifetime 
 		// is caller's responsibility!
-		static World* Build(const Json::Value& json);
-		static World* Build(std::istream& stream);
+		static World* Build(const Json::Value& json,
+							const Json::Value& blueprints);
 
 		virtual ~World()
 		{

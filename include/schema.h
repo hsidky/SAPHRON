@@ -18,11 +18,12 @@ namespace SAPHRON
 		static std::string DSFFF;
 		static std::string LebwholLasherFF;
 		static std::string LennardJonesFF;
+		static std::string Components;
 		static std::string Worlds;
 		static std::string SimpleWorld;
 		static std::string Particles;
 		static std::string Site;
-		static std::string Components;
+		static std::string Blueprints;
 		static std::string Selector;
 		static std::string Director;
 		static std::string Observers;
