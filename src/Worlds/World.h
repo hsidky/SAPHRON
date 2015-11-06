@@ -14,7 +14,7 @@
 
 namespace SAPHRON
 {
-	typedef std::map<int, int> CompositionList; 
+	typedef std::vector<int> CompositionList; 
 	typedef std::vector<World*> WorldList;
 	typedef std::vector<int> WorldIndexList;
 	
@@ -119,7 +119,7 @@ namespace SAPHRON
 		_rcut(rcut), _rcutsq(rcut*rcut), _ncut(0), _ncutsq(0), 
 		_H(arma::fill::zeros), _diag(true), _skin(0), _skinsq(0), 
 		_temperature(0.0), _particles(0), _primitives(0), 
-		_rand(seed), _composition(), _seed(seed), _id(++_nextID)
+		_rand(seed), _composition(0), _seed(seed), _id(++_nextID)
 		{
 			_stringid = "world" + std::to_string(_id);
 			_skin = 0.30 * _rcut;
@@ -129,6 +129,7 @@ namespace SAPHRON
 			_H(0,0) = xl;
 			_H(1,1) = yl;
 			_H(2,2) = zl;
+			_composition.reserve(20);
 		}
 
 		// Draw a random particle from the world.

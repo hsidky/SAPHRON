@@ -108,23 +108,23 @@ TEST(SimpleWorld, DefaultBehavior)
 	// Check the composition of the world to make sure it's correct.
 	auto& composition = world.GetComposition();
 
-	ASSERT_EQ(9000, composition.at(site1.GetSpeciesID()));
-	ASSERT_EQ(9000, composition.at(site2.GetSpeciesID()));
-	ASSERT_EQ(9000, composition.at(site3.GetSpeciesID()));
+	ASSERT_EQ(9000, composition[site1.GetSpeciesID()]);
+	ASSERT_EQ(9000, composition[site2.GetSpeciesID()]);
+	ASSERT_EQ(9000, composition[site3.GetSpeciesID()]);
 
 	// Test changing species, adding particle, removing particle. 
 	Particle* pr = world.DrawRandomParticle();
 	world.RemoveParticle(pr);
-	ASSERT_EQ(8999, composition.at(pr->GetSpeciesID()));
+	ASSERT_EQ(8999, composition[pr->GetSpeciesID()]);
 
 	world.AddParticle(pr);
-	ASSERT_EQ(9000, composition.at(pr->GetSpeciesID()));
+	ASSERT_EQ(9000, composition[pr->GetSpeciesID()]);
 
 	int previd = pr->GetSpeciesID();
 	int newid = (previd == 0) ? 1 : 0;
 	pr->SetSpeciesID(newid);
-	ASSERT_EQ(9001, composition.at(newid));
-	ASSERT_EQ(8999, composition.at(previd));
+	ASSERT_EQ(9001, composition[newid]);
+	ASSERT_EQ(8999, composition[previd]);
 }
 
 TEST(SimpleWorld, MoveParticleSemantics)

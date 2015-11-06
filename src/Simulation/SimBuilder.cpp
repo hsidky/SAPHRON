@@ -86,9 +86,10 @@ namespace SAPHRON
 
 				// Write particle species notices.
 				auto& slist = Particle::GetSpeciesList();
-				for(auto& s : world->GetComposition())
-					notices.push_back("Initialized " + to_string(s.second) + 
-							  " particle(s) of type \"" + slist[s.first] + "\".");				
+				auto& comp = world->GetComposition();
+				for(size_t i = 0; i < comp.size(); ++i)
+					notices.push_back("Initialized " + to_string(comp[i]) + 
+							  " particle(s) of type \"" + slist[i] + "\".");				
 			} catch(BuildException& e) {
 				DumpErrorsToConsole(e.GetErrors(), _notw);
 				return false;

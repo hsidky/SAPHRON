@@ -12,10 +12,12 @@ namespace SAPHRON
 	void World::AddParticleComposition(Particle* particle)
 	{
 		int id = particle->GetSpeciesID();
-		if(_composition.find(id) == _composition.end())
-			_composition[id] = 1;
-		else
-			++_composition[id];
+
+		// If ID doesn't exist yet, create it.
+		if((int)_composition.size() - 1 < id)
+			_composition.resize(id + 1, 0);
+
+		++_composition[id];
 
 		// If it's a primitive, add it to the primitives list. 
 		if(!particle->HasChildren())
@@ -28,7 +30,7 @@ namespace SAPHRON
 	void World::RemoveParticleComposition(Particle* particle)
 	{
 		int id = particle->GetSpeciesID();
-		assert(_composition.find(id) != _composition.end());
+		assert(_composition.size() >= id);
 		--_composition[id];
 
 		if(!particle->HasChildren())
@@ -45,13 +47,13 @@ namespace SAPHRON
 	{
 		int oldID = pEvent.GetOldSpecies();
 		int id = pEvent.GetParticle()->GetSpeciesID();
-		assert(_composition.find(oldID) != _composition.end());
+		assert(_composition.size() >= id);
 		--_composition[oldID];
 
-		if(_composition.find(id) == _composition.end())
-			_composition[id] = 1;
-		else
-			++_composition[id];
+		if((int)_composition.size() - 1 < id)
+			_composition.resize(id + 1, 0);
+
+		++_composition[id];
 	}
 
 	inline void World::AddNeighbor(Particle* pi, Particle* pj)

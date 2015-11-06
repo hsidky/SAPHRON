@@ -134,7 +134,7 @@ namespace SAPHRON
 					if(key.first == particle.GetSpeciesID())
 					{
 						auto* forcefield = it.second;
-						double N = compositions.at(key.second);
+						double N = compositions[key.second];
 						double rho = N/volume;
 						ep.energy.intervdw += 2.0*2.0*M_PI*rho*forcefield->EnergyTailCorrection(rcut);
 						ep.pressure.ptail = 2.0/3.0*2.0*M_PI*rho*forcefield->PressureTailCorrection(rcut);

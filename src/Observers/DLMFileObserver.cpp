@@ -143,8 +143,11 @@ namespace SAPHRON
 			if(this->Flags.econnectivity)
 				WriteStream(*_worldfs.back(), "E Connectivity");
 			if(this->Flags.world_composition)
-				for(auto&c : w->GetComposition())
-					WriteStream(*_worldfs.back(), "#" + to_string(c.first));
+			{
+				const auto& species = Particle::GetSpeciesList(); 
+				for(size_t i = 0; i < w->GetComposition().size(); ++i)
+					WriteStream(*_worldfs.back(), "#" + species[i]);
+			}
 
 			*_worldfs.back() << "\n";
 		}
@@ -365,7 +368,7 @@ namespace SAPHRON
 			{
 				*fs << fixed;
 				for(auto&c : w->GetComposition())
-					WriteStream(*fs, c.second);
+					WriteStream(*fs, c);
 				*fs << scientific;
 			}
 			++i;

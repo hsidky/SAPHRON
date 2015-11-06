@@ -28,6 +28,7 @@ TEST(LennardJonesFF, DefaultBehavior)
 	ffm.AddNonBondedForceField("L1", "L1", ff);
 
 	CompositionList compositions;
+	compositions.resize(s1.GetSpeciesID() + 1, 0);
 	compositions[s1.GetSpeciesID()] = 1000;
 
 	// Validate invidual components first.
