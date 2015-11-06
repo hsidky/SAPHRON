@@ -76,7 +76,7 @@ namespace SAPHRON
 		}
 	}
 
-	void World::rect(int i0, int i1, int j0, int j1)
+	inline void World::rect(int i0, int i1, int j0, int j1)
 	{
 		int di = i1 - i0;
 		int dj = j1 - j0;
@@ -107,7 +107,7 @@ namespace SAPHRON
 		}
 	}
 
-	void World::triangle(int n0, int n1)
+	inline void World::triangle(int n0, int n1)
 	{
         int dn = n1 - n0;
 		constexpr int threshold = 32;   

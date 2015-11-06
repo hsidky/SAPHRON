@@ -2,8 +2,44 @@
 #include "../src/Worlds/World.h"
 #include "gtest/gtest.h"
 #include <map>
+#include <chrono>
+#include <ctime>
 
 using namespace SAPHRON;
+
+
+TEST(SimpleWorld, NeighborList)
+{
+	// create world with specified nlist. 
+	double rcut = 1.5;
+	World world(30, 30, 30, rcut);
+	ASSERT_EQ(rcut, world.GetCutoffRadius());
+	ASSERT_DOUBLE_EQ(1.3*rcut, world.GetNeighborRadius());
+	ASSERT_DOUBLE_EQ(0.3*rcut, world.GetSkinThickness());
+
+	// Change values and make sure it propogates. 
+	world.SetCutoffRadius(0.9);
+	ASSERT_DOUBLE_EQ(0.9, world.GetCutoffRadius());
+	ASSERT_DOUBLE_EQ(1.3*rcut-0.9, world.GetSkinThickness());
+
+	// Pack a world with a decent number of of particles.
+	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
+	world.PackWorld({&site1}, {1.0}, 5000, 0.5);
+
+
+    std::chrono::time_point<std::chrono::system_clock> start, end;
+    start = std::chrono::system_clock::now();
+
+    for(int i = 0; i < 100; ++i)
+    	world.UpdateNeighborList();
+
+    end = std::chrono::system_clock::now();
+
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+ 
+    std::cout << "Elapsed time: " << elapsed_seconds.count() << "s\n";
+}
 
 TEST(SimpleWorld, DefaultBehavior)
 {
@@ -156,19 +192,4 @@ TEST(SimpleWorld, VolumeScaling)
 	Position newpos = 2.0*p->GetPosition(); // we will scale by 2
 	world.SetVolume(8*world.GetVolume(), true);
 	ASSERT_TRUE(is_close(newpos, p->GetPosition(),1e-11));
-}
-
-TEST(SimpleWorld, NeighborList)
-{
-	// create world with specified nlist. 
-	double rcut = 1.5;
-	World world(30, 30, 30, rcut);
-	ASSERT_EQ(rcut, world.GetCutoffRadius());
-	ASSERT_DOUBLE_EQ(1.3*rcut, world.GetNeighborRadius());
-	ASSERT_DOUBLE_EQ(0.3*rcut, world.GetSkinThickness());
-
-	// Change values and make sure it propogates. 
-	world.SetCutoffRadius(0.9);
-	ASSERT_DOUBLE_EQ(0.9, world.GetCutoffRadius());
-	ASSERT_DOUBLE_EQ(1.3*rcut-0.9, world.GetSkinThickness());
 }
