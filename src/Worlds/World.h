@@ -140,6 +140,15 @@ namespace SAPHRON
 			return _particles[_rand.int32() % n];
 		}
 
+		// Draws a random particle by species from the world. 
+		Particle* DrawRandomParticleSpecies(int species)
+		{
+			// Select random number betwene [0, count-1].
+			int i = _rand.int32() % _composition[species];
+			return SelectParticleBySpecies(species, i);
+		}
+
+
 		// Draw a random primitive from the world.
 		Particle* DrawRandomPrimitive()
 		{
@@ -199,6 +208,30 @@ namespace SAPHRON
 		const Particle* SelectParticle(int location) const
 		{
 			return _particles[location];
+		}
+
+		// Select the "ith" particle of species "species". 
+		Particle* SelectParticleBySpecies(int species, int i)
+		{
+			auto it = std::find_if(_particles.begin(), _particles.end(),[=](Particle* p){
+				return p->GetSpeciesID() == species;
+			});
+
+			while(--i >= 0 && it != _particles.end())
+			{
+				++it;
+    			it =  std::find_if(it, _particles.end(),[=](Particle* p){
+					return p->GetSpeciesID() == species;
+				});
+			}
+
+			return *it;
+		}
+
+		// Select the "ith" particle of species "species" (const). 
+		const Particle* SelectParticleBySpecies(int species, int i) const
+		{
+			return SelectParticleBySpecies(species, i);
 		}
 
 		// Select a primitive particle by location.
