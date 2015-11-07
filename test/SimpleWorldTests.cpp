@@ -7,6 +7,38 @@
 
 using namespace SAPHRON;
 
+TEST(SimpleWorld, ParticleStash)
+{
+	// Pack the world.
+	World world(1, 1, 1, 1.0);
+	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
+	Site site2({0, 0, 0}, {0, 1, 0}, "E2");
+	Site site3({0, 0, 0}, {0, 0, 1}, "E3");
+
+	// Pack the world with 3 species.
+	world.PackWorld({&site1, &site2, &site3}, 
+					{1.0/3.0, 1.0/3.0, 1.0/3.0}, 
+					4500, 
+					0.5);
+
+	ASSERT_EQ(4500, world.GetParticleCount());
+	ASSERT_EQ(4500, world.GetPrimitiveCount());
+
+	// Stash some particles. 
+	world.StashParticle(&site1, 100);
+
+	int s1 = site1.GetSpeciesID();
+
+	// Unstash and add to world then check counts.
+	// We expect stash to autofill itself when empty.
+	for(int i = 0; i < 200; ++i)
+		world.AddParticle(world.UnstashParticle(s1));
+
+	auto& comp = world.GetComposition();
+
+	ASSERT_EQ(1700, comp[s1]);
+}
+
 TEST(SimpleWorld, DrawParticlesBySpecies)
 {
 	World world(1, 1, 1, 1.0);
@@ -33,7 +65,7 @@ TEST(SimpleWorld, DrawParticlesBySpecies)
 	ASSERT_EQ(world.SelectParticle(3004), world.SelectParticleBySpecies(s3, 4));
 
 	for(int i = 0; i < 10000; ++i)
-		ASSERT_EQ(s2, world.DrawRandomParticleSpecies(s2)->GetSpeciesID());
+		ASSERT_EQ(s2, world.DrawRandomParticleBySpecies(s2)->GetSpeciesID());
 }
 
 TEST(SimpleWorld, NeighborList)

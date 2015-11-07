@@ -11,12 +11,14 @@
 #include <memory>
 #include <functional>
 #include <armadillo>
+#include <queue>
 
 namespace SAPHRON
 {
 	typedef std::vector<int> CompositionList; 
 	typedef std::vector<World*> WorldList;
 	typedef std::vector<int> WorldIndexList;
+	typedef std::vector<std::queue<Particle*>> StashList;
 	
 	// Public interface representing the "World" in which particles live. 
 	// A World object is responsible for setting up the "box" and associated 
@@ -58,6 +60,9 @@ namespace SAPHRON
 
 		// Composition of the system.
 		CompositionList _composition;
+
+		// Particle stash.
+		StashList _stash;
 		
 		// Seed.
 		int _seed;		
@@ -119,7 +124,8 @@ namespace SAPHRON
 		_rcut(rcut), _rcutsq(rcut*rcut), _ncut(0), _ncutsq(0), 
 		_H(arma::fill::zeros), _diag(true), _skin(0), _skinsq(0), 
 		_temperature(0.0), _particles(0), _primitives(0), 
-		_rand(seed), _composition(0), _seed(seed), _id(++_nextID)
+		_rand(seed), _composition(0), _stash(0), _seed(seed), 
+		_id(++_nextID)
 		{
 			_stringid = "world" + std::to_string(_id);
 			_skin = 0.30 * _rcut;
@@ -129,7 +135,9 @@ namespace SAPHRON
 			_H(0,0) = xl;
 			_H(1,1) = yl;
 			_H(2,2) = zl;
+			
 			_composition.reserve(20);
+			_stash.reserve(20);
 		}
 
 		// Draw a random particle from the world.
@@ -141,13 +149,12 @@ namespace SAPHRON
 		}
 
 		// Draws a random particle by species from the world. 
-		Particle* DrawRandomParticleSpecies(int species)
+		Particle* DrawRandomParticleBySpecies(int species)
 		{
 			// Select random number betwene [0, count-1].
 			int i = _rand.int32() % _composition[species];
 			return SelectParticleBySpecies(species, i);
 		}
-
 
 		// Draw a random primitive from the world.
 		Particle* DrawRandomPrimitive()
@@ -282,6 +289,39 @@ namespace SAPHRON
 
 				_particles.erase(it);
 			}
+		}
+
+		// Stash "n" copies of particle.
+		void StashParticle(Particle* particle, int n)
+		{
+			int id = particle->GetSpeciesID();
+
+			// Stashed particles cannot belong to a world.
+			particle->SetWorld(nullptr);
+			
+			// If ID doesn't exist yet, create it and fill in
+			// the middle. 
+			if((int)_stash.size() - 1 < id)
+				_stash.resize(id + 1);
+
+			for(int i = 0; i < n; ++i)
+				_stash[id].push(particle->Clone());
+		}
+
+		// Get a particle from the stash. 
+		Particle* UnstashParticle(int species)
+		{
+			assert(species < (int)_stash.size());
+
+			auto* p = _stash[species].front();
+			_stash[species].pop();
+
+			// If it's the last one, fill 'er up.
+			if(_stash[species].empty())
+				for(int i = 0; i < 100; ++i)
+					_stash[species].push(p->Clone());
+
+			return p;
 		}
 
 		// Applies periodic boundaries to positions.
@@ -502,6 +542,14 @@ namespace SAPHRON
 			for(auto& p : _particles)
 					delete p;
 
+			for(auto& s : _stash)
+				while(!s.empty())
+				{
+					delete s.front();
+					s.pop();
+				}
+
+			_stash.clear();
 			_particles.clear();
 		}
 	};

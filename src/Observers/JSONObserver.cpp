@@ -21,7 +21,7 @@ namespace SAPHRON
 		time (&rawtime);
 		timeinfo = localtime(&rawtime);
 
-  		strftime(buffer,80,"%d-%m-%Y %r",timeinfo);
+  		strftime(buffer,80,"%Y-%m-%d %r",timeinfo);
   		return std::string(buffer);
 	}
 
