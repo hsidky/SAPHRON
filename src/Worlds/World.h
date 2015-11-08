@@ -48,6 +48,7 @@ namespace SAPHRON
 		double _temperature; 
 		Energy _energy;
 		Pressure _pressure;
+		std::vector<double> _chemp; // Chemical potential.
 
 		// Particle list.
 		ParticleList _particles;
@@ -123,7 +124,7 @@ namespace SAPHRON
 		World(double xl, double yl, double zl, double rcut, int seed = 1) : 
 		_rcut(rcut), _rcutsq(rcut*rcut), _ncut(0), _ncutsq(0), 
 		_H(arma::fill::zeros), _diag(true), _skin(0), _skinsq(0), 
-		_temperature(0.0), _particles(0), _primitives(0), 
+		_temperature(0.0), _chemp(0), _particles(0), _primitives(0), 
 		_rand(seed), _composition(0), _stash(0), _seed(seed), 
 		_id(++_nextID)
 		{
@@ -138,6 +139,7 @@ namespace SAPHRON
 			
 			_composition.reserve(20);
 			_stash.reserve(20);
+			_chemp.reserve(20);
 		}
 
 		// Draw a random particle from the world.
@@ -479,6 +481,60 @@ namespace SAPHRON
 
 		// Increment world energy (e += de).
 		void IncrementEnergy(const Energy& de) { _energy += de; }
+
+		// Get species chemical potential. 
+		// Returns 0 if species not found.
+		double GetChemicalPotential(int species)
+		{
+			if((int)_chemp.size() - 1 < species)
+				return 0;
+
+			return _chemp[species];
+		}
+
+		// Get species chemical potential.
+		// Returns 0 if species not found.
+		double GetChemicalPotential(const std::string& species)
+		{
+			auto& spec = Particle::GetSpeciesList();
+			auto it = std::find(spec.begin(), spec.end(), species);
+			if(it == spec.end())
+				return 0;
+
+			int id = it - spec.begin();
+
+			return GetChemicalPotential(id);
+		}
+
+		// Sets the chemical potential for species in the 
+		// world.
+		void SetChemicalPotential(int species, double chemp)
+		{
+			if((int)_chemp.size() - 1 < species)
+				_chemp.resize(species + 1, 0);
+
+			_chemp[species] = chemp;	
+		}
+
+		// Sets the chemical potential for species in the 
+		// world.
+		void SetChemicalPotential(std::string species, double chemp)
+		{
+			auto& spec = Particle::GetSpeciesList();
+			auto it = std::find(spec.begin(), spec.end(), species);
+			if(it == spec.end())
+			{
+				std::cerr << "Cannot set chemical potential for "
+							 "nonexistent species \"" + species +  "\"." 
+						  << std::endl;
+			}
+			
+			int id = it - spec.begin();
+			if((int)_chemp.size() - 1 < id)
+				_chemp.resize(id + 1, 0);
+
+			_chemp[id] = chemp;	
+		}
 
 		// Get H matrix.
 		inline const Matrix3D& GetHMatrix() const { return _H; }

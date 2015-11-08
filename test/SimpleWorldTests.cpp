@@ -7,7 +7,7 @@
 
 using namespace SAPHRON;
 
-TEST(SimpleWorld, ParticleStash)
+TEST(SimpleWorld, WorldProps)
 {
 	// Pack the world.
 	World world(1, 1, 1, 1.0);
@@ -28,6 +28,8 @@ TEST(SimpleWorld, ParticleStash)
 	world.StashParticle(&site1, 100);
 
 	int s1 = site1.GetSpeciesID();
+	int s2 = site2.GetSpeciesID();
+	int s3 = site3.GetSpeciesID();
 
 	// Unstash and add to world then check counts.
 	// We expect stash to autofill itself when empty.
@@ -37,6 +39,30 @@ TEST(SimpleWorld, ParticleStash)
 	auto& comp = world.GetComposition();
 
 	ASSERT_EQ(1700, comp[s1]);
+
+	// Test chemical potential. 
+	ASSERT_EQ(0, world.GetChemicalPotential(s1));
+	ASSERT_EQ(0, world.GetChemicalPotential(s2));
+	ASSERT_EQ(0, world.GetChemicalPotential(s3));
+	ASSERT_EQ(0, world.GetChemicalPotential("E1"));
+	ASSERT_EQ(0, world.GetChemicalPotential("E2"));
+	ASSERT_EQ(0, world.GetChemicalPotential("E3"));
+
+	world.SetChemicalPotential("E2", 5.0);
+	ASSERT_EQ(0.0, world.GetChemicalPotential(s1));
+	ASSERT_EQ(5.0, world.GetChemicalPotential(s2));
+	ASSERT_EQ(0.0, world.GetChemicalPotential(s3));
+
+	world.SetChemicalPotential(s2, 6.0);
+	ASSERT_EQ(0.0, world.GetChemicalPotential(s1));
+	ASSERT_EQ(6.0, world.GetChemicalPotential(s2));
+	ASSERT_EQ(0.0, world.GetChemicalPotential(s3));
+
+	world.SetChemicalPotential(s3, -4.4);
+	ASSERT_EQ(0.0, world.GetChemicalPotential(s1));
+	ASSERT_EQ(6.0, world.GetChemicalPotential(s2));
+	ASSERT_EQ(-4.4, world.GetChemicalPotential(s3));
+
 }
 
 TEST(SimpleWorld, DrawParticlesBySpecies)
