@@ -36,21 +36,29 @@ TEST(ParticleSwapMove, DefaultBehavior)
 	WorldManager wm;
 	wm.AddWorld(&liquid);
 	wm.AddWorld(&vapor);
+	liquid.SetEnergy(H1.energy);
+	liquid.SetPressure(H1.pressure);
+	vapor.SetEnergy(H2.energy);
+	vapor.SetPressure(H2.pressure);
 
 	ParticleSwapMove move;
 
 	// Let's perform the move but force reject and ensure everything is the same.
-	for(int i = 0; i < 100000; ++i)
+	for(int i = 0; i < 1000; ++i)
 	{
 		move.Perform(&wm, &ffm, MoveOverride::ForceReject);
 		ASSERT_EQ(200, liquid.GetParticleCount());
 		ASSERT_EQ(200, vapor.GetParticleCount());
 		ASSERT_NEAR(H1.energy.total(), ffm.EvaluateHamiltonian(liquid).energy.total(), 1e-11);
+		ASSERT_NEAR(H1.energy.total(), liquid.GetEnergy().total(), 1e-11);
 		ASSERT_EQ(H2.energy, ffm.EvaluateHamiltonian(vapor).energy);
+		ASSERT_EQ(H2.energy, vapor.GetEnergy());
 	}
 	
 	// Let's force acceptance on a move and make sure the energy difference is equal
 	// in both worlds.
 	move.Perform(&wm, &ffm, MoveOverride::ForceAccept);
 	ASSERT_EQ(liquid.GetParticleCount() - 200, 200 - vapor.GetParticleCount());
+	ASSERT_NEAR(ffm.EvaluateHamiltonian(liquid).energy.total(), liquid.GetEnergy().total(), 1e-11);
+	ASSERT_NEAR(ffm.EvaluateHamiltonian(vapor).energy.total(), vapor.GetEnergy().total(), 1e-11);
 }

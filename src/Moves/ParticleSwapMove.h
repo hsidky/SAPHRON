@@ -90,7 +90,7 @@ namespace SAPHRON
 			
 			// The acceptance rule is from Frenkel & Smit Eq. 8.3.4.
 			// However, it was modified for *final* particle numbers.
-			SimInfo sim = SimInfo::Instance();
+			auto& sim = SimInfo::Instance();
 			double beta = 1.0/(sim.GetkB()*w2->GetTemperature());
 			double p = (n1 - 1.0)*v2/(n2*v1)*exp(-beta*de);
 			p = p > 1.0 ? 1.0 : p;
