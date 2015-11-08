@@ -484,7 +484,7 @@ namespace SAPHRON
 
 		// Get species chemical potential. 
 		// Returns 0 if species not found.
-		double GetChemicalPotential(int species)
+		double GetChemicalPotential(int species) const
 		{
 			if((int)_chemp.size() - 1 < species)
 				return 0;
@@ -494,7 +494,7 @@ namespace SAPHRON
 
 		// Get species chemical potential.
 		// Returns 0 if species not found.
-		double GetChemicalPotential(const std::string& species)
+		double GetChemicalPotential(const std::string& species) const
 		{
 			auto& spec = Particle::GetSpeciesList();
 			auto it = std::find(spec.begin(), spec.end(), species);
