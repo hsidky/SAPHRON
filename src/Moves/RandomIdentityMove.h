@@ -65,7 +65,9 @@ namespace SAPHRON
 			++_performed;
 		}
 
-		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm, const MoveOverride& override) override
+		virtual void Perform(WorldManager* wm, 
+							 ForceFieldManager* ffm, 
+							 const MoveOverride& override) override
 		{
 			// Get random particle from random world.
 			World* w = wm->GetRandomWorld();
@@ -102,18 +104,25 @@ namespace SAPHRON
 		}
 
 		// Perform move using DOS interface.
-		virtual void Perform(World* world, ForceFieldManager* ffm, DOSOrderParameter* op , const MoveOverride& override) override
+		virtual void Perform(World* world, 
+							 ForceFieldManager* ffm, 
+							 DOSOrderParameter* op , 
+							 const MoveOverride& override) override
 		{
 			Particle* particle = world->DrawRandomPrimitive();
 
 			// Get initial species and evaluate energy and OP.
 			auto si = particle->GetSpeciesID();
-			auto ei = ffm->EvaluateHamiltonian(*particle, world->GetComposition(), world->GetVolume());
+			auto ei = ffm->EvaluateHamiltonian(*particle, 
+												world->GetComposition(), 
+												world->GetVolume());
 			auto opi = op->EvaluateOrderParameter(*world);
 
 			// Perform move and evaluate new energy and OP.
 			Perform(particle);
-			auto ef = ffm->EvaluateHamiltonian(*particle, world->GetComposition(), world->GetVolume());
+			auto ef = ffm->EvaluateHamiltonian(*particle, 
+												world->GetComposition(), 
+												world->GetVolume());
 			Energy de = ef.energy - ei.energy;
 
 			// Update energies and pressures.

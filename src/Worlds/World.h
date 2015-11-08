@@ -296,8 +296,13 @@ namespace SAPHRON
 		{
 			int id = particle->GetSpeciesID();
 
+			// If particle has a world, remove it. 
 			// Stashed particles cannot belong to a world.
-			particle->SetWorld(nullptr);
+			if(particle->GetWorld() != nullptr)
+			{
+				particle->GetWorld()->RemoveParticle(particle);
+				particle->SetWorld(nullptr);
+			}
 			
 			// If ID doesn't exist yet, create it and fill in
 			// the middle. 
