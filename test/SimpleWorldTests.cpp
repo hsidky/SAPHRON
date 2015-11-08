@@ -63,6 +63,11 @@ TEST(SimpleWorld, WorldProps)
 	ASSERT_EQ(6.0, world.GetChemicalPotential(s2));
 	ASSERT_EQ(-4.4, world.GetChemicalPotential(s3));
 
+	// Check de Broglie wavelength. 
+	// In reduced units these should all be 1.
+	ASSERT_EQ(1.0, world.GetWavelength(s1));
+	ASSERT_EQ(1.0, world.GetWavelength(s2));
+	ASSERT_EQ(1.0, world.GetWavelength(s3));
 }
 
 TEST(SimpleWorld, DrawParticlesBySpecies)

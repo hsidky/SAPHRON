@@ -45,10 +45,18 @@ namespace SAPHRON
 		// Skin thickness (calculated).
 		double _skin, _skinsq;
 
+		// System properties.
 		double _temperature; 
+
 		Energy _energy;
+
 		Pressure _pressure;
-		std::vector<double> _chemp; // Chemical potential.
+
+		// Chemical potential.
+		std::vector<double> _chemp;
+
+		// de Broglie wavelength.
+		std::vector<double> _debroglie;
 
 		// Particle list.
 		ParticleList _particles;
@@ -86,6 +94,24 @@ namespace SAPHRON
 		void ModifyParticleComposition(const ParticleEvent& pEvent);
 		void UpdateNeighborList(Particle* particle, bool clear);
 
+		// Compute de Broglie wavelength for particle p.
+		void ComputeWavelength(Particle* p)
+		{
+			int id = p->GetSpeciesID();
+
+			if((int)_debroglie.size() - 1 < id)
+				_debroglie.resize(id + 1, 1.0);
+			
+			// de Broglie is 1 in reduced units.
+			auto& sim = SimInfo::Instance();
+			if(sim.GetUnits() == real)
+			{
+				auto denom = sqrt(2.0*M_PI*p->GetMass()*sim.GetkBamu()*GetTemperature());
+				_debroglie[id] = sim.GetPlanck()/denom;
+			}
+
+		}
+
 		// Perform all the appropriate configuration for a new particle.
 		inline void ConfigureParticle(Particle* particle)
 		{
@@ -99,6 +125,9 @@ namespace SAPHRON
 
 			// Add particle to the composition list.
 			AddParticleComposition(particle);
+
+			// Compute de Broglie wavelength.
+			ComputeWavelength(particle);
 
 			// Update particle neighbor list. This will clear old
 			// and create new for particle and children.
@@ -124,9 +153,9 @@ namespace SAPHRON
 		World(double xl, double yl, double zl, double rcut, int seed = 1) : 
 		_rcut(rcut), _rcutsq(rcut*rcut), _ncut(0), _ncutsq(0), 
 		_H(arma::fill::zeros), _diag(true), _skin(0), _skinsq(0), 
-		_temperature(0.0), _chemp(0), _particles(0), _primitives(0), 
-		_rand(seed), _composition(0), _stash(0), _seed(seed), 
-		_id(++_nextID)
+		_temperature(0.0), _chemp(0), _debroglie(0), _particles(0), 
+		_primitives(0), _rand(seed), _composition(0), _stash(0), 
+		_seed(seed), _id(++_nextID)
 		{
 			_stringid = "world" + std::to_string(_id);
 			_skin = 0.30 * _rcut;
@@ -140,6 +169,7 @@ namespace SAPHRON
 			_composition.reserve(20);
 			_stash.reserve(20);
 			_chemp.reserve(20);
+			_debroglie.reserve(20);
 		}
 
 		// Draw a random particle from the world.
@@ -481,6 +511,19 @@ namespace SAPHRON
 
 		// Increment world energy (e += de).
 		void IncrementEnergy(const Energy& de) { _energy += de; }
+
+		// Get the de Broglie wavelength for species.
+		double GetWavelength(int species) const
+		{
+			if((int)_debroglie.size() - 1 < species)
+			{
+				std::cerr << "de Broglie wavelength for species " << species
+						  << " not defined." << std::endl;
+				exit(-1);
+			}
+
+			return _debroglie[species];
+		}
 
 		// Get species chemical potential. 
 		// Returns 0 if species not found.

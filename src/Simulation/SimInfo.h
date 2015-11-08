@@ -23,6 +23,9 @@ namespace SAPHRON
 		// Boltzmann constant (J/mol*K).
 		double _kb = 8.314459848;
 
+		// Boltzmann constant (amu*angstrom^2/ps^2-K)
+		double _kbamu = 0.8314459848;
+
 		// Converts charge potential to (J/mol).
 		double _charge = 1.389354578390845E+06; 
 
@@ -38,11 +41,15 @@ namespace SAPHRON
 		// Pressure conversion to bar from J*atom/(mol*angstrom^3).
 		double _pconv = 1.0e30/(6.02214129E+23*1.0e5);
 
+		// Planck constant (amu*angstrom^2/ps).
+		double _h = 39.9031268605;
+
 		/********************************
 		 * These are what the user gets * 
 		 ********************************/
 		double _echarge = 1.0;
 		double _ekb = 1.0;
+		double _ekbamu = 1.0;
 		double _epconv = 1.0;
 
 	public:
@@ -69,6 +76,7 @@ namespace SAPHRON
 			{
 				_echarge = 1.0;
 				_ekb = 1.0;
+				_ekbamu = _kbamu;
 				_units = reduced;
 			}
 		}
@@ -79,8 +87,11 @@ namespace SAPHRON
 		// Get Avogadro's constant.
 		double GetNa() const { return _na; }
 		
-		// Get/set Boltzmann constant.
+		// Get Boltzmann constant.
 		double GetkB() const { return _ekb; }
+
+		// Get Boltzmann constant in amu.
+		double GetkBamu() const { return _ekbamu; }
 
 		// Get charge conversion factor.
 		double GetChargeConv() const { return _echarge; }
@@ -93,5 +104,8 @@ namespace SAPHRON
 
 		// Get pressure conversion factor (bar).
 		double GetPressureConv() const { return _epconv; };
+
+		// Get Planck constant.
+		double GetPlanck() const { return _h; }
 	};
 }
