@@ -28,7 +28,7 @@ namespace SAPHRON
 			_rand(seed), _rejected(0), _performed(0), _seed(seed), _identities(0)
 		{
 			// Verify the identities exist.
-			auto list = Particle::GetSpeciesList();
+			auto& list = Particle::GetSpeciesList();
 			for(auto& id : identities)
 			{
 				if(id >= (int)list.size())

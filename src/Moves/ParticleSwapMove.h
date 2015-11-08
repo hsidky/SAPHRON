@@ -43,11 +43,15 @@ namespace SAPHRON
 		}
 
 		// Swap a random particle from a random world to another random world.
-		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm, const MoveOverride& override) override
+		virtual void Perform(WorldManager* wm, 
+							 ForceFieldManager* ffm, 
+							 const MoveOverride& override) override
 		{
 			if(wm->GetWorldCount() < 2)
 			{
-				std::cerr << "Cannot perform volume swap move on less than 2 worlds." << std::endl;
+				std::cerr << 
+				"Cannot perform particle swap move on less than 2 worlds." << 
+				std::endl;
 				exit(-1);
 			}
 
@@ -73,9 +77,12 @@ namespace SAPHRON
 			auto ei = ffm->EvaluateHamiltonian(*particle, w1->GetComposition(), v1);
 
 			// Move particle from w1 to w2.
-			MoveParticle(particle, w1, w2);			
-			double n1 = w1->GetPrimitiveCount();
-			double n2 = w2->GetPrimitiveCount();
+			MoveParticle(particle, w1, w2);
+			auto& comp1 = w1->GetComposition();
+			auto& comp2 = w2->GetComposition();
+			auto id = particle->GetSpeciesID();
+			double n1 = comp1[id];
+			double n2 = comp2[id];
 
 			// Evaluate new energy and accept/reject.
 			auto ef = ffm->EvaluateHamiltonian(*particle, w2->GetComposition(), v2);
@@ -105,7 +112,10 @@ namespace SAPHRON
 			}
 		}
 
-		virtual void Perform(World*, ForceFieldManager*, DOSOrderParameter* , const MoveOverride&) override
+		virtual void Perform(World*, 
+							 ForceFieldManager*, 
+							 DOSOrderParameter* , 
+							 const MoveOverride&) override
 		{
 			std::cerr << "Particle swap move does not support DOS ensemble." << std::endl;
 			exit(-1);
