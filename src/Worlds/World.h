@@ -181,8 +181,12 @@ namespace SAPHRON
 		}
 
 		// Draws a random particle by species from the world. 
+		// Will return nullptr if species doesn't exist.
 		Particle* DrawRandomParticleBySpecies(int species)
 		{
+			if((int)_composition.size() - 1 < species || _composition[species] < 1)
+				return nullptr; 
+
 			// Select random number betwene [0, count-1].
 			int i = _rand.int32() % _composition[species];
 			return SelectParticleBySpecies(species, i);

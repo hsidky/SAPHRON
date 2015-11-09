@@ -94,6 +94,7 @@ TEST(SimpleWorld, DrawParticlesBySpecies)
 	ASSERT_EQ(world.SelectParticle(1500), world.SelectParticleBySpecies(s2, 0));
 	ASSERT_EQ(world.SelectParticle(3000), world.SelectParticleBySpecies(s3, 0));
 	ASSERT_EQ(world.SelectParticle(3004), world.SelectParticleBySpecies(s3, 4));
+	ASSERT_EQ(nullptr, world.DrawRandomParticleBySpecies(44));
 
 	for(int i = 0; i < 10000; ++i)
 		ASSERT_EQ(s2, world.DrawRandomParticleBySpecies(s2)->GetSpeciesID());

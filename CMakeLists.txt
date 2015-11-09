@@ -167,6 +167,12 @@ target_include_directories(DebyeHuckelChargeTests PRIVATE "${GTEST_INCLUDE_DIR}"
 add_dependencies(DebyeHuckelChargeTests googletest) 
 add_test(DebyeHuckelChargeTests DebyeHuckelChargeTests)
 
+add_executable(DeleteParticleMoveTests test/DeleteParticleMoveTests.cpp)
+target_link_libraries(DeleteParticleMoveTests ${TEST_DEPS})
+target_include_directories(DeleteParticleMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(DeleteParticleMoveTests googletest) 
+add_test(DeleteParticleMoveTests DeleteParticleMoveTests)
+
 add_executable(DirectorRotateMoveTests test/DirectorRotateMoveTests.cpp)
 target_link_libraries(DirectorRotateMoveTests ${TEST_DEPS})
 target_include_directories(DirectorRotateMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
