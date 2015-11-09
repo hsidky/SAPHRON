@@ -151,7 +151,7 @@ namespace SAPHRON
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
 				// Stashing a particle automatically removes it from world. 
-				w->StashParticle(p, 1);
+				w->StashParticle(p);
 				++_rejected;
 			}
 			else

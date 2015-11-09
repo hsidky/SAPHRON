@@ -43,10 +43,15 @@ namespace SAPHRON
 		// Perform a move given the world manager and forcefield manager.
 		// An implemented move should respect constness and not change the state 
 		// of the instance. This is important to ensure thread safety!
-		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm, const MoveOverride& override) = 0;
+		virtual void Perform(WorldManager* wm, 
+							 ForceFieldManager* ffm, 
+							 const MoveOverride& override) = 0;
 
 		// Perform move interface for DOS ensemble.
-		virtual void Perform(World* world, ForceFieldManager* ffm, DOSOrderParameter* op, const MoveOverride& override) = 0;
+		virtual void Perform(World* world, 
+							 ForceFieldManager* ffm, 
+							 DOSOrderParameter* op, 
+							 const MoveOverride& override) = 0;
 
 		// Get move name. 
 		virtual std::string GetName() const = 0;
@@ -57,17 +62,24 @@ namespace SAPHRON
 		// Serialize.
 		virtual void Serialize(Json::Value& json) const = 0;
 
-		// Builds a move from a JSON node. Returns a pointer to the built Move in addition to adding it 
-		// to the move manager. If return value is nullptr, then an unknown error occurred. It will throw 
-		// a BuildException on failure. Object lifetime is the caller's responsibility. 
-		static Move* BuildMove(const Json::Value& json, MoveManager* mm);
+		// Builds a move from a JSON node. Returns a pointer to the built Move in 
+		// addition to adding it to the move manager. If return value is nullptr, 
+		// then an unknown error occurred. It will throw a BuildException on failure. 
+		// Object lifetime is the caller's responsibility. 
+		static Move* BuildMove(const Json::Value& json, MoveManager* mm, WorldManager* wm);
 
 		// Overloaded function allowing JSON path specification.
-		static Move* BuildMove(const Json::Value& json, MoveManager* mm, const std::string& path);
+		static Move* BuildMove(const Json::Value& json, 
+							   MoveManager* mm, 
+							   WorldManager* wm, 
+							   const std::string& path);
 
 		// Builds moves from a base tree root["moves"] and adds them to the Move manager. 
 		// It also adds all initialized pointers to the mvlist array passed in. Throws exception
 		// on failure. Object lifetime management is caller's responsibility. 
-		static void BuildMoves(const Json::Value& json, MoveManager* mm, MoveList& mvlist);
+		static void BuildMoves(const Json::Value& json, 
+							   MoveManager* mm, 
+							   WorldManager* wm, 
+							   MoveList& mvlist);
 	};
 }

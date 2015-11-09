@@ -327,6 +327,28 @@ namespace SAPHRON
 			}
 		}
 
+		// Stash particle itself. Make sure 
+		// it is heap allocated!
+		void StashParticle(Particle* particle)
+		{
+			int id = particle->GetSpeciesID();
+
+			// If particle has a world, remove it. 
+			// Stashed particles cannot belong to a world.
+			if(particle->GetWorld() != nullptr)
+			{
+				particle->GetWorld()->RemoveParticle(particle);
+				particle->SetWorld(nullptr);
+			}
+			
+			// If ID doesn't exist yet, create it and fill in
+			// the middle. 
+			if((int)_stash.size() - 1 < id)
+				_stash.resize(id + 1);
+
+			_stash[id].push(particle);
+		}
+
 		// Stash "n" copies of particle.
 		void StashParticle(Particle* particle, int n)
 		{

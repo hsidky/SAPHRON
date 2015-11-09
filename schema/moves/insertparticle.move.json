@@ -1,0 +1,30 @@
+{
+	"type" : "object",
+	"properties" : {
+		"type" : { 
+			"type" : "string",
+			"enum" : ["InsertParticle"]
+		},
+		"stash_count" : {
+			"type" : "integer", 
+			"minimum" : 1
+		},
+		"species" : {
+			"type" : "array",
+			"items" : {
+				"type" : "string"
+			},
+			"minimumItems" : 1
+		},
+		"seed" : {
+			"type" : "integer",
+			"minimum" : 0
+		},
+		"weight" : {
+			"type" : "integer",
+			"minimum" : 1
+		}
+	},
+	"required" : ["type", "stash_count", "species"],
+	"additionalProperties": false
+}

@@ -7,6 +7,7 @@
 #include "../Validator/ObjectRequirement.h"
 #include "../Validator/ArrayRequirement.h"
 #include "../Simulation/SimException.h"
+#include "../Worlds/WorldManager.h"
 #include "FlipSpinMove.h"
 #include "TranslateMove.h"
 #include "DirectorRotateMove.h"
@@ -15,17 +16,22 @@
 #include "RotateMove.h"
 #include "SpeciesSwapMove.h"
 #include "VolumeSwapMove.h"
+#include "InsertParticleMove.h"
+#include "DeleteParticleMove.h"
 
 using namespace Json;
 
 namespace SAPHRON
 {
-	Move* Move::BuildMove(const Json::Value &json, SAPHRON::MoveManager *mm)
+	Move* Move::BuildMove(const Json::Value &json, SAPHRON::MoveManager *mm, WorldManager* wm)
 	{
-		return BuildMove(json, mm, "#/moves");
+		return BuildMove(json, mm, wm, "#/moves");
 	}
 
-	Move* Move::BuildMove(const Value &json, MoveManager *mm, const std::string& path)
+	Move* Move::BuildMove(const Value &json, 
+						  MoveManager *mm, 
+						  WorldManager* wm, 
+						  const std::string& path)
 	{
 		ObjectRequirement validator;
 		Value schema;
@@ -36,7 +42,26 @@ namespace SAPHRON
 		// Get move type. 
 		std::string type = json.get("type", "none").asString();
 
-		if(type == "DirectorRotate")
+		if(type == "DeleteParticle")
+		{
+			reader.parse(JsonSchema::DeleteParticleMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			srand(time(NULL));
+			int seed = json.get("seed", rand()).asInt();
+			
+			std::vector<std::string> species;
+			for(auto& s : json["species"])
+				species.push_back(s.asString());
+
+			move = new DeleteParticleMove(species, seed);
+		}
+		else if(type == "DirectorRotate")
 		{
 			reader.parse(JsonSchema::DirectorRotateMove, schema);
 			validator.Parse(schema, path);
@@ -65,6 +90,26 @@ namespace SAPHRON
 			int seed = json.get("seed", rand()).asInt();
 
 			move = new FlipSpinMove(seed);
+		}
+		else if(type == "InsertParticle")
+		{
+			reader.parse(JsonSchema::InsertParticleMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs. 
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			srand(time(NULL));
+			int seed = json.get("seed", rand()).asInt();
+			int scount = json["stash_count"].asInt();
+
+			std::vector<std::string> species;
+			for(auto& s : json["species"])
+				species.push_back(s.asString());
+
+			move = new InsertParticleMove(species, *wm, scount, seed);
 		}
 		else if(type == "ParticleSwap")
 		{
@@ -183,7 +228,10 @@ namespace SAPHRON
 		return move;
 	}
 
-	void Move::BuildMoves(const Json::Value &json, SAPHRON::MoveManager *mm, MoveList &mvlist)
+	void Move::BuildMoves(const Json::Value &json, 
+						  SAPHRON::MoveManager *mm, 
+						  WorldManager* wm, 
+						  MoveList &mvlist)
 	{
 		ArrayRequirement validator;
 		Value schema;
@@ -201,7 +249,7 @@ namespace SAPHRON
 		int i = 0;
 		for(auto& m : json)
 		{
-			mvlist.push_back(BuildMove(m, mm, "#/moves/" + std::to_string(i)));
+			mvlist.push_back(BuildMove(m, mm, wm, "#/moves/" + std::to_string(i)));
 			++i;
 		}
 

@@ -108,7 +108,7 @@ namespace SAPHRON
 			else
 			{
 				// Stach the particle. 
-				w->StashParticle(p, 1);
+				w->StashParticle(p);
 
 				// Update energies and pressures.
 				w->IncrementEnergy(-1.0*ei.energy);

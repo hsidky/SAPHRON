@@ -137,7 +137,7 @@ namespace SAPHRON
 		// Build move(s).
 		PrintBoldNotice(" > Building move(s)...", _msgw); 
 		try{
-			Move::BuildMoves(root.get("moves", Json::arrayValue), &_mm, _moves);
+			Move::BuildMoves(root.get("moves", Json::arrayValue), &_mm, &_wm, _moves);
 		} catch(BuildException& e) {
 			DumpErrorsToConsole(e.GetErrors(), _notw);
 			return false;
@@ -181,7 +181,8 @@ namespace SAPHRON
 		for(auto& o : _observers)
 		{
 			notices.push_back("Initialized " + o->GetName() + " observer.");
-			notices.push_back("Set sampling frequency to " + to_string(o->GetFrequency()) +  " sweeps.");
+			notices.push_back("Set sampling frequency to " + 
+				to_string(o->GetFrequency()) +  " sweeps.");
 		}
 
 		DumpNoticesToConsole(notices, "",_notw);

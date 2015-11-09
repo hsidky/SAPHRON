@@ -30,6 +30,8 @@ files = [
 	("moves/translate.move.json", "TranslateMove"),
 	("moves/rotate.move.json", "RotateMove"),
 	("moves/volumeswap.move.json", "VolumeSwapMove"),
+	("moves/insertparticle.move.json", "InsertParticleMove"),
+	("moves/deleteparticle.move.json", "DeleteParticleMove"),
 	("observers/dlmfile.observer.json", "DLMFileObserver"),
 	("observers/json.observer.json", "JSONObserver"),
 	("observers/observers.json", "Observers"),

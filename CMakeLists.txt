@@ -227,6 +227,12 @@ target_include_directories(GibbsNVTEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(GibbsNVTEnsembleTests googletest) 
 add_test(GibbsNVTEnsembleTests GibbsNVTEnsembleTests)
 
+add_executable(GrandCanonicalEnsembleTests test/GrandCanonicalEnsembleTests.cpp)
+target_link_libraries(GrandCanonicalEnsembleTests ${TEST_DEPS})
+target_include_directories(GrandCanonicalEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(GrandCanonicalEnsembleTests googletest) 
+add_test(GrandCanonicalEnsembleTests GrandCanonicalEnsembleTests)
+
 add_executable(HistogramTests test/HistogramTests.cpp)
 target_link_libraries(HistogramTests ${TEST_DEPS})
 target_include_directories(HistogramTests PRIVATE "${GTEST_INCLUDE_DIR}")
