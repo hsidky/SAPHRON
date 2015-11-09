@@ -399,6 +399,12 @@ namespace SAPHRON
 		json["r_cutoff"] = this->GetCutoffRadius();
 		json["nlist_cutoff"] = this->GetNeighborRadius();
 
+		// Serialize chemical potentials.
+		auto& slist = Particle::GetSpeciesList();
+		for(size_t i = 0; i < _chemp.size(); ++i)
+			if(_chemp[i] != 0) // Only write non-zero chemical potentials?
+				json["chemical_potential"][slist[i]] = _chemp[i];
+
 		// Serialize primitives and build blueprint.
 		for(int i = 0; i < (int)_primitives.size(); ++i)
 		{
@@ -480,12 +486,66 @@ namespace SAPHRON
 									 json["components"], 
 									 particles);
 			
-			for(auto& p : particles)
-				world->AddParticle(p);
+			// Use these to pack the box. 
+			if(json.isMember("pack"))
+			{
+				auto count = json["pack"]["count"].asInt();
+				auto rho = json["pack"].get("density", 0.0).asDouble();
+				
+				// We expect a single particle prototype 
+				// for each species defined in composition.
+				auto& comp = json["pack"]["composition"];
+				if(comp.size() != particles.size())
+					throw BuildException({"Expected " + std::to_string(comp.size()) + 
+						" particles to pack but " + std::to_string(particles.size()) + 
+						" were defined."});
+
+				// Get compositions.
+				std::vector<double> xi;
+				for(auto& p : particles)
+				{
+					auto s = p->GetSpecies();
+					if(!comp.isMember(s))
+						throw BuildException({"Particle of type " + s + " defined " + 
+							"but no composition specified."});
+
+					xi.push_back(comp[s].asDouble());
+				}
+
+				// Pack world. If rho is zero, then we pack it with whatever,
+				// and force the volume specified by the user afterwards.
+				if(rho == 0)
+				{
+					auto V = world->GetVolume();
+					world->PackWorld(particles, xi, count, 1.0);
+					world->SetVolume(V, true);
+				}
+				else
+					world->PackWorld(particles, xi, count, rho);
+
+				// Clean up our mess.
+				for(auto& p : particles)
+					delete p;
+
+				particles.clear();
+			}
+			else 
+			{
+				for(auto& p : particles)
+					world->AddParticle(p);
+			}
 		}
 
 		// Load temperature.
 		world->SetTemperature(json.get("temperature", 0).asDouble());
+
+		// Load chemical potentials. 
+		if(json.isMember("chemical_potential"))
+		{
+			auto& chemp = json["chemical_potential"];
+			for(auto& species : chemp.getMemberNames())
+				world->SetChemicalPotential(species, chemp[species].asDouble());
+		}
 
 		return world;
 	}

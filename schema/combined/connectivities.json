@@ -4,28 +4,28 @@
         "oneOf": [
             {
                 "type": "object",
-                "additionalProperties": false,
                 "properties": {
-                    "coefficient": {
-                        "type": "number"
-                    },
                     "type": {
                         "type": "string",
                         "enum": [
                             "P2SA"
                         ]
                     },
+                    "coefficient": {
+                        "type": "number"
+                    },
+                    "selector": {},
                     "director": {
                         "type": "array",
                         "items": {
                             "type": "number"
                         },
-                        "minItems": 3,
+                        "additionalItems": false,
                         "maxItems": 3,
-                        "additionalItems": false
-                    },
-                    "selector": {}
+                        "minItems": 3
+                    }
                 },
+                "additionalProperties": false,
                 "required": [
                     "type",
                     "coefficient",

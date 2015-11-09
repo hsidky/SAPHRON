@@ -29,7 +29,37 @@
 			"minimum" : 0
 		},
 		"pack" : {
-			"type" : "object"
+			"type" : "object",
+			"properties" : {
+				"count" : {
+					"type" : "integer",
+					"minimum" : 1
+				},
+				"density" : {
+					"type" : "number", 
+					"minimum" : 0,
+					"exclusiveMinimum" : true
+				},
+				"composition" : {
+					"type" : "object",
+					"patternProperties" : {
+						"^[A-z][A-z0-9]+$" : {
+							"type" : "number",
+							"minimum" : 0.0, 
+							"maximum" : 1.0,
+							"exclusiveMinimum" : true
+						}
+					}
+				}
+			}
+		},
+		"chemical_potential" : {
+			"type" : "object",
+			"patternProperties" : {
+				"^[A-z][A-z0-9]+$" : {
+					"type" : "number"
+				}
+			}
 		}
 	},
 	"required" : ["type", "dimensions", "r_cutoff", "components"],
