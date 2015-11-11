@@ -70,6 +70,7 @@ TEST(GrandCanonicalEnsembleTests, Default)
 	// Initialize ensemble. 
 	StandardSimulation ensemble(&wm, &ffm, &mm);
 	ensemble.AddObserver(&dlm);
+	ASSERT_EQ(N, world.GetParticleCount());
 
 	// Run 
 	ensemble.Run(10000);

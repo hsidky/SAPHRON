@@ -31,6 +31,8 @@ TEST(InsertParticleMove, DefaultBehavior)
 	wm.AddWorld(&world);
 
 	InsertParticleMove move({"LJ"}, wm, 1000);
+	ASSERT_EQ(200, world.GetParticleCount());
+	
 
 	// Set initial world energy. 
 	world.SetEnergy(H1.energy);

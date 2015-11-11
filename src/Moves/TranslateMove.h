@@ -40,10 +40,13 @@ namespace SAPHRON
 			{
 				// Get random particle from random world.
 				World* w = wm->GetRandomWorld();
+				if(w->GetParticleCount() == 0)
+					return;
+
 				Particle* particle = w->DrawRandomParticle();
 
 				// Initial position.
-				Position posi = particle->GetPosition();
+				auto& posi = particle->GetPosition();
 				
 				// Evaluate initial particle energy. 
 				auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
@@ -88,10 +91,13 @@ namespace SAPHRON
 			// Perform move using DOS interface.
 			virtual void Perform(World* w, ForceFieldManager* ffm, DOSOrderParameter* op , const MoveOverride& override) override
 			{
-				Particle* particle = w->DrawRandomParticle();
+				if(w->GetParticleCount() == 0)
+					return;
+				
+				auto* particle = w->DrawRandomParticle();
 
 				// Initial position.
-				Position posi = particle->GetPosition();
+				auto& posi = particle->GetPosition();
 				
 				// Evaluate initial particle energy. 
 				auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
@@ -134,9 +140,6 @@ namespace SAPHRON
 					++_rejected;
 				}	
 			}
-
-			// Returns maximum displacement.
-			double GetMaxDisplacement() const { return _dx;	}
 
 			virtual double GetAcceptanceRatio() const override
 			{
