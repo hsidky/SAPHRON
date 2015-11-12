@@ -46,7 +46,7 @@ namespace SAPHRON
 				Particle* particle = w->DrawRandomParticle();
 
 				// Initial position.
-				auto& posi = particle->GetPosition();
+				auto posi = particle->GetPosition();
 				
 				// Evaluate initial particle energy. 
 				auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
@@ -97,7 +97,7 @@ namespace SAPHRON
 				auto* particle = w->DrawRandomParticle();
 
 				// Initial position.
-				auto& posi = particle->GetPosition();
+				auto posi = particle->GetPosition();
 				
 				// Evaluate initial particle energy. 
 				auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
