@@ -96,7 +96,7 @@ namespace SAPHRON
 			// The acceptance rule is from Frenkel & Smit Eq. 5.6.9.
 			auto& sim = SimInfo::Instance();
 			auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
-			auto pacc = (lambda*lambda*lambda*N)/V*exp(beta*(mu + ei.energy.total()));
+			auto pacc = (lambda*lambda*lambda*N)/V*exp(beta*(ei.energy.total()-mu));
 			pacc = pacc > 1.0 ? 1.0 : pacc;
 
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
