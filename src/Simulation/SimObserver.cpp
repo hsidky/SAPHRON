@@ -27,6 +27,7 @@ namespace SAPHRON
 		flags.world_temperature = json.get("world_temperature", 0).asUInt();
 		flags.world_composition = json.get("world_composition", 0).asUInt();
 		flags.world_energy = json.get("world_energy", 0).asUInt();
+		flags.world_chem_pot = json.get("world_chem_pot", 0).asUInt();
 		flags.eintervdw = json.get("energy_intervdw", 0).asUInt();
 		flags.eintravdw = json.get("energy_intravdw", 0).asUInt();
 		flags.einterelect = json.get("energy_interelect", 0).asUInt();

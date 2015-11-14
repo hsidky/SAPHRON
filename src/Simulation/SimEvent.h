@@ -10,7 +10,7 @@ namespace SAPHRON
 	{
 		private:
 			unsigned int simulation_mask = 15;
-			unsigned int world_mask = 63;
+			unsigned int world_mask = 127;
 			unsigned int energy_mask = 63;
 			unsigned int pressure_mask = 255;
 			unsigned int histogram_mask = 63;
@@ -50,6 +50,7 @@ namespace SAPHRON
 					unsigned int world_temperature: 1;
 					unsigned int world_composition: 1;
 					unsigned int world_energy : 1;
+					unsigned int world_chem_pot : 1;
 				};
 				
 				unsigned int world;
@@ -137,6 +138,7 @@ namespace SAPHRON
 					if(world_temperature) json["world_temperature"] = 1;
 					if(world_composition) json["world_composition"] = 1;
 					if(world_energy) json["world_energy"] = 1;
+					if(world_chem_pot) json["world_chem_pot"] = 1;
 				}
 
 				if(energy_components == energy_mask)

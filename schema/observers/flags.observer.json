@@ -81,6 +81,11 @@
 			"minimum" : 0,
 			"maximum" : 1
 		},
+		"world_chem_pot" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
 		"energy_intervdw" : {
 			"type" : "integer", 
 			"minimum" : 0,

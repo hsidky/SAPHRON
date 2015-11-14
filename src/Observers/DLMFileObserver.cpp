@@ -1,4 +1,4 @@
-	#include <iterator>
+#include <iterator>
 #include <iomanip>
 #include "DLMFileObserver.h"
 #include "../Particles/Particle.h"
@@ -142,6 +142,12 @@ namespace SAPHRON
 				WriteStream(*_worldfs.back(), "E Bonded");
 			if(this->Flags.econnectivity)
 				WriteStream(*_worldfs.back(), "E Connectivity");
+			if(this->Flags.world_chem_pot)
+			{
+				const auto& species = Particle::GetSpeciesList(); 
+				for(size_t i = 0; i < w->GetComposition().size(); ++i)
+					WriteStream(*_worldfs.back(), "Mu_" + species[i]);
+			}
 			if(this->Flags.world_composition)
 			{
 				const auto& species = Particle::GetSpeciesList(); 
@@ -364,6 +370,12 @@ namespace SAPHRON
 				WriteStream(*fs, E.bonded);
 			if(this->Flags.econnectivity)
 				WriteStream(*fs, E.connectivity);
+			if(this->Flags.world_chem_pot)
+			{
+				int st = w->GetComposition().size();
+				for(int j = 0; j < st; ++j)
+					WriteStream(*fs, w->GetChemicalPotential(j));
+			}
 			if(this->Flags.world_composition)
 			{
 				*fs << fixed;
