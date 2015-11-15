@@ -2,11 +2,16 @@
     "items": {
         "oneOf": [
             {
-                "additionalProperties": false,
-                "type": "object",
                 "properties": {
-                    "coefficient": {
-                        "type": "number"
+                    "selector": {},
+                    "director": {
+                        "items": {
+                            "type": "number"
+                        },
+                        "additionalItems": false,
+                        "minItems": 3,
+                        "type": "array",
+                        "maxItems": 3
                     },
                     "type": {
                         "enum": [
@@ -14,23 +19,18 @@
                         ],
                         "type": "string"
                     },
-                    "director": {
-                        "items": {
-                            "type": "number"
-                        },
-                        "type": "array",
-                        "maxItems": 3,
-                        "minItems": 3,
-                        "additionalItems": false
-                    },
-                    "selector": {}
+                    "coefficient": {
+                        "type": "number"
+                    }
                 },
+                "additionalProperties": false,
                 "required": [
                     "type",
                     "coefficient",
                     "director",
                     "selector"
-                ]
+                ],
+                "type": "object"
             }
         ]
     },

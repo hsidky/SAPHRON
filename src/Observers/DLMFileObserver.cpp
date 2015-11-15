@@ -179,6 +179,8 @@ namespace SAPHRON
 				WriteStream(*fs, "ID");
 			if(this->Flags.particle_species)
 				WriteStream(*fs, "Species");
+			if(this->Flags.particle_species_id)
+				WriteStream(*fs, "Species ID");
 			if(this->Flags.particle_parent_id)
 				WriteStream(*fs, "Parent ID");
 			if(this->Flags.particle_parent_species) 
@@ -407,6 +409,8 @@ namespace SAPHRON
 			WriteStream(*fs, p.GetGlobalIdentifier());
 		if(this->Flags.particle_species)
 			WriteStream(*fs, p.GetSpecies());
+		if(this->Flags.particle_species_id)
+			WriteStream(*fs, p.GetSpeciesID());
 		if(this->Flags.particle_parent_id && p.HasParent())
 			WriteStream(*fs, p.GetParent()->GetGlobalIdentifier());
 		if(this->Flags.particle_parent_species && p.HasParent()) 

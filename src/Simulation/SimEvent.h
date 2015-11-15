@@ -107,6 +107,7 @@ namespace SAPHRON
 				{
 					unsigned int particle_id : 1;
 					unsigned int particle_species : 1;
+					unsigned int particle_species_id : 1;
 					unsigned int particle_parent_id : 1;
 					unsigned int particle_parent_species : 1;
 					unsigned int particle_position : 1;
@@ -183,6 +184,7 @@ namespace SAPHRON
 				{
 					if(particle_id) json["particle_id"] = 1;
 					if(particle_species) json["particle_species"] = 1;
+					if(particle_species_id) json["particle_species_id"] = 1;
 					if(particle_parent_id) json["particle_parent_id"] = 1;
 					if(particle_parent_species) json["particle_parent_species"] = 1;
 					if(particle_position) json["oarticle_position"] = 1;

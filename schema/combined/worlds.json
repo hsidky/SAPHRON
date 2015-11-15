@@ -1,16 +1,47 @@
 {
     "items": {
-        "additionalProperties": false,
-        "type": "object",
         "properties": {
-            "temperature": {
-                "type": "number",
-                "minimum": 0
+            "dimensions": {
+                "items": {
+                    "minimum": 0,
+                    "type": "number"
+                },
+                "additionalItems": false,
+                "minItems": 3,
+                "type": "array",
+                "maxItems": 3
             },
-            "r_cutoff": {
-                "exclusiveMinimum": true,
-                "type": "number",
-                "minimum": 0
+            "particles": {
+                "type": "array"
+            },
+            "pack": {
+                "properties": {
+                    "composition": {
+                        "type": "object",
+                        "patternProperties": {
+                            "^[A-z][A-z0-9]+$": {
+                                "minimum": 0.0,
+                                "exclusiveMinimum": true,
+                                "maximum": 1.0,
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "count": {
+                        "minimum": 1,
+                        "type": "integer"
+                    },
+                    "density": {
+                        "minimum": 0,
+                        "exclusiveMinimum": true,
+                        "type": "number"
+                    }
+                },
+                "type": "object"
+            },
+            "temperature": {
+                "minimum": 0,
+                "type": "number"
             },
             "type": {
                 "enum": [
@@ -18,90 +49,59 @@
                 ],
                 "type": "string"
             },
-            "nlist_cutoff": {
+            "r_cutoff": {
+                "minimum": 0,
                 "exclusiveMinimum": true,
-                "type": "number",
-                "minimum": 0
-            },
-            "chemical_potential": {
-                "patternProperties": {
-                    "^[A-z][A-z0-9]+$": {
-                        "type": "number"
-                    }
-                },
-                "type": "object"
+                "type": "number"
             },
             "components": {
                 "components": {
+                    "minProperties": 1,
                     "additionalProperties": false,
+                    "type": "object",
                     "patternProperties": {
                         "^[A-z][A-z0-9]+$": {
-                            "type": "object",
                             "properties": {
                                 "count": {
-                                    "type": "integer",
-                                    "minimum": 1
+                                    "minimum": 1,
+                                    "type": "integer"
                                 }
                             },
                             "required": [
                                 "count"
-                            ]
+                            ],
+                            "type": "object"
                         }
-                    },
-                    "type": "object",
-                    "minProperties": 1
-                }
-            },
-            "seed": {
-                "type": "integer",
-                "minimum": 0
-            },
-            "particles": {
-                "type": "array"
-            },
-            "pack": {
-                "type": "object",
-                "properties": {
-                    "density": {
-                        "exclusiveMinimum": true,
-                        "type": "number",
-                        "minimum": 0
-                    },
-                    "count": {
-                        "type": "integer",
-                        "minimum": 1
-                    },
-                    "composition": {
-                        "patternProperties": {
-                            "^[A-z][A-z0-9]+$": {
-                                "exclusiveMinimum": true,
-                                "type": "number",
-                                "maximum": 1.0,
-                                "minimum": 0.0
-                            }
-                        },
-                        "type": "object"
                     }
                 }
             },
-            "dimensions": {
-                "items": {
-                    "type": "number",
-                    "minimum": 0
-                },
-                "type": "array",
-                "maxItems": 3,
-                "minItems": 3,
-                "additionalItems": false
+            "seed": {
+                "minimum": 0,
+                "type": "integer"
+            },
+            "chemical_potential": {
+                "type": "object",
+                "patternProperties": {
+                    "^[A-z][A-z0-9]+$": {
+                        "type": "number"
+                    }
+                }
+            },
+            "nlist_cutoff": {
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "type": "number"
             }
         },
+        "additionalProperties": false,
         "required": [
             "type",
             "dimensions",
             "r_cutoff",
             "components"
-        ]
+        ],
+        "type": "object"
     },
-    "type": "array",
-    "minItems": 1
+    "minItems": 1,
+    "type": "array"
 }

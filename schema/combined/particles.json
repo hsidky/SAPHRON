@@ -2,41 +2,41 @@
     "items": {
         "items": [
             {
-                "type": "integer",
-                "minimum": 1
+                "minimum": 1,
+                "type": "integer"
             },
             {
                 "type": "string"
             },
             {
                 "items": {
-                    "type": "number",
-                    "minimum": 0
+                    "minimum": 0,
+                    "type": "number"
                 },
-                "type": "array",
-                "maxItems": 3,
+                "additionalItems": false,
                 "minItems": 3,
-                "additionalItems": false
+                "type": "array",
+                "maxItems": 3
             },
             {
                 "items": {
                     "type": "number"
                 },
-                "type": "array",
-                "maxItems": 3,
+                "additionalItems": false,
                 "minItems": 3,
-                "additionalItems": false
+                "type": "array",
+                "maxItems": 3
             },
             {
                 "type": "string"
             }
         ],
-        "type": "array",
-        "maxItems": 4,
+        "additionalItems": false,
         "minItems": 3,
-        "additionalItems": false
+        "type": "array",
+        "maxItems": 4
     },
-    "type": "array",
+    "additionalItems": false,
     "minItems": 1,
-    "additionalItems": false
+    "type": "array"
 }

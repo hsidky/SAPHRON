@@ -196,6 +196,11 @@
 			"minimum" : 0,
 			"maximum" : 1
 		},
+		"particle_species_id" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
 		"particle_parent_id" : {
 			"type" : "integer", 
 			"minimum" : 0,
