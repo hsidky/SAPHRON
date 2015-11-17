@@ -5,6 +5,7 @@
 #include "../Utils/Rand.h"
 #include "../Worlds/WorldManager.h"
 #include "../ForceFields/ForceFieldManager.h"
+#include "../DensityOfStates/DOSOrderParameter.h"
 
 namespace SAPHRON
 {
@@ -20,6 +21,7 @@ namespace SAPHRON
 		int _rejected;
 		int _performed;
 		std::vector<int> _species;
+		bool _prefac;
 		int _scount; // Stash count.
 		int _seed;
 
@@ -51,7 +53,7 @@ namespace SAPHRON
 						   int stashcount,
 						   int seed = 45843) :
 		_rand(seed), _rejected(0), _performed(0), _species(0), 
-		_scount(stashcount), _seed(seed)
+		_prefac(true), _scount(stashcount), _seed(seed)
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
@@ -75,7 +77,7 @@ namespace SAPHRON
 						   int stashcount,
 						   int seed = 45843) : 
 		_rand(seed), _rejected(0), _performed(0), _species(0),
-		_scount(stashcount), _seed(seed)
+		_prefac(true), _scount(stashcount), _seed(seed)
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
@@ -162,14 +164,84 @@ namespace SAPHRON
 			}
 		}
 
-		virtual void Perform(World*, 
-							 ForceFieldManager*, 
-							 DOSOrderParameter* , 
-							 const MoveOverride&) override
+		virtual void Perform(World* w, 
+							 ForceFieldManager* ffm, 
+							 DOSOrderParameter* op, 
+							 const MoveOverride& override) override
 		{
-			std::cerr << "DOS for particle insertion is currently unimplemented." << std::endl;
-			exit(-1);
+			// Get random identity from list. 
+			size_t n = _species.size();
+			assert(n > 0);
+			auto* p = w->UnstashParticle(_species[_rand.int32() % n]);
+
+			// Generate a random position and orientation for particle insertion.
+			const auto& H = w->GetHMatrix();
+			Vector3D pr{_rand.doub(), _rand.doub(), _rand.doub()};
+			Vector3D pos = H*pr;
+			p->SetPosition(pos);
+
+			// Choose random axis, and generate random angle.
+			int axis = _rand.int32() % 3 + 1;
+			double deg = (4.0*_rand.doub() - 2.0)*M_PI;
+			Matrix3D R = GenRotationMatrix(axis, deg);
+
+			// Rotate particle and director.
+			p->SetDirector(R*p->GetDirector());
+			for(auto& child : *p)
+			{
+				child->SetPosition(R*(child->GetPosition()-pos) + pos);
+				child->SetDirector(R*child->GetDirector());
+			}
+
+			// Get energy and evaluate initial order parameter.
+			auto ei = w->GetEnergy();
+			auto opi = op->EvaluateOrderParameter(*w);
+
+			// Insert particle.
+			w->AddParticle(p);
+
+			auto id = p->GetSpeciesID();
+			auto& comp = w->GetComposition();
+			auto N = comp[id];
+			auto V = w->GetVolume();
+			auto mu = w->GetChemicalPotential(id);
+			auto lambda = w->GetWavelength(id);
+
+			++_performed;
+
+			// Evaluate new energy, update and eval OP. 
+			auto ef = ffm->EvaluateHamiltonian(*p, comp, V);
+			w->IncrementEnergy(ef.energy);
+			w->IncrementPressure(ef.pressure);
+			auto opf = op->EvaluateOrderParameter(*w);
+
+			// The acceptance rule is from Frenkel & Smit Eq. 5.6.8.
+			// However, it iwas modified since we are using the *final* particle number.
+			double pacc = op->AcceptanceProbability(ei, ef.energy, opi, opf, *w);
+			
+			// If prefactor is enabled, compute.
+			if(_prefac)
+			{
+				auto& sim = SimInfo::Instance();
+				auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
+				pacc *= V/(lambda*lambda*lambda*N)*exp(beta*mu);
+			}
+			pacc = pacc > 1.0 ? 1.0 : pacc;
+
+			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
+			{
+				// Stashing a particle automatically removes it from world. 
+				w->StashParticle(p);
+				w->IncrementEnergy(-1.0*ef.energy);
+				w->IncrementPressure(-1.0*ef.pressure);
+				++_rejected;
+			}
+			
 		}
+
+		// Turn on or off the acceptance rule prefactor 
+		// for DOS order parameter.
+		void SetOrderParameterPrefactor(bool flag) { _prefac = flag; }
 
 		virtual double GetAcceptanceRatio() const override
 		{
@@ -188,6 +260,7 @@ namespace SAPHRON
 			json["type"] = "InsertParticle";
 			json["stash_count"] = _scount;
 			json["seed"] = _seed;
+			json["op_prefactor"] = _prefac;
 
 			auto& species = Particle::GetSpeciesList();
 			for(auto& s : _species)

@@ -54,12 +54,15 @@ namespace SAPHRON
 
 			srand(time(NULL));
 			int seed = json.get("seed", rand()).asInt();
+			auto prefac = json.get("op_prefactor", true).asBool();
 			
 			std::vector<std::string> species;
 			for(auto& s : json["species"])
 				species.push_back(s.asString());
 
-			move = new DeleteParticleMove(species, seed);
+			auto* m = new DeleteParticleMove(species, seed);
+			m->SetOrderParameterPrefactor(prefac);
+			move = static_cast<Move*>(m);
 		}
 		else if(type == "DirectorRotate")
 		{
@@ -102,14 +105,17 @@ namespace SAPHRON
 				throw BuildException(validator.GetErrors());
 
 			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();
-			int scount = json["stash_count"].asInt();
+			auto seed = json.get("seed", rand()).asInt();
+			auto scount = json["stash_count"].asInt();
+			auto prefac = json.get("op_prefactor", true).asBool(); 
 
 			std::vector<std::string> species;
 			for(auto& s : json["species"])
 				species.push_back(s.asString());
 
-			move = new InsertParticleMove(species, *wm, scount, seed);
+			auto* m = new InsertParticleMove(species, *wm, scount, seed);
+			m->SetOrderParameterPrefactor(prefac);
+			move = static_cast<Move*>(m);
 		}
 		else if(type == "ParticleSwap")
 		{

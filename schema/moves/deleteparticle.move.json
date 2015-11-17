@@ -19,6 +19,9 @@
 		"weight" : {
 			"type" : "integer",
 			"minimum" : 1
+		},
+		"op_prefactor" : {
+			"tyoe" : "boolean"
 		}
 	},
 	"required" : ["type", "species"],
