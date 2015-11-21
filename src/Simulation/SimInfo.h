@@ -19,6 +19,13 @@ namespace SAPHRON
 		SimUnits _units;
 		Timer _timer;
 
+		// Name map for timer names.
+		std::map<std::string, std::string> _namemap = {
+			{"nlist", "Neighbor list generation"},
+			{"total", "Total"},
+			{"e_inter", "Intermolecular energy"},
+			{"e_intra", "Intramolecular energy"}
+		};
 
 		/***************************
 		 *    These are defaults   * 
@@ -93,6 +100,14 @@ namespace SAPHRON
 		void AddTime(const std::string& name) { _timer.AddTime(name); }
 
 		const TimerMap& GetTimerMap() const { return _timer.GetTimerMap(); }
+
+		std::string ResolveTimerName(const std::string& name) const
+		{
+			if(_namemap.find(name) == _namemap.end())
+				return name;
+			else
+				return _namemap.at(name);
+		}
 
 		// Get sim units.
 		SimUnits GetUnits() const  { return _units; }

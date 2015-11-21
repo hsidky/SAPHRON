@@ -19,7 +19,7 @@ int main(int argc, char const* argv[])
   
 	revision.resize(53,' ');
 
-	std::cout << "                                                                         \n" << 
+	std::cerr << "                                                                         \n" << 
 	             " **********************************************************************      \n" << 
 	             " *         ____      _     ____   _   _  ____    ___   _   _          *      \n" << 
 	             " *        / ___|    / \\   |  _ \\ | | | ||  _ \\  / _ \\ | \\ | |         * \n" << 
@@ -54,7 +54,23 @@ int main(int argc, char const* argv[])
 		std::cerr << std::setw(47 + 8) << std::left << "\033[1m > Running simulation... \033[0m";
 		auto* sim = builder.GetSimulation();
 		sim->Run();
-		std::cout << std::setw(30) << std::right << "\033[32mComplete!\033[0m\n";
+		std::cerr << std::setw(34) << std::right << "\033[32mComplete!\033[0m\n";
+		
+		// Time Info. 
+		auto& info = SimInfo::Instance();
+		info.AddTime("total");
+
+		auto& map = info.GetTimerMap();
+		auto tot = map.at("total").elapsed_time.count();
+		std::cerr << " * Elapsed time breakdown during simulation:\n";
+		std::cerr << std::fixed << std::setprecision(2);
+		for(auto& it : map)
+		{
+			auto t = it.second.elapsed_time.count();
+			std::cerr << " * " << info.ResolveTimerName(it.first) 
+					  << ": " << t << " ms" 
+					  << " (" << (float)t/tot*100. << "%)" << std::endl;
+		}
 	}
 
 	return 0;

@@ -317,8 +317,13 @@ namespace SAPHRON
 										   const CompositionList& compositions, 
 										   double volume) const
 		{
+			auto& sim = SimInfo::Instance();
+			sim.StartTimer("e_inter");
 			EPTuple ep = EvaluateInter(particle, compositions, volume);
+			sim.AddTime("e_inter");
+			sim.StartTimer("e_intra");
 			ep.energy += EvaluateIntra(particle, compositions, volume);
+			sim.AddTime("e_intra");
 			ep.energy.connectivity = EvaluateConnectivity(particle);
 
 			// Divide virial by volume to get pressure. 

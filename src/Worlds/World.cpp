@@ -135,6 +135,9 @@ namespace SAPHRON
 
 	void World::UpdateNeighborList()
 	{
+		auto& sim = SimInfo::Instance();
+		sim.StartTimer("nlist");
+
 		int n = this->GetPrimitiveCount();
 
 		// Clear neighbor list before repopulating.
@@ -151,11 +154,18 @@ namespace SAPHRON
 		#pragma omp parallel
 		#pragma omp single
 		triangle(0, n);
+
+		sim.AddTime("nlist");
 	}
 
 	void World::UpdateNeighborList(Particle* particle)
 	{
+		auto& sim = SimInfo::Instance();
+		sim.StartTimer("nlist");
+
 		UpdateNeighborList(particle, true);
+		
+		sim.AddTime("nlist");
 	}
 
 	// Internal method. Allows for efficiency of clearing neighbor lists 
