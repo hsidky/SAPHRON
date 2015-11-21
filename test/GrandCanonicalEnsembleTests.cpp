@@ -34,7 +34,6 @@ TEST(GrandCanonicalEnsembleTests, Default)
 	World world(1, 1, 1, rcut);
 	world.SetNeighborRadius(rcut + 1.0);
 	world.PackWorld({&lj}, {1.0}, N, 0.6);
-	world.UpdateNeighborList();
 	world.SetChemicalPotential("LJ", 2.0);
 	world.SetTemperature(T);
 	world.SetVolume(V, true); // Override volume. This will be fixed.

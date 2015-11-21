@@ -32,13 +32,11 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 	liquid.SetNeighborRadius(rcut + 1.0);
 	liquid.PackWorld({&ljatom}, {1.0}, N/2, 0.30);
 	liquid.SetTemperature(T);
-	liquid.UpdateNeighborList();
 
 	World vapor(1, 1, 1, rcut);
 	vapor.SetNeighborRadius(rcut + 1.0);
 	vapor.PackWorld({&ljatom}, {1.0}, N/2, 0.30);
 	vapor.SetTemperature(T);
-	vapor.UpdateNeighborList();
 
 	WorldManager wm;
 	wm.AddWorld(&liquid);

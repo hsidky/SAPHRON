@@ -16,7 +16,6 @@ TEST(InsertParticleMove, DefaultBehavior)
 
 	// Pack the world. 
 	world.PackWorld({&s}, {1.0}, 200, 0.1);
-	world.UpdateNeighborList();
 
 	ASSERT_EQ(200, world.GetParticleCount());
 

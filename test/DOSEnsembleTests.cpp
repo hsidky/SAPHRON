@@ -20,7 +20,6 @@ TEST(DOSSimulation, DefaultBehavior)
 	World world(n, n, n, 1.0);
 	Site site1({0, 0, 0}, {1.0, 0, 0}, "E1");
 	world.PackWorld({&site1}, {1.0});
-	world.UpdateNeighborList();
 
 	// Initialize forcefields.
 	LebwohlLasherFF ff(1.0, 0);

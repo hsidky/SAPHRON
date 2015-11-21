@@ -263,7 +263,7 @@ namespace SAPHRON
 					double mult = (L/nCube);
 					Position pos = {mult*(x+0.5),mult*(y+0.5),mult*(z+0.5)};
 					pnew->SetPosition(pos);
-					AddParticle(pnew);
+					AddParticle(pnew, false); // Update neighborlist later.
 					--counts[j];
 					break;
 				}
@@ -278,6 +278,8 @@ namespace SAPHRON
 				}
 			}
 		}
+
+		UpdateNeighborList();
 	}
 
 	// Configure Particles in the lattice. For n particles and n fractions, 
@@ -329,7 +331,7 @@ namespace SAPHRON
 				{
 					Particle* pnew = particles[j]->Clone();
 					pnew->SetPosition({x,y,z});
-					AddParticle(pnew);
+					AddParticle(pnew, false);
 					--counts[j];
 					break;
 				}
@@ -342,6 +344,8 @@ namespace SAPHRON
 			if(max != 0 && i >= max - 1)
 				return;
 		}
+
+		UpdateNeighborList();
 	}
 
 	void World::SetVolume(double v, bool scale)

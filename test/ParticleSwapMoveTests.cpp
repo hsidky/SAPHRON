@@ -19,8 +19,6 @@ TEST(ParticleSwapMove, DefaultBehavior)
 	// Pack the worlds. 
 	liquid.PackWorld({&s}, {1.0}, 200, 0.1);
 	vapor.PackWorld({&s}, {1.0}, 200, 0.01);
-	liquid.UpdateNeighborList();
-	vapor.UpdateNeighborList();
 
 	ASSERT_EQ(200, liquid.GetParticleCount());
 	ASSERT_EQ(200, vapor.GetParticleCount());

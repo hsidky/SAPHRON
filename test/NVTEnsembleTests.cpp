@@ -16,7 +16,6 @@ TEST(NVTEnsemble, DefaultBehavior)
 	World world(30, 30, 30, 1);
 	Site site1({0, 0, 0}, {1.0, 0, 0}, "E1");
 	world.PackWorld({&site1}, {1.0});
-	world.UpdateNeighborList();
 	world.SetTemperature(1.0);
 
 	WorldManager wm;

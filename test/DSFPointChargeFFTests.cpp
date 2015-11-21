@@ -158,7 +158,6 @@ TEST(DSFFF, PVTValidation1)
 	liquid.SetNeighborRadius(rcut + 3.0);
 	liquid.PackWorld({&h2o}, {1.0}, N, 0.033356);
 	liquid.SetTemperature(T);
-	liquid.UpdateNeighborList();
 	
 	WorldManager wm;
 	wm.AddWorld(&liquid);
@@ -252,13 +251,11 @@ TEST(DSFFF, NISTValidation1)
 	liquid.SetNeighborRadius(rcut + 1.0);
 	liquid.PackWorld({&h2o}, {1.0}, N/2, 0.02);
 	liquid.SetTemperature(T);
-	liquid.UpdateNeighborList();
 
 	SimpleWorld vapor(1, 1, 1, rcut);
 	vapor.SetNeighborRadius(rcut + 1.0);
 	vapor.PackWorld({&h2o}, {1.0}, N/2, 0.005);
 	vapor.SetTemperature(T);
-	vapor.UpdateNeighborList();
 
 	WorldManager wm;
 	wm.AddWorld(&liquid);

@@ -113,7 +113,7 @@ namespace SAPHRON
 		}
 
 		// Perform all the appropriate configuration for a new particle.
-		inline void ConfigureParticle(Particle* particle)
+		inline void ConfigureParticle(Particle* particle, bool updatelist)
 		{
 			// Add this world as an observer.
 			// Propogates to children.
@@ -131,7 +131,8 @@ namespace SAPHRON
 
 			// Update particle neighbor list. This will clear old
 			// and create new for particle and children.
-			this->UpdateNeighborList(particle);
+			if(updatelist)
+				this->UpdateNeighborList(particle);
 		}
 
 		// Methods for parallel neighbor list.
@@ -289,17 +290,18 @@ namespace SAPHRON
 			return _primitives[location];
 		}
 		
-		// Add a particle. 
-		void AddParticle(Particle&& particle)
+		// Add a particle. Option to update neighbor list or not.
+		void AddParticle(Particle&& particle, bool updatelist = true)
 		{
 			_particles.push_back(std::move(&particle));
-			ConfigureParticle(_particles.back()); // Do this after since we are moving.
+			// Do this after since we are moving.
+			ConfigureParticle(_particles.back(), updatelist); 
 		}
 
 		// Add a particle.
-		void AddParticle(Particle* particle)
+		void AddParticle(Particle* particle, bool updatelist = true)
 		{
-			ConfigureParticle(particle);
+			ConfigureParticle(particle, updatelist);
 			_particles.push_back(particle);
 		}
 
