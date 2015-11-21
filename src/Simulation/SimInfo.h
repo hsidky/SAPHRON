@@ -1,5 +1,7 @@
 #pragma once 
 
+#include "../Utils/Timer.h"
+
 namespace SAPHRON
 {
 	// Class that hold useful information to be used across SAPHRON
@@ -15,6 +17,8 @@ namespace SAPHRON
 	{
 	private:
 		SimUnits _units;
+		Timer _timer;
+
 
 		/***************************
 		 *    These are defaults   * 
@@ -53,6 +57,7 @@ namespace SAPHRON
 		double _epconv = 1.0;
 
 	public:
+		SimInfo() : _timer() {}
 
 		// Get singleton (I know, I know...) instance of 
 		// SimInfo.
@@ -80,6 +85,14 @@ namespace SAPHRON
 				_units = reduced;
 			}
 		}
+
+		// Start a timer.
+		void StartTimer(const std::string& name) { _timer.PressStart(name); }
+
+		// Add time to timer. 
+		void AddTime(const std::string& name) { _timer.AddTime(name); }
+
+		const TimerMap& GetTimerMap() const { return _timer.GetTimerMap(); }
 
 		// Get sim units.
 		SimUnits GetUnits() const  { return _units; }
