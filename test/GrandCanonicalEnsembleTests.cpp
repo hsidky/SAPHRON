@@ -24,7 +24,7 @@ TEST(GrandCanonicalEnsembleTests, Default)
 	auto sigma = 1.;
 	auto eps = 1.;
 	auto T = 1.50;
-	auto V = 250.047;
+	auto V = 512.0;
 	auto rcut = 3.*sigma;
 
 	// Prototype particle. 
@@ -34,7 +34,7 @@ TEST(GrandCanonicalEnsembleTests, Default)
 	World world(1, 1, 1, rcut);
 	world.SetNeighborRadius(rcut + 1.0);
 	world.PackWorld({&lj}, {1.0}, N, 0.6);
-	world.SetChemicalPotential("LJ", 2.0);
+	world.SetChemicalPotential("LJ", -2.0);
 	world.SetTemperature(T);
 	world.SetVolume(V, true); // Override volume. This will be fixed.
 
@@ -64,13 +64,18 @@ TEST(GrandCanonicalEnsembleTests, Default)
 	flags.world_on(); 
 	flags.simulation_on();
 
-	DLMFileObserver dlm("gcmc.test", flags);
+	TestAccumulator observer(flags, 1, 6000);
 
 	// Initialize ensemble. 
 	StandardSimulation ensemble(&wm, &ffm, &mm);
-	ensemble.AddObserver(&dlm);
+	ensemble.AddObserver(&observer);
 	ASSERT_EQ(N, world.GetParticleCount());
 
 	// Run 
-	ensemble.Run(10000);
+	ensemble.Run(20000);
+
+	auto rhos = observer.GetAverageDensities();
+	ASSERT_NEAR(rhos[&world], 0.64, 1e-2);
+	auto Ps = observer.GetAveragePressures();
+	ASSERT_NEAR(Ps[&world].isotropic(), 1.04, 1e-2);
 }
