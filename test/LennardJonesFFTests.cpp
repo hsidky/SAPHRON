@@ -17,7 +17,7 @@ using namespace SAPHRON;
 TEST(LennardJonesFF, DefaultBehavior)
 {
 	double rcut = 14.0;
-	LennardJonesFF ff(1.0, 1.0);
+	LennardJonesFF ff(1.0, 1.0, {rcut});
 	Site s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 	Site s2({1.5, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 	s1.AddNeighbor(&s2);
@@ -31,16 +31,16 @@ TEST(LennardJonesFF, DefaultBehavior)
 	compositions[s1.GetSpeciesID()] = 1000;
 
 	// Validate invidual components first.
-	auto NB = ff.Evaluate(s1, s2, s1.GetPosition() - s2.GetPosition(), rcut);
+	auto NB = ff.Evaluate(s1, s2, s1.GetPosition() - s2.GetPosition(), 0);
 	ASSERT_NEAR(-0.320336594278575, NB.energy, 1e-10);
-	ASSERT_NEAR(-4.859086276627293e-04, ff.EnergyTailCorrection(rcut), 1e-10);
-	ASSERT_NEAR(-0.002915451636909, ff.PressureTailCorrection(rcut), 1e-10);
+	ASSERT_NEAR(-4.859086276627293e-04, ff.EnergyTailCorrection(0), 1e-10);
+	ASSERT_NEAR(-0.002915451636909, ff.PressureTailCorrection(0), 1e-10);
 	ASSERT_NEAR(0.772019220697437, NB.virial, 1e-10);
 
 	auto H = ffm.EvaluateHamiltonian(s2, compositions, 30*30*30);
 
-	ASSERT_NEAR(-0.32033659427857464, H.energy.intervdw, 1e-10);
-	ASSERT_NEAR(-2.1444978352706585e-05, H.pressure.isotropic(), 1e-9);
+	ASSERT_NEAR(-0.320563, H.energy.intervdw, 1e-6);
+	ASSERT_NEAR(-2.144497E-05, H.pressure.isotropic(), 1e-7);
 }
 
 // Validate results from NIST MC LJ standards 
@@ -63,10 +63,11 @@ TEST(LennardJonesFF, ConfigurationValues)
 
 	ASSERT_EQ(800, w->GetParticleCount());
 	w->UpdateNeighborList();
-	ASSERT_EQ(3.0, w->GetCutoffRadius());
+	ASSERT_EQ(3.5, w->GetNeighborRadius());
+	ASSERT_EQ(0.5, w->GetSkinThickness());
 
 	// Define potential (for 2 different rcut).
-	LennardJonesFF ff(1.0, 1.0);
+	LennardJonesFF ff(1.0, 1.0, {3.0, 3.0});
 
 	// Evaluate energy and compare to LJ.
 	ForceFieldManager ffm;
@@ -79,10 +80,11 @@ TEST(LennardJonesFF, ConfigurationValues)
 	ASSERT_NEAR(-5.6867E+02, virial, 1e-2);
 
 	// rcut = 4.0.
-	w->SetCutoffRadius(4.0);
-	w->SetNeighborRadius(4.9);
+	LennardJonesFF ff2(1.0, 1.0, {4.0, 4.0});
+
+	w->SetNeighborRadius(4.5);
 	ffm.RemoveNonBondedForceField("LJ", "LJ");
-	ffm.AddNonBondedForceField("LJ", "LJ", ff);
+	ffm.AddNonBondedForceField("LJ", "LJ", ff2);
 	w->UpdateNeighborList();
 	E = ffm.EvaluateHamiltonian(*w);
 
@@ -113,8 +115,7 @@ TEST(LennardJonesFF, NISTValidation1)
 
 	// Add lj atom to world and initialize in simple lattice configuration.
 	// World volume is adjusted by packworld.
-	World world(1, 1, 1, rcut);
-	world.SetNeighborRadius(rcut + 1.0);
+	World world(1, 1, 1, rcut + 1.0, 1.0);
 	world.PackWorld({ljatom}, {1.0}, N, rdensity);
 	world.UpdateNeighborList();
 	world.SetTemperature(T);
@@ -127,7 +128,7 @@ TEST(LennardJonesFF, NISTValidation1)
 	ASSERT_NEAR((double)N*pow(sigma,3)/rdensity, world.GetVolume(), 1e-10);
 
 	// Initialize LJ forcefield.
-	LennardJonesFF ff(eps, sigma);
+	LennardJonesFF ff(eps, sigma, {rcut, rcut, rcut, rcut});
 	ForceFieldManager ffm;
 	ffm.AddNonBondedForceField("LJ", "LJ", ff);
 

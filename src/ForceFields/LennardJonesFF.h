@@ -12,22 +12,43 @@ namespace SAPHRON
 		double _epsilon;
 		double _sigmasq;
 		double _sigma3;
+		CutoffList _rc;
+		std::vector<double> _etail;
+		std::vector<double> _ptail;
 
 	public:
 
-		LennardJonesFF(double epsilon, double sigma) : 
-		_epsilon(epsilon), _sigmasq(sigma*sigma), _sigma3(_sigmasq*sigma)
+		LennardJonesFF(double epsilon, double sigma, const CutoffList& rc) : 
+		_epsilon(epsilon), _sigmasq(sigma*sigma), _sigma3(_sigmasq*sigma),
+		_rc(rc), _etail(0), _ptail(0)
 		{ 
+			for(auto& r : _rc)
+			{
+				auto r3 = r*r*r;
+				auto r9 = r3*r3*r3;
+				_etail.push_back(
+					4.0/3.0*_epsilon*_sigma3*
+					(1.0/3.0*(_sigma3*_sigma3*_sigma3)/r9-_sigma3/r3)
+				); 
+				
+				_ptail.push_back(
+					8.0*_epsilon*_sigma3*(2.0/3.0*(_sigma3*_sigma3*_sigma3)/r9-_sigma3/r3)
+				);
+			}
 		}
 
 		virtual Interaction Evaluate(const Particle&, 
 									 const Particle&, 
 									 const Position& rij,
-									 double) override
+									 unsigned int wid) override
 		{
 			Interaction ep;
 
-			double rsq = arma::dot(rij,rij);
+			auto r = arma::norm(rij);
+			if(r > _rc[wid])
+				return ep;
+
+			double rsq = r*r;
 			double sr6 = _sigma3*_sigma3/(rsq*rsq*rsq);
 			ep.energy = 4.0*_epsilon*(sr6*sr6-sr6);
 			ep.virial = 24.0*_epsilon*(sr6-2.0*sr6*sr6)/rsq;
@@ -35,18 +56,14 @@ namespace SAPHRON
 			return ep;
 		}
 
-		virtual double EnergyTailCorrection(double rcut) override
+		virtual double EnergyTailCorrection(unsigned int wid) override
 		{
-			auto rcut3 = rcut*rcut*rcut;
-			auto rcut9 = rcut3*rcut3*rcut3;
-			return 4.0/3.0*_epsilon*_sigma3*(1.0/3.0*(_sigma3*_sigma3*_sigma3)/rcut9-_sigma3/rcut3); 
+			return _etail[wid];
 		}
 
-		virtual double PressureTailCorrection(double rcut) override 
+		virtual double PressureTailCorrection(unsigned int wid) override 
 		{
-			auto rcut3 = rcut*rcut*rcut;
-			auto rcut9 = rcut3*rcut3*rcut3;
-			return 8.0*_epsilon*_sigma3*(2.0/3.0*(_sigma3*_sigma3*_sigma3)/rcut9-_sigma3/rcut3); 
+			return _ptail[wid];
 		}
 
 		// Serialize LJ.
@@ -55,6 +72,8 @@ namespace SAPHRON
 			json["type"] = "LennardJones";
 			json["sigma"] = sqrt(_sigmasq);
 			json["epsilon"] = _epsilon;
+			for(auto& rc : _rc)
+				json["rcut"].append(rc);
 		}
 
 		double GetEpsilon() const { return _epsilon; }

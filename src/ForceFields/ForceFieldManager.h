@@ -34,9 +34,6 @@ namespace SAPHRON
 		FFMap _uniquebffs;
 		FFMap _uniqueeffs;
 
-		// Default cutoff.
-		double _rcdefault = 10e10;
-
 		// Evaluate intermolecular interactions of a particle including energy and virial pressure contribution.
 		// Implementation follows Allen and Tildesley. See Forcefield.h. Tail corrections are also summed in.
 		// Pressure tail contribution is added to isotropic pressure parts only!
@@ -47,7 +44,7 @@ namespace SAPHRON
 			// Calculate energy with neighbors.
 			World* world = particle.GetWorld();
 			auto& neighbors = particle.GetNeighbors();
-			double rcut = (world == nullptr) ? _rcdefault : world->GetCutoffRadius();
+			unsigned int wid = (world == nullptr) ? 0 : world->GetID();
 			if(!particle.HasChildren())
 			{
 				#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pxz,pyy,pyz,pzz)
@@ -59,10 +56,6 @@ namespace SAPHRON
 												
 					if(world != nullptr)
 						world->ApplyMinimumImage(&rij);
-
-					// skip if exceeds cutoff.
-					if(arma::norm(rij) > rcut)
-						continue;
 
 					// If particle has parent, compute vector between parent molecule(s).
 					Position rab = rij;
@@ -94,14 +87,14 @@ namespace SAPHRON
 					if(it != _nonbondedforcefields.end())
 					{
 						auto* ff = it->second;
-						interij = ff->Evaluate(particle, *neighbor, rij, rcut);
+						interij = ff->Evaluate(particle, *neighbor, rij, wid);
 					}
 
 					//Electrostatics containing energy and virial
 					if(it2 != _electrostaticforcefield.end())
 					{
 						auto* eff = it2->second;
-						electroij = eff->Evaluate(particle, *neighbor, rij, rcut);
+						electroij = eff->Evaluate(particle, *neighbor, rij, wid);
 					}
 					
 					intere += interij.energy; // Sum nonbonded van der Waal energy.
@@ -136,8 +129,8 @@ namespace SAPHRON
 						auto* forcefield = it.second;
 						double N = compositions[key.second];
 						double rho = N/volume;
-						ep.energy.intervdw += 2.0*2.0*M_PI*rho*forcefield->EnergyTailCorrection(rcut);
-						ep.pressure.ptail = 2.0/3.0*2.0*M_PI*rho*forcefield->PressureTailCorrection(rcut);
+						ep.energy.intervdw += 2.0*2.0*M_PI*rho*forcefield->EnergyTailCorrection(wid);
+						ep.pressure.ptail = 2.0/3.0*2.0*M_PI*rho*forcefield->PressureTailCorrection(wid);
 					}
 				}
 			}
@@ -153,7 +146,7 @@ namespace SAPHRON
 			EPTuple ep(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 			World* world = particle.GetWorld();
-			double rcut = (world == nullptr) ? _rcdefault : world->GetCutoffRadius();
+			unsigned int wid = (world == nullptr) ? 0 : world->GetID();
 
     		// Go to particle parent and evaluate non-bonded interactions with siblings.
             if(particle.HasParent())
@@ -175,14 +168,14 @@ namespace SAPHRON
 						if(it2 != _electrostaticforcefield.end())
 						{
 							auto* eff = it2->second;
-							auto ij = eff->Evaluate(particle, *sibling, rij, rcut);
+							auto ij = eff->Evaluate(particle, *sibling, rij, wid);
 							ep.energy.intraelectrostatic+=ij.energy;
 						}		
 
 						if(it != _nonbondedforcefields.end())
 						{
 							auto* ff = it->second;
-							auto ij = ff->Evaluate(particle, *sibling, rij, rcut);
+							auto ij = ff->Evaluate(particle, *sibling, rij, wid);
 
 							ep.energy.intravdw += ij.energy; // Sum nonbonded energy.
 							
@@ -203,7 +196,7 @@ namespace SAPHRON
 					if(world != nullptr)
 						world->ApplyMinimumImage(&rij);
 
-					auto ij = ff->Evaluate(particle, *bondedneighbor, rij, rcut);
+					auto ij = ff->Evaluate(particle, *bondedneighbor, rij, wid);
 					ep.energy.bonded += ij.energy; // Sum bonded energy.
 					
 				}
@@ -388,11 +381,5 @@ namespace SAPHRON
 
 		// Get (unique) bonded forcefields.
 		const FFMap& GetBondedForceFields() const { return _uniquebffs;	}
-
-		// Get default cutoff radius.
-		double GetDefaultCutoff() const { return _rcdefault; }
-
-		// Set default cutoff radius.
-		void SetDefaultCutoff(double rc) { _rcdefault = rc; }
 	};
 }

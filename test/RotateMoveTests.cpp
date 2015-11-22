@@ -76,7 +76,7 @@ TEST(RotateMove, MoleculeRotations)
 
 TEST(RotateMove, MoveInterface)
 {
-	World w(10.0, 10.0, 10.0, 2.0);
+	World w(10.0, 10.0, 10.0, 2.0, 1.0);
 
 	// Create a new site.
 	Site* s1 = new Site({0, 0, 0}, {0, 0, 1}, "T1");	

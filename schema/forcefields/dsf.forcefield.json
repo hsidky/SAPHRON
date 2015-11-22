@@ -9,8 +9,17 @@
 			"type" : "number",
 			"minimum" : 0
 		},
+		"rcut" : {
+			"type" : "array",
+			"items" : {
+				"type" : "number",
+				"minimum" : 0,
+				"exclusiveMinimum" : true
+			},
+			"minItems" : 1
+		},
 		"species" : "@file(nonbonded.forcefield.json)"
 	},
 	"additionalProperties" : false,
-	"required" : ["type", "alpha", "species"]
+	"required" : ["type", "alpha", "species", "rcut"]
 }

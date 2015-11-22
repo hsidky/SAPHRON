@@ -13,7 +13,8 @@ namespace SAPHRON
 	class ForceField;
 
 	// Typedefs. 
-	typedef std::vector<ForceField*> FFList;
+	using FFList = std::vector<ForceField*>;
+	using CutoffList = std::vector<double>;
 
 	// Abstract base class for a force field. Represents the scalar interaction potential
 	// between two bodies (particles). It calculates energy and intermolecular virial 
@@ -25,20 +26,22 @@ namespace SAPHRON
 	public:
 		// Returns the potential and virial contribution between two particle. 
 		// The distance vector between the two particles is provided by the FFManager 
-		// with minimum image applied. The cutoff radius for the corresopnding system 
-		// is also supplied.
+		// with minimum image applied, in addition to the integer world ID if applicable, 
+		// zero if there is none. 
 		virtual Interaction Evaluate(const Particle& p1, 
 									 const Particle& p2, 
-									 const Position& rij, 
-									 double rcut) = 0;
+									 const Position& rij,
+									 unsigned int wid) = 0;
 
 		// Evaluates the energy tail correction term. 
 		// This is precisely integral(u(r)*r^2,rc,inf). 
 		// The remainder is taken care of by the forcefield manager.
-		virtual double EnergyTailCorrection(double) { return 0.0; }
+		// The world ID (or 0) is passed in.
+		virtual double EnergyTailCorrection(unsigned int) { return 0.0; }
 
 		// Evalutes the pressure tail correction term.
-		virtual double PressureTailCorrection(double) { return 0.0; }
+		// The world ID (or 0) is passed in.
+		virtual double PressureTailCorrection(unsigned int) { return 0.0; }
 
 		// Serialize 
 		virtual void Serialize(Json::Value& json) const = 0;

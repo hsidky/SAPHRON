@@ -21,7 +21,7 @@ namespace SAPHRON
 		inline virtual Interaction Evaluate(const Particle& p1, 
 											const Particle& p2, 
 											const Position&,
-											double) override
+											unsigned int) override
 		{
 			auto& n1 = p1.GetDirector();
 			auto& n2 = p2.GetDirector();

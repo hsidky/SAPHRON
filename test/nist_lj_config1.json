@@ -7,8 +7,8 @@
 			"type" : "Simple",
 			"dimensions" : [10, 10, 10],
 			"seed" : 300, 
-			"r_cutoff" : 3.0,
 			"nlist_cutoff" : 3.5,
+			"skin_thickness": 0.5,
 			"components" : {
 				"LJ" : {
 					"count": 800

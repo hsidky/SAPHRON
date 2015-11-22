@@ -15,10 +15,9 @@
 			"minimum" : 0,
 			"exclusiveMinimum": true
 		},
-		"r_cutoff" : {
+		"skin_thickness" : {
 			"type" : "number",
-			"minimum" : 0,
-			"exclusiveMinimum" : true
+			"minimum" : 0
 		},
 		"particles" : {
 			"type": "array"
@@ -62,6 +61,12 @@
 			}
 		}
 	},
-	"required" : ["type", "dimensions", "r_cutoff", "components"],
+	"required" : [
+		"type", 
+		"dimensions", 
+		"nlist_cutoff", 
+		"skin_thickness", 
+		"components"
+	],
 	"additionalProperties" : false
 }

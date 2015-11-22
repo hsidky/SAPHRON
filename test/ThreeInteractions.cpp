@@ -10,9 +10,9 @@ using namespace SAPHRON;
 
 TEST(ThreeInteractions, DefaultBehavior)
 {
-	DebyeHuckelFF ffe(0.001);
+	DebyeHuckelFF ffe(0.001, {100.0});
 	FENEFF ffb(2,2.5,8,10);
-	LennardJonesFF ffnb(5,1.5);
+	LennardJonesFF ffnb(5,1.5,{100.0});
 
 	Site* s1 = new Site({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 	s1->SetCharge(true);

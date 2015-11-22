@@ -13,7 +13,7 @@ using namespace SAPHRON;
 TEST(NVTEnsemble, DefaultBehavior)
 {
 	// Initialize world and manager.
-	World world(30, 30, 30, 1);
+	World world(30, 30, 30, 1.0, 1.0);
 	Site site1({0, 0, 0}, {1.0, 0, 0}, "E1");
 	world.PackWorld({&site1}, {1.0});
 	world.SetTemperature(1.0);

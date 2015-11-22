@@ -8,7 +8,7 @@ using namespace SAPHRON;
 
 TEST(DebyeHuckelFF, DefaultBehavior)
 {
-	DebyeHuckelFF ff(0.001);
+	DebyeHuckelFF ff(0.001, {10.0});
 	
 	Site* s1 = new Site({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 	s1->SetCharge(true);
@@ -82,7 +82,7 @@ TEST(DebyeHuckelFF, DefaultBehavior)
 	CompositionList compositions{};
 	
 	//Check simple atom to atom
-	auto Energy = ff.Evaluate(*s1,*s3,s1->GetPosition()-s3->GetPosition(), 10);
+	auto Energy = ff.Evaluate(*s1,*s3,s1->GetPosition()-s3->GetPosition(), 0);
 	ASSERT_NEAR(0.33233, Energy.energy, 1e-3);
 
 	// Validate molecule test

@@ -65,7 +65,7 @@ TEST(ParticleObserver, DefaultBehavior)
 
 TEST(ParticleObserver, AddRemoveChild)
 {
-	World sw(10.0, 10.0, 10.0, 1.0);
+	World sw(10.0, 10.0, 10.0, 1.0, 1.0);
 
 	Site* s1 = new Site({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "S1");
 	Site* s2 = new Site({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "S1");

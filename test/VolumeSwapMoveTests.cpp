@@ -14,8 +14,8 @@ TEST(VolumeSwapMove, DefaultBehavior)
 	double v1 = l1*l1*l1;
 	double v2 = l2*l2*l2;
 
-	World world1(l1, l1, l1, 1.0);
-	World world2(l2, l2, l2, 1.0);
+	World world1(l1, l1, l1, 1.0, 1.0);
+	World world2(l2, l2, l2, 1.0, 1.0);
 
 	ASSERT_EQ(v1, world1.GetVolume());
 	ASSERT_EQ(v2, world2.GetVolume());

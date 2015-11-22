@@ -28,12 +28,12 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 
 	// Add lj atom to world and initialize in simple lattice configuration.
 	// World volume is adjusted by packworld.
-	World liquid(1, 1, 1, rcut);
+	World liquid(1, 1, 1, rcut + 1.0, 1.0);
 	liquid.SetNeighborRadius(rcut + 1.0);
 	liquid.PackWorld({&ljatom}, {1.0}, N/2, 0.30);
 	liquid.SetTemperature(T);
 
-	World vapor(1, 1, 1, rcut);
+	World vapor(1, 1, 1, rcut + 1.0, 1.0);
 	vapor.SetNeighborRadius(rcut + 1.0);
 	vapor.PackWorld({&ljatom}, {1.0}, N/2, 0.30);
 	vapor.SetTemperature(T);
@@ -46,7 +46,7 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 	ASSERT_EQ(128, vapor.GetParticleCount());
 
 	// Initialize LJ forcefield.
-	LennardJonesFF ff(eps, sigma);
+	LennardJonesFF ff(eps, sigma, {rcut, rcut});
 	ForceFieldManager ffm;
 	ffm.AddNonBondedForceField("LJ", "LJ", ff);
 

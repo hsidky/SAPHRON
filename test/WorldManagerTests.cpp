@@ -8,8 +8,8 @@ using namespace SAPHRON;
 TEST(WorldManager, DefaultBehavior)
 {
 	// Create dummy worlds.
-	World w1(10.0, 10.0, 10.0, 1.0);
-	World w2(10.0, 10.0, 10.0, 1.0);
+	World w1(10.0, 10.0, 10.0, 1.0, 1.0);
+	World w2(10.0, 10.0, 10.0, 1.0, 1.0);
 
 	// Initialize WorldManager.
 	WorldManager sim;

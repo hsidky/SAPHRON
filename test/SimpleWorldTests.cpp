@@ -10,7 +10,7 @@ using namespace SAPHRON;
 TEST(SimpleWorld, WorldProps)
 {
 	// Pack the world.
-	World world(1, 1, 1, 1.0);
+	World world(1, 1, 1, 1.0, 1.0);
 	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
 	Site site2({0, 0, 0}, {0, 1, 0}, "E2");
 	Site site3({0, 0, 0}, {0, 0, 1}, "E3");
@@ -72,7 +72,7 @@ TEST(SimpleWorld, WorldProps)
 
 TEST(SimpleWorld, DrawParticlesBySpecies)
 {
-	World world(1, 1, 1, 1.0);
+	World world(1, 1, 1, 1.0, 1.0);
 	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
 	Site site2({0, 0, 0}, {0, 1, 0}, "E2");
 	Site site3({0, 0, 0}, {0, 0, 1}, "E3");
@@ -104,15 +104,14 @@ TEST(SimpleWorld, NeighborList)
 {
 	// create world with specified nlist. 
 	double rcut = 1.5;
-	World world(30, 30, 30, rcut);
-	ASSERT_EQ(rcut, world.GetCutoffRadius());
+	World world(30, 30, 30, 1.3*rcut, 0.3*rcut);
 	ASSERT_DOUBLE_EQ(1.3*rcut, world.GetNeighborRadius());
 	ASSERT_DOUBLE_EQ(0.3*rcut, world.GetSkinThickness());
 
 	// Change values and make sure it propogates. 
-	world.SetCutoffRadius(0.9);
-	ASSERT_DOUBLE_EQ(0.9, world.GetCutoffRadius());
-	ASSERT_DOUBLE_EQ(1.3*rcut-0.9, world.GetSkinThickness());
+	world.SetNeighborRadius(0.9);
+	ASSERT_DOUBLE_EQ(0.9, world.GetNeighborRadius());
+	ASSERT_DOUBLE_EQ(0.3*rcut, world.GetSkinThickness());
 
 	// Pack a world with a decent number of of particles.
 	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
@@ -134,7 +133,7 @@ TEST(SimpleWorld, NeighborList)
 TEST(SimpleWorld, DefaultBehavior)
 {
 	int n = 30;
-	World world(n, n, n, 1.0);
+	World world(n, n, n, 1.0, 1.0);
 	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
 	Site site2({0, 0, 0}, {0, 1, 0}, "E2");
 	Site site3({0, 0, 0}, {0, 0, 1}, "E3");
@@ -256,7 +255,7 @@ TEST(SimpleWorld, DefaultBehavior)
 TEST(SimpleWorld, MoveParticleSemantics)
 {
 	int n = 30;
-	World world(n, n, n, 1);
+	World world(n, n, n, 1.0, 1.0);
 
 	ASSERT_EQ(0, world.GetParticleCount());
 	world.AddParticle(new Site({0,0,0}, {1,0,0}, "E1"));
@@ -270,7 +269,7 @@ TEST(SimpleWorld, MoveParticleSemantics)
 TEST(SimpleWorld, VolumeScaling)
 {
 	int n = 30;
-	World world(n, n, n, 1);
+	World world(n, n, n, 1.0, 1.0);
 	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
 	world.PackWorld({&site1}, {1.0}, 500, 1.0);
 	ASSERT_EQ(500, world.GetParticleCount());

@@ -30,9 +30,6 @@ namespace SAPHRON
 	class World : public ParticleObserver, public Visitable, public Serializable
 	{
 	private:
-		// Cutoff radius.
-		double _rcut, _rcutsq; 
-
 		// Neighbor list cutoff radius.
 		double _ncut, _ncutsq;
 
@@ -151,18 +148,14 @@ namespace SAPHRON
 		typedef ParticleList::const_iterator const_iterator;
 
 		// Initialize an orthorhombic world.
-		World(double xl, double yl, double zl, double rcut, int seed = 1) : 
-		_rcut(rcut), _rcutsq(rcut*rcut), _ncut(0), _ncutsq(0), 
-		_H(arma::fill::zeros), _diag(true), _skin(0), _skinsq(0), 
+		World(double xl, double yl, double zl, double ncut, double skin, int seed = 1) : 
+		_ncut(ncut), _ncutsq(ncut*ncut), 
+		_H(arma::fill::zeros), _diag(true), _skin(skin), _skinsq(skin*skin), 
 		_temperature(0.0), _chemp(0), _debroglie(0), _particles(0), 
 		_primitives(0), _rand(seed), _composition(0), _stash(0), 
-		_seed(seed), _id(++_nextID)
+		_seed(seed), _id(_nextID++)
 		{
 			_stringid = "world" + std::to_string(_id);
-			_skin = 0.30 * _rcut;
-			_skinsq = _skin * _skin;
-			_ncut = _rcut + _skin;
-			_ncutsq = (_rcut + _skin)*(_rcut + _skin);
 			_H(0,0) = xl;
 			_H(1,1) = yl;
 			_H(2,2) = zl;
@@ -455,28 +448,17 @@ namespace SAPHRON
 		{
 			_ncutsq = ncut*ncut;
 			_ncut = ncut;
-
-			// Recompute skin.
-			_skin = _ncut - _rcut;
-			_skinsq = _skin * _skin;
-		}
-
-		// Get the cutoff radius for forcefields.
-		double GetCutoffRadius() const { return _rcut; }
-
-		// Set the cutoff radius for forcefields..
-		void SetCutoffRadius(double x)
-		{
-			_rcut = x;
-			_rcutsq = x*x;
-
-			// Recompute skin.
-			_skin = _ncut - _rcut;
-			_skinsq = _skin * _skin;
 		}
 
 		// Get the effective skin thickness of the world.
 		double GetSkinThickness() const { return _skin;	}
+
+		// Set the effective skin thickness of the world.
+		void SetSkinThickness(double skin)
+		{
+			_skin = skin;
+			_skinsq = skin*skin;
+		}
 
 		// Get system composition.
 		const CompositionList& GetComposition() const

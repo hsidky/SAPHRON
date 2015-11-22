@@ -12,7 +12,7 @@ TEST(InsertParticleMove, DefaultBehavior)
 {
 	Site s({0, 0, 0},{0,0,0}, "LJ");
 
-	World world(1, 1, 1,  4.0);
+	World world(1, 1, 1, 5.0, 1.0);
 
 	// Pack the world. 
 	world.PackWorld({&s}, {1.0}, 200, 0.1);
@@ -21,7 +21,7 @@ TEST(InsertParticleMove, DefaultBehavior)
 
 	ForceFieldManager ffm;
 
-	LennardJonesFF lj(10.0, 1.0);
+	LennardJonesFF lj(10.0, 1.0, {4.0});
 	ffm.AddNonBondedForceField("LJ", "LJ", lj);
 
 	auto H1 = ffm.EvaluateHamiltonian(world);

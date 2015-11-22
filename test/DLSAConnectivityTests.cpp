@@ -8,7 +8,7 @@ using namespace SAPHRON;
 
 TEST(DLSAConnectivity, DefaultBehavior)
 {
-	World world(10, 10, 10, 1);
+	World world(10, 10, 10, 1.0, 1.0);
 	Site site1({ 0, 0, 0 }, { 1.0, 0, 0 }, "E1");
 	world.PackWorld({ &site1 }, { 1.0 });
 

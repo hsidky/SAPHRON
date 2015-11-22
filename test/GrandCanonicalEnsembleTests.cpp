@@ -31,8 +31,7 @@ TEST(GrandCanonicalEnsembleTests, Default)
 	Site lj({0, 0, 0}, {0, 0, 0}, "LJ");
 
 	// Initialze world, set chemical potential and pack with lj. 
-	World world(1, 1, 1, rcut);
-	world.SetNeighborRadius(rcut + 1.0);
+	World world(1, 1, 1, rcut + 1.0, 1.0);
 	world.PackWorld({&lj}, {1.0}, N, 0.6);
 	world.SetChemicalPotential("LJ", -2.0);
 	world.SetTemperature(T);
@@ -46,7 +45,7 @@ TEST(GrandCanonicalEnsembleTests, Default)
 	ASSERT_DOUBLE_EQ(V, world.GetVolume());
 
 	// Initialize LJ forcefield. 
-	LennardJonesFF ff(eps, sigma);
+	LennardJonesFF ff(eps, sigma, {rcut});
 	ForceFieldManager ffm;
 	ffm.AddNonBondedForceField("LJ", "LJ", ff);
 

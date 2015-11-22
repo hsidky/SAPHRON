@@ -12,11 +12,12 @@ namespace SAPHRON
 	private:
 		double _kappa;
 		double _qdim;
+		CutoffList _rc;
 
 	public:
 
-		DebyeHuckelFF(double kappa) : 
-		_kappa(kappa), _qdim(1.0)
+		DebyeHuckelFF(double kappa, CutoffList rc) : 
+		_kappa(kappa), _qdim(1.0), _rc(rc)
 		{ 
 			// Calculate charge (q) reduced units conversion.
 			auto& sim = SimInfo::Instance();
@@ -26,11 +27,14 @@ namespace SAPHRON
 		virtual Interaction Evaluate(const Particle& p1, 
 									 const Particle& p2, 
 									 const Position& rij,
-									 double) override
+									 unsigned int wid) override
 		{
 			Interaction ep;
 
-			double r = arma::norm(rij);
+			auto r = arma::norm(rij);
+			if(r > _rc[wid])
+				return ep;
+
 			auto rsq = r*r;
 			auto q1 = p1.GetCharge();
 			auto q2 = p2.GetCharge();

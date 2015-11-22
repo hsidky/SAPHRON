@@ -410,7 +410,7 @@ namespace SAPHRON
 		json["dimensions"][2] = box(2,2);
 
 		json["seed"] = this->GetSeed();
-		json["r_cutoff"] = this->GetCutoffRadius();
+		json["skin_thickness"] = this->GetSkinThickness();
 		json["nlist_cutoff"] = this->GetNeighborRadius();
 
 		// Serialize chemical potentials.
@@ -472,21 +472,21 @@ namespace SAPHRON
 						 json["dimensions"][2].asDouble()};
 
 			// Neighbor list cutoff check.
-			double ncut = json.get("nlist_cutoff",0.0).asDouble();
+			double ncut = json["nlist_cutoff"].asDouble();
 			if(ncut > dim[0]/2.0 || ncut > dim[1]/2.0 || ncut > dim[2]/2.0)
 				throw BuildException({"Neighbor list cutoff must not exceed "
 									  "half the shortest box vector."});
 			
 			// Skin thickness check.
-			double rcut = json["r_cutoff"].asDouble();
-			if(ncut && rcut > ncut)
-				throw BuildException({"Cutoff radius must not exceed neighbor list cutoff."});
+			double skin = json["skin_thickness"].asDouble();
+			if(ncut && skin > ncut)
+				throw BuildException({"Skin thickness must not exceed neighbor list cutoff."});
 
 			srand(time(NULL));
 			int seed = json.isMember("seed") ? json["seed"].asInt() : rand();
 
 			
-			world = new World(dim[0], dim[1], dim[2], rcut, seed);
+			world = new World(dim[0], dim[1], dim[2], ncut, skin, seed);
 			if(ncut)
 				world->SetNeighborRadius(ncut);
 		}

@@ -41,8 +41,12 @@ namespace SAPHRON
 				throw BuildException(validator.GetErrors());
 
 			double alpha = json["alpha"].asDouble();
+
+			CutoffList rc;
+			for(auto r : json["rcut"])
+				rc.push_back(r.asDouble());
 			
-			ff = new DSFFF(alpha);
+			ff = new DSFFF(alpha, rc);
 		}
 		else if(type == "DebyeHuckel")
 		{
@@ -55,8 +59,14 @@ namespace SAPHRON
 				throw BuildException(validator.GetErrors());
 
 			double kappa = json["kappa"].asDouble();
+
+
+			CutoffList rc;
+			for(auto r : json["rcut"])
+				rc.push_back(r.asDouble());
 			
-			ff = new DebyeHuckelFF(kappa);
+			
+			ff = new DebyeHuckelFF(kappa, rc);
 		}
 		else
 		{
@@ -110,7 +120,11 @@ namespace SAPHRON
 			double eps = json["epsilon"].asDouble();
 			double sigma = json["sigma"].asDouble();
 			
-			ff = new LennardJonesFF(eps, sigma);
+			CutoffList rc;
+			for(auto r : json["rcut"])
+				rc.push_back(r.asDouble());
+
+			ff = new LennardJonesFF(eps, sigma, rc);
 		}
 		else if(type == "LebwohlLasher")
 		{

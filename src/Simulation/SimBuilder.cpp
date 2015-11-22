@@ -67,8 +67,8 @@ namespace SAPHRON
 					to_string(world->GetNeighborRadius()) + 
 					" \u212B.");
 
-				notices.push_back("Setting cutoff radius to " + 
-					to_string(world->GetCutoffRadius()) + 
+				notices.push_back("Setting skin thickness to " + 
+					to_string(world->GetSkinThickness()) + 
 					" \u212B.");
 
 				notices.push_back("Setting seed to " + 

@@ -5,39 +5,46 @@
 				"type" : "LennardJones",
 				"epsilon" : 6.501694011808411e+02,
 				"sigma" : 3.16555789,
-				"species" : ["O", "O"]
+				"species" : ["O", "O"],
+				"rcut" : [10.0]
 			}
 		],
 		"electrostatic" : [
 			{
 				"type" : "DSF",
 				"alpha" : 0.20,
-				"species": ["O", "O"]
+				"species": ["O", "O"],
+				"rcut" : [10.0]
 			},
 			{
 				"type" : "DSF",
 				"alpha" : 0.20,
-				"species": ["O", "H1"]
+				"species": ["O", "H1"],
+				"rcut" : [10.0]
 			},
 			{
 				"type" : "DSF",
 				"alpha" : 0.20,
-				"species": ["O", "H2"]
+				"species": ["O", "H2"],
+				"rcut" : [10.0]
 			},
 			{
 				"type" : "DSF",
 				"alpha" : 0.20,
-				"species": ["H1", "H1"]
+				"species": ["H1", "H1"],
+				"rcut" : [10.0]
 			},
 			{
 				"type" : "DSF",
 				"alpha" : 0.20,
-				"species": ["H1", "H2"]
+				"species": ["H1", "H2"],
+				"rcut" : [10.0]
 			},
 			{
 				"type" : "DSF",
 				"alpha" : 0.20,
-				"species": ["H2", "H2"]
+				"species": ["H2", "H2"],
+				"rcut" : [10.0]
 			}
 		]
 	},
@@ -67,8 +74,8 @@
 			"type": "Simple",
 			"dimensions": [20, 20, 20],
 			"seed": 300,
-			"r_cutoff": 10.0,
 			"nlist_cutoff": 10.0,
+			"skin_thickness" : 0,
 			"components" : {
 				"SPCE" : {
 					"count" : 100
