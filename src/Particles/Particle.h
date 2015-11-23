@@ -329,9 +329,9 @@ namespace SAPHRON
 		// other than std::find.
 		inline void AddNeighbor(Particle* particle)
 		{
-			auto found = std::find(_neighbors.begin(), _neighbors.end(), particle);
-			if(found == _neighbors.end())
-				_neighbors.push_back(particle);
+			//auto found = std::find(_neighbors.begin(), _neighbors.end(), particle);
+			//if(found == _neighbors.end())
+			_neighbors.push_back(particle);
 		}
 
 		// Remove a neighbor from the neighbor list.
@@ -376,10 +376,9 @@ namespace SAPHRON
 		// other than std::find.
 		inline void AddBondedNeighbor(Particle* particle)
 		{
-			auto found = std::find(_bondedneighbors.begin(), _bondedneighbors.end(), particle);
-
-			if(found == _bondedneighbors.end())
-				_bondedneighbors.push_back(particle);
+			//auto found = std::find(_bondedneighbors.begin(), _bondedneighbors.end(), particle);
+			//if(found == _bondedneighbors.end())
+			_bondedneighbors.push_back(particle);
 		}
 
 		// Remove a bonded neighbor from the bonded neighbor list.

@@ -48,10 +48,9 @@ namespace SAPHRON
 									 const Position& rij,
 									 unsigned int wid) override
 		{
-			using arma::norm;
 			Interaction ep;
 
-			auto r = norm(rij);
+			auto r = fnorm(rij);
 
 			if (r > _rc[wid])
 				return ep;

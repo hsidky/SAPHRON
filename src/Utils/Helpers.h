@@ -7,7 +7,7 @@ namespace SAPHRON
 {
 	// Create a rotation matrix which will rotate a vector 
 	// abount an axis (x = 1, y = 2, z = 3) "deg" degrees.
-	Matrix3D GenRotationMatrix(int axis, double deg)
+	inline Matrix3D GenRotationMatrix(int axis, double deg)
 	{
 		double phi = 0, theta = 0, psi = 0;
 
@@ -35,5 +35,5 @@ namespace SAPHRON
 		return {{ ctheta*cpsi, cphi*spsi+sphi*stheta*cpsi, sphi*spsi-cphi*stheta*cpsi},
 				{-ctheta*spsi, cphi*cpsi-sphi*stheta*spsi, sphi*cpsi+cphi*stheta*spsi},
 				{      stheta,               -sphi*ctheta,                cphi*ctheta}};
-	}	
+	}
 }

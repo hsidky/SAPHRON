@@ -218,7 +218,7 @@ namespace SAPHRON
 			{
 				auto dist = particle->GetCheckpointDist();
 				ApplyMinimumImage(&dist);
-				if(dot(dist,dist) > _skinsq/4.0)
+				if(fdot(dist,dist) > _skinsq/4.0)
 				{	
 					UpdateNeighborList();
 					return;
@@ -231,7 +231,7 @@ namespace SAPHRON
 		{
 			auto dist = p->GetCheckpointDist();
 			ApplyMinimumImage(&dist);
-			if(dot(dist,dist) > _skinsq/4.0)	
+			if(fdot(dist,dist) > _skinsq/4.0)	
 				UpdateNeighborList();
 		}
 

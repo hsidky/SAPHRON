@@ -44,7 +44,7 @@ namespace SAPHRON
 		{
 			Interaction ep;
 
-			auto r = arma::norm(rij);
+			auto r = fnorm(rij);
 			if(r > _rc[wid])
 				return ep;
 

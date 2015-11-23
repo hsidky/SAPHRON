@@ -69,7 +69,7 @@ namespace SAPHRON
 		Position rij = posi - posj;
 		ApplyMinimumImage(&rij);
 
-		if(arma::dot(rij,rij) <= _ncutsq)
+		if(fdot(rij,rij) <= _ncutsq)
 		{
 			pj->AddNeighbor(pi);
 			pi->AddNeighbor(pj);
