@@ -4,6 +4,18 @@
 		"^[A-z][A-z0-9]+$" : {
 			"type" : "object",
 			"properties" : {
+				"bonds" : {
+					"type" : "array",
+					"items" : {
+						"type" : "array",
+						"items" : {
+							"type" : "number",
+							"minimum" : 0
+						},
+						"minItems" : 2,
+						"maxItems" : 2
+					}
+				},
 				"children" : {
 					"type" : "array",
 					"items" : {

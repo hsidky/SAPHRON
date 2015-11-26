@@ -4,6 +4,7 @@
         "oneOf": [
             {
                 "type": "object",
+                "additionalProperties": false,
                 "properties": {
                     "type": {
                         "type": "string",
@@ -11,21 +12,20 @@
                             "P2SA"
                         ]
                     },
-                    "selector": {},
                     "coefficient": {
                         "type": "number"
                     },
+                    "selector": {},
                     "director": {
+                        "additionalItems": false,
                         "type": "array",
                         "maxItems": 3,
                         "minItems": 3,
-                        "additionalItems": false,
                         "items": {
                             "type": "number"
                         }
                     }
                 },
-                "additionalProperties": false,
                 "required": [
                     "type",
                     "coefficient",

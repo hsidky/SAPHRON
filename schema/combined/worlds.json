@@ -1,36 +1,27 @@
 {
     "type": "array",
+    "minItems": 1,
     "items": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
+            "particles": {
+                "type": "array"
+            },
             "type": {
                 "type": "string",
                 "enum": [
                     "Simple"
                 ]
             },
-            "seed": {
-                "type": "integer",
-                "minimum": 0
-            },
-            "nlist_cutoff": {
+            "temperature": {
                 "type": "number",
-                "minimum": 0,
-                "exclusiveMinimum": true
-            },
-            "chemical_potential": {
-                "type": "object",
-                "patternProperties": {
-                    "^[A-z][A-z0-9]+$": {
-                        "type": "number"
-                    }
-                }
+                "minimum": 0
             },
             "components": {
                 "components": {
                     "type": "object",
                     "minProperties": 1,
-                    "additionalProperties": false,
                     "patternProperties": {
                         "^[A-z][A-z0-9]+$": {
                             "type": "object",
@@ -44,21 +35,9 @@
                                 "count"
                             ]
                         }
-                    }
+                    },
+                    "additionalProperties": false
                 }
-            },
-            "dimensions": {
-                "type": "array",
-                "maxItems": 3,
-                "minItems": 3,
-                "additionalItems": false,
-                "items": {
-                    "type": "number",
-                    "minimum": 0
-                }
-            },
-            "particles": {
-                "type": "array"
             },
             "skin_thickness": {
                 "type": "number",
@@ -67,6 +46,15 @@
             "pack": {
                 "type": "object",
                 "properties": {
+                    "count": {
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "density": {
+                        "type": "number",
+                        "minimum": 0,
+                        "exclusiveMinimum": true
+                    },
                     "composition": {
                         "type": "object",
                         "patternProperties": {
@@ -77,24 +65,37 @@
                                 "exclusiveMinimum": true
                             }
                         }
-                    },
-                    "density": {
-                        "type": "number",
-                        "minimum": 0,
-                        "exclusiveMinimum": true
-                    },
-                    "count": {
-                        "type": "integer",
-                        "minimum": 1
                     }
                 }
             },
-            "temperature": {
-                "type": "number",
+            "seed": {
+                "type": "integer",
                 "minimum": 0
+            },
+            "nlist_cutoff": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+            },
+            "dimensions": {
+                "additionalItems": false,
+                "type": "array",
+                "maxItems": 3,
+                "minItems": 3,
+                "items": {
+                    "type": "number",
+                    "minimum": 0
+                }
+            },
+            "chemical_potential": {
+                "type": "object",
+                "patternProperties": {
+                    "^[A-z][A-z0-9]+$": {
+                        "type": "number"
+                    }
+                }
             }
         },
-        "additionalProperties": false,
         "required": [
             "type",
             "dimensions",
@@ -102,6 +103,5 @@
             "skin_thickness",
             "components"
         ]
-    },
-    "minItems": 1
+    }
 }

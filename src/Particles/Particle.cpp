@@ -6,6 +6,7 @@
 #include "Molecule.h"
 #include "schema.h"
 #include <queue>
+#include <set>
 
 using namespace Json;
 
@@ -104,6 +105,39 @@ namespace SAPHRON
 
 		for(auto& c : *this)
 			c->RemoveFromBondedNeighbors();
+	}
+
+	void Particle::GetBlueprint(Json::Value& json) const
+	{
+		if(!HasChildren())
+		{
+			json["species"] = GetSpecies();
+			json["charge"] = GetCharge();
+			json["mass"] = GetMass();
+		}
+		else
+		{
+			// TODO: Find a better mechanism than set.
+			std::set<Json::Value> bonds;
+			Json::Value bond;
+			for(int i = 0; i < (int)_children.size(); ++i)
+			{
+				auto& last = json["children"][i];
+				_children[i]->GetBlueprint(last);
+				auto i1 = _children[i]->GetChildIndex();
+				for(auto& b : _children[i]->GetBondedNeighbors())
+				{
+					int i2 = b->GetChildIndex();
+					bond[0] = std::min(i1, i2);
+					bond[1] = std::max(i1, i2);
+					bonds.insert(bond);
+				}
+			}
+
+			// Fill json schema with unique elements in set.
+			for(auto& b : bonds)
+				json["bonds"].append(b);
+		}
 	}
 			
 	Particle* Particle::BuildParticle(const Json::Value& particles, 
@@ -221,6 +255,19 @@ namespace SAPHRON
 			// Compute actual number of particles.
 			int pcount = ccount ? count * ccount : count;
 
+			// Verify bond indices do not exceed children indices.
+			if(blueprint.isMember("bonds"))
+			{
+				for(auto& bond : blueprint["bonds"])
+				{
+					if(bond[0].asInt() > ccount - 1 || bond[1].asInt() > ccount - 1)
+						throw BuildException({
+							"Particle \"" + ctype +  
+							"\": bonded particle ID exceeds number of children."
+						});
+				}
+			}
+
 			// Loop through particles and validate type and order.
 			for(int j = i; j < i + pcount; ++j)
 			{
@@ -323,6 +370,15 @@ namespace SAPHRON
 						parent->AddChild(p);
 						pcontainer.pop();
 					}
+
+					// Add bonded neighbor(s).
+					auto& children = parent->GetChildren();
+					for(auto& bond : spec["bonds"])
+					{
+						children[bond[0].asUInt()]->AddBondedNeighbor(children[bond[1].asUInt()]);
+						children[bond[1].asUInt()]->AddBondedNeighbor(children[bond[0].asUInt()]);
+					}
+
 					pvector.push_back(parent);
 				}
 			}

@@ -302,6 +302,16 @@ namespace SAPHRON
 		// Check if particle has children.
 		bool HasChildren() const { return _children.size() != 0; }
 
+		// Get index of particle in parent child list.
+		// Returns -1 if no parent.
+		int GetChildIndex() const
+		{
+			if(!HasParent()) return -1;
+
+			auto it = std::find(_parent->begin(), _parent->end(), this);
+			return it - _parent->begin();
+		}
+
 		/****************************
 		 *                          *
 		 *  Connectivity related    *
@@ -376,9 +386,9 @@ namespace SAPHRON
 		// other than std::find.
 		inline void AddBondedNeighbor(Particle* particle)
 		{
-			//auto found = std::find(_bondedneighbors.begin(), _bondedneighbors.end(), particle);
-			//if(found == _bondedneighbors.end())
-			_bondedneighbors.push_back(particle);
+			auto found = std::find(_bondedneighbors.begin(), _bondedneighbors.end(), particle);
+			if(found == _bondedneighbors.end())
+				_bondedneighbors.push_back(particle);
 		}
 
 		// Remove a bonded neighbor from the bonded neighbor list.
@@ -472,23 +482,7 @@ namespace SAPHRON
 		 ****************************/
 
 		// Get particle blueprint.
-		void GetBlueprint(Json::Value& json) const
-		{
-			if(!HasChildren())
-			{
-				json["species"] = GetSpecies();
-				json["charge"] = GetCharge();
-				json["mass"] = GetMass();
-			}
-			else
-			{
-				for(int i = 0; i < (int)_children.size(); ++i)
-				{
-					auto& last = json["children"][i];
-					_children[i]->GetBlueprint(last);
-				}
-			}
-		}
+		void GetBlueprint(Json::Value& json) const;
 
 		// Serialize particle.
 		virtual void Serialize(Json::Value& json) const override
