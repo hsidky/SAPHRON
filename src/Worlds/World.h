@@ -167,10 +167,11 @@ namespace SAPHRON
 		}
 
 		// Draw a random particle from the world.
+		// Returns nullptr if nothing is drawn.
 		Particle* DrawRandomParticle()
 		{
 			size_t n = _particles.size();
-			assert(n > 0);
+			if(n < 1) return nullptr;
 			return _particles[_rand.int32() % n];
 		}
 
@@ -187,10 +188,11 @@ namespace SAPHRON
 		}
 
 		// Draw a random primitive from the world.
+		// Returns nullptr if nothing is drawn.
 		Particle* DrawRandomPrimitive()
 		{
 			size_t n = _primitives.size();
-			assert(n > 0);
+			if(n < 1) return nullptr;
 			return _primitives[_rand.int32() % n];
 		}
 

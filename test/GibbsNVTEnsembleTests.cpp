@@ -78,7 +78,7 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 	ensemble.AddObserver(&accumulator);
 	
 	// Run 
-	ensemble.Run(50000);
+	ensemble.Run(60000);
 
 	// Check values (from NIST)
 	auto density = accumulator.GetAverageDensities();
