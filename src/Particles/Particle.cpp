@@ -375,8 +375,10 @@ namespace SAPHRON
 					auto& children = parent->GetChildren();
 					for(auto& bond : spec["bonds"])
 					{
-						children[bond[0].asUInt()]->AddBondedNeighbor(children[bond[1].asUInt()]);
-						children[bond[1].asUInt()]->AddBondedNeighbor(children[bond[0].asUInt()]);
+						auto b1 = bond[0].asUInt();
+						auto b2 = bond[1].asUInt();
+						children[b1]->AddBondedNeighbor(children[b2]);
+						children[b2]->AddBondedNeighbor(children[b1]);
 					}
 
 					pvector.push_back(parent);

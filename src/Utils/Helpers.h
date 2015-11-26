@@ -31,7 +31,6 @@ namespace SAPHRON
 		auto spsi = sin(psi);
 
 		// Build rotation matrix. 
-		// TODO: CHECK RVO.
 		return {{ ctheta*cpsi, cphi*spsi+sphi*stheta*cpsi, sphi*spsi-cphi*stheta*cpsi},
 				{-ctheta*spsi, cphi*cpsi-sphi*stheta*spsi, sphi*cpsi+cphi*stheta*spsi},
 				{      stheta,               -sphi*ctheta,                cphi*ctheta}};

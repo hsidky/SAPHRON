@@ -9,7 +9,9 @@
 
 namespace SAPHRON
 {
-	// Class for performing particle rotations.
+	// Class for performing particle rotations. Method is taken 
+	// from Allen and Tildesley based on reference below:
+	// J.A. Barker, R.O. Watts, Chem. Phys. Lett., March 1969, 144-145.
 	class RotateMove : public Move
 	{
 	private:

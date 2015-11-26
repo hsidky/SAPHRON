@@ -93,10 +93,11 @@ TEST(RotateMove, MoveInterface)
 	wm.AddWorld(&w);
 
 	// Difference between directors should never exceed dmax.
-	for (int i = 0; i < 10000; ++i)
+	for (int i = 0; i < 100000; ++i)
 	{
 		Director d = s1->GetDirector();
 		mv.Perform(&wm, &ffm, MoveOverride::ForceAccept);
-		ASSERT_LE(acos(arma::dot(d,s1->GetDirector())), M_PI/4.0);
+		auto dot = fdot(d,s1->GetDirector());
+		ASSERT_LE(acos(dot), M_PI/4.0);
 	}
 }

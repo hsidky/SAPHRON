@@ -30,6 +30,9 @@ namespace SAPHRON
 		// Delta distance for elastic coefficient calculation.
 		double _dxj;
 
+		// World ID. 
+		int _wid;
+
 	protected:
 		
 		// Calculate acceptance probability.
@@ -52,7 +55,7 @@ namespace SAPHRON
 		// The value h represents the length over which to compute the derivative (dni/dxj).
 		ElasticCoeffOP(const Histogram& hist, World* world, double dxj, EFilterFunc efunc) : 
 			DOSOrderParameter(hist), _Q(arma::fill::zeros), _efunc(efunc), _eigval(arma::fill::zeros), 
-			_eigvec(arma::fill::zeros), _imax(0), _pcount(0), _dxj(dxj)
+			_eigvec(arma::fill::zeros), _imax(0), _pcount(0), _dxj(dxj), _wid(world->GetID())
 		{
 
 			for (int i = 0; i < world->GetParticleCount(); ++i)
@@ -111,9 +114,7 @@ namespace SAPHRON
 			json["type"] = "ElasticCoeff";
 			json["mode"] = "twist";
 			json["xrange"] = _dxj;
-			
-			// TODO: fix this.
-			json["world"] = 0;
+			json["world"] = _wid;
 		}
 
 		// Get layer director.

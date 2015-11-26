@@ -382,8 +382,6 @@ namespace SAPHRON
 		}
 
 		// Add a neighbor to bonded neighbor list.
-		// TODO: figure out an efficient mechanism to check for duplicates 
-		// other than std::find.
 		inline void AddBondedNeighbor(Particle* particle)
 		{
 			auto found = std::find(_bondedneighbors.begin(), _bondedneighbors.end(), particle);
