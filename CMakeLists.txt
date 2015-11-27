@@ -13,6 +13,9 @@ if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Release")
 endif()
 
+# Default is openmp.
+set(SAPHRON_OPENMP true CACHE BOOL "Enable OpenMP parallelization")
+
 set(SAPH_USE_LINAL false)
 SET(ARMA_PATHS "" CACHE STRING "Search directory for Armadillo")
 
@@ -148,10 +151,18 @@ add_executable(saphron
 target_link_libraries(saphron ${SAPH_LIBS} libsaphron)
 
 # Configure flags 
-# - Globals 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math -fopenmp -pthread -std=c++11")
+# - Globals
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math -pthread -std=c++11")
 set_target_properties(libsaphron saphron PROPERTIES COMPILE_FLAGS "-Wall -Wextra")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-as-needed -fopenmp")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-as-needed")
+
+if(SAPHRON_OPENMP)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fopenmp")
+	message(STATUS "*** OpenMP Parallelization enabled!")
+	message(STATUS "")
+endif()
+
 
 # Add testing 
 enable_testing()
