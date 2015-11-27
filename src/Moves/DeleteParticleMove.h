@@ -89,10 +89,10 @@ namespace SAPHRON
 			auto lambda = w->GetWavelength(id);
 			auto N = comp[id];
 
-			// Evaluate old energy then remove particle. 
+			// Evaluate old energy. We don't actually have to remove 
+			// the particle, only do it if needed. However, for DOS 
+			// we have to (see below).
 			auto ei = ffm->EvaluateHamiltonian(*p, comp, V);
-
-			w->RemoveParticle(p);
 			++_performed;
 
 			// The acceptance rule is from Frenkel & Smit Eq. 5.6.9.
@@ -104,12 +104,11 @@ namespace SAPHRON
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
 				// Add it back to the world. 
-				w->AddParticle(p);
 				++_rejected;
 			}
 			else
 			{
-				// Stach the particle. 
+				// Stash the particle which actually removes it from the world. 
 				w->StashParticle(p);
 
 				// Update energies and pressures.

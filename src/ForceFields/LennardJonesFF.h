@@ -12,6 +12,7 @@ namespace SAPHRON
 		double _epsilon;
 		double _sigmasq;
 		double _sigma3;
+		CutoffList _rcsq;
 		CutoffList _rc;
 		std::vector<double> _etail;
 		std::vector<double> _ptail;
@@ -20,7 +21,7 @@ namespace SAPHRON
 
 		LennardJonesFF(double epsilon, double sigma, const CutoffList& rc) : 
 		_epsilon(epsilon), _sigmasq(sigma*sigma), _sigma3(_sigmasq*sigma),
-		_rc(rc), _etail(0), _ptail(0)
+		_rcsq(0), _rc(rc), _etail(0), _ptail(0)
 		{ 
 			for(auto& r : _rc)
 			{
@@ -34,6 +35,8 @@ namespace SAPHRON
 				_ptail.push_back(
 					8.0*_epsilon*_sigma3*(2.0/3.0*(_sigma3*_sigma3*_sigma3)/r9-_sigma3/r3)
 				);
+
+				_rcsq.push_back(r*r);
 			}
 		}
 
@@ -44,11 +47,10 @@ namespace SAPHRON
 		{
 			Interaction ep;
 
-			auto r = fnorm(rij);
-			if(r > _rc[wid])
+			auto rsq = fdot(rij, rij);
+			if(rsq > _rcsq[wid])
 				return ep;
 
-			double rsq = r*r;
 			double sr6 = _sigma3*_sigma3/(rsq*rsq*rsq);
 			ep.energy = 4.0*_epsilon*(sr6*sr6-sr6);
 			ep.virial = 24.0*_epsilon*(sr6-2.0*sr6*sr6)/rsq;

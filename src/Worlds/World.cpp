@@ -63,10 +63,7 @@ namespace SAPHRON
 		  (pi->GetParent() == pj->GetParent()))
 			return;
 
-		const Position& posi = pi->GetPosition();
-		const Position& posj = pj->GetPosition();
-
-		Position rij = posi - posj;
+		Position rij = pi->GetPosition() - pj->GetPosition();
 		ApplyMinimumImage(&rij);
 
 		if(fdot(rij,rij) <= _ncutsq)

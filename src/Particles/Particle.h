@@ -16,18 +16,18 @@
 
 namespace SAPHRON
 {
-	inline int ffloor(const double& x)
+	inline int ffloor(double x)
 	{
 	    return (int) x - (x<0); 
 	}
 
-	inline int fceil(const double& x)
+	inline int fceil(double x)
 	{
 	    return (int) x + (x>0);
 	}
 
 	// Minimum image convention.
-	inline double anint(const double& x)
+	inline double anint(double x)
 	{
 		return ( x >= 0 ) ? ffloor( x + 0.5 ) : fceil( x - 0.5 );
 	}
@@ -347,9 +347,12 @@ namespace SAPHRON
 		// Remove a neighbor from the neighbor list.
 		inline void RemoveNeighbor(Particle* particle)
 		{
-			_neighbors.erase(
-				std::remove(_neighbors.begin(), _neighbors.end(), particle), 
-				_neighbors.end());
+			auto it = std::find(_neighbors.begin(), _neighbors.end(), particle);
+			if(it != _neighbors.end())
+			{
+				std::swap(*it, _neighbors.back());
+				_neighbors.pop_back();
+			}
 		}
 
 		// Check if a particle is a neighbor.
