@@ -181,9 +181,15 @@
         
             <li><a href="#the-basics">The basics</a></li>
         
-            <li><a href="#concepts">Concepts</a></li>
-        
             <li><a href="#json">JSON</a></li>
+        
+            <li><a href="#units">Units</a></li>
+        
+            <li><a href="#particles">Particles</a></li>
+        
+            <li><a href="#worlds">Worlds</a></li>
+        
+            <li><a href="#observers">Observers</a></li>
         
             <li><a href="#input-file-structure">Input file structure</a></li>
         
@@ -248,13 +254,6 @@ input files.</p>
 defined explicitly</strong>. To offer maximum flexibility, an ensemble is a consequence of the 
 moves specified by the user, not the other way around. Check the examples section for 
 ways of reproducing common ensembles in SAPHRON.</p>
-<h2 id="concepts">Concepts<a class="headerlink" href="#concepts" title="Permanent link"></a></h2>
-<p>To better understand the documentation, we describe a few key concepts used in SAPHRON
-which may not be immediately obvious to the user.</p>
-<h4 id="particles">Particles<a class="headerlink" href="#particles" title="Permanent link"></a></h4>
-<h4 id="worlds">Worlds<a class="headerlink" href="#worlds" title="Permanent link"></a></h4>
-<h4 id="observers">Observers<a class="headerlink" href="#observers" title="Permanent link"></a></h4>
-<h3 id="blueprints">Blueprints<a class="headerlink" href="#blueprints" title="Permanent link"></a></h3>
 <h2 id="json">JSON<a class="headerlink" href="#json" title="Permanent link"></a></h2>
 <p>A SAPHRON input file is a valid JSON document. Here we will define a bit of terminology 
 relating to JSON. Take the following JSON structure as an example, obtained from 
@@ -287,12 +286,199 @@ relating to JSON. Take the following JSON structure as an example, obtained from
 
 <p>The first pair of curly brackets define the <em>root</em> section, we will signify this using <code>#</code>.
 An item in the hierarchy, such as the street address, can be referenced like this: 
-<code>#/address/streetAddress</code>. Before moving on to SAPHRON specific JSON, it is important 
-to recognize that square brackets <code>[]</code> in JSON refer to <em>arrays</em>, while curly brackets
-refer to <em>objects</em>. They can be thought of as Python lists and dictionaries respectively. 
-That would make <code>#/phoneNumber</code> an array of phone number objects, each containing a type 
+<code>#/address/streetAddress</code>. </p>
+<p>Before moving on to SAPHRON specific JSON, we'll mention a few more things about JSON.</p>
+<ul>
+<li>
+<p>Square brackets <code>[]</code> in JSON refer to <em>arrays</em>, while curly brackets refer to <em>objects</em>. 
+They can be thought of as Python lists and dictionaries respectively. That would make 
+<code>#/phoneNumber</code> an array of phone number objects, each containing a type 
 and a number. The fax number can be referenced by <code>#/phoneNumber/1/number</code>, where <code>1</code> is 
 the array index beginning from zero.</p>
+</li>
+<li>
+<p>Items in a JSON object (Python dictionary) are unique. In the example above, <code>#/age</code> can 
+only be defined once - it is a key in the root tree. Defining <code>#/age</code> again will not throw 
+an error, but instead the last definition will override any previous definitions. This is 
+actually very powerful behavior. It means a user can import a general forcefield for example 
+and override whatever parameters they wish. The exact behavior of the merging process is 
+described in detail in the user guide.</p>
+</li>
+<li>
+<p>Types matter in JSON. Notice how <code>#/age</code> is specified by a number that is not surrounded in
+quotes. This is a number, more specifically an integer. <code>#/address/postalCode</code> on the other 
+hand is a string, even though the contents of the string are all numbers. Some fields in SAPHRON 
+may require the input to be a string, integer or number and the user should be aware of this difference.</p>
+</li>
+</ul>
+<h2 id="units">Units<a class="headerlink" href="#units" title="Permanent link"></a></h2>
+<p>SAPHRON supports both real and reduced units. For a detailed breakdown of the real units
+used in a simulation, check out the <a href="../user-guide/simulation/">simulation</a> page in the 
+user guide.</p>
+<h2 id="particles">Particles<a class="headerlink" href="#particles" title="Permanent link"></a></h2>
+<p>A particle is a general object that can be manipulated in a simulation. Molecules, 
+atoms and spins are all <em>types</em> of particles. This abstraction is part of what gives 
+the SAPHRON engine its flexibility. Particles can also be thought of as composite 
+objects. They can have children, like a molecule, or be a "primitive", like an atom or 
+a spin. Currently, the SAPHRON input file supports one level of depth - basically 
+a molecule/atom hierarchy. </p>
+<p>The structure of a particle is defined by its topology, or <em>blueprint</em>. A blueprint is nothing 
+but a description of a particle's topology. For something simple, like a spin or Lennard-Jones
+particle, it would look like this: </p>
+<pre><code class="json">&quot;blueprints&quot; : {
+    &quot;LJ&quot; : {
+        &quot;masss&quot; : 1.0,
+        &quot;charge&quot; : 0.0
+    }
+}
+</code></pre>
+
+<p>The above example shows an neutral unit LJ particle. To introduce a bit of terminology: "LJ" is 
+the <em>species</em> name of the particle. A more complex topology, like that of SPCE water would be</p>
+<pre><code class="json">&quot;blueprints&quot; : {
+    &quot;H2O&quot; : {
+        &quot;children&quot; : [
+            {
+                &quot;species&quot; : &quot;O&quot;,
+                &quot;charge&quot; : -0.84760,
+                &quot;mass&quot; : 15.9994
+            },
+            {
+                &quot;species&quot;: &quot;H1&quot;,
+                &quot;charge&quot; : 0.42380,
+                &quot;mass&quot; : 1.00794
+            },
+            {
+                &quot;species&quot;: &quot;H2&quot;,
+                &quot;charge&quot; : 0.42380, 
+                &quot;mass&quot; : 1.00794
+            }
+        ]
+    }
+</code></pre>
+
+<p>Let's go through this in detail: we have defined a particle of type "H2O" (which is a molecule), with 
+three children defined in an array. Each child has a species, charge and mass specified. A few things 
+stand out. The first is that we have not defined any bonds, bends or positions of the water molecule. 
+In SAPHRON particles are rigid by default; this includes molecules. Since SPCE is a rigid model, 
+we do not need to specify any bonds or bends. Specifying bonds are used for evaluating bonded interactions. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>SAPHRON does not yet support flexible (nearest)-neighbor interaction scaling/exclusion. The default
+behavior is to exclude all nonbonded interactions for bonded pairs. Nonbonded interactions are 
+evaluated for all non-bonded pairs within a molecule.</p>
+</div>
+<p>The internal coordinates within the H2O molecule are also not specified. When specifying a world (see below), 
+the coordinates of primitive particles, in this case atoms, are defined in the system (think XYZ file). 
+This is done since flexible molecules may have different configurations. In a sense, "H2O" can 
+be thought of as a container for three atoms. That means non-primitive particles cannot have a defined 
+charge, mass or position. The three quantities are calculated properties from the children.</p>
+<h2 id="worlds">Worlds<a class="headerlink" href="#worlds" title="Permanent link"></a></h2>
+<p>A simulation box is called a "world" in SAPHRON. An arbitrary number of worlds are supported, each containing 
+an arbitrary number of particles. Along with containing particles, a world also has properties, some specified 
+and some calculated. Since a world is responsible for providing a move with a random particle, the user can define 
+a seed for the random number generator. User defined properties of a world include dimensions, temperature, and
+the chemical potential of species within the world. This means that different worlds can have different temperatures 
+and species chemical potentials, allowing for some very creative "ensembles". Calculated properties include 
+pressure, energy, dimensions (in non-constant volume ensembles) and in some cases chemical potential.</p>
+<p>There are two other important properties that required for a world: neighbor list cutoff and skin thickness.
+Each forcefield is responsible for specifying its cutoff radii (they can be vary between worlds), but the 
+world is responsible for generating the neighbor lists for its particles. The neighbor list cutoff in a world
+should be equal to or exceed the largest specified forcefield cutoff radius, "rcmax". Another subtle point is the 
+skin thickness. This value should be chosen to be, <em>at maximum</em> the difference between "rcmax" and the neighbor 
+list cutoff. Make the value any smaller and you run the risk of excluding particles from an energy calculation 
+that should be included. However, this is not guaranteed since it is of a stochastic nature. These rules are 
+not enforced by SAPHRON to offer the user the flexibility for those who like to live on the edge!</p>
+<p>Using the LJ blueprint from above, we define a world with 300 LJ atoms</p>
+<pre><code class="json">&quot;worlds&quot; : [
+    {
+        &quot;type&quot; : &quot;Simple&quot;,
+        &quot;dimensions&quot; : [10, 10, 10],
+        &quot;seed&quot; : 300, 
+        &quot;nlist_cutoff&quot; : 3.5,
+        &quot;skin_thickness&quot;: 0.5,
+        &quot;components&quot; : [
+            [&quot;LJ&quot;, 100]
+        ], 
+        &quot;particles&quot; : [
+            [1, &quot;LJ&quot;, [4.881841346822,6.371867327468,4.106571184116]],
+            [2, &quot;LJ&quot;, [2.530762553678,3.610971102018,5.829908319858]],
+            [3, &quot;LJ&quot;, [1.947804017482,6.637837197361,9.390609698797]],
+            [4, &quot;LJ&quot;, [9.765735290537,8.258298245790,7.792001193077]],
+            [5, &quot;LJ&quot;, [3.097831629217,9.321038282277,9.453535007431]],
+            ...
+        ]
+    }
+]
+</code></pre>
+
+<p>Notice how we've defined a world type. For now "Simple" is the only option, which represents an orthorhombic 
+box, but non-orthorhombic geometry support is coming soon. `#/worlds/0/components' defines the number of each <em>high level</em> 
+species in the box. In this case, LJ is both the high level type and primitive. Under '#/worlds/0/particles' a unique ID 
+is given to each primitive particle, the species is defined and finally the coordinates are given. For SPCE water this 
+would look like</p>
+<pre><code class="json">&quot;worlds&quot; : [
+    {
+        &quot;type&quot;: &quot;Simple&quot;,
+        &quot;dimensions&quot;: [20, 20, 20],
+        &quot;seed&quot;: 300,
+        &quot;nlist_cutoff&quot;: 10.0,
+        &quot;skin_thickness&quot; : 0,
+        &quot;components&quot; : [
+            [&quot;H2O&quot;, 100]
+        ],
+        &quot;particles&quot; : [
+            [1, &quot;O&quot;, [4.7730209484199992, 1.5620128626400014, 1.5253242702800005]],
+            [2, &quot;H1&quot;, [4.0459440059599991, 0.9341800149600008, 1.8031462188700003]],
+            [3, &quot;H2&quot;, [5.1428368446299997, 1.2737801963600006, 0.6420586630000003]],
+            [4, &quot;O&quot;, [8.0901735057700002, 4.5440428079500004, 1.2051669896099995]],
+            [5, &quot;H1&quot;, [8.7068419886699999, 5.2474487816600011, 0.8516984360500004]],
+            [6, &quot;H2&quot;, [7.8721620900899989, 3.8950436691600006, 0.4762835006500001]],
+            ...
+        ]
+    }
+]
+</code></pre>
+
+<p>Here the number of H2O molecules is specified and the coordinates of each atom is given under <code>#/worlds/0/particles</code>. 
+Since there are 100 H2O molecules, SAPHRON would expect 300 atoms in the order in which they appear in the blueprint. 
+More options are available for a world and individual particle directors can also be specified. Details are available 
+in the <a href="../user-guide/worlds/">user guide</a>. There are additional options to pack a world with particles. </p>
+<h2 id="observers">Observers<a class="headerlink" href="#observers" title="Permanent link"></a></h2>
+<p>Observers are objects that "observe" a simulation as it proceeds and take notes. In other words, observers can be 
+thought of as loggers. SAPHRON offers a number of different observers, including a JSON observer which writes 
+checkpoint JSON files, a general delimited file observer which writes various properties and an XYZ observer which 
+writes snapshots of worlds to XYZ files. There can be an arbitrary number of observers logging different 
+properties at independent frequencies. An example is shown below</p>
+<pre><code class="json">&quot;observers&quot; : [
+    {
+        &quot;type&quot; : &quot;DLMFile&quot;,
+        &quot;frequency&quot; : 1,
+        &quot;prefix&quot; : &quot;test&quot;,
+        &quot;flags&quot; : {
+            &quot;simulation&quot; : 1,
+            &quot;world&quot; : 1
+        }
+    },
+    {
+        &quot;type&quot; : &quot;JSON&quot;,
+        &quot;frequency&quot; : 1000,
+        &quot;prefix&quot; : &quot;test_checkpt&quot;
+    },
+    {
+        &quot;type&quot; : &quot;XYZ&quot;, 
+        &quot;frequency&quot; : 100,
+        &quot;prefix&quot; : &quot;test_xyz&quot;
+    }
+]
+</code></pre>
+
+<p>We've defined three different observers above. The first is a fixed-width space delimited logger recording 
+simulation and world properties every iteration. The second is a JSON observer writing checkpoint files every 
+1000 iterations. The third is an XYZ observer recording snapshots every 100 iterations. Note the <code>prefix</code>
+specification which is used for the file names. Also, multiple observers of the same type can be defined to 
+log the same or different properties independent of one another. A detailed list of options and flags is located 
+in the <a href="../user-guide/observers/">user guide</a>.</p>
 <h2 id="input-file-structure">Input file structure<a class="headerlink" href="#input-file-structure" title="Permanent link"></a></h2>
 <p>A SAPHRON input file consists of a collection of JSON objects and arrays. The main 
 sections are outlined below:</p>
