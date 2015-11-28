@@ -34,6 +34,7 @@ files = [
 	("moves/deleteparticle.move.json", "DeleteParticleMove"),
 	("observers/dlmfile.observer.json", "DLMFileObserver"),
 	("observers/json.observer.json", "JSONObserver"),
+	("observers/xyz.observer.json", "XYZObserver"),
 	("observers/observers.json", "Observers"),
 	("particles/director.particle.json", "Director"),
 	("particles/selector.particle.json", "Selector"),

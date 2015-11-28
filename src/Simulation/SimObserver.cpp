@@ -7,6 +7,7 @@
 #include "SimException.h"
 #include "../Observers/DLMFileObserver.h"
 #include "../Observers/JSONObserver.h"
+#include "../Observers/XYZObserver.h"
 
 using namespace Json;
 
@@ -156,6 +157,25 @@ namespace SAPHRON
 			auto* dlm = new JSONObserver(prefix, flags, frequency);
 			obs = static_cast<SimObserver*>(dlm);
 		}
+		else if(type == "XYZ")
+		{
+			reader.parse(JsonSchema::XYZObserver, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			// Initialize flags.
+			SimFlags flags;
+
+			// Initialize JSON specific options.
+			auto prefix = json.get("prefix", "unnamed").asString();
+			auto frequency = json.get("frequency", 1).asInt();
+
+			auto* dlm = new XYZObserver(prefix, flags, frequency);
+			obs = static_cast<SimObserver*>(dlm);
+		}
 		else
 		{
 			throw BuildException({path + ": Unknown observer type specified."});
@@ -182,7 +202,7 @@ namespace SAPHRON
 		int i = 0;
 		for(auto& obs : json)
 		{
-			ol.push_back(BuildObserver(obs, "#/moves/" + std::to_string(i)));
+			ol.push_back(BuildObserver(obs, "#/observers/" + std::to_string(i)));
 			++i;
 		}
 	}

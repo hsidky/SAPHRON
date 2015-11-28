@@ -129,6 +129,7 @@ set(SOURCE
 	src/Observers/DLMFileObserver.cpp
 #	src/Observers/ConsoleObserver.cpp
 	src/Observers/JSONObserver.cpp
+	src/Observers/XYZObserver.cpp
 	src/Particles/Particle.cpp
 	src/Simulation/SimObservable.cpp
 	src/Simulation/SimObserver.cpp

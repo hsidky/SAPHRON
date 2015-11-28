@@ -27,6 +27,7 @@ namespace SAPHRON
 		static std::string Selector;
 		static std::string Director;
 		static std::string Observers;
+		static std::string XYZObserver;
 		static std::string JSONObserver;
 		static std::string DLMFileObserver;
 		static std::string DeleteParticleMove;

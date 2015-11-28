@@ -5,25 +5,26 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
+#include <map>
 
 namespace SAPHRON
 {
-	// JSON Observer class that creates a snapshot of the 
-	// simulation and dumps it to a JSON file.
-	class JSONObserver : public SimObserver
+	// XYZ observer class that creates XYZ snapshots of the simulations.
+	class XYZObserver : public SimObserver
 	{
 	private:
-		std::unique_ptr<std::ofstream> _jsonfs;
+		std::map<int, std::unique_ptr<std::ofstream>> _worldfs;
 		std::string _prefix;
-		Json::Value _root;
+		bool _initialized;
+
+		void InitializeXYZ(const WorldManager& wm);
 
 	public:
-		JSONObserver(const std::string& prefix, 
-					 const SimFlags& flags, 
-					 unsigned int frequency = 1 );
+		XYZObserver(const std::string& prefix, 
+					const SimFlags& flags, 
+					unsigned int frequency = 1);
 
-				// Get Observer name.
-		virtual std::string GetName() const override{ return "JSON"; }
+		virtual std::string GetName() const override { return "XYZ"; }
 
 		virtual void Visit(const Simulation& e) override;
 		virtual void Visit(const DOSSimulation& e) override;
@@ -34,14 +35,17 @@ namespace SAPHRON
 		virtual void Visit(const Histogram& hist) override;
 
 		virtual void Serialize(Json::Value& json) const override;
-		
-		virtual void PreVisit() override;
-		virtual void PostVisit() override;
 
-		~JSONObserver()
+		virtual void PostVisit() override
 		{
-			if(_jsonfs)
-				_jsonfs->close();
+			_initialized = true;
 		}
+
+		~XYZObserver()
+		{
+			for(auto& w : _worldfs)
+				w.second->close();
+		}
+
 	};
 }

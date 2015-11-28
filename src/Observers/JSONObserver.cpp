@@ -25,7 +25,9 @@ namespace SAPHRON
   		return std::string(buffer);
 	}
 
-	JSONObserver::JSONObserver(std::string prefix, SimFlags flags, unsigned int frequency) : 
+	JSONObserver::JSONObserver(const std::string& prefix, 
+							   const SimFlags& flags, 
+							   unsigned int frequency) : 
 	SimObserver(flags, frequency), _prefix(prefix), _root()
 	{
 	}

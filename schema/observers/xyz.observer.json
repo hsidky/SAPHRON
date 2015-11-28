@@ -1,0 +1,17 @@
+{
+	"properties" : {
+		"type" : {
+			"type" : "string",
+			"enum" : ["XYZ"]
+		},
+		"prefix" : {
+			"type" : "string"
+		},
+		"frequency" : {
+			"type" : "integer",
+			"minimum" : 1
+		}
+	},
+	"required" : ["type", "prefix", "frequency"],
+	"additionalProperties" : false
+}
