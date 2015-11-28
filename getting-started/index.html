@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Hythem Sidky">
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Getting Started - SAPHRON Documentation</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">SAPHRON Documentation</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="active">
+                        <a href="./">Getting Started</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Examples <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../examples/canonical-simulations/">Canonical simulations</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Gude <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../user-guide/simulation/">Simulation</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../user-guide/blueprints/">Blueprints</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../user-guide/worlds/">Worlds</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../user-guide/forcefields/">Forcefields</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../user-guide/moves/">Moves</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../user-guide/observers/">Observers</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../user-guide/density-of-states/">Density of states</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../user-guide/histogram/">Histogram</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li >
+                        <a rel="next" href="..">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../examples/canonical-simulations/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a href="https://github.com/hsidky/SAPHRON">
+                            
+                                <i class="fa fa-github"></i>
+                            
+                            GitHub
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#getting-started">Getting started</a></li>
+        
+            <li><a href="#the-basics">The basics</a></li>
+        
+            <li><a href="#concepts">Concepts</a></li>
+        
+            <li><a href="#json">JSON</a></li>
+        
+            <li><a href="#input-file-structure">Input file structure</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="getting-started">Getting started<a class="headerlink" href="#getting-started" title="Permanent link"></a></h1>
+<h2 id="the-basics">The basics<a class="headerlink" href="#the-basics" title="Permanent link"></a></h2>
+<p>SAPHRON simulations can either be run using the API or using <a href="http://json.org/">JSON</a> input files.
+JSON is a lightweight text format which is easy for humans to read and write and for machines to 
+parse and generate. Almost every programming language offers some level of JSON support, making it 
+particularly convenient to script or automate input file generation using, say, Python (more on that later).
+If you've never used JSON before, don't worry. Throughout the documentation we make no assumptions about 
+the user's knowledge of JSON and provide clear easy-to-follow examples.</p>
+<p>The SAPHRON executable has two modes: validation and execution. An input file's syntax can be verified 
+by running SAPHRON with the <code>-v</code> flag. This is a great way to make sure there are no input file errors 
+before submitting a job to a HPC cluster. A typical example of this is shown below.</p>
+<pre><code class="bash">$ saphron -v &lt; input.json 
+
+ **********************************************************************      
+ *         ____      _     ____   _   _  ____    ___   _   _          *      
+ *        / ___|    / \   |  _ \ | | | ||  _ \  / _ \ | \ | |         * 
+ *        \___ \   / _ \  | |_) || |_| || |_) || | | ||  \| |         *  
+ *         ___) | / ___ \ |  __/ |  _  ||  _ &lt; | |_| || |\  |         *    
+ *        |____/ /_/   \_\|_|    |_| |_||_| \_\ \___/ |_| \_|         *
+ *                                                                    *      
+ *   Statistical Applied PHysics through Random On-the-fly Numerics   *
+ *                                                                    *     
+ *  Version 0.0.7 Revision: a2fe4783e74ca5460c9825553a955b8835d4197b  *      
+ **********************************************************************      
+
+ &gt; Validating JSON...                                               OK!
+ &gt; Building world(s)...                                             OK!
+ * Building world &quot;world0&quot;...
+ * Setting size to [20.000000, 20.000000, 20.000000] Å.
+ * Setting neighbor list radius to 5.000000 Å.
+ * Setting skin thickness to 2.000000 Å.
+ * Setting seed to 471762238.
+ * Setting temperature to 1.500000K.
+ * Initialized 3000 particle(s) of type &quot;LJ&quot;.
+ &gt; Building forcefield(s)...                                        OK!
+ * Initialized 1 forcefield(s).
+ &gt; Building move(s)...                                              OK!
+ * Initialized Translate move.
+ &gt; Building observer(s)...                                          OK!
+ * Initialized DLMFile observer.
+ * Set sampling frequency to 1 sweeps.
+ * Initialized XYZ observer.
+ * Set sampling frequency to 1 sweeps.
+ &gt; Building simulation...                                           OK!
+$ 
+</code></pre>
+
+<p>SAPHRON will provide a basic summary of the settings supplied in the input file. To actually run the 
+simulation, simply remove the <code>-v</code> flag, and off it goes. At the completion 
+of a simulation, some general CPU usage statistics are provided to help the user optimize their 
+input files.</p>
+<h4 id="a-note-on-ensembles">A note on ensembles<a class="headerlink" href="#a-note-on-ensembles" title="Permanent link"></a></h4>
+<p>One of the most important things to remember is that in SAPHRON, <strong>ensembles are not 
+defined explicitly</strong>. To offer maximum flexibility, an ensemble is a consequence of the 
+moves specified by the user, not the other way around. Check the examples section for 
+ways of reproducing common ensembles in SAPHRON.</p>
+<h2 id="concepts">Concepts<a class="headerlink" href="#concepts" title="Permanent link"></a></h2>
+<p>To better understand the documentation, we describe a few key concepts used in SAPHRON
+which may not be immediately obvious to the user.</p>
+<h4 id="particles">Particles<a class="headerlink" href="#particles" title="Permanent link"></a></h4>
+<h4 id="worlds">Worlds<a class="headerlink" href="#worlds" title="Permanent link"></a></h4>
+<h4 id="observers">Observers<a class="headerlink" href="#observers" title="Permanent link"></a></h4>
+<h3 id="blueprints">Blueprints<a class="headerlink" href="#blueprints" title="Permanent link"></a></h3>
+<h2 id="json">JSON<a class="headerlink" href="#json" title="Permanent link"></a></h2>
+<p>A SAPHRON input file is a valid JSON document. Here we will define a bit of terminology 
+relating to JSON. Take the following JSON structure as an example, obtained from 
+<a href="https://en.wikipedia.org/wiki/JSON#JSON_sample">Wikipedia</a>:</p>
+<pre><code class="json">{
+    &quot;firstName&quot;: &quot;John&quot;,
+    &quot;lastName&quot;: &quot;Smith&quot;,
+    &quot;age&quot;: 25,
+    &quot;address&quot;: {
+        &quot;streetAddress&quot;: &quot;21 2nd Street&quot;,
+        &quot;city&quot;: &quot;New York&quot;,
+        &quot;state&quot;: &quot;NY&quot;,
+        &quot;postalCode&quot;: &quot;10021&quot;
+    },
+    &quot;phoneNumber&quot;: [
+        {
+            &quot;type&quot;: &quot;home&quot;,
+            &quot;number&quot;: &quot;212 555-1234&quot;
+        },
+        {
+            &quot;type&quot;: &quot;fax&quot;,
+            &quot;number&quot;: &quot;646 555-4567&quot;
+        }
+    ],
+    &quot;gender&quot;: {
+        &quot;type&quot;: &quot;male&quot;
+    }
+}
+</code></pre>
+
+<p>The first pair of curly brackets define the <em>root</em> section, we will signify this using <code>#</code>.
+An item in the hierarchy, such as the street address, can be referenced like this: 
+<code>#/address/streetAddress</code>. Before moving on to SAPHRON specific JSON, it is important 
+to recognize that square brackets <code>[]</code> in JSON refer to <em>arrays</em>, while curly brackets
+refer to <em>objects</em>. They can be thought of as Python lists and dictionaries respectively. 
+That would make <code>#/phoneNumber</code> an array of phone number objects, each containing a type 
+and a number. The fax number can be referenced by <code>#/phoneNumber/1/number</code>, where <code>1</code> is 
+the array index beginning from zero.</p>
+<h2 id="input-file-structure">Input file structure<a class="headerlink" href="#input-file-structure" title="Permanent link"></a></h2>
+<p>A SAPHRON input file consists of a collection of JSON objects and arrays. The main 
+sections are outlined below:</p>
+<ul>
+<li><code>#</code> - The JSON root encompasses everything and defines an entire simulation.</li>
+<li><code>#/worlds</code> - Array defining the different "worlds", or boxes, in the system.</li>
+<li><code>#/moves</code> - Array defining the moves to be performed on the worlds.</li>
+<li><code>#/forcefields</code> - Array defining the bonded, nonbonded and electrostatic interactions.</li>
+<li><code>#/blueprints</code> - Object containing the blueprints, or topologies, of the particles in the simulation.</li>
+<li><code>#/observers</code> - Array defining all of the observers, or loggers, that will collect data throughout the simulation.</li>
+<li><code>#/DOS</code> - Object containing settings for DOS simulations. </li>
+<li><code>#/Histogram</code> - Object containing settings for histograms.</li>
+</ul>
+<p>An empty shell containing some of the above looks like this:</p>
+<pre><code class="json">{
+    &quot;blueprints&quot; : {
+
+    },
+    &quot;forcefields&quot; : {
+        &quot;nonbonded&quot; : [
+        ],
+        &quot;bonded&quot; : [
+        ],
+        &quot;electrostatic&quot; : [
+        ]
+    },
+    &quot;worlds&quot; : [
+    ],
+    &quot;moves&quot; : [
+    ],
+    &quot;observers&quot; : [
+    ]
+}
+</code></pre></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
