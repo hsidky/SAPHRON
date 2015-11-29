@@ -257,6 +257,12 @@ target_include_directories(InsertParticleMoveTests PRIVATE "${GTEST_INCLUDE_DIR}
 add_dependencies(InsertParticleMoveTests googletest) 
 add_test(InsertParticleMoveTests InsertParticleMoveTests)
 
+add_executable(JSONLoaderTests test/JSONLoaderTests.cpp)
+target_link_libraries(JSONLoaderTests ${TEST_DEPS})
+target_include_directories(JSONLoaderTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(JSONLoaderTests googletest) 
+add_test(JSONLoaderTests JSONLoaderTests)
+
 add_executable(LebwohlLasherFFTests test/LebwohlLasherFFTests.cpp)
 target_link_libraries(LebwohlLasherFFTests ${TEST_DEPS})
 target_include_directories(LebwohlLasherFFTests PRIVATE "${GTEST_INCLUDE_DIR}")

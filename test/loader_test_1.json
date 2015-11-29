@@ -1,0 +1,4 @@
+{
+	"test" : "me",
+	"imported" : "@include(loader_test_2.json)"
+}
