@@ -3,20 +3,23 @@ SAPHRON
 
 **SAPHRON** (**S**tatistical **A**pplied **PH**ysics through **R**andomized **O**n-the-fly **N**umerics) is a modern, open-source, light-weight C++11 based Monte Carlo physics package. It is designed to be easy to use, extendable and extremely versatile. As the name suggests, one of the primary features is the inclusion of various Density-of-States (DOS) sampling algorithms. **SAPHRON** is currently in early development, and as a result it currently lacks many basic features; this README is also likely to be out of date. In addition to the C++ application, a number of helper MATLAB scripts are included to assist with data analysis. 
 
-**A thorough documentation is in the works.**
+**The documentation can be found [here](https://hsidky.github.io/SAPHRON)**
 
 <a id="features"></a>
 ## Features
-- *A very simple API* that is developer-friendly. The modulatiry makes it easily extendable.
+- *A very simple API* that is user and developer friendly
 - Lattice and off-lattice support. 
 - OpenMP parallelization.
-- Density of states (DOS) flat-histogram sampling in many reaction coordinates (energy, mole number, etc..)
+- Density of states (DOS) flat-histogram sampling along many order parameters (energy, mole number, etc..)
+- Much more!
+
+Check out the documentation for a more detailed list of features
+
+https://hsidky.github.io/SAPHRON
 
 <a id="dependencies"></a>
 ## Dependencies
-SAPHRON requires some math libraries to enable more advanced features. They are not necessary for core functionality, but the build system in its current state requires that they be there.
-
-It's easy enough to install the required packages. On any Debian-based distro simply type:
+SAPHRON requires some linear alegra routines to get going. It's easy enough to install the required packages. On any Debian-based distro simply type:
 
 ```bash
 $ sudo apt-get install libblas3 liblapack3 libarmadillo-dev
