@@ -210,26 +210,30 @@ namespace SAPHRON
 
 		pvector.clear();
 
-		// Parse schemas.
+		// Parse and validate particles.
 		reader.parse(JsonSchema::Particles, pschema);
 		arrayvalid.Parse(pschema, "#/particles");
-		reader.parse(JsonSchema::Blueprints, bschema);
-		arrayvalid.Parse(bschema, "#/blueprints");
-		reader.parse(JsonSchema::Components, cschema);
-		objvalid.Parse(cschema, "#/components");
-
+		
 		// Validate inputs via schemas. 
 		arrayvalid.Validate(particles, "#/particles");
 		if(arrayvalid.HasErrors())
 			throw BuildException(arrayvalid.GetErrors());
 
+		// Parse and validate blueprints.
+		reader.parse(JsonSchema::Blueprints, bschema);
+		objvalid.Parse(bschema, "#/blueprints");
+		
 		objvalid.Validate(blueprints, "#/blueprints");
 		if(objvalid.HasErrors())
 			throw BuildException(objvalid.GetErrors());
 
-		objvalid.Validate(components, "#/components");
-		if(objvalid.HasErrors())
-			throw BuildException(objvalid.GetErrors());
+		// Parse and validate components.
+		reader.parse(JsonSchema::Components, cschema);
+		arrayvalid.Parse(cschema, "#/components");
+	
+		arrayvalid.Validate(components, "#/components");
+		if(arrayvalid.HasErrors())
+			throw BuildException(arrayvalid.GetErrors());
 
 		// Perform semantic validation first, then initialize all particles. 
 		// This is to avoid having to free memory on error(s).
@@ -240,16 +244,16 @@ namespace SAPHRON
 		// Verify that components have blueprints and that 
 		// particles in the particles array match up with the 
 		// blueprint and component counts.
-		for(auto& ctype : components.getMemberNames())
+		for(auto& component : components)
 		{
-			auto& component = components[ctype];
+			auto ctype = component[0].asString();
+			auto count = component[1].asInt();
+
 			if(!blueprints.isMember(ctype))
 				throw BuildException({"Particle type \"" + 
 					ctype + "\" not delcared in blueprints."});	
 			auto& blueprint = blueprints[ctype];
 
-			// Get parent particle counts.
-			int count = component["count"].asInt();
 			// Get potential children counts.
 			int ccount = blueprint.isMember("children") ? blueprint["children"].size() : 0;
 			// Compute actual number of particles.
@@ -339,10 +343,11 @@ namespace SAPHRON
 
 		// Create parent particles and add to output container.
 		// Here we also assign charges and masses from blueprints.
-		for(auto& component : components.getMemberNames())
+		for(auto& comp : components)
 		{
+			auto component = comp[0].asString();
+			auto count = comp[1].asInt();
 			auto& spec = blueprints[component];
-			int count = components[component]["count"].asInt();
 			int ccount = spec.isMember("children") ? spec["children"].size() : 0;
 
 			for(int j = 0; j < count; ++j)

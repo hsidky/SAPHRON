@@ -1,4 +1,5 @@
 {
+    "type": "array",
     "items": {
         "oneOf": [
             {
@@ -9,9 +10,11 @@
                     "selector"
                 ],
                 "additionalProperties": false,
-                "type": "object",
                 "properties": {
                     "selector": {},
+                    "coefficient": {
+                        "type": "number"
+                    },
                     "director": {
                         "maxItems": 3,
                         "additionalItems": false,
@@ -26,13 +29,10 @@
                             "P2SA"
                         ],
                         "type": "string"
-                    },
-                    "coefficient": {
-                        "type": "number"
                     }
-                }
+                },
+                "type": "object"
             }
         ]
-    },
-    "type": "array"
+    }
 }

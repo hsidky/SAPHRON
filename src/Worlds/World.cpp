@@ -417,6 +417,7 @@ namespace SAPHRON
 				json["chemical_potential"][slist[i]] = _chemp[i];
 
 		// Serialize primitives and build blueprint.
+		std::map<std::string, int> compmap;
 		for(int i = 0; i < (int)_primitives.size(); ++i)
 		{
 			auto& p = _primitives[i];
@@ -429,16 +430,24 @@ namespace SAPHRON
 			// If primitive has no parent it belongs in components.
 			if(p->HasParent())
 			{
-				auto& component = json["components"][p->GetParent()->GetSpecies()];
-				if(component == Json::nullValue)
-					component["count"] = _composition.at(p->GetParent()->GetSpeciesID());
+				auto pid = p->GetParent()->GetSpecies();
+				compmap[pid] = _composition.at(p->GetParent()->GetSpeciesID());
 			}
 			else
 			{
-				auto& component = json["components"][p->GetSpecies()];
-				if(component == Json::nullValue)
-					component["count"] = _composition.at(p->GetSpeciesID());
+				auto id = p->GetSpecies();
+				compmap[id] = _composition.at(p->GetSpeciesID());
 			}
+		}
+
+		// Serialize components. 
+		auto& components = json["components"];
+		Json::Value comp;
+		for(auto& c : compmap)
+		{
+			comp[0] = c.first;
+			comp[1] = c.second;
+			components.append(comp);
 		}
 	}
 

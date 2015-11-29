@@ -36,10 +36,6 @@
 					},
 					"minItems" : 1
 				},
-				"count" : {
-					"type" : "integer",
-					"minimum" : 1
-				},
 				"mass" : {
 					"type" : "number",
 					"minimum": 0
@@ -48,7 +44,6 @@
 					"type" : "number"
 				}
 			},
-			"required": ["count"],
 			"minProperties" : 1,
 			"additionalProperties": false
 		}	

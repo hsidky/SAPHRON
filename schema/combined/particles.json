@@ -1,8 +1,12 @@
 {
+    "additionalItems": false,
     "minItems": 1,
+    "type": "array",
     "items": {
         "maxItems": 4,
+        "additionalItems": false,
         "minItems": 3,
+        "type": "array",
         "items": [
             {
                 "minimum": 1,
@@ -33,10 +37,6 @@
             {
                 "type": "string"
             }
-        ],
-        "type": "array",
-        "additionalItems": false
-    },
-    "type": "array",
-    "additionalItems": false
+        ]
+    }
 }
