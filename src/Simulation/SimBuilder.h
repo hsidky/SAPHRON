@@ -40,7 +40,7 @@ namespace SAPHRON
 		_sim(nullptr), _ltot(81), _msgw(51), _notw(_ltot - _msgw)
 		{}
 		
-		bool BuildSimulation(std::istream& is);
+		bool BuildSimulation(const std::string& filename);
 		Simulation* GetSimulation() { return _sim; }
 		
 		~SimBuilder()

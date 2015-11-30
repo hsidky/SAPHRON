@@ -1,4 +1,5 @@
 #include "SimBuilder.h"
+#include "../JSON/JSONLoader.h"
 
 using namespace std;
 
@@ -27,20 +28,26 @@ namespace SAPHRON
 		cerr << setw(msgw + 8) << left << "\033[1m" + notice + "\033[0m";
 	}
 
-	bool SimBuilder::BuildSimulation(istream& is)
+	bool SimBuilder::BuildSimulation(const std::string& filename)
 	{
-		Json::Reader reader;
 		Json::Value root;
 		vector<string> notices;
+		JSONLoader loader;
 
 		// Parse JSON.
 		PrintBoldNotice(" > Validating JSON...", _msgw);
 
-		if(!reader.parse(is, root))
-		{
-			DumpErrorsToConsole({reader.getFormattedErrorMessages()}, _notw);
+		try{
+			root = loader.LoadFile(filename);
+		} catch(std::exception& e) {
+			DumpErrorsToConsole({e.what()}, _notw);
+			return false;
+		} catch(int& k) { 
+			std::string err = strerror(k);
+			DumpErrorsToConsole({"File IO error: " + err}, _notw);
 			return false;
 		}
+
 		cout << setw(_notw) << right << "\033[32mOK!\033[0m\n";
 
 		// Build world(s).
