@@ -191,6 +191,8 @@
         
             <li><a href="#observers">Observers</a></li>
         
+            <li><a href="#forcefields">Forcefields</a></li>
+        
             <li><a href="#input-file-structure">Input file structure</a></li>
         
     
@@ -209,7 +211,7 @@ the user's knowledge of JSON and provide clear easy-to-follow examples.</p>
 <p>The SAPHRON executable has two modes: validation and execution. An input file's syntax can be verified 
 by running SAPHRON with the <code>-v</code> flag. This is a great way to make sure there are no input file errors 
 before submitting a job to a HPC cluster. A typical example of this is shown below.</p>
-<pre><code class="bash">$ saphron -v &lt; input.json 
+<pre><code class="bash">$ saphron -v input.json 
 
  **********************************************************************      
  *         ____      _     ____   _   _  ____    ___   _   _          *      
@@ -479,6 +481,91 @@ simulation and world properties every iteration. The second is a JSON observer w
 specification which is used for the file names. Also, multiple observers of the same type can be defined to 
 log the same or different properties independent of one another. A detailed list of options and flags is located 
 in the <a href="../user-guide/observers/">user guide</a>.</p>
+<h2 id="forcefields">Forcefields<a class="headerlink" href="#forcefields" title="Permanent link"></a></h2>
+<p>Forcefields can be specified as a JSON array of individual pair-wise interactions. The 
+<a href="../user-guide/forcefields/">user guide</a> contains a list of all available forcefields, but 
+we will go through a simple example below. Before that though, we should probably mention 
+an important point</p>
+<div class="admonition warning">
+<p class="admonition-title">Mixing rules</p>
+<p>SAPHRON does not automatically apply any mixing rules. To offer the user maximum flexibility, 
+cross interactions <em>must</em> be explicitly defined. This way we don't limit the user to a built 
+in set which may or may not suit them.</p>
+</div>
+<p>With that out of the way, let's go through defining a forcefield for SPCE water</p>
+<pre><code class="json">&quot;forcefields&quot; : {
+    &quot;nonbonded&quot; : [
+        {
+            &quot;type&quot; : &quot;LennardJones&quot;,
+            &quot;epsilon&quot; : 6.501694011808411e+02,
+            &quot;sigma&quot; : 3.16555789,
+            &quot;species&quot; : [&quot;O&quot;, &quot;O&quot;],
+            &quot;rcut&quot; : [10.0]
+        }
+    ],
+    &quot;electrostatic&quot; : [
+        {
+            &quot;type&quot; : &quot;DSF&quot;,
+            &quot;alpha&quot; : 0.20,
+            &quot;species&quot;: [&quot;O&quot;, &quot;O&quot;],
+            &quot;rcut&quot; : [10.0]
+        },
+        {
+            &quot;type&quot; : &quot;DSF&quot;,
+            &quot;alpha&quot; : 0.20,
+            &quot;species&quot;: [&quot;O&quot;, &quot;H1&quot;],
+            &quot;rcut&quot; : [10.0]
+        },
+        {
+            &quot;type&quot; : &quot;DSF&quot;,
+            &quot;alpha&quot; : 0.20,
+            &quot;species&quot;: [&quot;O&quot;, &quot;H2&quot;],
+            &quot;rcut&quot; : [10.0]
+        },
+        {
+            &quot;type&quot; : &quot;DSF&quot;,
+            &quot;alpha&quot; : 0.20,
+            &quot;species&quot;: [&quot;H1&quot;, &quot;H1&quot;],
+            &quot;rcut&quot; : [10.0]
+        },
+        {
+            &quot;type&quot; : &quot;DSF&quot;,
+            &quot;alpha&quot; : 0.20,
+            &quot;species&quot;: [&quot;H1&quot;, &quot;H2&quot;],
+            &quot;rcut&quot; : [10.0]
+        },
+        {
+            &quot;type&quot; : &quot;DSF&quot;,
+            &quot;alpha&quot; : 0.20,
+            &quot;species&quot;: [&quot;H2&quot;, &quot;H2&quot;],
+            &quot;rcut&quot; : [10.0]
+        }
+    ]
+}
+</code></pre>
+
+<p>The absurd number of decimals aside, lets go through the highlights. First, there's only
+one nonbonded LJ interaction between the oxygen sites. For electrostatics, we use the 
+damp shifted force (DSF) method (see user guide for details). Notice how all cross interactions
+are explicitly defined. This probably seems cumbersome, and it is, but we felt puts a lot of power
+in the user's hands. Some forms of alchemical thermodynamic integration require the ability to 
+turn off or scale particular interactions, and this sets up the proper foundation. Also, cross 
+interactions are no longer obvious when dealing with anisotropic forcefields like Gay-Berne. It's 
+just easier this way!</p>
+<p>Not all hope is lost however, for two main reasons. The first is that JSON can be readily generated
+using a Python script, so you can always specify main interactions and compute the cross terms to
+your desires, then dump the output to file. Now that we say this out loud, perhaps we will provide 
+a supplementary script to assist in the process. The second is that we extended JSON toallow
+includes in the input file using the <code>@include(filename)</code> syntax. This means a user can have a 
+database of forcefields, or at least share a single forcefield file amongst many simulations.
+Here's how this would look:</p>
+<pre><code class="json">{
+    &quot;forcefields&quot; : &quot;@include(/path/to/spce_forcefield.json)&quot;
+}
+</code></pre>
+
+<p>That's it for forcefields really. Paths are resolved relative to the input file, so just keep that
+in mind (we think that's the more natural way of thinking about it anyways).</p>
 <h2 id="input-file-structure">Input file structure<a class="headerlink" href="#input-file-structure" title="Permanent link"></a></h2>
 <p>A SAPHRON input file consists of a collection of JSON objects and arrays. The main 
 sections are outlined below:</p>

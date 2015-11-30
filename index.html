@@ -197,42 +197,42 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="saphron">SAPHRON<a class="headerlink" href="#saphron" title="Permanent link"></a></h1>
-<p>Thanks for visiting the official documentation for SAPHRON 
+<p>Thanks for visiting the official documentation for <strong>SAPHRON</strong> 
 (<strong>S</strong>tatistical <strong>A</strong>pplied <strong>PH</strong>ysics through <strong>R</strong>andomized <strong>O</strong>n-the-fly <strong>N</strong>umerics), 
 a lightweight C++11-based Monte Carlo molecular simulation package. <strong>SAPHRON is currently 
 under development and may lack some basic features</strong>. As a result, the documentation may also 
-not be up-to-date. If you are feeling up to it, then please, dive right in!</p>
+not be up-to-date. If you are still interested in givin it a shot, then please, dive right in!</p>
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link"></a></h2>
-<p>The primary goal of SAPHRON is to provide a simple, extensible and <em>user friendly</em> API and 
+<p>The primary goal of <strong>SAPHRON</strong> is to provide a simple, extensible and <em>user friendly</em> API and 
 interface for carrying out Monte Carlo simulations. It is both a library and a standalone 
 application, with an emphasis on density of states (DOS) based sampling. A few key features 
 are listed below.</p>
 <ul>
-<li>Lattice simulations support (Ising, Lebwohl-Lasher, etc...)</li>
+<li>Lattice simulations support (Ising, Lebwohl-Lasher, etc...).</li>
 <li>Off-lattice atomistic simulations.</li>
 <li>OpenMP parallelization.</li>
 <li>DOS sampling on various order parameters.</li>
 <li>Native JSON support for input files.</li>
 <li>Extensive suite of unit tests.</li>
-<li>Clear user error reporting </li>
+<li>Clear user error reporting.</li>
 </ul>
 <p>One point of frustration for us using various molecular simulation packages was the lack 
 of clear error reporting. We found that packages often dumped meaningless errors, sometimes
 even contradictory messages in response to semantic errors in input files. In a few cases, 
 applications seg-faulted on syntax errors. <strong>That is NOT okay!</strong></p>
-<p>SAPHRON was designed to provide thoughtful, meaningful and helpful error messages to the user
-as a way of guiding them towards crafting a valid input file. As SAPHRON develops, this feature 
-will be built out to provide general notices and hints as well. Our hope is that SAPHRON will
+<p><strong>SAPHRON</strong> was designed to provide thoughtful, meaningful and helpful error messages to the user
+as a way of guiding them towards crafting a valid input file. As <strong>SAPHRON</strong> develops, this feature 
+will be built out to provide general notices and hints as well. Our hope is that <strong>SAPHRON</strong> will
 be easy enough to use so that with a little bit of practice, it can be operated by a high-school 
 student. If you feel any aspect of SAPHRON's usability can be improved, please let us know 
 immediately by <a href="https://github.com/hsidky/SAPHRON/issues/new">opening a ticket</a>.</p>
 <h2 id="dependencies">Dependencies<a class="headerlink" href="#dependencies" title="Permanent link"></a></h2>
-<p>SAPHRON requires GCC 4.9.x or Clang 3.4+ <strong>at minimum</strong>. This is not an issue for most 
+<p><strong>SAPHRON</strong> requires GCC 4.9.x or Clang 3.4+ <strong>at minimum</strong>. This is not an issue for most 
 systems, but if you are running Ubuntu 14.04 LTS, please read 
 <a href="http://askubuntu.com/questions/466651/how-do-i-use-the-latest-gcc-4-9-on-ubuntu-14-04">this</a>.
-SAPHRON also depends on <a href="http://arma.sourceforge.net/">Armadillo</a> to provide an interface to 
+<strong>SAPHRON</strong> also depends on <a href="http://arma.sourceforge.net/">Armadillo</a> to provide an interface to 
 low level linear algebra routines. It links directly to any linear algebra provider 
-available on the system. BLAS and LAPACK are the default providers, but SAPHRON 
+available on the system. BLAS and LAPACK are the default providers, but <strong>SAPHRON</strong> 
 also supports the Intel MKL. Typically, no configuration on the user's end is required. 
 All dependencies are automatically detected by the CMake build system. </p>
 <p>If you just want to get things going, it is easy enough to install the required libraries.
@@ -241,12 +241,15 @@ For a Debian-based distro simply type:</p>
 </code></pre>
 
 <p>This will install the BLAS/LAPACK shared libraries and Armadillo headers. As mentioned, 
-if you have access to Intel's MKL you don't have to do anything else and SAPHRON should 
+if you have access to Intel's MKL you don't have to do anything else and <strong>SAPHRON</strong> should 
 find it. If the MKL is available via an environment module, it is recommended that it be 
 loaded since it offers superior performance. Just make sure that wherever the binary is
-deployed also has access.</p>
-<p><strong>SAPHRON will NOT compile until you perform the next step!</strong>
-By default, Armadillo assumes you want to link against its shared library. SAPHRON does not do this, 
+deployed also has access to the MKL.</p>
+<div class="admonition danger">
+<p class="admonition-title">STOP AND READ</p>
+<p><strong>SAPHRON</strong> will <strong>NOT</strong> compile until you perform the next step!</p>
+</div>
+<p>By default, Armadillo assumes you want to link against its shared library. <strong>SAPHRON</strong> does not do this, 
 but instead links directly to BLAS and LAPACK or MKL as mentioned above. To fix this, use your editor 
 of choice (here we use vim) to modify the Armadillo config header:</p>
 <pre><code class="bash">$ vim /usr/include/armadillo_bits/config.hpp
@@ -254,16 +257,16 @@ of choice (here we use vim) to modify the Armadillo config header:</p>
 
 <p>Just comment out the line that says <code>#define ARMA_USE_WRAPPER</code> and you're good to go!</p>
 <h4 id="openmp">OpenMP<a class="headerlink" href="#openmp" title="Permanent link"></a></h4>
-<p>SAPHRON uses OpenMP to parallelize energy evaluations, neighbor list generation and other 
+<p><strong>SAPHRON</strong> uses OpenMP to parallelize energy evaluations, neighbor list generation and other 
 calculations. It relies on compilers that support the <code>-fopenmp</code> flag. OpenMP support is enabled
-by default. If you do not want to run SAPHRON multi-threaded, see the advanced configuration 
+by default. If you do not want to run <strong>SAPHRON</strong> multi-threaded, see the advanced configuration 
 section below.</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link"></a></h2>
 <p>The first step is to clone the repository locally</p>
 <pre><code class="bash">$ git clone https://github.com/hsidky/SAPHRON.git
 </code></pre>
 
-<p>SAPHRON uses a CMake build system. It is recommended that you perform an out of source build. 
+<p><strong>SAPHRON</strong> uses a CMake build system. It is recommended that you perform an out of source build. 
 To do so, enter the following commands</p>
 <pre><code class="bash">$ cd SAPHRON
 $ mkdir build &amp;&amp; cd build
@@ -273,10 +276,10 @@ $ sudo make install
 </code></pre>
 
 <p>This will install a <code>saphron</code> binary into <code>/usr/local/bin</code> and a static library in <code>/usr/local/lib/libsaphron.a</code>.
-Now that SAPHRON is installed, hop on over to the <a href="getting-started/">Getting Started</a> page to
+Now that <strong>SAPHRON</strong> is installed, hop on over to the <a href="getting-started/">Getting Started</a> page to
 set up and run your first simulation!</p>
 <h4 id="advanced-installation">Advanced installation<a class="headerlink" href="#advanced-installation" title="Permanent link"></a></h4>
-<p>If you do not have root access or would like to build SAPHRON for a cluster, it is possible 
+<p>If you do not have root access or would like to build <strong>SAPHRON</strong> for a cluster, it is possible 
 to manually specify the location of the Armadillo headers by specifying the ARMA_PATHS variable
 in CMake</p>
 <pre><code class="bash">$ cmake -DARMA_PATHS=/path/to/arma ..
@@ -286,24 +289,25 @@ in CMake</p>
 <pre><code class="bash">$ cmake -DSAPHRON_OPENMP=false ..
 </code></pre>
 
-<p>By default, SAPHRON is built optimized without debug info, to change the build type to 
+<p>By default, <strong>SAPHRON</strong> is built optimized without debug info. To change the build type and 
 include debug info for debugging or profiling</p>
 <pre><code class="bash">$ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
 </code></pre>
 
 <p>Of course, any of the default CMake variables are available and can be combined as desired.</p>
 <h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link"></a></h2>
-<p>SAPHRON has a comprehensive, but not <em>exhaustive</em> suite of unit tests. They range from 
+<p><strong>SAPHRON</strong> has a comprehensive, but not <em>exhaustive</em> suite of unit tests. They range from 
 simple behavioral verification, to full fledged simulations verified against NIST data. 
 The <a href="https://code.google.com/p/googletest/">Google C++ Testing Framework</a> is used for 
 unit testing. It is automatically downloaded as part of the build process. It is a good idea 
-if deploying SAPHRON for the first time to run the unit tests. This can be done in the build 
+if deploying <strong>SAPHRON</strong> for the first time to run the unit tests. This can be done in the build 
 directory by typing </p>
 <pre><code class="bash">$ make test
 </code></pre>
 
 <p>It is also a great way to make sure that any customizations you make do not introduce new 
-bugs into the code and to get a feel for the SAPHRON API.</p>
+bugs into the code and to get a feel for the <strong>SAPHRON</strong> API. We recommend that you do this 
+right before a (preferably lengthy) lunch break as this may take a while...</p>
 <h2 id="acknowledgements">Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permanent link"></a></h2>
 <p><strong>SAPHRON</strong> utilizes the following packages: </p>
 <p>Armadillo (http://arma.sourceforge.net/)</p>
@@ -361,5 +365,5 @@ report bugs or request features; you can guide the development of this project!<
 
 <!--
 MkDocs version : 0.14.0
-Build Date UTC : 2015-11-28 22:48:38.043285
+Build Date UTC : 2015-11-30 04:07:36.665544
 -->
