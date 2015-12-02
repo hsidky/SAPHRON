@@ -3,35 +3,35 @@
     "items": {
         "oneOf": [
             {
+                "additionalProperties": false,
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "P2SA"
+                        ]
+                    },
+                    "director": {
+                        "maxItems": 3,
+                        "additionalItems": false,
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        },
+                        "minItems": 3
+                    },
+                    "coefficient": {
+                        "type": "number"
+                    },
+                    "selector": {}
+                },
                 "required": [
                     "type",
                     "coefficient",
                     "director",
                     "selector"
-                ],
-                "additionalProperties": false,
-                "properties": {
-                    "selector": {},
-                    "coefficient": {
-                        "type": "number"
-                    },
-                    "director": {
-                        "maxItems": 3,
-                        "additionalItems": false,
-                        "minItems": 3,
-                        "type": "array",
-                        "items": {
-                            "type": "number"
-                        }
-                    },
-                    "type": {
-                        "enum": [
-                            "P2SA"
-                        ],
-                        "type": "string"
-                    }
-                },
-                "type": "object"
+                ]
             }
         ]
     }

@@ -6,8 +6,26 @@
 			"enum" : ["Translate"]
 		},
 		"dx" : {
-			"type" : "number",
-			"minimum" : 0
+			"oneOf" : [
+				{
+					"type" : "number",
+					"minimum" : 0
+				},
+				{
+					"type" : "object",
+					"patternProperties": {
+						"^[A-z][A-z0-9]+$": {
+                            "minimum": 0.0,
+                            "type": "number",
+                        	"exclusiveMinimum": true
+                   		}
+					},
+					"minProperties" : 1
+				}
+			]
+		},
+		"explicit_draw" : {
+			"type" : "boolean"
 		},
 		"seed" : {
 			"type" : "integer",

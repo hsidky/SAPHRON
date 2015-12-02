@@ -192,12 +192,24 @@ namespace SAPHRON
 			validator.Validate(json, path);
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
-
-			double dx = json["dx"].asDouble();
+		
 			srand(time(NULL));
 			int seed = json.get("seed", rand()).asInt();
+			if(json["dx"].isObject())
+			{
+				std::map<std::string, double> dx; 
+				for(auto& s : json["dx"].getMemberNames())
+					dx[s] = json["dx"][s].asDouble();
 
-			move = new TranslateMove(dx, seed);
+				auto expl = json.get("explicit_draw", false).asBool();
+
+				move = new TranslateMove(dx, expl, seed);
+			}
+			else
+			{
+				auto dx = json["dx"].asDouble();
+				move = new TranslateMove(dx, seed);
+			}
 		}
 		else if(type == "VolumeSwap")
 		{

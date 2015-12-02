@@ -1,69 +1,86 @@
 {
-    "minItems": 1,
     "type": "array",
+    "minItems": 1,
     "items": {
-        "required": [
-            "type",
-            "dimensions",
-            "nlist_cutoff",
-            "skin_thickness",
-            "components"
-        ],
         "additionalProperties": false,
+        "type": "object",
         "properties": {
-            "particles": {
-                "type": "array"
+            "nlist_cutoff": {
+                "minimum": 0,
+                "type": "number",
+                "exclusiveMinimum": true
+            },
+            "type": {
+                "type": "string",
+                "enum": [
+                    "Simple"
+                ]
             },
             "temperature": {
                 "minimum": 0,
                 "type": "number"
             },
-            "seed": {
+            "skin_thickness": {
                 "minimum": 0,
-                "type": "integer"
+                "type": "number"
             },
             "pack": {
+                "type": "object",
                 "properties": {
                     "density": {
                         "minimum": 0,
                         "type": "number",
                         "exclusiveMinimum": true
                     },
-                    "composition": {
-                        "patternProperties": {
-                            "^[A-z][A-z0-9]+$": {
-                                "minimum": 0.0,
-                                "maximum": 1.0,
-                                "type": "number",
-                                "exclusiveMinimum": true
-                            }
-                        },
-                        "type": "object"
-                    },
                     "count": {
                         "minimum": 1,
                         "type": "integer"
+                    },
+                    "composition": {
+                        "type": "object",
+                        "patternProperties": {
+                            "^[A-z][A-z0-9]+$": {
+                                "minimum": 0.0,
+                                "type": "number",
+                                "maximum": 1.0,
+                                "exclusiveMinimum": true
+                            }
+                        }
                     }
-                },
-                "type": "object"
+                }
             },
-            "type": {
-                "enum": [
-                    "Simple"
-                ],
-                "type": "string"
-            },
-            "skin_thickness": {
-                "minimum": 0,
-                "type": "number"
-            },
-            "components": {
-                "minItems": 1,
+            "dimensions": {
+                "maxItems": 3,
+                "additionalItems": false,
                 "type": "array",
                 "items": {
+                    "minimum": 0,
+                    "type": "number"
+                },
+                "minItems": 3
+            },
+            "chemical_potential": {
+                "type": "object",
+                "patternProperties": {
+                    "^[A-z][A-z0-9]+$": {
+                        "type": "number"
+                    }
+                }
+            },
+            "particles": {
+                "type": "array"
+            },
+            "seed": {
+                "minimum": 0,
+                "type": "integer"
+            },
+            "components": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
                     "maxItems": 2,
-                    "minItems": 2,
                     "type": "array",
+                    "minItems": 2,
                     "items": [
                         {
                             "type": "string"
@@ -74,31 +91,14 @@
                         }
                     ]
                 }
-            },
-            "dimensions": {
-                "maxItems": 3,
-                "additionalItems": false,
-                "minItems": 3,
-                "type": "array",
-                "items": {
-                    "minimum": 0,
-                    "type": "number"
-                }
-            },
-            "nlist_cutoff": {
-                "minimum": 0,
-                "type": "number",
-                "exclusiveMinimum": true
-            },
-            "chemical_potential": {
-                "patternProperties": {
-                    "^[A-z][A-z0-9]+$": {
-                        "type": "number"
-                    }
-                },
-                "type": "object"
             }
         },
-        "type": "object"
+        "required": [
+            "type",
+            "dimensions",
+            "nlist_cutoff",
+            "skin_thickness",
+            "components"
+        ]
     }
 }
