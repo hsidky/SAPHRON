@@ -37,7 +37,7 @@ namespace Json
 		else if(json["anyOf"].isArray())
 			item = new AnyOfRequirement();
 		else if(json["oneOf"].isArray())
-			item = new AnyOfRequirement();
+			item = new OneOfRequirement();
 		else if(json["enum"].isArray())
 			item = new EnumRequirement();
 		else if(json["not"].isObject())
@@ -57,7 +57,7 @@ namespace Json
 		else if(json.isObject() && json.isMember("anyOf") && json["anyOf"].isArray())
 			item = new AnyOfRequirement();
 		else if(json.isObject() && json.isMember("oneOf") && json["oneOf"].isArray())
-			item = new AnyOfRequirement();
+			item = new OneOfRequirement();
 
 		return item;
 	}
