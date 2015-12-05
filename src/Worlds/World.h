@@ -175,6 +175,34 @@ namespace SAPHRON
 			return _particles[_rand.int32() % n];
 		}
 
+		// Uniformly draws a particle from the world based on a list 
+		// of species. This basically selects a random particle based 
+		// on mole fraction.
+		Particle* DrawParticleFromSpeciesList(const std::vector<int>& species)
+		{
+			// Compute total number of drawable species.
+			auto tot = 0;
+			for(auto& s : species)
+				tot += _composition[s];
+
+			// Pick a random number < tot.
+			int x = _rand.int32() % tot;
+
+			// Re-iterate through species and choose the appropriate one.
+			auto count = 0, id = 0;
+			for(auto& s : species)
+			{
+				count += _composition[s];
+				if(count > x)
+				{
+					id = s;
+					break;
+				}
+			}
+
+			return DrawRandomParticleBySpecies(id);
+		}
+
 		// Draws a random particle by species from the world. 
 		// Will return nullptr if species doesn't exist.
 		Particle* DrawRandomParticleBySpecies(int species)
@@ -194,6 +222,17 @@ namespace SAPHRON
 			size_t n = _primitives.size();
 			if(n < 1) return nullptr;
 			return _primitives[_rand.int32() % n];
+		}
+
+		// Draws a random primitive by species from the world. 
+		// Will return nullptr if species don't exist.
+		Particle* DrawRandomPrimitiveBySpecies(int species)
+		{
+			if((int)_composition.size() - 1 < species || _composition[species] < 1)
+				return nullptr;
+
+			int i = _rand.int32() % _composition[species];
+			return SelectPrimitiveBySpecies(species, i);
 		}
 
 		// Draw random particles from the world and inserts them into particles. 
@@ -271,6 +310,30 @@ namespace SAPHRON
 		const Particle* SelectParticleBySpecies(int species, int i) const
 		{
 			return SelectParticleBySpecies(species, i);
+		}
+
+		// Select the "ith" primitive of species "species".
+		Particle* SelectPrimitiveBySpecies(int species, int i)
+		{
+			auto it = std::find_if(_primitives.begin(), _primitives.end(), [=](Particle* p){
+				return p->GetSpeciesID() == species;
+			});
+
+			while(--i >= 0 && it != _primitives.end())
+			{
+				++it;
+				it = std::find_if(it, _primitives.end(), [=](Particle* p){
+					return p->GetSpeciesID() == species;
+				});
+			}
+
+			return *it;
+		}
+
+		// Select the "ith" primitive of species "species" (const).
+		const Particle* SelectPrimitiveBySpecies(int species, int i) const
+		{
+			return SelectPrimitiveBySpecies(species, i);
 		}
 
 		// Select a primitive particle by location.

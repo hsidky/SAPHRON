@@ -24,19 +24,21 @@ namespace SAPHRON
 
 		// Vector of dx's based on species ID.
 		std::vector<double> _sdx;
+		std::vector<int> _species;
 
 	public: 
 		// Initialize translate move with species based dx. Anything not 
 		// specified will initialize to zero.
 		TranslateMove(const std::map<int, double>& dx, bool expl, int seed = 2496) : 
-		_dx(0), _rand(seed), _rejected(0), _performed(0), _seed(seed), _explicit(expl), _sdx(0)
+		_dx(0), _rand(seed), _rejected(0), _performed(0), _seed(seed), _explicit(expl), 
+		_sdx(0), _species(0)
 		{
 			// Get species and initialize all dx's with zeros.
 			auto& list = Particle::GetSpeciesList();
 			_sdx.resize(list.size(), 0);
 
 			for(auto& id : dx)
-			{
+			{	
 				if(id.first >= (int)list.size())
 				{
 					std::cerr << "Species ID \"" 
@@ -45,17 +47,20 @@ namespace SAPHRON
 					exit(-1);
 				}
 				_sdx[id.first] = id.second;
+				_species.push_back(id.first);
 			}
 		}
 
 		// Initialize translate move with species based dx. Anything not specified 
 		// will initialize to zero.
 		TranslateMove(const std::map<std::string, double>& dx, bool expl, int seed = 2496) : 
-		_dx(0), _rand(seed), _rejected(0), _performed(0), _seed(seed), _explicit(expl), _sdx(0)
+		_dx(0), _rand(seed), _rejected(0), _performed(0), _seed(seed), _explicit(expl), 
+		_sdx(0), _species(0)
 		{
 			// Get species and initialize all dx's with zeros.
 			auto& list = Particle::GetSpeciesList();
 			_sdx.resize(list.size(), 0);
+			_species.resize(dx.size());
 
 			// Resolve strings to ID's and fill sdx.
 			for(auto& id : dx)
@@ -70,6 +75,7 @@ namespace SAPHRON
 				}
 
 				_sdx[it - list.begin()] = id.second;
+				_species.push_back(it - list.begin());
 			}
 		}
 
@@ -101,34 +107,7 @@ namespace SAPHRON
 			
 			// If we explicit draw. 
 			if(_explicit)
-			{
-				// Compute total number of movable particles. 
-				auto tot = 0; 
-				auto& comp = w->GetComposition();
-				for(size_t i = 0; i < _sdx.size(); ++i)
-					if(_sdx[i] != 0)
-						tot += comp[i];
-
-				// Pick a random number < tot.
-				int rnd = _rand.int32() % tot;
-
-				// Re-iterate through sdx and choose the appropriate 
-				// species.
-				auto cnt = 0;
-				int id = 0;
-				for(size_t i = 0; i < _sdx.size(); ++i)
-					if(_sdx[i] != 0)
-					{
-						cnt += comp[i];
-						if(cnt >= rnd)
-						{
-							id = i;
-							break;
-						}
-					}
-
-				particle = w->DrawRandomParticleBySpecies(id);
-			}
+				particle = w->DrawParticleFromSpeciesList(_species);
 			else
 				particle = w->DrawRandomParticle();
 
@@ -199,34 +178,7 @@ namespace SAPHRON
 						
 			// If we explicit draw. 
 			if(_explicit)
-			{
-				// Compute total number of movable particles. 
-				auto tot = 0; 
-				auto& comp = w->GetComposition();
-				for(size_t i = 0; i < _sdx.size(); ++i)
-					if(_sdx[i] != 0)
-						tot += comp[i];
-
-				// Pick a random number < tot.
-				int rnd = _rand.int32() % tot;
-
-				// Re-iterate through sdx and choose the appropriate 
-				// species.
-				auto cnt = 0;
-				int id = 0;
-				for(size_t i = 0; i < _sdx.size(); ++i)
-					if(_sdx[i] != 0)
-					{
-						cnt += comp[i];
-						if(cnt >= rnd)
-						{
-							id = i;
-							break;
-						}
-					}
-
-				particle = w->DrawRandomParticleBySpecies(id);
-			}
+				particle = w->DrawParticleFromSpeciesList(_species);
 			else
 				particle = w->DrawRandomParticle();
 
