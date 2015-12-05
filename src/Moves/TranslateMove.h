@@ -102,7 +102,31 @@ namespace SAPHRON
 			// If we explicit draw. 
 			if(_explicit)
 			{
-				auto id = _rand.int32() % _sdx.size();
+				// Compute total number of movable particles. 
+				auto tot = 0; 
+				auto& comp = w->GetComposition();
+				for(size_t i = 0; i < _sdx.size(); ++i)
+					if(_sdx[i] != 0)
+						tot += comp[i];
+
+				// Pick a random number < tot.
+				int rnd = _rand.int32() % tot;
+
+				// Re-iterate through sdx and choose the appropriate 
+				// species.
+				auto cnt = 0;
+				int id = 0;
+				for(size_t i = 0; i < _sdx.size(); ++i)
+					if(_sdx[i] != 0)
+					{
+						cnt += comp[i];
+						if(cnt >= rnd)
+						{
+							id = i;
+							break;
+						}
+					}
+
 				particle = w->DrawRandomParticleBySpecies(id);
 			}
 			else
@@ -176,7 +200,31 @@ namespace SAPHRON
 			// If we explicit draw. 
 			if(_explicit)
 			{
-				auto id = _rand.int32() % _sdx.size();
+				// Compute total number of movable particles. 
+				auto tot = 0; 
+				auto& comp = w->GetComposition();
+				for(size_t i = 0; i < _sdx.size(); ++i)
+					if(_sdx[i] != 0)
+						tot += comp[i];
+
+				// Pick a random number < tot.
+				int rnd = _rand.int32() % tot;
+
+				// Re-iterate through sdx and choose the appropriate 
+				// species.
+				auto cnt = 0;
+				int id = 0;
+				for(size_t i = 0; i < _sdx.size(); ++i)
+					if(_sdx[i] != 0)
+					{
+						cnt += comp[i];
+						if(cnt >= rnd)
+						{
+							id = i;
+							break;
+						}
+					}
+
 				particle = w->DrawRandomParticleBySpecies(id);
 			}
 			else

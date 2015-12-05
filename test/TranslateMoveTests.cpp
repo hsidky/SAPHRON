@@ -7,6 +7,32 @@
 #include <cmath>
 #include <numeric>
 
+namespace SAPHRON
+{
+	class TranslateParticleCounter : public ParticleObserver
+	{
+		public:
+			std::map<std::string, int> movecounts;
+
+			TranslateParticleCounter() : movecounts()
+			{}
+
+			virtual void ParticleUpdate(const ParticleEvent& pEvent) override
+			{
+				auto* p = pEvent.GetParticle();
+				auto s = p->GetSpecies();
+				
+				if (pEvent.position)
+				{
+					if(movecounts.find(s) == movecounts.end())
+						movecounts[s] = 1;
+					else
+						++movecounts[s];
+				}
+			}
+	};
+}
+
 using namespace SAPHRON;
 
 // Test TranslateMove default behavior
@@ -68,5 +94,49 @@ TEST(TranslateMove, Selector)
 		else
 			ASSERT_TRUE(is_close(p2, p->GetPosition(), 1e-10));
 	}
+}
 
+TEST(TranslateMove, ExplicitDraw)
+{
+	World world(10.0, 10.0, 10.0, 5.0, 0.0);
+	WorldManager wm;
+	wm.AddWorld(&world);
+
+	Position p1 = {0, 0, 1.0};
+	Position p2 = {0, 0, 0};
+
+	Site s1(p1, {0, 0, 0}, "S1");
+	Site s2(p2, {0, 0, 0}, "S2");
+	Site s3(p2, {0, 0, 0}, "S3");
+
+	world.PackWorld({&s1, &s2, &s3}, {0.1, 0.3, 0.6}, 1000, 0.01);
+
+	ASSERT_EQ(1000, world.GetParticleCount());
+
+	auto& comp = world.GetComposition();
+	ASSERT_EQ(100, comp[s1.GetSpeciesID()]);
+	ASSERT_EQ(300, comp[s2.GetSpeciesID()]);
+	ASSERT_EQ(600, comp[s3.GetSpeciesID()]);
+	
+
+	// Add particle counter to all particles.
+	TranslateParticleCounter counter;
+	for(auto& p : world)
+		p->AddObserver(&counter);
+
+	// Empty forcefield manager.
+	ForceFieldManager ffm;
+	std::map<int, double> dx = {{s1.GetSpeciesID(), 0.5}, {s2.GetSpeciesID(), 0.7}, {s3.GetSpeciesID(), 0.3}};
+
+	// Explicit draw.
+	TranslateMove m1(dx, true);
+
+	// Perform the move lots.
+	for(int i = 0; i < 10000; ++i)
+		m1.Perform(&wm, &ffm, MoveOverride::ForceAccept);
+
+	// Ratio of moves performed to composition should be close.
+	ASSERT_NEAR(counter.movecounts["S1"]/10000., 0.1, 1e-2);
+	ASSERT_NEAR(counter.movecounts["S2"]/10000., 0.3, 1e-2);
+	ASSERT_NEAR(counter.movecounts["S3"]/10000., 0.6, 1e-2);
 }
