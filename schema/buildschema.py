@@ -45,6 +45,7 @@ files = [
 	("worlds/worlds.json", "Worlds"),
 	("worlds/components.world.json", "Components"),
 	("forcefields/lennardjones.forcefield.json", "LennardJonesFF"),
+	("forcefields/lennardjonests.forcefield.json", "LennardJonesTSFF"),
 	("forcefields/lebwohllasher.forcefield.json", "LebwholLasherFF"),
 	("forcefields/dsf.forcefield.json", "DSFFF"),
 	("forcefields/debyehuckel.forcefield.json", "DebyeHuckelFF"),

@@ -17,6 +17,7 @@ namespace SAPHRON
 		static std::string DebyeHuckelFF;
 		static std::string DSFFF;
 		static std::string LebwholLasherFF;
+		static std::string LennardJonesTSFF;
 		static std::string LennardJonesFF;
 		static std::string Components;
 		static std::string Worlds;

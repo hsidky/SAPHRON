@@ -4,6 +4,7 @@
 #include "../Validator/ObjectRequirement.h"
 #include "schema.h"
 #include "LennardJonesFF.h"
+#include "LennardJonesTSFF.h"
 #include "LebwohlLasherFF.h"
 #include "DSFFF.h"
 #include "DebyeHuckelFF.h"
@@ -125,6 +126,25 @@ namespace SAPHRON
 				rc.push_back(r.asDouble());
 
 			ff = new LennardJonesFF(eps, sigma, rc);
+		}
+		else if(type == "LennardJonesTS")
+		{
+			reader.parse(JsonSchema::LennardJonesTSFF, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs. 
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			double eps = json["epsilon"].asDouble();
+			double sigma = json["sigma"].asDouble();
+			
+			CutoffList rc;
+			for(auto r : json["rcut"])
+				rc.push_back(r.asDouble());
+
+			ff = new LennardJonesTSFF(eps, sigma, rc);
 		}
 		else if(type == "LebwohlLasher")
 		{

@@ -275,6 +275,12 @@ target_include_directories(LennardJonesFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(LennardJonesFFTests googletest) 
 add_test(LennardJonesFFTests LennardJonesFFTests)
 
+add_executable(LennardJonesTSFFTests test/LennardJonesTSFFTests.cpp)
+target_link_libraries(LennardJonesTSFFTests ${TEST_DEPS})
+target_include_directories(LennardJonesTSFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(LennardJonesTSFFTests googletest) 
+add_test(LennardJonesTSFFTests LennardJonesTSFFTests)
+
 add_executable(MoleculeTests test/MoleculeTests.cpp)
 target_link_libraries(MoleculeTests ${TEST_DEPS})
 target_include_directories(MoleculeTests PRIVATE "${GTEST_INCLUDE_DIR}")
