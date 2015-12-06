@@ -97,7 +97,7 @@ namespace SAPHRON
 			double de2 = ef2.energy.total() - ei2.total();
 
 			// Get SimInfo for kB.
-			auto sim = SimInfo::Instance();
+			auto& sim = SimInfo::Instance();
 
 			// Calculate acceptance.
 			double beta = 1.0/(sim.GetkB()*w1->GetTemperature());
