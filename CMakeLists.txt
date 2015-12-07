@@ -323,6 +323,12 @@ target_include_directories(ParticleSwapMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(ParticleSwapMoveTests googletest) 
 add_test(ParticleSwapMoveTests ParticleSwapMoveTests)
 
+add_executable(PVTEnsembleTests test/PVTEnsembleTests.cpp)
+target_link_libraries(PVTEnsembleTests ${TEST_DEPS})
+target_include_directories(PVTEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(PVTEnsembleTests googletest) 
+add_test(PVTEnsembleTests PVTEnsembleTests)
+
 add_executable(RandomIdentityMoveTests test/RandomIdentityMoveTests.cpp)
 target_link_libraries(RandomIdentityMoveTests ${TEST_DEPS})
 target_include_directories(RandomIdentityMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
