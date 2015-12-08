@@ -46,6 +46,17 @@ namespace SAPHRON
 		// Serialize 
 		virtual void Serialize(Json::Value& json) const = 0;
 
+		// Build a bonded forcefield from a JSON node. Returns a pointer to the built 
+		// FF in addition to adding it to the FFM. If return value is nullptr, then an 
+		// unknown error occurred. Will throw BuildException on failure. Object lifetime 
+		// is the caller's responsibility.
+		static ForceField* BuildBonded(const Json::Value& json, ForceFieldManager* ffm);
+		
+		// Overloaded function allowing JSON path specification.
+		static ForceField* BuildBonded(const Json::Value& json,
+									   ForceFieldManager* ffm,
+									   const std::string& path);
+
 		// Build a non-bonded forcefield from a JSON node. Returns a pointer to the built 
 		// FF in addition to adding it to the FFM. If return value is nullptr, then an 
 		// unknown error occurred. Will throw BuildException on failure. Object lifetime 

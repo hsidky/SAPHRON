@@ -14,6 +14,7 @@ namespace SAPHRON
 		static std::string DOSSimulation;
 		static std::string Simulation;
 		static std::string ForceFields;
+		static std::string FENEFF;
 		static std::string DebyeHuckelFF;
 		static std::string DSFFF;
 		static std::string LebwholLasherFF;

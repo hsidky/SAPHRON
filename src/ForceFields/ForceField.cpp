@@ -8,6 +8,7 @@
 #include "LebwohlLasherFF.h"
 #include "DSFFF.h"
 #include "DebyeHuckelFF.h"
+#include "FENEFF.h"
 
 using namespace Json;
 
@@ -179,6 +180,61 @@ namespace SAPHRON
 
 		return ff;
 	}
+	
+	ForceField* ForceField::BuildBonded(const Json::Value& json, ForceFieldManager *ffm)
+	{
+		return BuildBonded(json, ffm, "#/forcefields/bonded");
+	}
+
+	ForceField* ForceField::BuildBonded(const Json::Value& json, 
+										ForceFieldManager* ffm, 
+										const std::string& path)
+	{
+		ObjectRequirement validator; 
+		Value schema;
+		Reader reader;
+
+		ForceField* ff = nullptr;
+
+		// Get forcefield type.
+		std::string type = json.get("type", "none").asString(); 
+		
+		if(type == "FENE")
+		{
+			reader.parse(JsonSchema::FENEFF, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs. 
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			auto eps = json["epsilon"].asDouble();
+			auto sigma = json["sigma"].asDouble();
+			auto kspring = json["kspring"].asDouble();
+			auto rmax = json["rmax"].asDouble();
+
+			ff = new FENEFF(eps, sigma, kspring, rmax);
+		}
+		else
+		{
+			throw BuildException({path + ": Unknown forcefield type specified."});
+		}
+
+		// Add to appropriate species pair.
+		try{
+			std::string p1type = json["species"][0].asString();
+			std::string p2type = json["species"][1].asString();
+			ffm->AddBondedForceField(p1type, p2type, *ff);
+		} catch(std::exception& e) {
+			delete ff;
+			throw BuildException({
+				e.what()
+			});
+		}
+
+		return ff;		
+	}
 
 	void ForceField::BuildForceFields(const Value& json, 
 									  ForceFieldManager* ffm, 
@@ -206,11 +262,22 @@ namespace SAPHRON
 			++i;
 		}
 
+		// Loop through electrostatic.
 		i = 0;
 		for(auto& ff : json["electrostatic"])
 		{
 			fflist.push_back(
 				BuildElectrostatic(ff, ffm, "#forcefields/electrostatic/" + std::to_string(i))
+				);
+			++i;
+		}
+
+		// Loop through bonded.
+		i = 0;
+		for(auto& ff : json["bonded"])
+		{
+			fflist.push_back(
+				BuildBonded(ff, ffm, "#forcefields/bonded/" + std::to_string(i))
 				);
 			++i;
 		}

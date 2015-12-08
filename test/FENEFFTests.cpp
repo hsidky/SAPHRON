@@ -1,14 +1,11 @@
 #include "../src/ForceFields/FENEFF.h"
 #include "../src/ForceFields/ForceFieldManager.h"
-#include "../src/Simulation/NVTSimulation.h"
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Particles/Site.h"
-#include "../src/Observers/ConsoleObserver.h"
 #include "../src/Observers/DLMFileObserver.h"
 #include "../src/Observers/JSONObserver.h"
 #include "TestAccumulator.h"
-#include "../src/Worlds/SimpleWorld.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
@@ -38,11 +35,11 @@ TEST(FENEFF, DefaultBehavior)
 	};
 
 	// Validate invidual components first.
-	auto NB = ff.Evaluate(s1, s2, s1.GetPosition() - s2.GetPosition());
+	auto NB = ff.Evaluate(s1, s2, s1.GetPosition() - s2.GetPosition(), 0);
 	ASSERT_NEAR(22.698, NB.energy, 1e-3);
-	auto NB2 = ff.Evaluate(s3, s4, s3.GetPosition() - s4.GetPosition());
+	auto NB2 = ff.Evaluate(s3, s4, s3.GetPosition() - s4.GetPosition(), 0);
 	ASSERT_NEAR(20.838, NB2.energy, 1e-3);
-	auto NB3 = ff.Evaluate(s5, s6, s5.GetPosition() - s6.GetPosition());
+	auto NB3 = ff.Evaluate(s5, s6, s5.GetPosition() - s6.GetPosition(), 0);
 	ASSERT_EQ(3E100, NB3.energy);
 
 }

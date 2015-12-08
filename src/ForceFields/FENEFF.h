@@ -27,29 +27,24 @@ namespace SAPHRON
 			{ 
 			}
 
-			// TODO: virial for FENE
-			inline virtual Interaction Evaluate(const Particle&, 
-												const Particle&, 
-												const Position& rij,
-												unsigned int) override
+			virtual Interaction Evaluate(const Particle&, 
+										 const Particle&, 
+										 const Position& rij,
+										 unsigned int) override
 			{
 				Interaction ep;
-
-				double rsq = arma::dot(rij,rij);
+				auto rsq = fdot(rij, rij);
 
 				if(rsq < _rmaxsq)
 				{
-					double sr6 = _sigma3*_sigma3/(rsq*rsq*rsq);
-					ep.energy = -0.5*_kspring*_rmaxsq*log(1-(rsq/_rmaxsq))+4.0*_epsilon*(sr6*sr6-sr6) + _epsilon;
+					auto sr6 = _sigma3*_sigma3/(rsq*rsq*rsq);
+					auto rrmax = 1.0 - rsq/_rmaxsq;
+					ep.energy = -0.5*_kspring*_rmaxsq*log(rrmax) 
+					+ 4.0*_epsilon*(sr6*sr6-sr6) + _epsilon;
+					ep.virial = _kspring/rrmax + 24.0*_epsilon*(sr6-2.0*sr6*sr6)/rsq;
 				}
-
-				//Hard potential, spring stretched too far
-				//TODO: Change to a flag that will stop the simulation
 				else
-				{
 					ep.energy = 3E100;
-				}
-
 
 				return ep;
 			}
@@ -63,11 +58,5 @@ namespace SAPHRON
 				json["kspring"] = _kspring;
 				json["rmax"] = sqrt(_rmaxsq);
 			}
-
-			double GetEpsilon() { return _epsilon; }
-			double GetSigma() { return sqrt(_sigmasq); }
-			double GetKSPring() { return _kspring; }
-			double GetRMax() { return sqrt(_rmaxsq); }
-
 	};
 }

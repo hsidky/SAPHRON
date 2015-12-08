@@ -1,0 +1,27 @@
+{
+	"type" : "object", 
+	"properties": {
+		"type" : {
+			"type": "string",
+			"enum": ["FENE"]
+		},
+		"epsilon" : {
+			"type" : "number"
+		},
+		"sigma" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"kspring" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"rmax" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"species" : "@file(bonded.forcefield.json)"
+	},
+	"additionalProperties": false,
+	"required": ["type", "epsilon", "sigma", "kspring", "rmax", "species"]
+}

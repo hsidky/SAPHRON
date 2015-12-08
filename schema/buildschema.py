@@ -49,6 +49,7 @@ files = [
 	("forcefields/lebwohllasher.forcefield.json", "LebwholLasherFF"),
 	("forcefields/dsf.forcefield.json", "DSFFF"),
 	("forcefields/debyehuckel.forcefield.json", "DebyeHuckelFF"),
+	("forcefields/fene.forcefield.json", "FENEFF"),
 	("forcefields/forcefields.json", "ForceFields"),
 	("simulation/simulation.json", "Simulation"),
 	("simulation/dos.simulation.json", "DOSSimulation"),
