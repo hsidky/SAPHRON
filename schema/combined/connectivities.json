@@ -3,35 +3,35 @@
     "items": {
         "oneOf": [
             {
-                "type": "object",
                 "required": [
                     "type",
                     "coefficient",
                     "director",
                     "selector"
                 ],
-                "additionalProperties": false,
+                "type": "object",
                 "properties": {
+                    "coefficient": {
+                        "type": "number"
+                    },
                     "director": {
-                        "type": "array",
-                        "additionalItems": false,
                         "minItems": 3,
                         "maxItems": 3,
+                        "additionalItems": false,
+                        "type": "array",
                         "items": {
                             "type": "number"
                         }
                     },
+                    "selector": {},
                     "type": {
                         "type": "string",
                         "enum": [
                             "P2SA"
                         ]
-                    },
-                    "coefficient": {
-                        "type": "number"
-                    },
-                    "selector": {}
-                }
+                    }
+                },
+                "additionalProperties": false
             }
         ]
     }

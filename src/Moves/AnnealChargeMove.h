@@ -20,6 +20,25 @@ namespace SAPHRON
 		int _seed;
 
 	public:
+		AnnealChargeMove(const std::vector<std::string>& species, int seed = 2474) : 
+		_species(0), _rand(seed), _performed(0), _rejected(0), _seed(seed)
+		{
+			// Verify species list and add to local vector.
+			auto& list = Particle::GetSpeciesList();
+			for(auto& id : species)
+			{
+				auto it = std::find(list.begin(), list.end(), id);
+				if(it == list.end())
+				{
+					std::cerr << "Species ID \""
+							  << id << "\" provided does not exist."
+							  << std::endl;
+					exit(-1);
+				}
+				_species.push_back(it - list.begin());
+			}
+		}
+
 		AnnealChargeMove(const std::vector<int>& species, int seed = 438765) :
 		_species(0), _rand(seed), _performed(0), _rejected(0), _seed(seed)
 		{

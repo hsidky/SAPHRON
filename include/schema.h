@@ -32,6 +32,7 @@ namespace SAPHRON
 		static std::string XYZObserver;
 		static std::string JSONObserver;
 		static std::string DLMFileObserver;
+		static std::string AnnealChargeMove;
 		static std::string DeleteParticleMove;
 		static std::string InsertParticleMove;
 		static std::string VolumeSwapMove;

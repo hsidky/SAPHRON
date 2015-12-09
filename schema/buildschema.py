@@ -32,6 +32,7 @@ files = [
 	("moves/volumeswap.move.json", "VolumeSwapMove"),
 	("moves/insertparticle.move.json", "InsertParticleMove"),
 	("moves/deleteparticle.move.json", "DeleteParticleMove"),
+	("moves/annealcharge.move.json", "AnnealChargeMove"),
 	("observers/dlmfile.observer.json", "DLMFileObserver"),
 	("observers/json.observer.json", "JSONObserver"),
 	("observers/xyz.observer.json", "XYZObserver"),

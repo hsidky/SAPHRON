@@ -18,6 +18,7 @@
 #include "VolumeSwapMove.h"
 #include "InsertParticleMove.h"
 #include "DeleteParticleMove.h"
+#include "AnnealChargeMove.h"
 
 using namespace Json;
 
@@ -42,7 +43,26 @@ namespace SAPHRON
 		// Get move type. 
 		std::string type = json.get("type", "none").asString();
 
-		if(type == "DeleteParticle")
+		if(type == "AnnealCharge")
+		{
+			reader.parse(JsonSchema::AnnealChargeMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			srand(time(NULL));
+			int seed = json.get("seed", rand()).asInt();	
+
+			std::vector<std::string> species;
+			for(auto& s : json["species"])
+				species.push_back(s.asString());
+
+			move = new AnnealChargeMove(species, seed);
+		}
+		else if(type == "DeleteParticle")
 		{
 			reader.parse(JsonSchema::DeleteParticleMove, schema);
 			validator.Parse(schema, path);
