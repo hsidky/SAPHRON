@@ -1,5 +1,4 @@
 {
-    "type": "array",
     "items": {
         "oneOf": [
             {
@@ -9,30 +8,31 @@
                     "director",
                     "selector"
                 ],
-                "type": "object",
+                "additionalProperties": false,
                 "properties": {
+                    "director": {
+                        "maxItems": 3,
+                        "additionalItems": false,
+                        "items": {
+                            "type": "number"
+                        },
+                        "minItems": 3,
+                        "type": "array"
+                    },
                     "coefficient": {
                         "type": "number"
                     },
-                    "director": {
-                        "minItems": 3,
-                        "maxItems": 3,
-                        "additionalItems": false,
-                        "type": "array",
-                        "items": {
-                            "type": "number"
-                        }
-                    },
                     "selector": {},
                     "type": {
-                        "type": "string",
                         "enum": [
                             "P2SA"
-                        ]
+                        ],
+                        "type": "string"
                     }
                 },
-                "additionalProperties": false
+                "type": "object"
             }
         ]
-    }
+    },
+    "type": "array"
 }
