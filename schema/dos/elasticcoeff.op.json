@@ -1,5 +1,6 @@
 {
 	"type" : "object", 
+	"varname" : "ElasticCoeffOP",
 	"properties" : {
 		"type" : {
 			"type" : "string",

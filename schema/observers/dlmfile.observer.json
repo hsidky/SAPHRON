@@ -1,4 +1,6 @@
 {
+	"type" : "object",
+	"varname" : "DLMFileObserver",
 	"properties" : {
 		"type" : {
 			"type" : "string",

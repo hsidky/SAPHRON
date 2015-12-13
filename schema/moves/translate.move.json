@@ -1,5 +1,6 @@
 {
 	"type" : "object",
+	"varname" : "TranslateMove",
 	"properties" : {
 		"type" : { 
 			"type" : "string",

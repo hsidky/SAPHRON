@@ -1,5 +1,6 @@
 {
 	"type" : "object",
+	"varname" : "WangLandauOP",
 	"properties" : {
 		"type" : {
 			"type": "string",

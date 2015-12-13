@@ -141,9 +141,23 @@ set(SOURCE
 	src/Validator/RequirementLoader.cpp
 )
 
+
+# Add schema builder
+add_custom_target(
+    schema ALL
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/__bogus.h
+    )
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/__bogus.h
+                   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                   COMMAND python schema/buildschema.py
+                   COMMENT "Generating schema source files"
+                   )
+
 add_library(libsaphron ${SOURCE})
 set_target_properties(libsaphron PROPERTIES PREFIX "")
 target_link_libraries(libsaphron ${SAPH_LIBS})
+add_dependencies(libsaphron schema)
 
 add_executable(saphron 
 	src/main.cpp 
@@ -163,7 +177,6 @@ if(SAPHRON_OPENMP)
 	message(STATUS "*** OpenMP Parallelization enabled!")
 	message(STATUS "")
 endif()
-
 
 # Add testing 
 enable_testing()

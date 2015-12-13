@@ -1,5 +1,6 @@
 {
 	"type" : "object", 
+	"varname" : "LennardJonesFF",
 	"properties" : {
 		"type" : {
 			"type" : "string",

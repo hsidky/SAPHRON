@@ -1,5 +1,6 @@
 {
 	"type": "array",
+	"varname" : "Worlds",
 	"items" : "@file(simple.world.json)",
 	"minItems" : 1
 }

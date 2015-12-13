@@ -164,7 +164,7 @@ namespace SAPHRON
 		}
 		else if(type == "LebwohlLasher")
 		{
-			reader.parse(JsonSchema::LebwholLasherFF, schema);
+			reader.parse(JsonSchema::LebwohlLasherFF, schema);
 			validator.Parse(schema, path);
 
 			// Validate inputs.

@@ -1,4 +1,6 @@
 {
+	"type" : "object",
+	"varname" : "XYZObserver",
 	"properties" : {
 		"type" : {
 			"type" : "string",

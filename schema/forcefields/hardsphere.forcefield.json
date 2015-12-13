@@ -1,5 +1,6 @@
 {
 	"type" : "object",
+	"varname" : "HardSphereFF",
 	"properties" : {
 		"type" : {
 			"type" : "string",

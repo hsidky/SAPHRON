@@ -1,5 +1,6 @@
 {
 	"type" : "object",
+	"varname" : "ForceFields",
 	"properties" : {
 		"nonbonded" : {
 			"type": "array"

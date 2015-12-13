@@ -1,5 +1,6 @@
 {
 	"type" : "array",
+	"varname" : "Position",
 	"minItems": 3,
 	"maxItems": 3,
 	"items" : {

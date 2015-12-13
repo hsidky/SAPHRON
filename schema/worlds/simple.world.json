@@ -1,5 +1,6 @@
 {
 	"type" : "object",
+	"varname" : "SimpleWorld",
 	"properties" : {
 		"type" : {
 			"type" : "string",

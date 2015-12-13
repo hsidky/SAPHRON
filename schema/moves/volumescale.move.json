@@ -1,5 +1,6 @@
 {
 	"type" : "object",
+	"varname" : "VolumeScaleMove",
 	"properties" : {
 		"type" : { 
 			"type" : "string",

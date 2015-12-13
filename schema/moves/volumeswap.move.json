@@ -1,5 +1,6 @@
 {
 	"type" : "object", 
+	"varname" : "VolumeSwapMove",
 	"properties" : {
 		"type" : {
 			"type" : "string",

@@ -1,5 +1,6 @@
 {
 	"type": "object",
+	"varname" : "Simulation",
 	"properties" : {
 		"units" : {
 			"type" : "string",

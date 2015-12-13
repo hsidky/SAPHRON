@@ -1,5 +1,6 @@
 {
 	"type" : "object",
+	"varname" : "Blueprints",
 	"patternProperties" : {
 		"^[A-z][A-z0-9]+$" : {
 			"type" : "object",

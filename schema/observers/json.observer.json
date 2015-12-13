@@ -1,4 +1,6 @@
 {
+	"type" : "object",
+	"varname" : "JSONObserver",
 	"properties" : {
 		"type" : {
 			"type" : "string",
