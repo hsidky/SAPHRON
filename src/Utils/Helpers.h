@@ -66,6 +66,8 @@ namespace SAPHRON
 	{
 		size_t found;
 		found = str.find_last_of("/\\");
+		if(found == str.npos)
+			return "./";
 		return str.substr(0, found);
 	}
 }

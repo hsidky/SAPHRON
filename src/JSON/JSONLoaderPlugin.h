@@ -21,12 +21,15 @@ namespace SAPHRON
 		{
 			std::smatch matches;
 			auto pattern = std::regex("\"@include\\((.*)\\)\"", std::regex::ECMAScript);
-			if(regex_search(contents, matches, pattern))
+			while(regex_search(contents, matches, pattern))
 			{
 				for(size_t i = 1; i < matches.size(); ++i)
 				{
 					auto content = GetFileContents((path + "/" + matches[i].str()).c_str());
-					contents = regex_replace(contents, pattern, content);
+					auto rpattern = std::regex("\"@include\\(" +
+											   matches[i].str() +
+											   "\\)\"", std::regex::ECMAScript);
+					contents = regex_replace(contents, rpattern, content);
 				}
 			}
 		}
