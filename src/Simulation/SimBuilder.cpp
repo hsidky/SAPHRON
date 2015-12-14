@@ -50,6 +50,14 @@ namespace SAPHRON
 
 		cout << setw(_notw) << right << "\033[32mOK!\033[0m\n";
 
+		// Set units. 
+		auto units = root.get("units", "reduced").asString();
+		if(units == "real")
+		{
+			auto& siminfo = SimInfo::Instance();
+			siminfo.SetUnits(SimUnits::real);
+		}
+
 		// Build world(s).
 		PrintBoldNotice(" > Building world(s)...", _msgw); 
 		for(auto& jworld : root["worlds"])
