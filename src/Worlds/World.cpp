@@ -365,16 +365,21 @@ namespace SAPHRON
 			auto ys = l/_H(1,1);
 			auto zs = l/_H(2,2);
 
-			#pragma omp parallel for schedule(static)
-			for(auto it = _particles.begin(); it < _particles.end(); ++it)
-			{
-				const auto& pos = (*it)->GetPosition();
-				(*it)->SetPosition(xs*pos[0], ys*pos[1], zs*pos[2]);
-			}
-
 			_H(0,0) = l;
 			_H(1,1) = l;
 			_H(2,2) = l;
+
+			#pragma omp parallel for schedule(static)
+			for(auto it = _particles.begin(); it < _particles.end(); ++it)
+			{
+				auto pos = (*it)->GetPosition();
+				pos[0] *= xs;
+				pos[1] *= ys;
+				pos[2] *= zs;
+				ApplyPeriodicBoundaries(&pos);
+				(*it)->SetPosition(pos);
+			}
+
 		}
 		else
 		{
