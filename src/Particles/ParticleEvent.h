@@ -15,6 +15,7 @@ namespace SAPHRON
 			Position _oldPosition;
 			int _oldSpecies;
 			double _oldCharge;
+			//bool _OldTagState;
 			Particle* _child;
 
 		public:
@@ -30,6 +31,7 @@ namespace SAPHRON
 					unsigned int director : 1;
 					unsigned int species : 1;
 					unsigned int charge : 1;
+					//unsigned int tag : 1;
 					unsigned int child_add: 1;
 					unsigned int child_remove: 1;
 				};

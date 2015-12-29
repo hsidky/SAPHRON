@@ -19,7 +19,7 @@ namespace SAPHRON
 			// Initializes a site at a given position with a given director and species.
 			Site(Position position, Director director, std::string species) : 
 			Particle(species), _position(position), _director(director), _checkpoint(),
-			_charge(0.0), _mass(1.0) 
+			_charge(0.0), _mass(1.0)
 			{}
 
 			// Gets site position.

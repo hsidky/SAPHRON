@@ -10,11 +10,12 @@
 		},
 		"@file(position.particle.json)",
 		"@file(director.particle.json)",
+		"@file(tag.particle.json)",
 		{
 			"type": "string"
 		}
 	],
 	"additionalItems" : false,
 	"minItems" : 3,
-	"maxItems" : 4
+	"maxItems" : 5
 }
