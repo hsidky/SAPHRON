@@ -1,5 +1,6 @@
 {
 	"type" : "object",
+	"varname" : "RotateMove",
 	"properties" : {
 		"type" : {
 			"type" : "string",

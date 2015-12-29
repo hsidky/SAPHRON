@@ -1,9 +1,14 @@
 {
 	"type" : "object",
+	"varname" : "VolumeScaleMove",
 	"properties" : {
 		"type" : { 
 			"type" : "string",
 			"enum" : ["VolumeScale"]
+		},
+		"Pextern" : {
+			"type" : "number",
+			"minimum" : 0
 		},
 		"dv" : {
 			"type" : "number",
@@ -18,6 +23,6 @@
 			"minimum" : 1
 		}
 	},
-	"required": ["type", "dv"],
+	"required": ["type", "dv", "Pextern"],
 	"additionalProperties": false
 }

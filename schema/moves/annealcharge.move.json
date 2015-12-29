@@ -1,5 +1,6 @@
 {
 	"type" : "object",
+	"varname" : "AnnealChargeMove",
 	"properties" : {
 		"type" : { 
 			"type" : "string",

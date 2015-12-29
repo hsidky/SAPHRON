@@ -64,7 +64,8 @@ namespace SAPHRON
 			// Compute acceptance rule.
 			auto& sim = SimInfo::Instance();
 			auto beta = 1.0/(w->GetTemperature()*sim.GetkB());
-			auto arg = -beta*(de.total() + _pextern*(vf - vi) - (n + 1.0) * log(vf/vi)/beta);
+			auto pconv = sim.GetPressureConv();
+			auto arg = -beta*(de.total() + _pextern/pconv*(vf - vi) - (n + 1.0) * log(vf/vi)/beta);
 			auto p = exp(arg);
 			p = p > 1.0 ? 1.0 : p;
 

@@ -1,5 +1,6 @@
 {
 	"type" : "object", 
+	"varname" : "FENEFF",
 	"properties": {
 		"type" : {
 			"type": "string",

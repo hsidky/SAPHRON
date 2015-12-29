@@ -16,6 +16,7 @@
 #include "RotateMove.h"
 #include "SpeciesSwapMove.h"
 #include "VolumeSwapMove.h"
+#include "VolumeScaleMove.h"
 #include "InsertParticleMove.h"
 #include "DeleteParticleMove.h"
 #include "AnnealChargeMove.h"
@@ -230,6 +231,23 @@ namespace SAPHRON
 				auto dx = json["dx"].asDouble();
 				move = new TranslateMove(dx, seed);
 			}
+		}
+		else if(type == "VolumeScale")
+		{
+			reader.parse(JsonSchema::VolumeScaleMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs. 
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			auto dv = json["dv"].asDouble();
+			auto Pextern = json["Pextern"].asDouble();
+			srand(time(NULL));
+			auto seed = json.get("seed", rand()).asInt();
+
+			move = new VolumeScaleMove(Pextern, dv, seed);		
 		}
 		else if(type == "VolumeSwap")
 		{

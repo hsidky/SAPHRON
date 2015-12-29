@@ -1,5 +1,6 @@
 {
 	"type" : "object",
+	"varname" : "P2SAConnectivity",
 	"properties" : {
 		"type" : { 
 			"type" : "string",

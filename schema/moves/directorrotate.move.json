@@ -1,5 +1,6 @@
 {
 	"type" : "object",
+	"varname" : "DirectorRotateMove",
 	"properties" : {
 		"type" : { 
 			"type" : "string",

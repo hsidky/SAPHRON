@@ -1,0 +1,18 @@
+{
+	"type" : "object",
+	"varname" : "HardSphereFF",
+	"properties" : {
+		"type" : {
+			"type" : "string",
+			"enum" : ["HardSphere"]
+		},
+		"sigma" : {
+			"type" : "number",
+			"minimum" : 0,
+			"exclusiveMinimum" : true
+		},
+		"species" : "@file(nonbonded.forcefield.json)"
+	},
+	"additionalProperties" : false,
+	"required" : ["type", "sigma", "species"]
+}

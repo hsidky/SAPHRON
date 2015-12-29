@@ -1,5 +1,6 @@
 {
 	"type" : "object",
+	"varname" : "InsertParticleMove",
 	"properties" : {
 		"type" : { 
 			"type" : "string",

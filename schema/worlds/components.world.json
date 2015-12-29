@@ -1,5 +1,6 @@
 {
 	"type" : "array",
+	"varname" : "Components",
 	"items" : {
 		"type" : "array",
 		"items" : [

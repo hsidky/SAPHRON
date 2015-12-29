@@ -3,6 +3,7 @@
 #include "../Simulation/SimException.h"
 #include "../Validator/ObjectRequirement.h"
 #include "schema.h"
+#include "HardSphereFF.h"
 #include "LennardJonesFF.h"
 #include "LennardJonesTSFF.h"
 #include "LebwohlLasherFF.h"
@@ -109,7 +110,21 @@ namespace SAPHRON
 		// Get forcefield type.
 		std::string type = json.get("type", "none").asString(); 
 		
-		if(type == "LennardJones")
+		if(type == "HardSphere")
+		{
+			reader.parse(JsonSchema::HardSphereFF, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs. 
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			auto sigma = json["sigma"].asDouble();
+			
+			ff = new HardSphereFF(sigma);
+		}
+		else if(type == "LennardJones")
 		{
 			reader.parse(JsonSchema::LennardJonesFF, schema);
 			validator.Parse(schema, path);
@@ -149,7 +164,7 @@ namespace SAPHRON
 		}
 		else if(type == "LebwohlLasher")
 		{
-			reader.parse(JsonSchema::LebwholLasherFF, schema);
+			reader.parse(JsonSchema::LebwohlLasherFF, schema);
 			validator.Parse(schema, path);
 
 			// Validate inputs.

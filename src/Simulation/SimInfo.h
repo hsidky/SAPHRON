@@ -90,6 +90,7 @@ namespace SAPHRON
 				_ekb = 1.0;
 				_ekbamu = _kbamu;
 				_units = reduced;
+				_epconv = 1.0;
 			}
 		}
 

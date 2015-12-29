@@ -1,5 +1,6 @@
 {
 	"type" : "object",
+	"varname" : "RandomIdentityMove",
 	"properties" : {
 		"type" : { 
 			"type" : "string",

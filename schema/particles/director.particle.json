@@ -1,4 +1,5 @@
 {
+	"varname" : "Director",
 	"type" : "array",
 	"minItems": 3,
 	"maxItems": 3,

@@ -1,5 +1,6 @@
 {
 	"type" : "object", 
+	"varname" : "DOSSimulation",
 	"properties" : {
 		"reset_freq" : {
 			"type" : "integer",
