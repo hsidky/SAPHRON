@@ -1,0 +1,35 @@
+{
+	"type" : "object",
+	"properties" : {
+		"type" : { 
+			"type" : "string",
+			"enum" : ["BaseTitrate"]
+		},
+		"explicit_draw" : {
+			"type" : "boolean"
+		},
+		"species" : {
+			"type" : "array",
+			"minItems" : 1,
+			"items" : {
+				"type" : "string"
+			}
+		},
+		"seed" : {
+			"type" : "integer",
+			"minimum" : 0
+		},
+		"weight" : {
+			"type" : "integer",
+			"minimum" : 1
+		},
+		"proton_charge" : {
+			"type" : "number"
+		},
+		"mu" : {
+			"type" : "number"
+		},
+	},
+	"required": ["type", "species", "mu"],
+	"additionalProperties": false
+}

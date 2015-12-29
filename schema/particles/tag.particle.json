@@ -1,0 +1,23 @@
+{
+  "title" : "map data",
+  "additionalProperties" : false,
+  "required" : [ "maps" ],
+  "properties" : {
+    "maps" : { "$ref" : "#/definitions/bool_map" }
+  },
+  "definitions" : {
+    "map" : {
+      "additionalProperties": false,
+      "required" : [ "key", "initial_value"],
+      "properties": {
+        "key" : { "type" : "string", "enum" : ["conjugateform"]},
+        "initial_value" : { "type" : "boolean" }
+      }
+    },
+    "bool_map" : {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/map" },
+      "default": {}
+    }
+  }
+}
