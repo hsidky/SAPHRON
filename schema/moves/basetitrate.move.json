@@ -1,5 +1,6 @@
 {
 	"type" : "object",
+	"varname" : "BaseTitrateChargeMove",
 	"properties" : {
 		"type" : { 
 			"type" : "string",
@@ -29,6 +30,9 @@
 		"mu" : {
 			"type" : "number"
 		},
+			"op_prefactor" : {
+			"type" : "boolean"
+		}
 	},
 	"required": ["type", "species", "mu"],
 	"additionalProperties": false

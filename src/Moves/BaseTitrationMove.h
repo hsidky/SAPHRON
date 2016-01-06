@@ -9,7 +9,7 @@
 
 namespace SAPHRON
 {
-	class TitrationMove : public Move
+	class BaseTitrationMove : public Move
 	{
 	private:
 		std::vector<int> _species;
@@ -27,12 +27,11 @@ namespace SAPHRON
 		std::string _mapkey;
 
 	public:
-		TitrationMove(const std::vector<std::string>& species,
-		double protoncharge = 1.0, double mu = 0,
-		std::string mapkey = "conjugateform", int seed = 7456253) : 
+		BaseTitrationMove(const std::vector<std::string>& species,
+		double protoncharge, double mu, int seed = 7456253) : 
 		_species(0), _rand(seed), _performed(0), _rejected(0),
 		_seed(seed), _protoncharge(protoncharge), _mu(mu),
-		_prefac(true), _mapkey(mapkey)
+		_prefac(true), _mapkey("conjugateform")
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
@@ -50,12 +49,11 @@ namespace SAPHRON
 			}
 		}
 
-		TitrationMove(const std::vector<int>& species,
-		double protoncharge = 1.0, double mu = 0,
-		std::string mapkey = "conjugateform", int seed = 7456253) : 
+		BaseTitrationMove(const std::vector<int>& species,
+		double protoncharge, double mu, int seed = 7456253) : 
 		_species(0), _rand(seed), _performed(0), _rejected(0),
 		_seed(seed), _protoncharge(protoncharge), _mu(mu),
-		_prefac(true), _mapkey(mapkey)
+		_prefac(true), _mapkey("conjugateform")
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
@@ -259,7 +257,7 @@ namespace SAPHRON
 		// Clone move.
 		Move* Clone() const override
 		{
-			return new TitrationMove(static_cast<const TitrationMove&>(*this));
+			return new BaseTitrationMove(static_cast<const BaseTitrationMove&>(*this));
 		}
 
 	};

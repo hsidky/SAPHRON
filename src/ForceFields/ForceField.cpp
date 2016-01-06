@@ -10,6 +10,8 @@
 #include "DSFFF.h"
 #include "DebyeHuckelFF.h"
 #include "FENEFF.h"
+#include "HarmonicFF.h"
+#include "ModLennardJonesTSFF.h"
 
 using namespace Json;
 
@@ -176,6 +178,26 @@ namespace SAPHRON
 			double gamma = json["gamma"].asDouble();
 			ff = new LebwohlLasherFF(eps, gamma);
 		}
+		else if(type == "ModLennardJonesTS")
+		{
+			reader.parse(JsonSchema::ModLennardJonesTSFF, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs. 
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			double eps = json["epsilon"].asDouble();
+			double sigma = json["sigma"].asDouble();
+			double beta = json["beta"].asDouble();
+			
+			CutoffList rc;
+			for(auto r : json["rcut"])
+				rc.push_back(r.asDouble());
+
+			ff = new ModLennardJonesTSFF(eps, sigma, beta, rc);
+		}
 		else
 		{
 			throw BuildException({path + ": Unknown forcefield type specified."});
@@ -230,6 +252,21 @@ namespace SAPHRON
 			auto rmax = json["rmax"].asDouble();
 
 			ff = new FENEFF(eps, sigma, kspring, rmax);
+		}
+		else if(type == "Harmonic")
+		{
+			reader.parse(JsonSchema::HarmonicFF, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs. 
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			auto kspring = json["kspring"].asDouble();
+			auto ro = json["ro"].asDouble();
+
+			ff = new Harmonic(kspring, ro);
 		}
 		else
 		{

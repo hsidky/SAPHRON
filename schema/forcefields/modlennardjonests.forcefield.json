@@ -1,0 +1,34 @@
+{
+	"type" : "object",
+	"varname" : "ModLennardJonesTSFF",
+	"properties" : {
+		"type" : {
+			"type" : "string",
+			"enum" : ["ModLennardJonesTS"]
+		},
+		"sigma" : {
+			"type" : "number",
+			"minimum" : 0,
+			"exclusiveMinimum": true
+		},
+		"epsilon" : {
+			"type" : "number", 
+			"minimum" : 0
+		},
+		"beta" : {
+			"type" : "number"
+		},
+		"rcut" : {
+			"type" : "array",
+			"items" : {
+				"type" : "number",
+				"minimum" : 0,
+				"exclusiveMinimum" : true
+			},
+			"minItems" : 1
+		},
+		"species" : "@file(nonbonded.forcefield.json)"
+	},
+	"additionalProperties" : false,
+	"required" : ["type", "sigma", "epsilon", "beta", "species", "rcut"]
+}

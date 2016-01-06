@@ -20,6 +20,8 @@
 #include "InsertParticleMove.h"
 #include "DeleteParticleMove.h"
 #include "AnnealChargeMove.h"
+#include "AcidTitrationMove.h"
+#include "BaseTitrationMove.h"
 
 using namespace Json;
 
@@ -44,7 +46,32 @@ namespace SAPHRON
 		// Get move type. 
 		std::string type = json.get("type", "none").asString();
 
-		if(type == "AnnealCharge")
+		if(type == "AcidTitrate")
+		{
+			reader.parse(JsonSchema::AcidTitrateChargeMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			srand(time(NULL));
+			int seed = json.get("seed", rand()).asInt();	
+
+			std::vector<std::string> species;
+			for(auto& s : json["species"])
+				species.push_back(s.asString());
+
+			auto protoncharge = json.get("proton_charge", 1.0).asDouble();
+			auto mu = json.get("mu", 0.0).asDouble();
+			auto prefac = json.get("op_prefactor", true).asBool();
+
+			auto* m = new AcidTitrationMove(species, protoncharge, mu, seed);
+			m->SetOrderParameterPrefactor(prefac);
+			move = static_cast<Move*>(m);
+		}
+		else if(type == "AnnealCharge")
 		{
 			reader.parse(JsonSchema::AnnealChargeMove, schema);
 			validator.Parse(schema, path);
@@ -62,6 +89,31 @@ namespace SAPHRON
 				species.push_back(s.asString());
 
 			move = new AnnealChargeMove(species, seed);
+		}
+		else if(type == "BaseTitrate")
+		{
+			reader.parse(JsonSchema::BaseTitrateChargeMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			srand(time(NULL));
+			int seed = json.get("seed", rand()).asInt();	
+
+			std::vector<std::string> species;
+			for(auto& s : json["species"])
+				species.push_back(s.asString());
+
+			auto protoncharge = json.get("proton_charge", 1.0).asDouble();
+			auto mu = json.get("mu",0.0).asDouble();
+			auto prefac = json.get("op_prefactor", true).asBool();
+
+			auto* m = new AcidTitrationMove(species, protoncharge, mu, seed);
+			m->SetOrderParameterPrefactor(prefac);
+			move = static_cast<Move*>(m);
 		}
 		else if(type == "DeleteParticle")
 		{

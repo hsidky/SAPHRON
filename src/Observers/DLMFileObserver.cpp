@@ -185,6 +185,8 @@ namespace SAPHRON
 				WriteStream(*fs, "Parent ID");
 			if(this->Flags.particle_parent_species) 
 				WriteStream(*fs, "Parent Species");
+			if(this->Flags.particle_charge)
+				WriteStream(*fs, "Charge");
 			if(this->Flags.particle_position)
 			{
 				WriteStream(*fs, "x");
@@ -415,6 +417,8 @@ namespace SAPHRON
 			WriteStream(*fs, p.GetParent()->GetGlobalIdentifier());
 		if(this->Flags.particle_parent_species && p.HasParent()) 
 			WriteStream(*fs, p.GetParent()->GetSpecies());
+		if(this->Flags.particle_charge)
+			WriteStream(*fs, p.GetCharge());
 		if(this->Flags.particle_position) 
 		{
 			const auto& pos = p.GetPosition();

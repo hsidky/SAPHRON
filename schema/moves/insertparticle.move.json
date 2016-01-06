@@ -26,7 +26,7 @@
 			"minimum" : 1
 		},
 		"op_prefactor" : {
-			"tyoe" : "boolean"
+			"type" : "boolean"
 		}
 	},
 	"required" : ["type", "stash_count", "species"],

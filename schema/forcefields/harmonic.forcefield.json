@@ -1,0 +1,21 @@
+{
+	"type" : "object", 
+	"varname" : "HarmonicFF",
+	"properties": {
+		"type" : {
+			"type": "string",
+			"enum": ["Harmonic"]
+		},
+		"kspring" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"ro" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"species" : "@file(bonded.forcefield.json)"
+	},
+	"additionalProperties": false,
+	"required": ["type", "kspring", "ro", "species"]
+}

@@ -234,6 +234,18 @@ target_include_directories(FENEFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(FENEFFTests googletest) 
 add_test(FENEFFTests FENEFFTests)
 
+add_executable(HarmonicTests test/HarmonicTests.cpp)
+target_link_libraries(HarmonicTests ${TEST_DEPS})
+target_include_directories(HarmonicTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(HarmonicTests googletest) 
+add_test(HarmonicTests HarmonicTests)
+
+add_executable(ModLennardJonesTSFFTests test/ModLennardJonesTSFFTests.cpp)
+target_link_libraries(ModLennardJonesTSFFTests ${TEST_DEPS})
+target_include_directories(ModLennardJonesTSFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(ModLennardJonesTSFFTests googletest) 
+add_test(ModLennardJonesTSFFTests ModLennardJonesTSFFTests)
+
 add_executable(FlipSpinMoveTests test/FlipSpinMoveTests.cpp)
 target_link_libraries(FlipSpinMoveTests ${TEST_DEPS})
 target_include_directories(FlipSpinMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")

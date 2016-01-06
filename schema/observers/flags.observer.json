@@ -211,6 +211,11 @@
 			"minimum" : 0,
 			"maximum" : 1
 		},
+		"particle_charge" : {
+			"type" : "integer",
+			"minimum" : 0,
+			"maximum" : 1
+		},
 		"particle_position" : {
 			"type" : "integer", 
 			"minimum" : 0,
