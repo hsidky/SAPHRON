@@ -74,7 +74,7 @@ namespace SAPHRON
 		{
 			// Draw random particle from random world.
 			auto* w = wm->GetRandomWorld();
-			auto* p = w->DrawRandomParticle();
+			auto* p = w->DrawRandomPrimitive();
 
 			if(p == nullptr)
 				return;
@@ -82,37 +82,23 @@ namespace SAPHRON
 			if(std::find(_species.begin(), _species.end(), p->GetSpeciesID()) == _species.end())
 				return;
 
-			auto* p1 = p;
-
-			if(p->HasChildren())
-			{
-				auto& children = p->GetChildren();
-				auto n = children.size();
-
-				// Draw a random child.
-				auto n1 = _rand.int32() % n;
-
-				// Get child.
-				p1 = children[n1];
-			}
-
 			// Evaluate initial energy. 
 			auto ei = ffm->EvaluateHamiltonian(*p, w->GetComposition(), w->GetVolume());
 
 			// Perform protonation/deprotonation.
-			auto tc = p1->GetCharge();
+			auto tc = p->GetCharge();
 			auto amu = _mu;
 
 			//Deprotonate acid if protonated
 			if(tc>=0.0)
 			{
-				p1->SetCharge(-_protoncharge);
+				p->SetCharge(-_protoncharge);
 				amu = -_mu;
 			}
 			//Protonate if deprotonated
 			else
 			{
-				p1->SetCharge(0.0);
+				p->SetCharge(0.0);
 			}
 
 			++_performed;
@@ -124,13 +110,13 @@ namespace SAPHRON
 			auto& sim = SimInfo::Instance();
 
 			// Acceptance probability.
-			double pacc = exp((-de.energy.total()-amu)/(w->GetTemperature()*sim.GetkB()));
+			double pacc = exp((-de.energy.total()+amu)/(w->GetTemperature()*sim.GetkB()));
 			pacc = pacc > 1.0 ? 1.0 : pacc;
 
 			// Reject or accept move.
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
-				p1->SetCharge(tc);
+				p->SetCharge(tc);
 				++_rejected;
 			}
 			else
@@ -148,7 +134,7 @@ namespace SAPHRON
 							 const MoveOverride& override) override
 		{
 
-			auto* p = world->DrawRandomParticle();
+			auto* p = world->DrawRandomPrimitive();
 
 			if(p == nullptr)
 				return;
@@ -156,39 +142,25 @@ namespace SAPHRON
 			if(std::find(_species.begin(), _species.end(), p->GetSpeciesID()) == _species.end())
 				return;
 
-			auto* p1 = p;
-
-			if(p->HasChildren())
-			{
-				auto& children = p->GetChildren();
-				auto n = children.size();
-
-				// Draw a random child.
-				auto n1 = _rand.int32() % n;
-
-				// Get child.
-				p1 = children[n1];
-			}
-
 			// Evaluate initial energy. 
 			auto ei = ffm->EvaluateHamiltonian(*p, world->GetComposition(), world->GetVolume());
 			auto opi = op->EvaluateOrderParameter(*world);
 
 			// Perform protonation/deprotonation.
-			auto tc=p1->GetCharge();
+			auto tc=p->GetCharge();
 			auto amu = _mu;
 
 			//Deprotonate acid if protonated
 			if(tc>=0.0)
 			{
-				p1->SetCharge(-_protoncharge);
+				p->SetCharge(-_protoncharge);
 				amu = -_mu;
 			}
 
 			//Protonate if deprotonated
 			else
 			{
-				p1->SetCharge(0.0);
+				p->SetCharge(0.0);
 			}
 
 			++_performed;
@@ -208,7 +180,7 @@ namespace SAPHRON
 			{
 				auto& sim = SimInfo::Instance();
 				auto beta = 1.0/(world->GetTemperature()*sim.GetkB());
-				auto arg = beta*(-amu);
+				auto arg = beta*(amu);
 				pacc *= exp(arg);
 			}
 			pacc = pacc > 1.0 ? 1.0 : pacc;
@@ -216,7 +188,7 @@ namespace SAPHRON
 			// Reject or accept move.
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
-				p1->SetCharge(tc);
+				p->SetCharge(tc);
 				++_rejected;
 			}
 		}
@@ -248,7 +220,7 @@ namespace SAPHRON
 				json["species"].append(s);
 		}
 
-		virtual std::string GetName() const override { return "Titration"; }
+		virtual std::string GetName() const override { return "AcidTitration"; }
 
 		// Clone move.
 		Move* Clone() const override
