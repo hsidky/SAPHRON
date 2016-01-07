@@ -134,9 +134,9 @@ namespace SAPHRON
 		_electrostaticforcefield.insert(std::pair<SpeciesPair, ForceField*>({p2type, p1type}, &ff));
 
 		// Must be unique.
-		if(_uniquebffs.find({p1type, p2type}) == _uniqueeffs.end() && 
-			_uniquebffs.find({p2type, p1type}) == _uniqueeffs.end())
-			_uniquebffs.insert(std::pair<SpeciesPair, ForceField*>({p1type, p2type}, &ff));
+		if(_uniqueeffs.find({p1type, p2type}) == _uniqueeffs.end() && 
+			_uniqueeffs.find({p2type, p1type}) == _uniqueeffs.end())
+			_uniqueeffs.insert(std::pair<SpeciesPair, ForceField*>({p1type, p2type}, &ff));
 	}
 
 	// Removes a forcefield from the manager.
