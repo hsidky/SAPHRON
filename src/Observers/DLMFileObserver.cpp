@@ -404,6 +404,9 @@ namespace SAPHRON
 		if(!this->Flags.particle)
 			return;
 
+		if(p.HasChildren())
+			return;
+
 		auto& fs = _particlefs[p.GetWorld()->GetID()];
 		if(this->Flags.iteration)
 			WriteStream(*fs,  this->GetIteration());

@@ -470,6 +470,8 @@ namespace SAPHRON
 
 		virtual void AcceptVisitor(Visitor& v) const override
 		{
+			for (auto &c :_children)
+				c->AcceptVisitor(v);
 			v.Visit(*this);
 		}
 
