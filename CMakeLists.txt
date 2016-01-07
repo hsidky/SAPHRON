@@ -246,6 +246,12 @@ target_include_directories(ModLennardJonesTSFFTests PRIVATE "${GTEST_INCLUDE_DIR
 add_dependencies(ModLennardJonesTSFFTests googletest) 
 add_test(ModLennardJonesTSFFTests ModLennardJonesTSFFTests)
 
+add_executable(AcidTitrationMoveTests test/AcidTitrationMoveTests.cpp)
+target_link_libraries(AcidTitrationMoveTests ${TEST_DEPS})
+target_include_directories(AcidTitrationMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(AcidTitrationMoveTests googletest) 
+add_test(AcidTitrationMoveTests AcidTitrationMoveTests)
+
 add_executable(FlipSpinMoveTests test/FlipSpinMoveTests.cpp)
 target_link_libraries(FlipSpinMoveTests ${TEST_DEPS})
 target_include_directories(FlipSpinMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")

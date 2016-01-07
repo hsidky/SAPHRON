@@ -85,9 +85,6 @@ namespace SAPHRON
 		// Global list of particle id's and pointers.
 		static ParticleMap _identityList;
 
-		// Particles tags and tag values
-		std::map<std::string, bool> _tags;
-
 		// Connectivities.
 		ConnectivityList _connectivities;
 
@@ -237,18 +234,11 @@ namespace SAPHRON
 		// Get particle string species.
 		inline std::string GetSpecies() const {	return _species; }
 
-		// Get particle string species.
-		inline bool GetTag(const std::string &name) { return _tags[name]; }
-
 		// Set the species of a particle.
 		void SetSpecies(std::string species);
 
 		// Set the species of a particle.
 		void SetSpeciesID(int id);
-
-		// Set the map value of a particle.
-		inline void SetTag(const std::string& name, bool flagit) 
-			{ _tags[name] = flagit; }
 
 		// Get particle charge
 		virtual double GetCharge() const = 0;

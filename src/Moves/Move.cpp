@@ -21,7 +21,6 @@
 #include "DeleteParticleMove.h"
 #include "AnnealChargeMove.h"
 #include "AcidTitrationMove.h"
-#include "BaseTitrationMove.h"
 
 using namespace Json;
 

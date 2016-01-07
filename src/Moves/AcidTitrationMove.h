@@ -24,14 +24,12 @@ namespace SAPHRON
 
 		bool _prefac;
 
-		std::string _mapkey;
-
 	public:
 		AcidTitrationMove(const std::vector<std::string>& species,
 		double protoncharge, double mu, int seed = 7456253) : 
 		_species(0), _rand(seed), _performed(0), _rejected(0),
 		_seed(seed), _protoncharge(protoncharge), _mu(mu),
-		_prefac(true), _mapkey("conjugateform")
+		_prefac(true)
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
@@ -53,7 +51,7 @@ namespace SAPHRON
 		double protoncharge, double mu, int seed = 7456253) : 
 		_species(0), _rand(seed), _performed(0), _rejected(0),
 		_seed(seed), _protoncharge(protoncharge), _mu(mu),
-		_prefac(true), _mapkey("conjugateform")
+		_prefac(true)
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
@@ -84,56 +82,55 @@ namespace SAPHRON
 			if(std::find(_species.begin(), _species.end(), p->GetSpeciesID()) == _species.end())
 				return;
 
-			// Particle must have at least two children for this move.
-			auto& children = p->GetChildren();
-			auto n = children.size();
+			auto* p1 = p;
 
-			// Draw a random child.
-			auto n1 = _rand.int32() % n;
+			if(p->HasChildren())
+			{
+				auto& children = p->GetChildren();
+				auto n = children.size();
 
-			// Get protonation state.
-			auto* p1 = children[n1];
+				// Draw a random child.
+				auto n1 = _rand.int32() % n;
+
+				// Get child.
+				p1 = children[n1];
+			}
 
 			// Evaluate initial energy. 
 			auto ei = ffm->EvaluateHamiltonian(*p, w->GetComposition(), w->GetVolume());
 
 			// Perform protonation/deprotonation.
-			auto tempc=p1->GetCharge();
-			auto conjugateflag = p1->GetTag(_mapkey);
-			auto adjustedmu = _mu;
+			auto tc = p1->GetCharge();
+			auto amu = _mu;
 
 			//Deprotonate acid if protonated
-			if(!conjugateflag)
+			if(tc>=0.0)
 			{
-				p1->SetCharge(tempc - _protoncharge);
-				p1->SetTag(_mapkey,false);
-				adjustedmu = -_mu;
+				p1->SetCharge(-_protoncharge);
+				amu = -_mu;
 			}
-
 			//Protonate if deprotonated
 			else
 			{
-				p1->SetCharge(tempc + _protoncharge);
-				p1->SetTag(_mapkey,true);
+				p1->SetCharge(0.0);
 			}
 
 			++_performed;
 
 			auto ef = ffm->EvaluateHamiltonian(*p, w->GetComposition(), w->GetVolume());
 			auto de = ef - ei;
-			
+		
 			// Get sim info for kB.
 			auto& sim = SimInfo::Instance();
 
 			// Acceptance probability.
-			double pacc = exp((-de.energy.total()-adjustedmu)/(w->GetTemperature()*sim.GetkB()));
+			double pacc = exp((-de.energy.total()-amu)/(w->GetTemperature()*sim.GetkB()));
 			pacc = pacc > 1.0 ? 1.0 : pacc;
 
 			// Reject or accept move.
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
-				p1->SetCharge(tempc);
-				p1->SetTag(_mapkey,conjugateflag);
+				p1->SetCharge(tc);
 				++_rejected;
 			}
 			else
@@ -159,38 +156,39 @@ namespace SAPHRON
 			if(std::find(_species.begin(), _species.end(), p->GetSpeciesID()) == _species.end())
 				return;
 
-			// Particle must have at least two children for this move.
-			auto& children = p->GetChildren();
-			auto n = children.size();
+			auto* p1 = p;
 
-			// Draw a random child.
-			auto n1 = _rand.int32() % n;
+			if(p->HasChildren())
+			{
+				auto& children = p->GetChildren();
+				auto n = children.size();
 
-			// Get protonation state.
-			auto* p1 = children[n1];
+				// Draw a random child.
+				auto n1 = _rand.int32() % n;
+
+				// Get child.
+				p1 = children[n1];
+			}
 
 			// Evaluate initial energy. 
 			auto ei = ffm->EvaluateHamiltonian(*p, world->GetComposition(), world->GetVolume());
 			auto opi = op->EvaluateOrderParameter(*world);
 
 			// Perform protonation/deprotonation.
-			auto tempc=p1->GetCharge();
-			auto conjugateflag = p1->GetTag(_mapkey);
-			auto adjustedmu = _mu;
+			auto tc=p1->GetCharge();
+			auto amu = _mu;
 
 			//Deprotonate acid if protonated
-			if(!conjugateflag)
+			if(tc>=0.0)
 			{
-				p1->SetCharge(tempc - _protoncharge);
-				p1->SetTag(_mapkey,false);
-				adjustedmu = -_mu;
+				p1->SetCharge(-_protoncharge);
+				amu = -_mu;
 			}
 
 			//Protonate if deprotonated
 			else
 			{
-				p1->SetCharge(tempc + _protoncharge);
-				p1->SetTag(_mapkey,true);
+				p1->SetCharge(0.0);
 			}
 
 			++_performed;
@@ -210,7 +208,7 @@ namespace SAPHRON
 			{
 				auto& sim = SimInfo::Instance();
 				auto beta = 1.0/(world->GetTemperature()*sim.GetkB());
-				auto arg = beta*(-adjustedmu);
+				auto arg = beta*(-amu);
 				pacc *= exp(arg);
 			}
 			pacc = pacc > 1.0 ? 1.0 : pacc;
@@ -218,8 +216,7 @@ namespace SAPHRON
 			// Reject or accept move.
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
-				p1->SetCharge(tempc);
-				p1->SetTag(_mapkey,conjugateflag);
+				p1->SetCharge(tc);
 				++_rejected;
 			}
 		}
@@ -246,7 +243,6 @@ namespace SAPHRON
 			json["mu"] = _mu;
 			json["proton_charge"] = _protoncharge;
 			json["op_prefactor"] = _prefac;
-			json["map_key"] = _mapkey;
 
 			for(auto& s : _species)
 				json["species"].append(s);

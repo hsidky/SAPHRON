@@ -16,7 +16,7 @@ namespace SAPHRON
 
 	public:
 
-		DebyeHuckelFF(double kappa, CutoffList rc) : 
+		DebyeHuckelFF(double kappa, const CutoffList& rc) : 
 		_kappa(kappa), _qdim(1.0), _rc(rc)
 		{ 
 			// Calculate charge (q) reduced units conversion.

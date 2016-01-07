@@ -59,7 +59,7 @@ namespace SAPHRON
 		// Serialize.
 		virtual void Serialize(Json::Value& json) const override
 		{	
-			json["type"] = "LennardJonesTS";
+			json["type"] = "ModLennardJonesTS";
 			json["sigma"] = sqrt(_sigmasq);
 			json["epsilon"] = _epsilon;
 			json["beta"] = _beta;
