@@ -7,6 +7,11 @@
 #include "../Utils/Rand.h"
 #include "../DensityOfStates/DOSOrderParameter.h"
 
+/* Currently move only works with acid where the following is the reaction:
+forward HA -> A- + H+
+Reverse A- + H+ -> HA
+*/
+
 namespace SAPHRON
 {
 	class ReactionMove : public Move
@@ -21,6 +26,8 @@ namespace SAPHRON
 		bool _prefac;
 		int _scount;
 		double _pKo;
+		double _protoncharge;
+		int _Ndeprotonated;
 		int _seed;
 
 		void InitStashParticles(const WorldManager& wm)
@@ -28,21 +35,7 @@ namespace SAPHRON
 			// Get particle map, find one of the appropriate species 
 			// and clone.
 			auto& plist = Particle::GetParticleMap();
-			for(auto& id : _products)
-			{
-				// Since the species exists, we assume there must be at least 
-				// one find. 
-				auto pcand = std::find_if(plist.begin(), plist.end(), 
-					[=](const std::pair<int, Particle*>& p)
-					{
-						return p.second->GetSpeciesID() == id;
-					}
-				);
 
-				// Stash a characteristic amount of the particles in world.
-				for(auto& world : wm)
-					world->StashParticle(pcand->second, _scount);
-			}
 			for(auto& id : _reactants)
 			{
 				// Since the species exists, we assume there must be at least 
@@ -63,10 +56,12 @@ namespace SAPHRON
 	public:
 		AcidReactionMove(const std::vector<std::string>& reactants,
 		const std::vector<std::string>& products,
-		int stashcount, double pKo, int seed = 7456253) : 
+		int stashcount, double pKo, double protoncharge,
+		int seed = 7456253) : 
 		_reactants(0),_products(0), _rand(seed), _performed(0),
 		 _rejected(0), _prefac(true), _scount(stashcount),
-		 _pKo(pKo), _seed(seed)
+		 _pKo(pKo), _protoncharge(protoncharge),
+		 _Ndeprotonated(0), _seed(seed)
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
@@ -102,10 +97,12 @@ namespace SAPHRON
 
 		AcidReactionMove(const std::vector<int>& reactants,
 		const std::vector<int>& products,
-		int stashcount, double pKo, int seed = 7456253) : 
+		int stashcount, double pKo, double protoncharge,
+		int seed = 7456253) : 
 		_reactants(0),_products(0), _rand(seed), _performed(0),
 		 _rejected(0), _prefac(true), _scount(stashcount),
-		 _pKo(pKo), _seed(seed)
+		 _pKo(pKo), _protoncharge(protoncharge),
+		 _Ndeprotonated(0), _seed(seed)
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
@@ -144,69 +141,132 @@ namespace SAPHRON
 
 			// Draw random particle from random world.
 			auto* w = wm->GetRandomWorld();
+			auto* p = wm->DrawRandomPrimitiveBySpecies(_reactants[0]);
+			particle* ph =nullptr;
 
-			int RxnExtent=1;
-			Particle * p = nullptr;
+			int RxnExtent = 1;
+			double rxndirection = _rand.doub();
+			double OldCharge = p->GetCharge();
+			double OldMass = p->GetMass();
 
 			//Determine reaction direction.
-			if(_rand.doub()>=0.5) //Reverse reaction
+			if(rxndirection>=0.5 && OldCharge >= 0) //Forward reaction
 			{
-				RxnExtent=-1;
+				RxnExtent = 1;
 			}
 
-			else 
+			else if(rxndirection<0.5 && OldCharge < 0)//Reverse reaction
 			{
+				RxnExtent = -1;
+				ph = wm->DrawRandomPrimitiveBySpecies(_products[0])
+
+				if(ph==nullptr)
+				{
+					std::cout<<"No products are present in system!"<<std::endl;
+					exit(-1);
+				}
+			}
+
+			else
+				return;
+
+			// Evaluate initial energy. 
+			auto ei = ffm->EvaluateHamiltonian(w);
+
+			if(RxnExtent == -1)
+			{
+				p->SetCharge(0.0);
+				p->SetMass(OldMass + ph->GetMass());
+				w->RemoveParticle(ph);
+			}
+
+			else
+			{
+				ph = w->UnstashParticle(_products[0]);
+				p->SetCharge(-_protoncharge);
+				p->SetMass(OldMass - ph->GetMass());
+
+				// Generate a random position and orientation for particle insertion.
 				const auto& H = w->GetHMatrix();
 				Vector3D pr{_rand.doub(), _rand.doub(), _rand.doub()};
 				Vector3D pos = H*pr;
-				p->SetPosition(pos);
+				ph->SetPosition(pos);
+
+				// Choose random axis, and generate random angle.
+				int axis = _rand.int32() % 3 + 1;
+				double deg = (4.0*_rand.doub() - 2.0)*M_PI;
+				Matrix3D R = GenRotationMatrix(axis, deg);
+
+				// Rotate particle and director.
+				ph->SetDirector(R*ph->GetDirector());
+				for(auto& child : *ph)
+				{
+					child->SetPosition(R*(child->GetPosition()-pos) + pos);
+					child->SetDirector(R*child->GetDirector());
+				}
 
 				// Insert particle.
-				w->AddParticle(p);
+				w->AddParticle(ph);
 			}
 
-			// Evaluate initial energy. 
-			auto ei = ffm->EvaluateHamiltonian(*p, w->GetComposition(), w->GetVolume());
+			auto id = ph->GetSpeciesID();
+			auto& comp = w->GetComposition();
+			auto V = pow(w->GetVolume(),RxnExtent);
+			auto lambda = w->GetWavelength(id);
+			auto lamda3 = pow(lambda*lambda*lambda,-1*RxnExtent);
+			double lamdaratio = pow(p->GetMass()/OldMass,3.0/2.0);
+			double Nratio=0;
+			double Kaenergy=0;
 
-			// Perform protonation/deprotonation.
-			auto tc = p->GetCharge();
-			auto amu = _mu;
-
-			//Deprotonate acid if protonated
-			if(tc>=0.0)
+			if(RxnExtent==1)
 			{
-				p->SetCharge(-_protoncharge);
-				amu = -_mu;
+				Nratio = (double)(comp[p->GetSpeciesID]-_Ndeprotonated)/((_Ndeprotonated+1)(comp[ph->GetSpeciesID]+1));
+				Kaenergy=inserthere;
 			}
-			//Protonate if deprotonated
 			else
 			{
-				p->SetCharge(0.0);
+				Nratio = (double)(_Ndeprotonated*comp[ph->GetSpeciesID])/(comp[p->GetSpeciesID]-_Ndeprotonated + 1);
+				Kaenergy=inserthere;
 			}
 
 			++_performed;
 
-			auto ef = ffm->EvaluateHamiltonian(*p, w->GetComposition(), w->GetVolume());
+			auto ef = ffm->EvaluateHamiltonian(w);
+
 			auto de = ef - ei;
 		
 			// Get sim info for kB.
 			auto& sim = SimInfo::Instance();
 
 			// Acceptance probability.
-			double pacc = exp((-de.energy.total()+amu)/(w->GetTemperature()*sim.GetkB()));
+			double pacc = Nratio*V*lamda3*lamdaratio*Kaenergy*
+			exp((-de.energy.total())/(w->GetTemperature()*sim.GetkB()));
 			pacc = pacc > 1.0 ? 1.0 : pacc;
 
 			// Reject or accept move.
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
-				p->SetCharge(tc);
 				++_rejected;
+				p->SetCharge(OldCharge);
+				p->SetMass(OldMass);
+
+				if(RxnExtent == -1) {w->AddParticle(ph);}
+
+				else {w->StashParticle(ph);}
+
 			}
 			else
 			{
-				// Update energies and pressures.
-				w->IncrementEnergy(de.energy);
-				w->IncrementPressure(de.pressure);
+				if(RxnExtent == -1) 
+				{
+					w->StashParticle(ph);
+					_Ndeprotonated-=1;
+				}
+				else
+					_Ndeprotonated+=1;
+
+				w->SetEnergy(ef.energy);
+				w->SetPressure(ef.pressure);
 			}
 		}
 
