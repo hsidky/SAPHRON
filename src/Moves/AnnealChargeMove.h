@@ -197,8 +197,6 @@ namespace SAPHRON
 			{
 				p1->SetCharge(c1);
 				p2->SetCharge(c2);
-				world->IncrementEnergy(-1.0*de.energy);
-				world->IncrementPressure(-1.0*de.pressure);
 				++_rejected;
 			}
 		}
