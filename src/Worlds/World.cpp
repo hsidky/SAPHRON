@@ -411,6 +411,11 @@ namespace SAPHRON
 		json["dimensions"][1] = box(1,1);
 		json["dimensions"][2] = box(2,2);
 
+		// Serialize periodicity. 
+		json["periodic"]["x"] = this->GetPeriodicX();
+		json["periodic"]["y"] = this->GetPeriodicY();
+		json["periodic"]["z"] = this->GetPeriodicZ();
+
 		json["seed"] = this->GetSeed();
 		json["skin_thickness"] = this->GetSkinThickness();
 		json["nlist_cutoff"] = this->GetNeighborRadius();
@@ -496,11 +501,22 @@ namespace SAPHRON
 			srand(time(NULL));
 			int seed = json.isMember("seed") ? json["seed"].asInt() : rand();
 
-			
 			world = new World(dim[0], dim[1], dim[2], ncut, skin, seed);
 			if(ncut)
 				world->SetNeighborRadius(ncut);
 		}
+
+		// Periodic. 
+		bool periodx = true, periody = true, periodz = true;
+		if(json.isMember("periodic"))
+		{
+			periodx = json["periodic"].get("x", true).asBool();
+			periody = json["periodic"].get("y", true).asBool();
+			periodz = json["periodic"].get("z", true).asBool();
+		}
+		world->SetPeriodicX(periodx);
+		world->SetPeriodicY(periody);
+		world->SetPeriodicZ(periodz);			
 
 		// Initialize particles.
 		if(json.isMember("particles"))

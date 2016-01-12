@@ -10,6 +10,7 @@
 #include "../Worlds/WorldManager.h"
 #include "FlipSpinMove.h"
 #include "TranslateMove.h"
+#include "TranslatePrimitiveMove.h"
 #include "DirectorRotateMove.h"
 #include "ParticleSwapMove.h"
 #include "RandomIdentityMove.h"
@@ -289,6 +290,34 @@ namespace SAPHRON
 			{
 				auto dx = json["dx"].asDouble();
 				move = new TranslateMove(dx, seed);
+			}
+		}
+		else if(type == "TranslatePrimitive")
+		{
+			reader.parse(JsonSchema::TranslatePrimitiveMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+		
+			srand(time(NULL));
+			int seed = json.get("seed", rand()).asInt();
+			if(json["dx"].isObject())
+			{
+				std::map<std::string, double> dx; 
+				for(auto& s : json["dx"].getMemberNames())
+					dx[s] = json["dx"][s].asDouble();
+
+				auto expl = json.get("explicit_draw", false).asBool();
+
+				move = new TranslatePrimitiveMove(dx, expl, seed);
+			}
+			else
+			{
+				auto dx = json["dx"].asDouble();
+				move = new TranslatePrimitiveMove(dx, seed);
 			}
 		}
 		else if(type == "VolumeScale")
