@@ -189,6 +189,8 @@ namespace SAPHRON
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
 				p->SetCharge(tc);
+				world->IncrementEnergy(-1.0*de.energy);
+				world->IncrementPressure(-1.0*de.pressure);
 				++_rejected;
 			}
 		}

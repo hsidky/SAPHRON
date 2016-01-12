@@ -1,6 +1,6 @@
 {
 	"type" : "object",
-	"varname" : "AcidTitrateChargeMove",
+	"varname" : "AcidTitrateMove",
 	"properties" : {
 		"type" : { 
 			"type" : "string",
