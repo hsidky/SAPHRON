@@ -1,0 +1,47 @@
+{
+	"type" : "object",
+	"varname" : "AcidReactionMove",
+	"properties" : {
+		"type" : { 
+			"type" : "string",
+			"enum" : ["AcidReaction"]
+		},
+		"reactants" : {
+			"type" : "array",
+			"minItems" : 1,
+			"items" : {
+				"type" : "string"
+			}
+		},
+		"products" : {
+			"type" : "array",
+			"minItems" : 1,
+			"items" : {
+				"type" : "string"
+			}
+		},
+		"seed" : {
+			"type" : "integer",
+			"minimum" : 0
+		},
+		"weight" : {
+			"type" : "integer",
+			"minimum" : 1
+		},
+		"proton_charge" : {
+			"type" : "number"
+		},
+		"pKo" : {
+			"type" : "number"
+		},
+		"stash_count" : {
+			"type" : "integer", 
+			"minimum" : 1
+		},
+			"op_prefactor" : {
+			"type" : "boolean"
+		}
+	},
+	"required": ["type", "reactants", "products", "pKo", "stash_count"],
+	"additionalProperties": false
+}
