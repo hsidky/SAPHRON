@@ -28,6 +28,21 @@
 			"type" : "number",
 			"minimum" : 0
 		},
+		"periodic" : {
+			"type" : "object", 
+			"properties" : {
+				"x" : {
+					"type" : "boolean"
+				},
+				"y" : {
+					"type" : "boolean"
+				},
+				"z" : {
+					"type" : "boolean"
+				}
+			},
+			"additionalProperties" : false
+		},
 		"pack" : {
 			"type" : "object",
 			"properties" : {

@@ -39,6 +39,9 @@ namespace SAPHRON
 		// Is diagoanl?
 		bool _diag;
 
+		// Periodic boundaries.
+		bool _periodx, _periody, _periodz;
+
 		// Skin thickness (calculated).
 		double _skin, _skinsq;
 
@@ -149,11 +152,10 @@ namespace SAPHRON
 
 		// Initialize an orthorhombic world.
 		World(double xl, double yl, double zl, double ncut, double skin, int seed = 1) : 
-		_ncut(ncut), _ncutsq(ncut*ncut), 
-		_H(arma::fill::zeros), _diag(true), _skin(skin), _skinsq(skin*skin), 
-		_temperature(0.0), _chemp(0), _debroglie(0), _particles(0), 
-		_primitives(0), _rand(seed), _composition(0), _stash(0), 
-		_seed(seed), _id(_nextID++)
+		_ncut(ncut), _ncutsq(ncut*ncut), _H(arma::fill::zeros), _diag(true),
+		_periodx(true), _periody(true), _periodz(true), _skin(skin), _skinsq(skin*skin), 
+		_temperature(0.0), _chemp(0), _debroglie(0), _particles(0), _primitives(0), 
+		_rand(seed), _composition(0), _stash(0), _seed(seed), _id(_nextID++)
 		{
 			_stringid = "world" + std::to_string(_id);
 			_H(0,0) = xl;
@@ -450,28 +452,40 @@ namespace SAPHRON
 		// Applies periodic boundaries to positions.
 		inline void ApplyPeriodicBoundaries(Position* position) const 
 		{
-			(*position)[0] -= _H(0,0)*ffloor((*position)[0]/_H(0,0));
-			(*position)[1] -= _H(1,1)*ffloor((*position)[1]/_H(1,1));
-			(*position)[2] -= _H(2,2)*ffloor((*position)[2]/_H(2,2));
+			if(_periodx)
+				(*position)[0] -= _H(0,0)*ffloor((*position)[0]/_H(0,0));
+			if(_periody)
+				(*position)[1] -= _H(1,1)*ffloor((*position)[1]/_H(1,1));
+			if(_periodz)
+				(*position)[2] -= _H(2,2)*ffloor((*position)[2]/_H(2,2));
 		}
 	
 		// Applies minimum image convention to distances. 
 		inline void ApplyMinimumImage(Position* position) const
 		{
-			if((*position)[0] > _H(0,0)/2.0)
-				(*position)[0] -= _H(0,0);
-			else if((*position)[0] < -_H(0,0)/2.0)
-				(*position)[0] += _H(0,0);
-			
-			if((*position)[1] > _H(1,1)/2.0)
-				(*position)[1] -= _H(1,1);
-			else if((*position)[1] < -_H(1,1)/2.0)
-				(*position)[1] += _H(1,1);
+			if(_periodx)
+			{
+				if((*position)[0] > _H(0,0)/2.0)
+					(*position)[0] -= _H(0,0);
+				else if((*position)[0] < -_H(0,0)/2.0)
+					(*position)[0] += _H(0,0);
+			}
 
-			if((*position)[2] > _H(2,2)/2.0)
-				(*position)[2] -= _H(2,2);
-			else if((*position)[2] < -_H(2,2)/2.0)
-				(*position)[2] += _H(2,2);
+			if(_periody)
+			{
+				if((*position)[1] > _H(1,1)/2.0)
+					(*position)[1] -= _H(1,1);
+				else if((*position)[1] < -_H(1,1)/2.0)
+					(*position)[1] += _H(1,1);
+			}
+
+			if(_periodz)
+			{
+				if((*position)[2] > _H(2,2)/2.0)
+					(*position)[2] -= _H(2,2);
+				else if((*position)[2] < -_H(2,2)/2.0)
+					(*position)[2] += _H(2,2);
+			}
 		}
 
 		// Packs a world with the given particle blueprints and 
@@ -669,6 +683,18 @@ namespace SAPHRON
 		// If scaling is not applied, periodic boundary conditions 
 		// are applied to all particles. The neighbor list is auto regenerated.
 		void SetVolume(double v, bool scale);
+
+		// Gets/sets the periodicity of the x-coordinate.
+		bool GetPeriodicX() const { return _periodx; }
+		void SetPeriodicX(bool periodic) { _periodx = periodic; }
+
+		// Gets/sets the periodicity of the y-coordinate.
+		bool GetPeriodicY() const { return _periody; }
+		void SetPeriodicY(bool periodic) { _periody = periodic; }
+
+		// Gets/sets the periodicity of the z-coordinate.
+		bool GetPeriodicZ() const { return _periodz; }
+		void SetPeriodicZ(bool periodic) { _periodz = periodic; }
 
 		// Iterators.
 		iterator begin() { return _particles.begin(); }
