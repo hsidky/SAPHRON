@@ -21,6 +21,7 @@
 #include "DeleteParticleMove.h"
 #include "AnnealChargeMove.h"
 #include "AcidTitrationMove.h"
+#include "AcidReactionMove.h"
 
 using namespace Json;
 
@@ -45,9 +46,41 @@ namespace SAPHRON
 		// Get move type. 
 		std::string type = json.get("type", "none").asString();
 
-		if(type == "AcidTitrate")
+		if(type == "AcidReaction")
 		{
-			reader.parse(JsonSchema::AcidTitrateChargeMove, schema);
+			reader.parse(JsonSchema::AcidReactionMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			srand(time(NULL));
+			int seed = json.get("seed", rand()).asInt();	
+
+			std::vector<std::string> reactants;
+			for(auto& s : json["reactants"])
+				reactants.push_back(s.asString());
+
+			std::vector<std::string> products;
+			for(auto& s : json["products"])
+				products.push_back(s.asString());
+
+			auto protoncharge = json.get("proton_charge", 1.0).asDouble();
+			auto pKo = json.get("pKo", 0.0).asDouble();
+			auto scount = json["stash_count"].asInt();
+
+			auto prefac = json.get("op_prefactor", true).asBool();
+
+			auto* m = new AcidReactionMove(reactants,products,*wm,
+			scount, pKo, protoncharge, seed);
+			m->SetOrderParameterPrefactor(prefac);
+			move = static_cast<Move*>(m);
+		}
+		else if(type == "AcidTitrate")
+		{
+			reader.parse(JsonSchema::AcidTitrateMove, schema);
 			validator.Parse(schema, path);
 
 			// Validate inputs.
@@ -88,31 +121,6 @@ namespace SAPHRON
 				species.push_back(s.asString());
 
 			move = new AnnealChargeMove(species, seed);
-		}
-		else if(type == "BaseTitrate")
-		{
-			reader.parse(JsonSchema::BaseTitrateChargeMove, schema);
-			validator.Parse(schema, path);
-
-			// Validate inputs.
-			validator.Validate(json, path);
-			if(validator.HasErrors())
-				throw BuildException(validator.GetErrors());
-
-			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();	
-
-			std::vector<std::string> species;
-			for(auto& s : json["species"])
-				species.push_back(s.asString());
-
-			auto protoncharge = json.get("proton_charge", 1.0).asDouble();
-			auto mu = json.get("mu",0.0).asDouble();
-			auto prefac = json.get("op_prefactor", true).asBool();
-
-			auto* m = new AcidTitrationMove(species, protoncharge, mu, seed);
-			m->SetOrderParameterPrefactor(prefac);
-			move = static_cast<Move*>(m);
 		}
 		else if(type == "DeleteParticle")
 		{
