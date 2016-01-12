@@ -81,7 +81,7 @@ namespace SAPHRON
 		}
 		else if(type == "AcidTitrate")
 		{
-			reader.parse(JsonSchema::AcidTitrateMove, schema);
+			reader.parse(JsonSchema::AcidTitrationMove, schema);
 			validator.Parse(schema, path);
 
 			// Validate inputs.
