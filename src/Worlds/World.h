@@ -226,6 +226,34 @@ namespace SAPHRON
 			return _primitives[_rand.int32() % n];
 		}
 
+		// Uniformly draws a primitive from the world based on a list 
+		// of species. This basically selects a random primitive particle based 
+		// on mole fraction.
+		Particle* DrawPrimitiveFromSpeciesList(const std::vector<int>& species)
+		{
+			// Compute total number of drawable species.
+			auto tot = 0;
+			for(auto& s : species)
+				tot += _composition[s];
+
+			// Pick a random number < tot.
+			int x = _rand.int32() % tot;
+
+			// Re-iterate through species and choose the appropriate one.
+			auto count = 0, id = 0;
+			for(auto& s : species)
+			{
+				count += _composition[s];
+				if(count > x)
+				{
+					id = s;
+					break;
+				}
+			}
+
+			return DrawRandomPrimitiveBySpecies(id);
+		}
+
 		// Draws a random primitive by species from the world. 
 		// Will return nullptr if species don't exist.
 		Particle* DrawRandomPrimitiveBySpecies(int species)

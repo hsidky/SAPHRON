@@ -49,6 +49,7 @@ namespace SAPHRON
 		static std::string RotateMove;
 		static std::string FlipSpinMove;
 		static std::string TranslateMove;
+		static std::string TranslatePrimitiveMove;
 		static std::string ParticleSwapMove;
 		static std::string RandomIdentityMove;
 		static std::string DirectorRotateMove;
