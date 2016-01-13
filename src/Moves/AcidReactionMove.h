@@ -36,7 +36,7 @@ namespace SAPHRON
 			// and clone.
 			auto& plist = Particle::GetParticleMap();
 
-			for(auto& id : _reactants)
+			for(auto& id : _products)
 			{
 				// Since the species exists, we assume there must be at least 
 				// one find. 
