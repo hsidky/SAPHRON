@@ -57,6 +57,7 @@ namespace SAPHRON
 			}
 		}
 
+		//No Double counting problem.
 		virtual void Perform(WorldManager* wm, 
 					 ForceFieldManager* ffm, 
 					 const MoveOverride& override) override
