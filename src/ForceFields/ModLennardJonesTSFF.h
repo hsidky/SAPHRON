@@ -41,17 +41,17 @@ namespace SAPHRON
 
 			auto rsq = fdot(rij, rij);
 			auto r = sqrt(rsq);
-			auto rc = sqrt(_rcsq[wid]);
+
 			if(rsq > _rcsq[wid])
 				return ep;
 
 			double sr6 = _sigma3*_sigma3/(rsq*rsq*rsq);
 			
 			ep.energy = 4.0*_epsilon*((sr6*sr6 - sr6) + 
-			_beta*(cos(2.0*M_PI*r/rc)-1.0)) - _vrc[wid];
+			_beta*(cos(2.0*M_PI*r/_rc[wid])-1.0)) - _vrc[wid];
 
 			ep.virial = 24.0*_epsilon*(sr6-2.0*sr6*sr6)/rsq - 
-			sin(2.0*M_PI*r/rc)*8.0*_epsilon*_beta*M_PI/rc;
+			sin(2.0*M_PI*r/_rc[wid])*8.0*_epsilon*_beta*M_PI/_rc[wid];
 			
 			return ep;
 		}
