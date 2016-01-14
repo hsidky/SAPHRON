@@ -41,9 +41,10 @@ namespace SAPHRON
 					}
 				);
 
+				auto* P=pcand->second->Clone();
 				// Stash a characteristic amount of the particles in world.
 				for(auto& world : wm)
-					world->StashParticle(pcand->second, _scount);
+					world->StashParticle(P, _scount);
 			}
 		}
 
