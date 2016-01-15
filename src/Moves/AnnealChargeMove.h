@@ -221,8 +221,9 @@ namespace SAPHRON
 		{
 			json["type"] = GetName();
 			json["seed"] = _seed;
+			auto& slist = Particle::GetSpeciesList();
 			for(auto& s : _species)
-				json["species"].append(s);
+				json["species"].append(slist[s]);
 		}
 
 		virtual std::string GetName() const override { return "AnnealCharge"; }
