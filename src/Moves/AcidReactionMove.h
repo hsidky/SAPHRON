@@ -236,7 +236,7 @@ namespace SAPHRON
 				}
 			}
 
-			double lamdaratio;
+			double lambdaratio;
 
 			auto& comp = w->GetComposition();
 			int comp1 = comp[_i1];
@@ -245,7 +245,7 @@ namespace SAPHRON
 
 			auto V = pow(w->GetVolume(),RxnExtent);
 			auto lambda = w->GetWavelength(_products[0]);
-			auto lamda3 = pow(lambda*lambda*lambda,-1*RxnExtent);
+			auto lambda3 = pow(lambda*lambda*lambda,-1*RxnExtent);
 			double Nratio=0;
 			double Korxn=0;
 
@@ -264,7 +264,7 @@ namespace SAPHRON
 				p2->SetSpeciesID(_i1);
 
 				ef = ffm->EvaluateHamiltonian(*p2, w->GetComposition(), w->GetVolume());
-				lamdaratio = pow(_c1/_c2,3.0/2.0);
+				lambdaratio = pow(_m1/_m2,3.0/2.0);
 			}
 
 			else
@@ -290,7 +290,7 @@ namespace SAPHRON
 				// Insert particle.
 				w->AddParticle(ph);
 				ef += ffm->EvaluateHamiltonian(*ph, w->GetComposition(), w->GetVolume());
-				lamdaratio = pow(_c2/_c1,3.0/2.0);
+				lambdaratio = pow(_m2/_m1,3.0/2.0);
 			}
 
 			++_performed;
@@ -301,7 +301,7 @@ namespace SAPHRON
 			auto& sim = SimInfo::Instance();
 
 			// Acceptance probability.
-			double pacc = Nratio*V*lamda3*lamdaratio*Korxn*
+			double pacc = Nratio*V*lambda3*lambdaratio*Korxn*
 			exp((-de.energy.total())/(w->GetTemperature()*sim.GetkB()));
 			pacc = pacc > 1.0 ? 1.0 : pacc;
 
