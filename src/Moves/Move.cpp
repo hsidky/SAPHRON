@@ -61,21 +61,20 @@ namespace SAPHRON
 			int seed = json.get("seed", rand()).asInt();	
 
 			std::vector<std::string> reactants;
-			for(auto& s : json["reactants"])
+			for(auto& s : json["swap"])
 				reactants.push_back(s.asString());
 
 			std::vector<std::string> products;
 			for(auto& s : json["products"])
 				products.push_back(s.asString());
 
-			auto protoncharge = json.get("proton_charge", 1.0).asDouble();
 			auto pKo = json.get("pKo", 0.0).asDouble();
 			auto scount = json["stash_count"].asInt();
 
 			auto prefac = json.get("op_prefactor", true).asBool();
 
 			auto* m = new AcidReactionMove(reactants,products,*wm,
-			scount, pKo, protoncharge, seed);
+			scount, pKo, seed);
 			m->SetOrderParameterPrefactor(prefac);
 			move = static_cast<Move*>(m);
 		}
