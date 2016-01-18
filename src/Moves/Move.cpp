@@ -260,8 +260,13 @@ namespace SAPHRON
 
 			srand(time(NULL));
 			int seed = json.get("seed", rand()).asInt();
+			bool deepcopy = json.get("deep_copy", false).asBool();
 
-			move = new SpeciesSwapMove(seed);
+			std::vector<std::string> species;
+			for(auto& s : json["species"])
+				species.push_back(s.asString());
+
+			move = new SpeciesSwapMove(species,deepcopy,seed);
 		}
 		else if(type == "Translate")
 		{

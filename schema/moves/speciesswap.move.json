@@ -10,6 +10,18 @@
 			"type" : "integer",
 			"minimum" : 0
 		},
+		"species" : {
+			"type" : "array",
+			"uniqueItems" : true,
+			"maxItems" : 2,
+			"minItems" : 2,
+			"items" : {
+				"type" : "string"
+			}
+		},
+		"deep_copy" : {
+			"type" : "boolean"
+		},
 		"weight" : {
 			"type" : "integer",
 			"minimum" : 1
