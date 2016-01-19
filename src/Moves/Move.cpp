@@ -23,6 +23,7 @@
 #include "AnnealChargeMove.h"
 #include "AcidTitrationMove.h"
 #include "AcidReactionMove.h"
+#include "WidomInsertionMove.h"
 
 using namespace Json;
 
@@ -135,12 +136,13 @@ namespace SAPHRON
 			srand(time(NULL));
 			int seed = json.get("seed", rand()).asInt();
 			auto prefac = json.get("op_prefactor", true).asBool();
+			auto multi_d = json.get("multi_delete", false).asBool();
 			
 			std::vector<std::string> species;
 			for(auto& s : json["species"])
 				species.push_back(s.asString());
 
-			auto* m = new DeleteParticleMove(species, seed);
+			auto* m = new DeleteParticleMove(species, multi_delete, seed);
 			m->SetOrderParameterPrefactor(prefac);
 			move = static_cast<Move*>(m);
 		}
@@ -187,13 +189,14 @@ namespace SAPHRON
 			srand(time(NULL));
 			auto seed = json.get("seed", rand()).asInt();
 			auto scount = json["stash_count"].asInt();
-			auto prefac = json.get("op_prefactor", true).asBool(); 
+			auto prefac = json.get("op_prefactor", true).asBool();
+			auto multi_i = json.get("multi_insertion", false).asBool(); 
 
 			std::vector<std::string> species;
 			for(auto& s : json["species"])
 				species.push_back(s.asString());
 
-			auto* m = new InsertParticleMove(species, *wm, scount, seed);
+			auto* m = new InsertParticleMove(species, *wm, scount, multi_i, seed);
 			m->SetOrderParameterPrefactor(prefac);
 			move = static_cast<Move*>(m);
 		}
@@ -357,6 +360,25 @@ namespace SAPHRON
 
 			move = new VolumeSwapMove(dv, seed);
 		}
+		else if(type == "WidomInsertion")
+		{
+			reader.parse(JsonSchema::InsertParticleMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs. 
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			srand(time(NULL));
+			auto seed = json.get("seed", rand()).asInt(); 
+
+			std::vector<std::string> species;
+			for(auto& s : json["species"])
+				species.push_back(s.asString());
+
+			auto* m = new WidomInsertionMove(species, *wm, seed);
+		}	
 		else
 		{
 			throw BuildException({path + ": Unknown move type specified."});
