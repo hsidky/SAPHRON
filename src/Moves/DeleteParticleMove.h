@@ -18,13 +18,14 @@ namespace SAPHRON
 		int _performed;
 		std::vector<int> _species;
 		bool _prefac;
+		bool _multi_delete;
 		int _seed;
 
 	public:
 		DeleteParticleMove(const std::vector<int>& species, 
-						   int seed = 45843) :
+						   bool multi_delete, int seed = 45843) :
 		_rand(seed), _rejected(0), _performed(0), _species(0), 
-		_prefac(true), _seed(seed)
+		_prefac(true), _multi_insertion(multi_delete), _seed(seed)
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
@@ -43,8 +44,9 @@ namespace SAPHRON
 
 		DeleteParticleMove(const std::vector<std::string>& species, 
 						   int seed = 45843) : 
-		_rand(seed), _rejected(0), _performed(0), _species(0),
-		_prefac(true), _seed(seed)
+						   bool multi_delete, int seed = 45843) :
+		_rand(seed), _rejected(0), _performed(0), _species(0), 
+		_prefac(true), _multi_delete(multi_delete), _seed(seed)
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
@@ -69,47 +71,86 @@ namespace SAPHRON
 			// Get random world.
 			World* w = wm->GetRandomWorld();
 
-			// Get random identity from list. 
-			size_t n = _species.size();
-			assert(n > 0);
+			Particle* plist[32];
 
-			auto id = _species[_rand.int32() % n];
+			int NumberofParticles=1;
 
-			// If world doesn't have any particles of type "id", return.
-			auto& comp = w->GetComposition();
-			if(comp[id] == 0)
-				return;
+			// Unstash into particle list or single particle
+			if(_multi_insertion)
+			{
+				auto& comp = w->GetComposition();
+				NumberofParticles=_species.size();
+				for (int i = 0; i < _species.size(); i++)
+				{
+					if(comp[_species[i]] == 0)
+						return;
+					plist[i] = w->DrawRandomParticleBySpecies(_species[i]);
+					if(plist[i] == nullptr) // Safety check.
+						return;
+				}
+			}
+			else
+			{
+				size_t n = _species.size();
+				assert(n > 0);
+				auto type = _rand.int32() % n;
+				auto& comp = w->GetComposition();
+				if(comp[type] == 0)
+					return;
+				plist[0] = w->DrawRandomParticleBySpecies(_species[type]);
+				if(plist[0] == nullptr) // Safety check.
+					return;
+			}
 
-			auto* p = w->DrawRandomParticleBySpecies(id);
-			if(p == nullptr) // Safety check.
-				return;
-
+			double Prefactor = 1;
+			auto& sim = SimInfo::Instance();
+			auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
 			auto V = w->GetVolume();
-			auto mu = w->GetChemicalPotential(id);
-			auto lambda = w->GetWavelength(id);
-			auto N = comp[id];
+			EPTuple ei;
 
-			// Evaluate old energy. We don't actually have to remove 
-			// the particle, only do it if needed. However, for DOS 
-			// we have to (see below).
-			auto ei = ffm->EvaluateHamiltonian(*p, comp, V);
+			for (int i = 0; i < NumberofParticles; i++)
+			{
+				auto& p = plist[i];
+
+				auto id = p->GetSpeciesID();
+				auto& comp = w->GetComposition();
+				auto N = comp[id];
+				auto mu = w->GetChemicalPotential(id);
+				auto lambda = w->GetWavelength(id);
+
+				Prefactor*=(lambda*lambda*lambda*N)/V*exp(-beta*mu);
+
+				// Evaluate old energy. For multi deletion moves
+				// Need to remove particle one by one so energy
+				// is not double counted.
+				auto ei += ffm->EvaluateHamiltonian(*p, comp, V);
+				w->RemoveParticle(p);
+			}
+
 			++_performed;
 
 			// The acceptance rule is from Frenkel & Smit Eq. 5.6.9.
-			auto& sim = SimInfo::Instance();
-			auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
-			auto pacc = (lambda*lambda*lambda*N)/V*exp(beta*(ei.energy.total()-mu));
+			auto pacc = Prefactor*exp(beta*ei.energy.total());
 			pacc = pacc > 1.0 ? 1.0 : pacc;
 
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
-				// Add it back to the world. 
+				// Add it back to the world.
+				for (int i = 0; i < NumberofParticles; i++)
+				{
+					auto& p = plist[i];
+					w->AddParticle(p);
+				}
 				++_rejected;
 			}
 			else
 			{
 				// Stash the particle which actually removes it from the world. 
-				w->StashParticle(p);
+				for (int i = 0; i < NumberofParticles; i++)
+				{
+					auto& p = plist[i];
+					w->StashParticle(p);
+				}
 
 				// Update energies and pressures.
 				w->IncrementEnergy(-1.0*ei.energy);
@@ -122,34 +163,68 @@ namespace SAPHRON
 							 DOSOrderParameter* op, 
 							 const MoveOverride& override) override
 		{
-						// Get random identity from list. 
-			size_t n = _species.size();
-			assert(n > 0);
 
-			auto id = _species[_rand.int32() % n];
+			Particle* plist[32];
 
-			// If world doesn't have any particles of type "id", return.
-			auto& comp = w->GetComposition();
-			if(comp[id] == 0)
-				return;
+			int NumberofParticles=1;
 
-			auto* p = w->DrawRandomParticleBySpecies(id);
-			if(p == nullptr) // Safety check.
-				return;
+						// Unstash into particle list or single particle
+			if(_multi_insertion)
+			{
+				auto& comp = w->GetComposition();
+				NumberofParticles=_species.size();
+				for (int i = 0; i < _species.size(); i++)
+				{
+					if(comp[_species[i]] == 0)
+						return;
+					plist[i] = w->DrawRandomParticleBySpecies(_species[i]);
+					if(plist[i] == nullptr) // Safety check.
+						return;
+				}
+			}
+			else
+			{
+				size_t n = _species.size();
+				assert(n > 0);
+				auto type = _rand.int32() % n;
+				auto& comp = w->GetComposition();
+				if(comp[type] == 0)
+					return;
+				plist[0] = w->DrawRandomParticleBySpecies(_species[type]);
+				if(plist[0] == nullptr) // Safety check.
+					return;
+			}
 
+			double Prefactor = 1;
+			auto& sim = SimInfo::Instance();
+			auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
 			auto V = w->GetVolume();
-			auto mu = w->GetChemicalPotential(id);
-			auto lambda = w->GetWavelength(id);
-			auto N = comp[id];
-
-			// Evaluate old energy then remove particle. 
-			auto ei = ffm->EvaluateHamiltonian(*p, comp, V);
+			
 			auto opi = op->EvaluateOrderParameter(*w);
+			EPTuple ei;
 
-			w->RemoveParticle(p);
+			for (int i = 0; i < NumberofParticles; i++)
+			{
+				auto& p = plist[i];
+
+				auto id = p->GetSpeciesID();
+				auto& comp = w->GetComposition();
+				auto N = comp[id];
+				auto mu = w->GetChemicalPotential(id);
+				auto lambda = w->GetWavelength(id);
+
+				if(_prefac)
+					Prefactor*=(lambda*lambda*lambda*N)/V*exp(-beta*mu);
+
+				// Evaluate old energy. For multi deletion moves
+				// Need to remove particle one by one so energy
+				// is not double counted.
+				auto ei += ffm->EvaluateHamiltonian(*p, comp, V);
+				w->RemoveParticle(p);
+			}
+
 			++_performed;
 
-			// Update energy and evaluate OP.
 			w->IncrementEnergy(-1.0*ei.energy);
 			w->IncrementPressure(-1.0*ei.pressure);
 			auto opf = op->EvaluateOrderParameter(*w);
@@ -158,28 +233,33 @@ namespace SAPHRON
 			// Acceptance rule.
 			double pacc = op->AcceptanceProbability(ei.energy, ef, opi, opf, *w);
 
-			// The acceptance rule is from Frenkel & Smit Eq. 5.6.9.
-			// If prefactor is enabled, compute.
 			if(_prefac)
 			{
-				auto& sim = SimInfo::Instance();
-				auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
-				pacc *= (lambda*lambda*lambda*N)/V*exp(-beta*mu);
+				pacc *= Prefactor;
 			}
+
 			pacc = pacc > 1.0 ? 1.0 : pacc;
 
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
-				// Add it back to the world. 
-				w->AddParticle(p);
+				// Add it back to the world.
+				for (int i = 0; i < NumberofParticles; i++)
+				{
+					auto& p = plist[i];
+					w->AddParticle(p);
+				}
 				w->IncrementEnergy(ei.energy);
 				w->IncrementPressure(ei.pressure);
 				++_rejected;
 			}
 			else
 			{
-				// Stach the particle. 
-				w->StashParticle(p);
+				// Stash the particle which actually removes it from the world. 
+				for (int i = 0; i < NumberofParticles; i++)
+				{
+					auto& p = plist[i];
+					w->StashParticle(p);
+				}
 			}
 		}
 
