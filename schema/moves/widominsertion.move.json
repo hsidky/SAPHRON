@@ -1,0 +1,27 @@
+{
+	"type" : "object",
+	"varname" : "WidomInsertionMove",
+	"properties" : {
+		"type" : { 
+			"type" : "string",
+			"enum" : ["WidomInsertion"]
+		},
+		"species" : {
+			"type" : "array",
+			"items" : {
+				"type" : "string"
+			},
+			"minimumItems" : 1
+		},
+		"seed" : {
+			"type" : "integer",
+			"minimum" : 0
+		},
+		"weight" : {
+			"type" : "integer",
+			"minimum" : 1
+		}
+	},
+	"required" : ["type", "species"],
+	"additionalProperties": false
+}
