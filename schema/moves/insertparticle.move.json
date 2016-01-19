@@ -17,6 +17,9 @@
 			},
 			"minimumItems" : 1
 		},
+		"multi_insertion" : {
+			"type" : "boolean"
+		},
 		"seed" : {
 			"type" : "integer",
 			"minimum" : 0

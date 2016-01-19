@@ -23,6 +23,7 @@ namespace SAPHRON
 		std::vector<int> _species;
 		bool _prefac;
 		int _scount; // Stash count.
+		bool _multi_insert;
 		int _seed;
 
 		void InitStashParticles(const WorldManager& wm)
@@ -51,10 +52,11 @@ namespace SAPHRON
 	public:
 		InsertParticleMove(const std::vector<int>& species, 
 						   const WorldManager& wm,
-						   int stashcount,
+						   int stashcount, bool multi_insert,
 						   int seed = 45843) :
 		_rand(seed), _rejected(0), _performed(0), _species(0), 
-		_prefac(true), _scount(stashcount), _seed(seed)
+		_prefac(true), _scount(stashcount), 
+		_multi_insert(multi_insert), _seed(seed)
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
@@ -75,10 +77,11 @@ namespace SAPHRON
 
 		InsertParticleMove(const std::vector<std::string>& species, 
 						   const WorldManager& wm,
-						   int stashcount,
-						   int seed = 45843) : 
-		_rand(seed), _rejected(0), _performed(0), _species(0),
-		_prefac(true), _scount(stashcount), _seed(seed)
+						   int stashcount, bool multi_insert,
+						   int seed = 45843) :
+		_rand(seed), _rejected(0), _performed(0), _species(0), 
+		_prefac(true), _scount(stashcount), 
+		_multi_insert(multi_insert), _seed(seed)
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
@@ -105,56 +108,86 @@ namespace SAPHRON
 			// Get random world.
 			World* w = wm->GetRandomWorld();
 
-			// Get random identity from list. 
-			size_t n = _species.size();
-			assert(n > 0);
-			auto * p = w->UnstashParticle(_species[_rand.int32() % n]);
+			Particle* plist[32];
 
-			// Generate a random position and orientation for particle insertion.
-			const auto& H = w->GetHMatrix();
-			Vector3D pr{_rand.doub(), _rand.doub(), _rand.doub()};
-			Vector3D pos = H*pr;
-			p->SetPosition(pos);
+			int NumberofParticles=1;
 
-			// Choose random axis, and generate random angle.
-			int axis = _rand.int32() % 3 + 1;
-			double deg = (4.0*_rand.doub() - 2.0)*M_PI;
-			Matrix3D R = GenRotationMatrix(axis, deg);
-
-			// Rotate particle and director.
-			p->SetDirector(R*p->GetDirector());
-			for(auto& child : *p)
+			// Unstash into particle list or single particle
+			if(_multi_insertion)
 			{
-				child->SetPosition(R*(child->GetPosition()-pos) + pos);
-				child->SetDirector(R*child->GetDirector());
+				NumberofParticles=_species.size();
+				for (int i = 0; i < _species.size(); i++)
+					plist[i]=(w->UnstashParticle(_species[i]));
+			}
+			else
+			{
+				size_t n = _species.size();
+				assert(n > 0);
+				auto type = _rand.int32() % n;
+				plist[0] = (w->UnstashParticle(_species[type]));
 			}
 
-			// Insert particle.
-			w->AddParticle(p);
-
-			auto id = p->GetSpeciesID();
-			auto& comp = w->GetComposition();
-			auto N = comp[id];
+			double Prefactor = 1;
+			auto& sim = SimInfo::Instance();
+			auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
 			auto V = w->GetVolume();
-			auto mu = w->GetChemicalPotential(id);
-			auto lambda = w->GetWavelength(id);
+			EPTuple ef;
+
+			// Generate a random position and orientation for particle insertion.
+			for (int i = 0; i < NumberofParticles; i++)
+			{
+				auto& p = plist[i];
+				
+				const auto& H = w->GetHMatrix();
+				Vector3D pr{_rand.doub(), _rand.doub(), _rand.doub()};
+				Vector3D pos = H*pr;
+				p->SetPosition(pos);
+
+				// Choose random axis, and generate random angle.
+				int axis = _rand.int32() % 3 + 1;
+				double deg = (4.0*_rand.doub() - 2.0)*M_PI;
+				Matrix3D R = GenRotationMatrix(axis, deg);
+
+				// Rotate particle and director.
+				p->SetDirector(R*p->GetDirector());
+				for(auto& child : *p)
+				{
+					child->SetPosition(R*(child->GetPosition()-pos) + pos);
+					child->SetDirector(R*child->GetDirector());
+				}
+
+				auto id = p->GetSpeciesID();
+				auto& comp = w->GetComposition();
+				auto N = comp[id];
+				auto mu = w->GetChemicalPotential(id);
+				auto lambda = w->GetWavelength(id);
+
+				Prefactor*=V/(lambda*lambda*lambda*N)*exp(beta*mu);
+			
+				// Evaluate new energy for each particle. 
+				// Insert particle one at a time. Done this way
+				// to prevent double counting in the forcefieldmanager
+				// Can be adjusted later if wated.
+
+				w->AddParticle(p);
+				ef += ffm->EvaluateHamiltonian(*p, comp, V);
+			}
 
 			++_performed;
 
-			// Evaluate new energy and accept/reject. 
-			auto ef = ffm->EvaluateHamiltonian(*p, comp, V);
-
 			// The acceptance rule is from Frenkel & Smit Eq. 5.6.8.
 			// However,t iwas modified since we are using the *final* particle number.
-			auto& sim = SimInfo::Instance();
-			auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
-			auto pacc = V/(lambda*lambda*lambda*N)*exp(beta*(mu - ef.energy.total()));
+			auto pacc = Prefactor*exp(-beta*ef.energy.total());;
 			pacc = pacc > 1.0 ? 1.0 : pacc;
 
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
-				// Stashing a particle automatically removes it from world. 
-				w->StashParticle(p);
+				// Stashing a particle automatically removes it from world.
+				for (int i = 0; i < NumberofParticles; i++)
+				{
+					auto& p = plist[i];
+					w->StashParticle(p);
+				}
 				++_rejected;
 			}
 			else
@@ -170,48 +203,79 @@ namespace SAPHRON
 							 DOSOrderParameter* op, 
 							 const MoveOverride& override) override
 		{
-			// Get random identity from list. 
-			size_t n = _species.size();
-			assert(n > 0);
-			auto* p = w->UnstashParticle(_species[_rand.int32() % n]);
 
-			// Generate a random position and orientation for particle insertion.
-			const auto& H = w->GetHMatrix();
-			Vector3D pr{_rand.doub(), _rand.doub(), _rand.doub()};
-			Vector3D pos = H*pr;
-			p->SetPosition(pos);
-
-			// Choose random axis, and generate random angle.
-			int axis = _rand.int32() % 3 + 1;
-			double deg = (4.0*_rand.doub() - 2.0)*M_PI;
-			Matrix3D R = GenRotationMatrix(axis, deg);
-
-			// Rotate particle and director.
-			p->SetDirector(R*p->GetDirector());
-			for(auto& child : *p)
-			{
-				child->SetPosition(R*(child->GetPosition()-pos) + pos);
-				child->SetDirector(R*child->GetDirector());
-			}
-
-			// Get energy and evaluate initial order parameter.
+			Particle* plist[32];
+			//Evaluate initial energy and order parameter
 			auto ei = w->GetEnergy();
 			auto opi = op->EvaluateOrderParameter(*w);
 
-			// Insert particle.
-			w->AddParticle(p);
+			int NumberofParticles=1;
 
-			auto id = p->GetSpeciesID();
-			auto& comp = w->GetComposition();
-			auto N = comp[id];
+			// Unstash into particle list or single particle
+			if(_multi_insertion)
+			{
+				NumberofParticles=_species.size();
+				for (int i = 0; i < _species.size(); i++)
+					plist[i]=(w->UnstashParticle(_species[i]));
+			}
+			else
+			{
+				size_t n = _species.size();
+				assert(n > 0);
+				auto type = _rand.int32() % n;
+				plist[0] = (w->UnstashParticle(_species[type]));
+			}
+
+			double Prefactor = 1;
+			auto& sim = SimInfo::Instance();
+			auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
 			auto V = w->GetVolume();
-			auto mu = w->GetChemicalPotential(id);
-			auto lambda = w->GetWavelength(id);
+			EPTuple ef;
+
+			// Generate a random position and orientation for particle insertion.
+			for (int i = 0; i < NumberofParticles; i++)
+			{
+				auto& p = plist[i];
+				
+				const auto& H = w->GetHMatrix();
+				Vector3D pr{_rand.doub(), _rand.doub(), _rand.doub()};
+				Vector3D pos = H*pr;
+				p->SetPosition(pos);
+
+				// Choose random axis, and generate random angle.
+				int axis = _rand.int32() % 3 + 1;
+				double deg = (4.0*_rand.doub() - 2.0)*M_PI;
+				Matrix3D R = GenRotationMatrix(axis, deg);
+
+				// Rotate particle and director.
+				p->SetDirector(R*p->GetDirector());
+				for(auto& child : *p)
+				{
+					child->SetPosition(R*(child->GetPosition()-pos) + pos);
+					child->SetDirector(R*child->GetDirector());
+				}
+
+				auto id = p->GetSpeciesID();
+				auto& comp = w->GetComposition();
+				auto N = comp[id];
+				auto mu = w->GetChemicalPotential(id);
+				auto lambda = w->GetWavelength(id);
+
+				if(_prefac)
+					Prefactor*=V/(lambda*lambda*lambda*N)*exp(beta*mu);
+			
+				// Evaluate new energy for each particle. 
+				// Insert particle one at a time. Done this way
+				// to prevent double counting in the forcefieldmanager
+				// Can be adjusted later if wated.
+
+				w->AddParticle(p);
+				ef += ffm->EvaluateHamiltonian(*p, comp, V);
+			}
 
 			++_performed;
 
-			// Evaluate new energy, update and eval OP. 
-			auto ef = ffm->EvaluateHamiltonian(*p, comp, V);
+			// new energy update and eval OP. 
 			w->IncrementEnergy(ef.energy);
 			w->IncrementPressure(ef.pressure);
 			auto opf = op->EvaluateOrderParameter(*w);
@@ -222,17 +286,18 @@ namespace SAPHRON
 			
 			// If prefactor is enabled, compute.
 			if(_prefac)
-			{
-				auto& sim = SimInfo::Instance();
-				auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
-				pacc *= V/(lambda*lambda*lambda*N)*exp(beta*mu);
-			}
+				pacc *= Prefactor;
+
 			pacc = pacc > 1.0 ? 1.0 : pacc;
 
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
 				// Stashing a particle automatically removes it from world. 
-				w->StashParticle(p);
+				for (int i = 0; i < NumberofParticles; i++)
+				{
+					auto& p = plist[i];
+					w->StashParticle(p);
+				}
 				w->IncrementEnergy(-1.0*ef.energy);
 				w->IncrementPressure(-1.0*ef.pressure);
 				++_rejected;
@@ -260,6 +325,7 @@ namespace SAPHRON
 		{
 			json["type"] = "InsertParticle";
 			json["stash_count"] = _scount;
+			json["multi_insertion"] = _multi_insertion;
 			json["seed"] = _seed;
 			json["op_prefactor"] = _prefac;
 
