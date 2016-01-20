@@ -110,13 +110,13 @@ namespace SAPHRON
 
 			Particle* plist[32];
 
-			int NumberofParticles=1;
+			unsigned int NumberofParticles=1;
 
 			// Unstash into particle list or single particle
-			if(_multi_insertion)
+			if(_multi_insert)
 			{
 				NumberofParticles=_species.size();
-				for (int i = 0; i < _species.size(); i++)
+				for (unsigned int i = 0; i < _species.size(); i++)
 					plist[i]=(w->UnstashParticle(_species[i]));
 			}
 			else
@@ -131,10 +131,11 @@ namespace SAPHRON
 			auto& sim = SimInfo::Instance();
 			auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
 			auto V = w->GetVolume();
+			auto& comp = w->GetComposition();
 			EPTuple ef;
 
 			// Generate a random position and orientation for particle insertion.
-			for (int i = 0; i < NumberofParticles; i++)
+			for (unsigned int i = 0; i < NumberofParticles; i++)
 			{
 				auto& p = plist[i];
 				
@@ -157,7 +158,6 @@ namespace SAPHRON
 				}
 
 				auto id = p->GetSpeciesID();
-				auto& comp = w->GetComposition();
 				auto N = comp[id];
 				auto mu = w->GetChemicalPotential(id);
 				auto lambda = w->GetWavelength(id);
@@ -183,7 +183,7 @@ namespace SAPHRON
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
 				// Stashing a particle automatically removes it from world.
-				for (int i = 0; i < NumberofParticles; i++)
+				for (unsigned int i = 0; i < NumberofParticles; i++)
 				{
 					auto& p = plist[i];
 					w->StashParticle(p);
@@ -209,13 +209,13 @@ namespace SAPHRON
 			auto ei = w->GetEnergy();
 			auto opi = op->EvaluateOrderParameter(*w);
 
-			int NumberofParticles=1;
+			unsigned int NumberofParticles=1;
 
 			// Unstash into particle list or single particle
-			if(_multi_insertion)
+			if(_multi_insert)
 			{
 				NumberofParticles=_species.size();
-				for (int i = 0; i < _species.size(); i++)
+				for (unsigned int i = 0; i < _species.size(); i++)
 					plist[i]=(w->UnstashParticle(_species[i]));
 			}
 			else
@@ -231,9 +231,10 @@ namespace SAPHRON
 			auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
 			auto V = w->GetVolume();
 			EPTuple ef;
+			auto& comp = w->GetComposition();
 
 			// Generate a random position and orientation for particle insertion.
-			for (int i = 0; i < NumberofParticles; i++)
+			for (unsigned int i = 0; i < NumberofParticles; i++)
 			{
 				auto& p = plist[i];
 				
@@ -256,7 +257,6 @@ namespace SAPHRON
 				}
 
 				auto id = p->GetSpeciesID();
-				auto& comp = w->GetComposition();
 				auto N = comp[id];
 				auto mu = w->GetChemicalPotential(id);
 				auto lambda = w->GetWavelength(id);
@@ -293,7 +293,7 @@ namespace SAPHRON
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
 				// Stashing a particle automatically removes it from world. 
-				for (int i = 0; i < NumberofParticles; i++)
+				for (unsigned int i = 0; i < NumberofParticles; i++)
 				{
 					auto& p = plist[i];
 					w->StashParticle(p);
@@ -325,7 +325,7 @@ namespace SAPHRON
 		{
 			json["type"] = "InsertParticle";
 			json["stash_count"] = _scount;
-			json["multi_insertion"] = _multi_insertion;
+			json["multi_insertion"] = _multi_insert;
 			json["seed"] = _seed;
 			json["op_prefactor"] = _prefac;
 

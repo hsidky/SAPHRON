@@ -142,7 +142,7 @@ namespace SAPHRON
 			for(auto& s : json["species"])
 				species.push_back(s.asString());
 
-			auto* m = new DeleteParticleMove(species, multi_delete, seed);
+			auto* m = new DeleteParticleMove(species, multi_d, seed);
 			m->SetOrderParameterPrefactor(prefac);
 			move = static_cast<Move*>(m);
 		}
@@ -377,7 +377,7 @@ namespace SAPHRON
 			for(auto& s : json["species"])
 				species.push_back(s.asString());
 
-			auto* m = new WidomInsertionMove(species, *wm, seed);
+			move = new WidomInsertionMove(species, *wm, seed);
 		}	
 		else
 		{

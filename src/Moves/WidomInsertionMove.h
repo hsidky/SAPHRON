@@ -12,7 +12,7 @@ namespace SAPHRON
 	// Class for widom move. Based on providing 
 	// a list of species, the move will create _ghost copies 
 	// of each one.
-	class WidomMove : public Move
+	class WidomInsertionMove : public Move
 	{
 	private: 
 		Rand _rand;
@@ -26,7 +26,7 @@ namespace SAPHRON
 
 		int _seed;
 
-		void InitGhostParticle(std::vector<int> ID)
+		void InitGhostParticle(std::vector<int> IDs)
 		{
 			// Get particle map, find one of the appropriate species 
 			// and clone. Can't clone if none available!
@@ -56,7 +56,7 @@ namespace SAPHRON
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
-			std::std::vector<int> IDs;
+			std::vector<int> IDs;
 			for(auto& id : species)
 			{
 				if(id >= (int)list.size())
@@ -79,7 +79,7 @@ namespace SAPHRON
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
-			std::std::vector<int> IDs;
+			std::vector<int> IDs;
 			for(auto& id : species)
 			{
 				auto it = std::find(list.begin(), list.end(), id);
@@ -90,7 +90,7 @@ namespace SAPHRON
 							  << std::endl;
 					exit(-1);
 				}
-				IDs.push_back(id);
+				IDs.push_back(it - list.begin());
 			}
 			InitGhostParticle(IDs);
 		}
@@ -102,6 +102,8 @@ namespace SAPHRON
 			// Get random world.
 			World* w = wm->GetRandomWorld();
 			EPTuple ef;
+			auto& comp = w->GetComposition();
+			auto V = w->GetVolume();
 
 			// Generate a random position and orientation for particle insertion.
 			for (auto& p : _ghosts)
@@ -128,6 +130,7 @@ namespace SAPHRON
 				ef += ffm->EvaluateHamiltonian(*p, comp, V);
 			}
 
+			auto& sim = SimInfo::Instance();
 			auto KbT = sim.GetkB()*w->GetTemperature();
 			auto beta = 1.0/(KbT);
 			_sum_energies += exp(-beta*ef.energy.total());
@@ -136,7 +139,7 @@ namespace SAPHRON
 
 			for (auto& p : _ghosts)
 			{
-				w->SetChemicalPotential(mu,p->GetSpeciesID())
+				w->SetChemicalPotential(mu,p->GetSpeciesID());
 				w->RemoveParticle(p);				
 			}
 
@@ -147,7 +150,7 @@ namespace SAPHRON
 							 DOSOrderParameter* op, 
 							 const MoveOverride& override) override
 		{
-			std::cerr << "Volume swap move does not support DOS interface." << std::endl;
+			std::cerr << "Widom insertion move does not support DOS interface." << std::endl;
 			exit(-1);
 		}
 

@@ -38,6 +38,7 @@ namespace SAPHRON
 		static std::string Observers;
 		static std::string JSONObserver;
 		static std::string DLMFileObserver;
+		static std::string WidomInsertionMove;
 		static std::string AcidTitrationMove;
 		static std::string TranslatePrimitiveMove;
 		static std::string AcidReactionMove;

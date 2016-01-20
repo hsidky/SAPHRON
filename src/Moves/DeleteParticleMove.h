@@ -25,7 +25,7 @@ namespace SAPHRON
 		DeleteParticleMove(const std::vector<int>& species, 
 						   bool multi_delete, int seed = 45843) :
 		_rand(seed), _rejected(0), _performed(0), _species(0), 
-		_prefac(true), _multi_insertion(multi_delete), _seed(seed)
+		_prefac(true), _multi_delete(multi_delete), _seed(seed)
 		{
 			// Verify species list and add to local vector.
 			auto& list = Particle::GetSpeciesList();
@@ -42,8 +42,7 @@ namespace SAPHRON
 			}
 		}
 
-		DeleteParticleMove(const std::vector<std::string>& species, 
-						   int seed = 45843) : 
+		DeleteParticleMove(const std::vector<std::string>& species,
 						   bool multi_delete, int seed = 45843) :
 		_rand(seed), _rejected(0), _performed(0), _species(0), 
 		_prefac(true), _multi_delete(multi_delete), _seed(seed)
@@ -73,14 +72,14 @@ namespace SAPHRON
 
 			Particle* plist[32];
 
-			int NumberofParticles=1;
+			unsigned int NumberofParticles=1;
 
 			// Unstash into particle list or single particle
-			if(_multi_insertion)
+			if(_multi_delete)
 			{
 				auto& comp = w->GetComposition();
 				NumberofParticles=_species.size();
-				for (int i = 0; i < _species.size(); i++)
+				for (unsigned int i = 0; i < _species.size(); i++)
 				{
 					if(comp[_species[i]] == 0)
 						return;
@@ -107,13 +106,13 @@ namespace SAPHRON
 			auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
 			auto V = w->GetVolume();
 			EPTuple ei;
+			auto& comp = w->GetComposition();
 
-			for (int i = 0; i < NumberofParticles; i++)
+			for (unsigned int i = 0; i < NumberofParticles; i++)
 			{
 				auto& p = plist[i];
 
 				auto id = p->GetSpeciesID();
-				auto& comp = w->GetComposition();
 				auto N = comp[id];
 				auto mu = w->GetChemicalPotential(id);
 				auto lambda = w->GetWavelength(id);
@@ -123,7 +122,7 @@ namespace SAPHRON
 				// Evaluate old energy. For multi deletion moves
 				// Need to remove particle one by one so energy
 				// is not double counted.
-				auto ei += ffm->EvaluateHamiltonian(*p, comp, V);
+				ei += ffm->EvaluateHamiltonian(*p, comp, V);
 				w->RemoveParticle(p);
 			}
 
@@ -136,7 +135,7 @@ namespace SAPHRON
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
 				// Add it back to the world.
-				for (int i = 0; i < NumberofParticles; i++)
+				for (unsigned int i = 0; i < NumberofParticles; i++)
 				{
 					auto& p = plist[i];
 					w->AddParticle(p);
@@ -146,7 +145,7 @@ namespace SAPHRON
 			else
 			{
 				// Stash the particle which actually removes it from the world. 
-				for (int i = 0; i < NumberofParticles; i++)
+				for (unsigned int i = 0; i < NumberofParticles; i++)
 				{
 					auto& p = plist[i];
 					w->StashParticle(p);
@@ -166,14 +165,14 @@ namespace SAPHRON
 
 			Particle* plist[32];
 
-			int NumberofParticles=1;
+			unsigned int NumberofParticles=1;
 
 						// Unstash into particle list or single particle
-			if(_multi_insertion)
+			if(_multi_delete)
 			{
 				auto& comp = w->GetComposition();
 				NumberofParticles=_species.size();
-				for (int i = 0; i < _species.size(); i++)
+				for (unsigned int i = 0; i < _species.size(); i++)
 				{
 					if(comp[_species[i]] == 0)
 						return;
@@ -199,16 +198,16 @@ namespace SAPHRON
 			auto& sim = SimInfo::Instance();
 			auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
 			auto V = w->GetVolume();
+			auto& comp = w->GetComposition();
 			
 			auto opi = op->EvaluateOrderParameter(*w);
 			EPTuple ei;
 
-			for (int i = 0; i < NumberofParticles; i++)
+			for (unsigned int i = 0; i < NumberofParticles; i++)
 			{
 				auto& p = plist[i];
 
 				auto id = p->GetSpeciesID();
-				auto& comp = w->GetComposition();
 				auto N = comp[id];
 				auto mu = w->GetChemicalPotential(id);
 				auto lambda = w->GetWavelength(id);
@@ -219,7 +218,7 @@ namespace SAPHRON
 				// Evaluate old energy. For multi deletion moves
 				// Need to remove particle one by one so energy
 				// is not double counted.
-				auto ei += ffm->EvaluateHamiltonian(*p, comp, V);
+				ei += ffm->EvaluateHamiltonian(*p, comp, V);
 				w->RemoveParticle(p);
 			}
 
@@ -243,7 +242,7 @@ namespace SAPHRON
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
 			{
 				// Add it back to the world.
-				for (int i = 0; i < NumberofParticles; i++)
+				for (unsigned int i = 0; i < NumberofParticles; i++)
 				{
 					auto& p = plist[i];
 					w->AddParticle(p);
@@ -255,7 +254,7 @@ namespace SAPHRON
 			else
 			{
 				// Stash the particle which actually removes it from the world. 
-				for (int i = 0; i < NumberofParticles; i++)
+				for (unsigned int i = 0; i < NumberofParticles; i++)
 				{
 					auto& p = plist[i];
 					w->StashParticle(p);
