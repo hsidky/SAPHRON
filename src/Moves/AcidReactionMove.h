@@ -346,7 +346,8 @@ namespace SAPHRON
 							 DOSOrderParameter* op, 
 							 const MoveOverride& override) override
 		{
-			return;
+			std::cerr << "Acid Reaction move does not support DOS interface." << std::endl;
+			exit(-1);
 		}
 
 		// Turns on or off the acceptance rule prefactor for DOS order parameter.
