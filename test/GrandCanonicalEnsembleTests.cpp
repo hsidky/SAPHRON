@@ -53,9 +53,9 @@ TEST(GrandCanonicalEnsembleTests, Default)
 	MoveManager mm;
 	TranslateMove move1(0.22);
 	mm.AddMove(&move1, 75);
-	InsertParticleMove move2({"LJ"}, wm, 500);
+	InsertParticleMove move2({"LJ"}, wm, false, 500);
 	mm.AddMove(&move2, 12);
-	DeleteParticleMove move3({"LJ"});
+	DeleteParticleMove move3({"LJ"},false);
 	mm.AddMove(&move3, 12);
 
 	// Initialize observer.
