@@ -51,6 +51,8 @@ namespace SAPHRON
 		{
 			json["type"] = "DebyeHuckel";
 			json["kappa"] = _kappa;
+			for(auto& rc : _rc)
+				json["rcut"].append(rc);
 		}
 	};
 }

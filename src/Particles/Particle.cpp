@@ -111,7 +111,6 @@ namespace SAPHRON
 	{
 		if(!HasChildren())
 		{
-			json["species"] = GetSpecies();
 			json["charge"] = GetCharge();
 			json["mass"] = GetMass();
 		}

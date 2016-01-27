@@ -426,38 +426,43 @@ namespace SAPHRON
 			if(_chemp[i] != 0) // Only write non-zero chemical potentials?
 				json["chemical_potential"][slist[i]] = _chemp[i];
 
-		// Serialize primitives and build blueprint.
-		std::map<std::string, int> compmap;
-		for(int i = 0; i < (int)_primitives.size(); ++i)
+		// TODO: find a better way to do this. 
+		// Group master particles by species.
+		std::map<std::string, ParticleList> plist; 
+		for(auto& p : _particles)
 		{
-			auto& p = _primitives[i];
-			
-			// Particles.
-			auto& last = json["particles"][i];
-			p->Serialize(last);
-
-			// Components
-			// If primitive has no parent it belongs in components.
-			if(p->HasParent())
-			{
-				auto pid = p->GetParent()->GetSpecies();
-				compmap[pid] = _composition.at(p->GetParent()->GetSpeciesID());
-			}
+			auto s = p->GetSpecies();
+			if(plist.find(s) == plist.end())
+				plist[s] = {p};
 			else
-			{
-				auto id = p->GetSpecies();
-				compmap[id] = _composition.at(p->GetSpeciesID());
-			}
+				plist[s].push_back(p);
 		}
 
-		// Serialize components. 
+		// Go through master particles and serialize primitives.
+		// Generate components as well.
 		auto& components = json["components"];
-		Json::Value comp;
-		for(auto& c : compmap)
+		Json::Value comp, prop;
+		for(auto& pair : plist)
 		{
-			comp[0] = c.first;
-			comp[1] = c.second;
+			comp[0] = pair.first;
+			comp[1] = (int)pair.second.size();
 			components.append(comp);
+			for(auto& p : pair.second)
+			{
+				if(p->HasChildren())
+				{
+					for(auto& child : *p)
+					{
+						child->Serialize(prop);
+						json["particles"].append(prop);
+					}
+				}
+				else
+				{
+					p->Serialize(prop);
+					json["particles"].append(prop);
+				}
+			}
 		}
 	}
 
