@@ -9,6 +9,7 @@
 
 namespace SAPHRON
 {
+	// TO DO: Correct tail corrections for widom insertion.
 	// Class for widom move. Based on providing 
 	// a list of species, the move will create _ghost copies 
 	// of each one.
@@ -49,7 +50,7 @@ namespace SAPHRON
 
 	public:
 		WidomInsertionMove(const std::vector<int>& species, 
-						   const WorldManager& wm,
+						   const WorldManager&,
 						   int seed = 45843) :
 		_rand(seed), _rejected(0), _performed(0), _ghosts(), 
 		_sum_energies(0), _seed(seed)
@@ -72,7 +73,7 @@ namespace SAPHRON
 		}
 
 		WidomInsertionMove(const std::vector<std::string>& species, 
-						   const WorldManager& wm,
+						   const WorldManager&,
 						   int seed = 45843) :
 		_rand(seed), _rejected(0), _performed(0), _ghosts(), 
 		_sum_energies(0), _seed(seed)
@@ -97,7 +98,7 @@ namespace SAPHRON
 
 		virtual void Perform(WorldManager* wm, 
 							 ForceFieldManager* ffm, 
-							 const MoveOverride& override) override
+							 const MoveOverride&) override
 		{
 			// Get random world.
 			World* w = wm->GetRandomWorld();
@@ -131,7 +132,7 @@ namespace SAPHRON
 			}
 
 			auto& sim = SimInfo::Instance();
-			auto KbT = sim.GetkB()*w->GetTemperature();
+			auto KbT = w->GetTemperature()*sim.GetkB();
 			auto beta = 1.0/(KbT);
 			_sum_energies += exp(-beta*ef.energy.total());
 			++_performed;
@@ -139,16 +140,16 @@ namespace SAPHRON
 
 			for (auto& p : _ghosts)
 			{
-				w->SetChemicalPotential(mu,p->GetSpeciesID());
+				w->SetChemicalPotential(p->GetSpeciesID(), mu);
 				w->RemoveParticle(p);				
 			}
 
 		}
 
-		virtual void Perform(World* w, 
-							 ForceFieldManager* ffm, 
-							 DOSOrderParameter* op, 
-							 const MoveOverride& override) override
+		virtual void Perform(World*, 
+							 ForceFieldManager*, 
+							 DOSOrderParameter*, 
+							 const MoveOverride&) override
 		{
 			std::cerr << "Widom insertion move does not support DOS interface." << std::endl;
 			exit(-1);

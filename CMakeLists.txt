@@ -426,11 +426,18 @@ target_include_directories(ValidatorTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(ValidatorTests googletest) 
 add_test(ValidatorTests ValidatorTests)
 
+add_executable(WidomMoveTests test/WidomMoveTests.cpp)
+target_link_libraries(WidomMoveTests ${TEST_DEPS})
+target_include_directories(WidomMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(WidomMoveTests googletest) 
+add_test(WidomMoveTests WidomMoveTests)
+
 add_executable(WorldManagerTests test/WorldManagerTests.cpp)
 target_link_libraries(WorldManagerTests ${TEST_DEPS})
 target_include_directories(WorldManagerTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(WorldManagerTests googletest) 
 add_test(WorldManagerTests WorldManagerTests)
+
 
 # end add testing 
 
