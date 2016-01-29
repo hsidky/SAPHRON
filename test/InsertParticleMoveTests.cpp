@@ -70,6 +70,7 @@ TEST(InsertParticleMove, MultiSpecies)
 	ASSERT_EQ(200, world2.GetParticleCount());
 
 	ffm.AddNonBondedForceField("LJ", "LJ2", lj);
+	ffm.AddNonBondedForceField("LJ2", "LJ2", lj);
 
 	auto H2 = ffm.EvaluateHamiltonian(world2);
 

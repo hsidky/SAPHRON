@@ -18,6 +18,7 @@ namespace SAPHRON
 			std::map<World*, double> _density;
 			std::map<World*, Energy> _energy;
 			std::map<World*, Pressure> _pressure;
+			std::map<World*, double> _chemicalpotential;
 			
 		public: 
 			TestAccumulator(SimFlags flags, unsigned int frequency, unsigned int start) : 
@@ -63,6 +64,13 @@ namespace SAPHRON
 							_pressure[world] = world->GetPressure();
 						else
 							_pressure[world] += world->GetPressure();
+					}
+					if(this->Flags.world_chem_pot)
+					{
+						if(_chemicalpotential.find(world) == _chemicalpotential.end())
+							_chemicalpotential[world] = world->GetChemicalPotential(0);
+						else
+							_chemicalpotential[world] += world->GetChemicalPotential(0);
 					}
 
 					if(_density.find(world) == _density.end())
@@ -115,6 +123,15 @@ namespace SAPHRON
 					world.second /= (double)_counter;
 
 				return pmap;
+			}
+
+			std::map<World*, double> GetAverageChemicalPotential()
+			{
+				auto mumap = _chemicalpotential;
+				for(auto& world : mumap)
+					world.second /= (double)_counter;
+
+				return mumap;
 			}
 			
 			double GetAverageTemperature()

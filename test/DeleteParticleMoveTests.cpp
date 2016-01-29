@@ -68,6 +68,7 @@ TEST(DeleteParticleMove, MultiSpecies)
 	LennardJonesFF lj(10.0, 1.0, {4.0});
 	ffm.AddNonBondedForceField("LJ", "LJ", lj);
 	ffm.AddNonBondedForceField("LJ", "LJ2", lj);
+	ffm.AddNonBondedForceField("LJ2", "LJ2", lj);
 
 	auto H2 = ffm.EvaluateHamiltonian(world2);
 
