@@ -55,7 +55,7 @@ namespace SAPHRON
 		flags.particle_parent_species = json.get("particle_parent_species", 0).asUInt();
 		flags.particle_position = json.get("particle_position", 0).asUInt();
 		flags.particle_director = json.get("particle_director", 0).asUInt();
-		flags.particle_neighbors = json.get("particles_neighbors", 0).asUInt();
+		flags.particle_charge = json.get("particle_charge", 0).asUInt();
 
 		// Masks.
 		int simulation = json.get("simulation", 0).asInt();
@@ -78,6 +78,8 @@ namespace SAPHRON
 		if(particle)
 			flags.particle_on();
 
+		flags.particle_neighbors = json.get("particles_neighbors", 0).asUInt();
+		
 		return flags;
 	}
 
