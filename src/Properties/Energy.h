@@ -12,30 +12,34 @@ namespace SAPHRON
 		double intraelectrostatic;
 		double bonded;
 		double connectivity;
+		double tail;
 		
 		Energy() : intervdw(0.0), intravdw(0.0), interelectrostatic(0.0), intraelectrostatic(0.0), 
-		bonded(0.0), connectivity(0.0){}
+		bonded(0.0), connectivity(0.0), tail(0.0) {}
 
 		Energy(double intervdwE, double intravdwE, double interelectroE, double intraelectroE,
-		 double bondedE, double connectivityE ) : 
+		 double bondedE, double connectivityE, double tailE) : 
 			intervdw(intervdwE), intravdw(intravdwE), interelectrostatic(interelectroE), intraelectrostatic(intraelectroE),
-			bonded(bondedE), connectivity(connectivityE){}
+			bonded(bondedE), connectivity(connectivityE), tail(tailE){}
 		
 		double total() const
 		{
-			return intervdw + intravdw + interelectrostatic + intraelectrostatic + connectivity + bonded;
+			return intervdw + intravdw + interelectrostatic + 
+			intraelectrostatic + connectivity + bonded + tail;
 		}
 
 		inline bool operator==(const Energy& rhs) const
 		{
-			return intervdw == rhs.intervdw && intravdw == rhs.intravdw && interelectrostatic == rhs.interelectrostatic && 
-			intraelectrostatic == rhs.intraelectrostatic && connectivity == rhs.connectivity && bonded == rhs.bonded;
+			return intervdw == rhs.intervdw && intravdw == rhs.intravdw && 
+			interelectrostatic == rhs.interelectrostatic && intraelectrostatic == rhs.intraelectrostatic && 
+			connectivity == rhs.connectivity && bonded == rhs.bonded && tail == rhs.tail;
 		}
 
 		inline bool operator!=(const Energy& rhs) const
 		{
-			return intervdw != rhs.intervdw || intravdw != rhs.intravdw || interelectrostatic != rhs.interelectrostatic || 
-			intraelectrostatic != rhs.intraelectrostatic || connectivity != rhs.connectivity || bonded != rhs.bonded;
+			return intervdw != rhs.intervdw || intravdw != rhs.intravdw || 
+			interelectrostatic != rhs.interelectrostatic || intraelectrostatic != rhs.intraelectrostatic || 
+			connectivity != rhs.connectivity || bonded != rhs.bonded || tail != rhs.tail;
 		}
 
 		inline Energy& operator+=(const Energy& rhs)
@@ -46,6 +50,7 @@ namespace SAPHRON
 			bonded += rhs.bonded;
 			interelectrostatic += rhs.interelectrostatic;
 			intraelectrostatic += rhs.intraelectrostatic;
+			tail += rhs.tail;
 			return *this;
 		}
 
@@ -57,6 +62,7 @@ namespace SAPHRON
 			bonded -= rhs.bonded;
 			interelectrostatic -= rhs.interelectrostatic;
 			intraelectrostatic -= rhs.intraelectrostatic;
+			tail -= rhs.tail;
 			return *this;
 		}
 
@@ -68,6 +74,20 @@ namespace SAPHRON
 			interelectrostatic /= rhs; 
 			intraelectrostatic /= rhs; 
 			connectivity /= rhs;
+			tail /= rhs;
+			return *this;
+		}
+
+
+		inline Energy operator*=(const double& rhs)
+		{
+			intervdw *= rhs; 
+			intravdw *= rhs; 
+			bonded *= rhs; 
+			interelectrostatic *= rhs; 
+			intraelectrostatic *= rhs; 
+			connectivity *= rhs;
+			tail *= rhs;
 			return *this;
 		}
 
@@ -80,6 +100,7 @@ namespace SAPHRON
 			lhs.interelectrostatic *= rhs; 
 			lhs.intraelectrostatic *= rhs; 
 			lhs.connectivity *= rhs;
+			lhs.tail *= rhs;
 			return lhs;
 		}
 	};
@@ -92,6 +113,7 @@ namespace SAPHRON
 		lhs.interelectrostatic += rhs.interelectrostatic;
 		lhs.intraelectrostatic += rhs.intraelectrostatic;
 		lhs.connectivity += rhs.connectivity;
+		lhs.tail += rhs.tail;
 		return lhs;
 	}
 
@@ -103,6 +125,7 @@ namespace SAPHRON
 		lhs.interelectrostatic -= rhs.interelectrostatic;
 		lhs.intraelectrostatic -= rhs.intraelectrostatic;
 		lhs.connectivity -= rhs.connectivity;
+		lhs.tail -= rhs.tail;
 		return lhs;
 	}
 
@@ -114,6 +137,7 @@ namespace SAPHRON
 		lhs.interelectrostatic /= rhs;
 		lhs.intraelectrostatic /= rhs;
 		lhs.connectivity /= rhs;
+		lhs.tail /= rhs;
 		return lhs;
 	}	
 

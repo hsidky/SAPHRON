@@ -112,7 +112,7 @@ namespace SAPHRON
 				}
 			}
 			
-			EPTuple ep{intere, 0, electroe, 0, 0, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
+			EPTuple ep{intere, 0, electroe, 0, 0, 0, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
 
 			// Sum in energy and pressure tail corrections.
 			// Note: we multiply the tail correction expressions by 2.0 because they are on a per-particle
@@ -143,7 +143,7 @@ namespace SAPHRON
 		// Evaluate intramolecular interactions of a particle.
 		inline Energy EvaluateIntra(const Particle& particle, const CompositionList& compositions, double volume) const
 		{
-			EPTuple ep(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			EPTuple ep(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 			World* world = particle.GetWorld();
 			unsigned int wid = (world == nullptr) ? 0 : world->GetID();
@@ -207,20 +207,7 @@ namespace SAPHRON
 			return ep.energy;
 		}
 
-		inline double EvaluateConnectivity(const Particle& particle) const
-		{
-			double h = 0;
-
-			// Calculate connectivity energy 
-			for(auto &connectivity : particle.GetConnectivities())
-				h+= connectivity->EvaluateEnergy(particle);
-
-			// Calculate energy of children.
-			for(auto &child : particle.GetChildren())
-				h += EvaluateConnectivity(*child);
-
-			return h;
-		}
+	
 
 	public:
 		typedef FFMap::iterator iterator;
@@ -273,6 +260,30 @@ namespace SAPHRON
 		// Get the number of registered forcefields.
 		int ElectrostaticForceFieldCount();
 
+		// Evaluates the intermolecular energy of a particle. 
+		EPTuple EvaluateInterEnergy(const Particle& particle) const;
+
+		// Evaluates the intermolecular energy of a world.
+		EPTuple EvaluateInterEnergy(const World& world) const;
+
+		// Computes the intramolecular energy of a particle, this includes bond
+		// energies and connectivities.
+		EPTuple EvaluateIntraEnergy(const Particle& particle) const;
+
+		// Computes intramolecular energy of entire world. 
+		EPTuple EvaluateIntraEnergy(const World& world) const;
+
+		// Evaluates tail contributions (long range corrections) for a world.
+		EPTuple EvaluateTailEnergy(const World& world) const;
+
+		// Evaluates the total energy of a particle including inter
+		// and intra.
+		EPTuple EvaluateEnergy(const Particle& particle) const;
+
+		// Evaluate total energy of the world including inter, intra
+		// and tail.
+		EPTuple EvaluateEnergy(const World& world) const;
+		
 		// Evaluate the energy and virial contribution of the entire world.
 		inline EPTuple EvaluateHamiltonian(World& world) const
 		{
@@ -317,7 +328,7 @@ namespace SAPHRON
 			sim.StartTimer("e_intra");
 			ep.energy += EvaluateIntra(particle, compositions, volume);
 			sim.AddTime("e_intra");
-			ep.energy.connectivity = EvaluateConnectivity(particle);
+			//ep.energy.connectivity = EvaluateConnectivity(particle);
 
 			// Divide virial by volume to get pressure. 
 			ep.pressure /= volume;
