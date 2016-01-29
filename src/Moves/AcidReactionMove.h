@@ -341,10 +341,10 @@ namespace SAPHRON
 			
 		}
 
-		virtual void Perform(World* world, 
-							 ForceFieldManager* ffm, 
-							 DOSOrderParameter* op, 
-							 const MoveOverride& override) override
+		virtual void Perform(World*, 
+							 ForceFieldManager*, 
+							 DOSOrderParameter*, 
+							 const MoveOverride&) override
 		{
 			std::cerr << "Acid Reaction move does not support DOS interface." << std::endl;
 			exit(-1);
