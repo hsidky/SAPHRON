@@ -42,7 +42,8 @@ namespace SAPHRON
 					}
 				);
 
-				auto* P=pcand->second->Clone();
+				auto* P = pcand->second->Clone();
+
 				// Stash a characteristic amount of the particles in world.
 				for(auto& world : wm)
 					world->StashParticle(P, _scount);
@@ -84,6 +85,7 @@ namespace SAPHRON
 		_multi_insert(multi_insert), _seed(seed)
 		{
 			// Verify species list and add to local vector.
+
 			auto& list = Particle::GetSpeciesList();
 			for(auto& id : species)
 			{
@@ -115,16 +117,16 @@ namespace SAPHRON
 			// Unstash into particle list or single particle
 			if(_multi_insert)
 			{
-				NumberofParticles=_species.size();
+				NumberofParticles = _species.size();
 				for (unsigned int i = 0; i < _species.size(); i++)
-					plist[i]=(w->UnstashParticle(_species[i]));
+					plist[i] = w->UnstashParticle(_species[i]);
 			}
 			else
 			{
 				size_t n = _species.size();
 				assert(n > 0);
 				auto type = _rand.int32() % n;
-				plist[0] = (w->UnstashParticle(_species[type]));
+				plist[0] = w->UnstashParticle(_species[type]);
 			}
 
 			double Prefactor = 1;
@@ -137,12 +139,12 @@ namespace SAPHRON
 			// Generate a random position and orientation for particle insertion.
 			for (unsigned int i = 0; i < NumberofParticles; i++)
 			{
-				auto& p = plist[i];
-				
+
 				const auto& H = w->GetHMatrix();
 				Vector3D pr{_rand.doub(), _rand.doub(), _rand.doub()};
 				Vector3D pos = H*pr;
-				p->SetPosition(pos);
+
+				plist[i]->SetPosition(pos);
 
 				// Choose random axis, and generate random angle.
 				int axis = _rand.int32() % 3 + 1;
@@ -150,14 +152,14 @@ namespace SAPHRON
 				Matrix3D R = GenRotationMatrix(axis, deg);
 
 				// Rotate particle and director.
-				p->SetDirector(R*p->GetDirector());
-				for(auto& child : *p)
+				plist[i]->SetDirector(R*plist[i]->GetDirector());
+				for(auto& child : *plist[i])
 				{
 					child->SetPosition(R*(child->GetPosition()-pos) + pos);
 					child->SetDirector(R*child->GetDirector());
 				}
 
-				auto id = p->GetSpeciesID();
+				auto id = plist[i]->GetSpeciesID();
 				auto N = comp[id];
 				auto mu = w->GetChemicalPotential(id);
 				auto lambda = w->GetWavelength(id);
@@ -169,8 +171,8 @@ namespace SAPHRON
 				// to prevent double counting in the forcefieldmanager
 				// Can be adjusted later if wated.
 
-				w->AddParticle(p);
-				ef += ffm->EvaluateHamiltonian(*p, comp, V);
+				w->AddParticle(plist[i]);
+				ef += ffm->EvaluateHamiltonian(*plist[i], comp, V);
 			}
 
 			++_performed;
@@ -184,10 +186,8 @@ namespace SAPHRON
 			{
 				// Stashing a particle automatically removes it from world.
 				for (unsigned int i = 0; i < NumberofParticles; i++)
-				{
-					auto& p = plist[i];
-					w->StashParticle(p);
-				}
+					w->StashParticle(plist[i]);
+
 				++_rejected;
 			}
 			else
@@ -216,14 +216,14 @@ namespace SAPHRON
 			{
 				NumberofParticles=_species.size();
 				for (unsigned int i = 0; i < _species.size(); i++)
-					plist[i]=(w->UnstashParticle(_species[i]));
+					plist[i] = w->UnstashParticle(_species[i]);
 			}
 			else
 			{
 				size_t n = _species.size();
 				assert(n > 0);
 				auto type = _rand.int32() % n;
-				plist[0] = (w->UnstashParticle(_species[type]));
+				plist[0] = w->UnstashParticle(_species[type]);
 			}
 
 			double Prefactor = 1;
@@ -236,12 +236,11 @@ namespace SAPHRON
 			// Generate a random position and orientation for particle insertion.
 			for (unsigned int i = 0; i < NumberofParticles; i++)
 			{
-				auto& p = plist[i];
-				
+
 				const auto& H = w->GetHMatrix();
 				Vector3D pr{_rand.doub(), _rand.doub(), _rand.doub()};
 				Vector3D pos = H*pr;
-				p->SetPosition(pos);
+				plist[i]->SetPosition(pos);
 
 				// Choose random axis, and generate random angle.
 				int axis = _rand.int32() % 3 + 1;
@@ -249,14 +248,14 @@ namespace SAPHRON
 				Matrix3D R = GenRotationMatrix(axis, deg);
 
 				// Rotate particle and director.
-				p->SetDirector(R*p->GetDirector());
-				for(auto& child : *p)
+				plist[i]->SetDirector(R*plist[i]->GetDirector());
+				for(auto& child : *plist[i])
 				{
 					child->SetPosition(R*(child->GetPosition()-pos) + pos);
 					child->SetDirector(R*child->GetDirector());
 				}
 
-				auto id = p->GetSpeciesID();
+				auto id = plist[i]->GetSpeciesID();
 				auto N = comp[id];
 				auto mu = w->GetChemicalPotential(id);
 				auto lambda = w->GetWavelength(id);
@@ -269,8 +268,8 @@ namespace SAPHRON
 				// to prevent double counting in the forcefieldmanager
 				// Can be adjusted later if wated.
 
-				w->AddParticle(p);
-				ef += ffm->EvaluateHamiltonian(*p, comp, V);
+				w->AddParticle(plist[i]);
+				ef += ffm->EvaluateHamiltonian(*plist[i], comp, V);
 			}
 
 			++_performed;
@@ -294,10 +293,8 @@ namespace SAPHRON
 			{
 				// Stashing a particle automatically removes it from world. 
 				for (unsigned int i = 0; i < NumberofParticles; i++)
-				{
-					auto& p = plist[i];
-					w->StashParticle(p);
-				}
+					w->StashParticle(plist[i]);
+
 				w->IncrementEnergy(-1.0*ef.energy);
 				w->IncrementPressure(-1.0*ef.pressure);
 				++_rejected;

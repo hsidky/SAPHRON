@@ -78,7 +78,7 @@ namespace SAPHRON
 			if(_multi_delete)
 			{
 				auto& comp = w->GetComposition();
-				NumberofParticles=_species.size();
+				NumberofParticles = _species.size();
 				for (unsigned int i = 0; i < _species.size(); i++)
 				{
 					if(comp[_species[i]] == 0)
@@ -110,9 +110,8 @@ namespace SAPHRON
 
 			for (unsigned int i = 0; i < NumberofParticles; i++)
 			{
-				auto& p = plist[i];
 
-				auto id = p->GetSpeciesID();
+				auto id = plist[i]->GetSpeciesID();
 				auto N = comp[id];
 				auto mu = w->GetChemicalPotential(id);
 				auto lambda = w->GetWavelength(id);
@@ -122,8 +121,8 @@ namespace SAPHRON
 				// Evaluate old energy. For multi deletion moves
 				// Need to remove particle one by one so energy
 				// is not double counted.
-				ei += ffm->EvaluateHamiltonian(*p, comp, V);
-				w->RemoveParticle(p);
+				ei += ffm->EvaluateHamiltonian(*plist[i], comp, V);
+				w->RemoveParticle(plist[i]);
 			}
 
 			++_performed;
@@ -136,20 +135,14 @@ namespace SAPHRON
 			{
 				// Add it back to the world.
 				for (unsigned int i = 0; i < NumberofParticles; i++)
-				{
-					auto& p = plist[i];
-					w->AddParticle(p);
-				}
+					w->AddParticle(plist[i]);
 				++_rejected;
 			}
 			else
 			{
 				// Stash the particle which actually removes it from the world. 
 				for (unsigned int i = 0; i < NumberofParticles; i++)
-				{
-					auto& p = plist[i];
-					w->StashParticle(p);
-				}
+					w->StashParticle(plist[i]);
 
 				// Update energies and pressures.
 				w->IncrementEnergy(-1.0*ei.energy);
@@ -205,9 +198,7 @@ namespace SAPHRON
 
 			for (unsigned int i = 0; i < NumberofParticles; i++)
 			{
-				auto& p = plist[i];
-
-				auto id = p->GetSpeciesID();
+				auto id = plist[i]->GetSpeciesID();
 				auto N = comp[id];
 				auto mu = w->GetChemicalPotential(id);
 				auto lambda = w->GetWavelength(id);
@@ -218,8 +209,8 @@ namespace SAPHRON
 				// Evaluate old energy. For multi deletion moves
 				// Need to remove particle one by one so energy
 				// is not double counted.
-				ei += ffm->EvaluateHamiltonian(*p, comp, V);
-				w->RemoveParticle(p);
+				ei += ffm->EvaluateHamiltonian(*plist[i], comp, V);
+				w->RemoveParticle(plist[i]);
 			}
 
 			++_performed;
@@ -243,10 +234,8 @@ namespace SAPHRON
 			{
 				// Add it back to the world.
 				for (unsigned int i = 0; i < NumberofParticles; i++)
-				{
-					auto& p = plist[i];
-					w->AddParticle(p);
-				}
+					w->AddParticle(plist[i]);
+
 				w->IncrementEnergy(ei.energy);
 				w->IncrementPressure(ei.pressure);
 				++_rejected;
@@ -255,10 +244,7 @@ namespace SAPHRON
 			{
 				// Stash the particle which actually removes it from the world. 
 				for (unsigned int i = 0; i < NumberofParticles; i++)
-				{
-					auto& p = plist[i];
-					w->StashParticle(p);
-				}
+					w->StashParticle(plist[i]);
 			}
 		}
 
@@ -283,6 +269,7 @@ namespace SAPHRON
 			json["type"] = "DeleteParticle";
 			json["seed"] = _seed;
 			json["op_prefactor"] = _prefac;
+			json["multi_delte"] = _multi_delete;
 
 			auto& species = Particle::GetSpeciesList();
 			for(auto& s : _species)

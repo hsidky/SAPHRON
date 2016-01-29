@@ -362,7 +362,7 @@ namespace SAPHRON
 		}
 		else if(type == "WidomInsertion")
 		{
-			reader.parse(JsonSchema::InsertParticleMove, schema);
+			reader.parse(JsonSchema::WidomInsertionMove, schema);
 			validator.Parse(schema, path);
 
 			// Validate inputs. 
