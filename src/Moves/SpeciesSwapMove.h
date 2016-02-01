@@ -132,13 +132,13 @@ namespace SAPHRON
 			}
 
 			// TODO: FFM is known to double count energies of two particles that are neighbors.
-			auto ei = ffm->EvaluateHamiltonian({p1, p2}, w->GetComposition(), w->GetVolume());
+			auto ei = ffm->EvaluateEnergy(*p1) + ffm->EvaluateEnergy(*p2);
 
 			// Increment pulled out since function is called for undo later on.
 			Perform(p1, p2);
 			++_performed;
 
-			auto ef = ffm->EvaluateHamiltonian({p1, p2}, w->GetComposition(), w->GetVolume());
+			auto ef = ffm->EvaluateEnergy(*p1) + ffm->EvaluateEnergy(*p2);
 			Energy de = ef.energy - ei.energy;
 
 			// Get sim info for kB.
@@ -189,14 +189,14 @@ namespace SAPHRON
 			}
 
 			// TODO: FFM is known to double count energies of two particles that are neighbors.
-			auto ei = ffm->EvaluateHamiltonian({p1, p2}, w->GetComposition(), w->GetVolume());
+			auto ei = ffm->EvaluateEnergy(*p1) + ffm->EvaluateEnergy(*p2);
 			auto opi = op->EvaluateOrderParameter(*w);
 
 			// Increment pulled out since function is called for undo later on.
 			Perform(p1, p2);
 			++_performed;
 
-			auto ef = ffm->EvaluateHamiltonian({p1, p2}, w->GetComposition(), w->GetVolume());
+			auto ef = ffm->EvaluateEnergy(*p1) + ffm->EvaluateEnergy(*p2);
 			Energy de = ef.energy - ei.energy;
 			
 			// Update energies and pressures.

@@ -74,7 +74,14 @@ namespace SAPHRON
 			// Get random particle, eval E.
 			Particle* particle = w1->DrawRandomParticle();
 			Position pi = particle->GetPosition();
-			auto ei = ffm->EvaluateHamiltonian(*particle, w1->GetComposition(), v1);
+			auto ei = ffm->EvaluateEnergy(*particle);
+			
+			// Get initial tail contributions.
+			auto w1ei = w1->GetEnergy();
+			auto w1pi = w1->GetPressure();
+			auto w2ei = w2->GetEnergy();
+			auto w2pi = w2->GetPressure();
+			ei.energy.tail = w1ei.tail + w2ei.tail;
 
 			// Move particle from w1 to w2.
 			MoveParticle(particle, w1, w2);
@@ -84,10 +91,15 @@ namespace SAPHRON
 			double n1 = comp1[id];
 			double n2 = comp2[id];
 
+			// Get final tail contributions.
+			auto w1ef = ffm->EvaluateTailEnergy(*w1);
+			auto w2ef = ffm->EvaluateEnergy(*w2);
+
 			// Evaluate new energy and accept/reject.
-			auto ef = ffm->EvaluateHamiltonian(*particle, w2->GetComposition(), v2);
+			auto ef = ffm->EvaluateEnergy(*particle);
+			ef.energy.tail = w1ef.energy.tail + w2ef.energy.tail;
 			double de = ef.energy.total() - ei.energy.total();
-			
+		
 			// The acceptance rule is from Frenkel & Smit Eq. 8.3.4.
 			// However, it was modified for *final* particle numbers.
 			auto& sim = SimInfo::Instance();
@@ -104,7 +116,14 @@ namespace SAPHRON
 			}
 			else
 			{
-				// Update energies and pressures.
+				// Update energies and pressures. Note we replace 
+				// tail energies with that of final world1/world2 because above 
+				// we just summed them up to compute the difference.
+				ei.energy.tail = w1ei.tail - w1ef.energy.tail;
+				ei.pressure.ptail = w1pi.ptail - w1ef.pressure.ptail;
+				ef.energy.tail = w2ef.energy.tail - w2ei.tail;
+				ef.pressure.ptail = w2ef.pressure.ptail - w2pi.ptail;
+
 				w1->IncrementEnergy(-1.0*ei.energy);
 				w1->IncrementPressure(-1.0*ei.pressure);
 				w2->IncrementEnergy(ef.energy);

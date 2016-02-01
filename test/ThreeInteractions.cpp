@@ -92,8 +92,8 @@ TEST(ThreeInteractions, DefaultBehavior)
 	CompositionList compositions;
 
 	// Validate test for a molecule and for a single atom
-	auto NB = ffm.EvaluateHamiltonian(m, compositions, 0.0);
-	auto NB2 = ffm.EvaluateHamiltonian(*s1, compositions, 0.0);
+	auto NB = ffm.EvaluateEnergy(m);
+	auto NB2 = ffm.EvaluateEnergy(*s1);
 
 	ASSERT_NEAR(0.8410, NB2.energy.interelectrostatic, 1e-3);
 	ASSERT_NEAR(0.332335, NB2.energy.intraelectrostatic, 1e-3);

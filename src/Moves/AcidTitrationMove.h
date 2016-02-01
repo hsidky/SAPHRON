@@ -83,7 +83,7 @@ namespace SAPHRON
 				return;
 
 			// Evaluate initial energy. 
-			auto ei = ffm->EvaluateHamiltonian(*p, w->GetComposition(), w->GetVolume());
+			auto ei = ffm->EvaluateEnergy(*p);
 
 			// Perform protonation/deprotonation.
 			auto tc = p->GetCharge();
@@ -103,7 +103,7 @@ namespace SAPHRON
 
 			++_performed;
 
-			auto ef = ffm->EvaluateHamiltonian(*p, w->GetComposition(), w->GetVolume());
+			auto ef = ffm->EvaluateEnergy(*p);
 			auto de = ef - ei;
 		
 			// Get sim info for kB.
@@ -143,7 +143,7 @@ namespace SAPHRON
 				return;
 
 			// Evaluate initial energy. 
-			auto ei = ffm->EvaluateHamiltonian(*p, world->GetComposition(), world->GetVolume());
+			auto ei = ffm->EvaluateEnergy(*p);
 			auto opi = op->EvaluateOrderParameter(*world);
 
 			// Perform protonation/deprotonation.
@@ -165,7 +165,7 @@ namespace SAPHRON
 
 			++_performed;
 
-			auto ef = ffm->EvaluateHamiltonian(*p, world->GetComposition(), world->GetVolume());
+			auto ef = ffm->EvaluateEnergy(*p);
 			auto de = ef - ei;
 
 			// Update energies and pressures.

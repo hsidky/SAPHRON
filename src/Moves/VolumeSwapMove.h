@@ -89,8 +89,8 @@ namespace SAPHRON
 			double vf2 = w2->GetVolume();
 
 			// Get final energies.
-			EPTuple ef1 = ffm->EvaluateHamiltonian(*w1);
-			EPTuple ef2 = ffm->EvaluateHamiltonian(*w2);
+			EPTuple ef1 = ffm->EvaluateEnergy(*w1);
+			EPTuple ef2 = ffm->EvaluateEnergy(*w2);
 
 			// Calculate delta E.
 			double de1 = ef1.energy.total() - ei1.total();

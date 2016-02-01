@@ -103,8 +103,9 @@ namespace SAPHRON
 			// Get random world.
 			World* w = wm->GetRandomWorld();
 			EPTuple ef;
-			auto& comp = w->GetComposition();
-			auto V = w->GetVolume();
+
+			// Get world energy for tail. 
+			auto wei = w->GetEnergy();
 
 			// Generate a random position and orientation for particle insertion.
 			for (auto& p : _ghosts)
@@ -128,8 +129,11 @@ namespace SAPHRON
 				}
 			
 				w->AddParticle(p);
-				ef += ffm->EvaluateHamiltonian(*p, comp, V);
+				ef += ffm->EvaluateEnergy(*p);
 			}
+
+			// Update tail correction.
+			ef.energy.tail = ffm->EvaluateTailEnergy(*w).energy.tail - wei.tail;
 
 			auto& sim = SimInfo::Instance();
 			auto KbT = w->GetTemperature()*sim.GetkB();

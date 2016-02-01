@@ -128,7 +128,7 @@ namespace SAPHRON
 			auto posi = particle->GetPosition();
 			
 			// Evaluate initial particle energy. 
-			auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ei = ffm->EvaluateInterEnergy(*particle);
 
 			// Generate new position then apply periodic boundaries.
 			Position newPos({posi[0] + dx*(_rand.doub()-0.5), 
@@ -140,7 +140,7 @@ namespace SAPHRON
 			++_performed;										
 
 			// Evaluate final particle energy and get delta E. 
-			auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ef = ffm->EvaluateInterEnergy(*particle);
 			Energy de = ef.energy - ei.energy;
 			
 			// Update neighbor list if needed.
@@ -199,7 +199,7 @@ namespace SAPHRON
 			auto posi = particle->GetPosition();
 			
 			// Evaluate initial particle energy. 
-			auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ei = ffm->EvaluateInterEnergy(*particle);
 			auto opi = op->EvaluateOrderParameter(*w);
 
 			// Generate new position then apply periodic boundaries.
@@ -212,7 +212,7 @@ namespace SAPHRON
 			++_performed;										
 
 			// Evaluate final particle energy and get delta E. 
-			auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ef = ffm->EvaluateInterEnergy(*particle);
 			Energy de = ef.energy - ei.energy;
 			
 			// Update energies and pressures.

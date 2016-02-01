@@ -58,7 +58,7 @@ namespace SAPHRON
 			auto vf = Perform(w, vi);
 
 			// Compute final energy. 
-			auto ef = ffm->EvaluateHamiltonian(*w);
+			auto ef = ffm->EvaluateEnergy(*w);
 			auto de = ef.energy - ei;
 
 			// Compute acceptance rule.
@@ -98,7 +98,7 @@ namespace SAPHRON
 			auto vf = Perform(w, vi);
 
 			// Compute final energy. We update energies early for DOS. 
-			auto ef = ffm->EvaluateHamiltonian(*w);
+			auto ef = ffm->EvaluateEnergy(*w);
 			w->SetEnergy(ef.energy);
 			w->SetPressure(ef.pressure);
 			auto opf = op->EvaluateOrderParameter(*w);

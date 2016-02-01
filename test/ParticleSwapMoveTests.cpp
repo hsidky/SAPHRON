@@ -28,8 +28,8 @@ TEST(ParticleSwapMove, DefaultBehavior)
 	LennardJonesFF lj(10.0, 1.0, {4.0, 4.0});
 	ffm.AddNonBondedForceField("LJ", "LJ", lj);
 
-	auto H1 = ffm.EvaluateHamiltonian(liquid);
-	auto H2 = ffm.EvaluateHamiltonian(vapor);
+	auto H1 = ffm.EvaluateEnergy(liquid);
+	auto H2 = ffm.EvaluateEnergy(vapor);
 
 	WorldManager wm;
 	wm.AddWorld(&liquid);
@@ -47,9 +47,9 @@ TEST(ParticleSwapMove, DefaultBehavior)
 		move.Perform(&wm, &ffm, MoveOverride::ForceReject);
 		ASSERT_EQ(200, liquid.GetParticleCount());
 		ASSERT_EQ(200, vapor.GetParticleCount());
-		ASSERT_NEAR(H1.energy.total(), ffm.EvaluateHamiltonian(liquid).energy.total(), 1e-11);
+		ASSERT_NEAR(H1.energy.total(), ffm.EvaluateEnergy(liquid).energy.total(), 1e-11);
 		ASSERT_NEAR(H1.energy.total(), liquid.GetEnergy().total(), 1e-11);
-		ASSERT_EQ(H2.energy, ffm.EvaluateHamiltonian(vapor).energy);
+		ASSERT_EQ(H2.energy, ffm.EvaluateEnergy(vapor).energy);
 		ASSERT_EQ(H2.energy, vapor.GetEnergy());
 	}
 	
@@ -57,6 +57,6 @@ TEST(ParticleSwapMove, DefaultBehavior)
 	// in both worlds.
 	move.Perform(&wm, &ffm, MoveOverride::ForceAccept);
 	ASSERT_EQ(liquid.GetParticleCount() - 200, 200 - vapor.GetParticleCount());
-	ASSERT_NEAR(ffm.EvaluateHamiltonian(liquid).energy.total(), liquid.GetEnergy().total(), 1e-11);
-	ASSERT_NEAR(ffm.EvaluateHamiltonian(vapor).energy.total(), vapor.GetEnergy().total(), 1e-11);
+	ASSERT_NEAR(ffm.EvaluateEnergy(liquid).energy.total(), liquid.GetEnergy().total(), 1e-11);
+	ASSERT_NEAR(ffm.EvaluateEnergy(vapor).energy.total(), vapor.GetEnergy().total(), 1e-11);
 }

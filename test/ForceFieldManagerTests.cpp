@@ -34,8 +34,8 @@ TEST(ForceFieldManager, DefaultBehavior)
 	ffm.AddBondedForceField("L1", "L2", Fff2);
 
 	// Note: cannot set volume to zero (or else D.B.Z).
-	ASSERT_EQ(-4.0, ffm.EvaluateHamiltonian(s1, CompositionList{}, 10).energy.total());
-	ASSERT_EQ(0.0, ffm.EvaluateHamiltonian(s1, CompositionList{}, 10).pressure.isotropic());
+	ASSERT_EQ(-4.0, ffm.EvaluateEnergy(s1).energy.total());
+	ASSERT_EQ(0.0, ffm.EvaluateEnergy(s1).pressure.isotropic());
 }
 
 TEST(ForceFieldManager, FFIterator)

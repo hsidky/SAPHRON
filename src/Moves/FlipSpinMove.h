@@ -46,11 +46,11 @@ namespace SAPHRON
 			
 			// Get initial director and evaluate energy.
 			auto di = particle->GetDirector();
-			auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ei = ffm->EvaluateEnergy(*particle);
 
 			// Perform move and evaluate new energy.
 			Perform(particle, di);
-			auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ef = ffm->EvaluateEnergy(*particle);
 			Energy de = ef.energy - ei.energy;
 
 			// Get sim info for kB.
@@ -81,12 +81,12 @@ namespace SAPHRON
 			
 			// Get initial director and evaluate energy and order parameter.
 			auto di = particle->GetDirector();
-			auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ei = ffm->EvaluateEnergy(*particle);
 			auto opi = op->EvaluateOrderParameter(*w);
 
 			// Perform move and evaluate new energy and order parameter.
 			Perform(particle, di);
-			auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ef = ffm->EvaluateEnergy(*particle);
 			Energy de = ef.energy - ei.energy;
 
 			// Update energies and pressures.

@@ -24,7 +24,7 @@ TEST(InsertParticleMove, DefaultBehavior)
 	LennardJonesFF lj(10.0, 1.0, {4.0});
 	ffm.AddNonBondedForceField("LJ", "LJ", lj);
 
-	auto H1 = ffm.EvaluateHamiltonian(world);
+	auto H1 = ffm.EvaluateEnergy(world);
 
 	WorldManager wm;
 	wm.AddWorld(&world);
@@ -41,14 +41,14 @@ TEST(InsertParticleMove, DefaultBehavior)
 	{
 		move.Perform(&wm, &ffm, MoveOverride::ForceReject);
 		ASSERT_EQ(200, world.GetParticleCount());
-		ASSERT_NEAR(H1.energy.total(), ffm.EvaluateHamiltonian(world).energy.total(), 1e-11);
+		ASSERT_NEAR(H1.energy.total(), ffm.EvaluateEnergy(world).energy.total(), 1e-11);
 		ASSERT_NEAR(H1.energy.total(), world.GetEnergy().total(), 1e-11);
 	}
 
 	// Let's force acceptance on a move and check energies.
 	move.Perform(&wm, &ffm, MoveOverride::ForceAccept);
 	ASSERT_EQ(201, world.GetParticleCount());
-	ASSERT_NEAR(world.GetEnergy().total(), ffm.EvaluateHamiltonian(world).energy.total(), 1e-11);
+	ASSERT_NEAR(world.GetEnergy().total(), ffm.EvaluateEnergy(world).energy.total(), 1e-11);
 }
 
 TEST(InsertParticleMove, MultiSpecies)
@@ -72,7 +72,7 @@ TEST(InsertParticleMove, MultiSpecies)
 	ffm.AddNonBondedForceField("LJ", "LJ2", lj);
 	ffm.AddNonBondedForceField("LJ2", "LJ2", lj);
 
-	auto H2 = ffm.EvaluateHamiltonian(world2);
+	auto H2 = ffm.EvaluateEnergy(world2);
 
 	WorldManager wm2;
 	wm2.AddWorld(&world2);
@@ -88,12 +88,12 @@ TEST(InsertParticleMove, MultiSpecies)
 	{
 		move2.Perform(&wm2, &ffm, MoveOverride::ForceReject);
 		ASSERT_EQ(200, world2.GetParticleCount());
-		ASSERT_NEAR(H2.energy.total(), ffm.EvaluateHamiltonian(world2).energy.total(), 1e-11);
+		ASSERT_NEAR(H2.energy.total(), ffm.EvaluateEnergy(world2).energy.total(), 1e-11);
 		ASSERT_NEAR(H2.energy.total(), world2.GetEnergy().total(), 1e-11);
 	}
 	
 	// Let's force acceptance on a move and check energies.
 	move2.Perform(&wm2, &ffm, MoveOverride::ForceAccept);
 	ASSERT_EQ(202, world2.GetParticleCount());
-	ASSERT_NEAR(world2.GetEnergy().total(), ffm.EvaluateHamiltonian(world2).energy.total(), 1e-11);
+	ASSERT_NEAR(world2.GetEnergy().total(), ffm.EvaluateEnergy(world2).energy.total(), 1e-11);
 }

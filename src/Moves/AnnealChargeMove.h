@@ -99,15 +99,15 @@ namespace SAPHRON
 				return;
 
 			// Evaluate initial energy. 
-			auto ei = ffm->EvaluateHamiltonian(*p1, w->GetComposition(), w->GetVolume());
-			ei+= ffm->EvaluateHamiltonian(*p2, w->GetComposition(), w->GetVolume());
+			auto ei = ffm->EvaluateEnergy(*p1);
+			ei+= ffm->EvaluateEnergy(*p2);
 			// Perform charge swap.
 			p1->SetCharge(c2);
 			p2->SetCharge(c1);
 			++_performed;
 
-			auto ef = ffm->EvaluateHamiltonian(*p1, w->GetComposition(), w->GetVolume());
-			ef += ffm->EvaluateHamiltonian(*p2, w->GetComposition(), w->GetVolume());
+			auto ef = ffm->EvaluateEnergy(*p1);
+			ef += ffm->EvaluateEnergy(*p2);
 			auto de = ef - ei;
 			
 			// Get sim info for kB.
@@ -173,8 +173,8 @@ namespace SAPHRON
 				return;
 
 			// Evaluate initial energy. 
-			auto ei = ffm->EvaluateHamiltonian(*p1, world->GetComposition(), world->GetVolume());
-			ei += ffm->EvaluateHamiltonian(*p2, world->GetComposition(), world->GetVolume());
+			auto ei = ffm->EvaluateEnergy(*p1);
+			ei += ffm->EvaluateEnergy(*p2);
 			auto opi = op->EvaluateOrderParameter(*world);
 
 			// Perform charge swap.
@@ -182,8 +182,8 @@ namespace SAPHRON
 			p2->SetCharge(c1);
 			++_performed;
 
-			auto ef = ffm->EvaluateHamiltonian(*p1, world->GetComposition(), world->GetVolume());
-			ef += ffm->EvaluateHamiltonian(*p2, world->GetComposition(), world->GetVolume());
+			auto ef = ffm->EvaluateEnergy(*p1);
+			ef += ffm->EvaluateEnergy(*p2);
 			auto de = ef - ei;
 
 			// Update energies and pressures.

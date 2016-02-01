@@ -90,8 +90,8 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 	ASSERT_NEAR(7.72251E-02, pressure[&vapor].isotropic(), 1e-3);	
 
 	// Check "conservation" of energy.
-	EPTuple H1 = ffm.EvaluateHamiltonian(liquid);
-	EPTuple H2 = ffm.EvaluateHamiltonian(vapor);
+	EPTuple H1 = ffm.EvaluateEnergy(liquid);
+	EPTuple H2 = ffm.EvaluateEnergy(vapor);
 	ASSERT_NEAR(H1.energy.total(), liquid.GetEnergy().total(), 1e-9);
 	ASSERT_NEAR(H1.pressure.isotropic(), liquid.GetPressure().isotropic() - liquid.GetPressure().ideal, 1e-9);
 	ASSERT_NEAR(H2.energy.total(), vapor.GetEnergy().total(), 1e-9);

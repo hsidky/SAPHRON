@@ -29,7 +29,7 @@ TEST(AcidTitrationMove, DefaultBehavior)
 	ffm.AddNonBondedForceField("LJ", "LJ", lj);
 	ffm.AddElectrostaticForceField("LJ", "LJ", DH);
 
-	auto H1 = ffm.EvaluateHamiltonian(world);
+	auto H1 = ffm.EvaluateEnergy(world);
 
 	WorldManager wm;
 	wm.AddWorld(&world);
@@ -47,7 +47,7 @@ TEST(AcidTitrationMove, DefaultBehavior)
 	for(int i = 0; i < 1000; ++i)
 	{
 		move.Perform(&wm, &ffm, MoveOverride::ForceReject);
-		ASSERT_NEAR(H1.energy.total(), ffm.EvaluateHamiltonian(world).energy.total(), 1e-11);
+		ASSERT_NEAR(H1.energy.total(), ffm.EvaluateEnergy(world).energy.total(), 1e-11);
 		ASSERT_NEAR(H1.energy.total(), world.GetEnergy().total(), 1e-11);
 	}
 
@@ -93,5 +93,5 @@ TEST(AcidTitrationMove, DefaultBehavior)
 	//This test has a small chance of failing if the total charge is zero
 	ASSERT_GT(world.GetEnergy().interelectrostatic, 0.0);
 	
-	ASSERT_NEAR(world.GetEnergy().total(), ffm.EvaluateHamiltonian(world).energy.total(), 1e-11);
+	ASSERT_NEAR(world.GetEnergy().total(), ffm.EvaluateEnergy(world).energy.total(), 1e-11);
 }

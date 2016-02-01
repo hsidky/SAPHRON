@@ -256,14 +256,14 @@ namespace SAPHRON
 			{
 				Nratio = comp2*compph/(comp1 + 1.0);
 				Korxn = exp(_pKo);
-				ei = ffm->EvaluateHamiltonian(*ph, w->GetComposition(), w->GetVolume());
+				ei = ffm->EvaluateEnergy(*ph);
 				w->RemoveParticle(ph);
-				ei += ffm->EvaluateHamiltonian(*p2, w->GetComposition(), w->GetVolume());
+				ei += ffm->EvaluateEnergy(*p2);
 				p2->SetCharge(_c1);
 				p2->SetMass(_m1);
 				p2->SetSpeciesID(_i1);
 
-				ef = ffm->EvaluateHamiltonian(*p2, w->GetComposition(), w->GetVolume());
+				ef = ffm->EvaluateEnergy(*p2);
 				lambdaratio = pow(_m1/_m2,3.0/2.0);
 			}
 
@@ -272,13 +272,13 @@ namespace SAPHRON
 				Nratio = comp1/((comp2+1.0)*(compph+1.0));
 				Korxn = exp(-_pKo);
 
-				ei = ffm->EvaluateHamiltonian(*p1, w->GetComposition(), w->GetVolume());
+				ei = ffm->EvaluateEnergy(*p1);
 				
 				p1->SetCharge(_c2);
 				p1->SetMass(_m2);
 				p1->SetSpeciesID(_i2);
 				
-				ef = ffm->EvaluateHamiltonian(*p1, w->GetComposition(), w->GetVolume());
+				ef = ffm->EvaluateEnergy(*p1);
 				
 				ph = w->UnstashParticle(_products[0]);
 				// Generate a random position and orientation for particle insertion.
@@ -289,7 +289,7 @@ namespace SAPHRON
 
 				// Insert particle.
 				w->AddParticle(ph);
-				ef += ffm->EvaluateHamiltonian(*ph, w->GetComposition(), w->GetVolume());
+				ef += ffm->EvaluateEnergy(*ph);
 				lambdaratio = pow(_m2/_m1,3.0/2.0);
 			}
 

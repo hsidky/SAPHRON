@@ -64,7 +64,7 @@ namespace SAPHRON
 			Particle* particle = w->DrawRandomParticle();
 
 			// Evaluate initial particle energy. 
-			auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ei = ffm->EvaluateInterEnergy(*particle);
 
 			// Choose random axis, and generate random angle.
 			int axis = _rand.int32() % 3 + 1;
@@ -76,7 +76,7 @@ namespace SAPHRON
 			++_performed;
 
 			// Evaluate final particle energy and get delta E. 
-			auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ef = ffm->EvaluateInterEnergy(*particle);
 			Energy de = ef.energy - ei.energy;
 
 			// Update neighbor list if needed.
@@ -113,7 +113,7 @@ namespace SAPHRON
 			Particle* particle = w->DrawRandomParticle();
 
 			// Evaluate initial particle energy. 
-			auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ei = ffm->EvaluateInterEnergy(*particle);
 			auto opi = op->EvaluateOrderParameter(*w);
 
 			// Choose random axis, and generate random angle.
@@ -126,7 +126,7 @@ namespace SAPHRON
 			++_performed;
 
 			// Evaluate final particle energy and get delta E. 
-			auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ef = ffm->EvaluateInterEnergy(*particle);
 			Energy de = ef.energy - ei.energy;
 
 			// Update energies and pressures.

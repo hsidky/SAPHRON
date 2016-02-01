@@ -10,12 +10,11 @@
 #include "../src/Worlds/WorldManager.h"
 #include "gtest/gtest.h"
 
-
 using namespace SAPHRON;
 
 TEST(DOSSimulation, DefaultBehavior)
 {
-	double n = 20;
+	/*double n = 20;
 	// Initialize world.
 	World world(n, n, n, 1.0, 1.0);
 	Site site1({0, 0, 0}, {1.0, 0, 0}, "E1");
@@ -51,5 +50,5 @@ TEST(DOSSimulation, DefaultBehavior)
 
 	DOSSimulation ensemble(&wm, &ffm, &mm, &op, &hist);
 	ensemble.AddObserver(&co);
-	ensemble.Run(20);
+	ensemble.Run(20);*/
 }

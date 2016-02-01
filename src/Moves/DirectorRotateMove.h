@@ -54,13 +54,13 @@ namespace SAPHRON
 
 			// Get initial director, energy.
 			Director di = particle->GetDirector();
-			auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ei = ffm->EvaluateEnergy(*particle);
 
 			// Perform director rotation.
 			Perform(particle);
 
 			// Evaluate final energy and check probability.
-			auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ef = ffm->EvaluateEnergy(*particle);
 			Energy de = ef.energy - ei.energy;
 				
 			// Get sim info for kB.
@@ -91,14 +91,14 @@ namespace SAPHRON
 			Particle* particle = world->DrawRandomParticle();
 
 			Director di = particle->GetDirector();
-			auto ei = ffm->EvaluateHamiltonian(*particle, world->GetComposition(), world->GetVolume());
+			auto ei = ffm->EvaluateEnergy(*particle);
 			auto opi = op->EvaluateOrderParameter(*world);
 			
 			// Perform
 			Perform(particle);
 
 			// Evaluate final energy and order parameter and check probability. 
-			auto ef = ffm->EvaluateHamiltonian(*particle, world->GetComposition(), world->GetVolume());
+			auto ef = ffm->EvaluateEnergy(*particle);
 			Energy de = ef.energy - ei.energy;
 
 			// Update energies and pressures.

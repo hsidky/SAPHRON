@@ -81,7 +81,7 @@ namespace SAPHRON
 				// Evaluate energies of systems. 
 				for(auto& world : *_wmanager)
 				{
-					auto EP = _ffmanager->EvaluateHamiltonian(*world);
+					auto EP = _ffmanager->EvaluateEnergy(*world);
 					world->SetEnergy(EP.energy);
 					world->SetPressure(EP.pressure);
 					mpi += world->GetParticleCount();

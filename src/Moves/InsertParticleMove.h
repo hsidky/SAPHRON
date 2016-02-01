@@ -136,6 +136,10 @@ namespace SAPHRON
 			auto& comp = w->GetComposition();
 			EPTuple ef;
 
+			// Get previous tail energy and pressure.
+			auto wei = w->GetEnergy();
+			auto wpi = w->GetPressure();
+
 			// Generate a random position and orientation for particle insertion.
 			for (unsigned int i = 0; i < NumberofParticles; i++)
 			{
@@ -172,8 +176,13 @@ namespace SAPHRON
 				// Can be adjusted later if wated.
 
 				w->AddParticle(plist[i]);
-				ef += ffm->EvaluateHamiltonian(*plist[i], comp, V);
+				ef += ffm->EvaluateEnergy(*plist[i]);
 			}
+
+			// Evaluate current tail energy and add diff to energy.
+			auto wef = ffm->EvaluateTailEnergy(*w);
+			ef.energy.tail = wef.energy.tail - wei.tail;
+			ef.pressure.ptail = wef.pressure.ptail - wpi.ptail;
 
 			++_performed;
 
@@ -269,7 +278,7 @@ namespace SAPHRON
 				// Can be adjusted later if wated.
 
 				w->AddParticle(plist[i]);
-				ef += ffm->EvaluateHamiltonian(*plist[i], comp, V);
+				ef += ffm->EvaluateEnergy(*plist[i]);
 			}
 
 			++_performed;

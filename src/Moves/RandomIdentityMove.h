@@ -75,11 +75,11 @@ namespace SAPHRON
 			
 			// Get initial species and evaluate energy.
 			auto si = particle->GetSpeciesID();
-			auto ei = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ei = ffm->EvaluateEnergy(*particle);
 
 			// Perform move and evaluate new energy.
 			Perform(particle);
-			auto ef = ffm->EvaluateHamiltonian(*particle, w->GetComposition(), w->GetVolume());
+			auto ef = ffm->EvaluateEnergy(*particle);
 			Energy de = ef.energy - ei.energy;
 
 			// Get sim info for kB.
@@ -113,16 +113,12 @@ namespace SAPHRON
 
 			// Get initial species and evaluate energy and OP.
 			auto si = particle->GetSpeciesID();
-			auto ei = ffm->EvaluateHamiltonian(*particle, 
-												world->GetComposition(), 
-												world->GetVolume());
+			auto ei = ffm->EvaluateEnergy(*particle);
 			auto opi = op->EvaluateOrderParameter(*world);
 
 			// Perform move and evaluate new energy and OP.
 			Perform(particle);
-			auto ef = ffm->EvaluateHamiltonian(*particle, 
-												world->GetComposition(), 
-												world->GetVolume());
+			auto ef = ffm->EvaluateEnergy(*particle);
 			Energy de = ef.energy - ei.energy;
 
 			// Update energies and pressures.

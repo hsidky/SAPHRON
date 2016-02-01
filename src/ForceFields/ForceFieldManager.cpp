@@ -174,9 +174,9 @@ namespace SAPHRON
 		sim.StartTimer("e_inter");
 
 		// Get appropriate world and ID.
+		World* world = particle.GetWorld();
 		if(!particle.HasChildren())
 		{
-			World* world = particle.GetWorld();
 			unsigned int wid = (world == nullptr) ? 0 : world->GetID();
 			auto& neighbors = particle.GetNeighbors();
 
@@ -251,6 +251,10 @@ namespace SAPHRON
 		for(auto& child : particle)
 			ep += EvaluateInterEnergy(*child);	
 		
+		// Divide virial by volume to get pressure if there's a world.
+		if(world != nullptr)
+		ep.pressure /= world->GetVolume();
+
 		return ep;
 	}
 
@@ -374,6 +378,51 @@ namespace SAPHRON
 		ep.pressure.ptail /= volume*volume;
 
 		return ep;
+	}
+
+	void ForceFieldManager::Serialize(Json::Value& json) const
+	{
+		auto& species = Particle::GetSpeciesList();
+
+		// Go through non-bonded FF.
+		if(_uniquenbffs.size() != 0)
+		{
+			auto& nonbonded = json["forcefields"]["nonbonded"];
+			for(auto& ff : _uniquenbffs)
+			{
+				auto& last = nonbonded[nonbonded.size()];
+				ff.second->Serialize(last);
+				auto& pair = ff.first;
+				last["species"][0] = species[pair.first];
+				last["species"][1] = species[pair.second];
+			}
+		}
+
+		if(_uniquebffs.size() != 0)
+		{
+			auto& bonded = json["forcefields"]["bonded"];
+			for(auto& ff : _uniquebffs)
+			{
+				auto& pair = ff.first;
+				auto& last = bonded[bonded.size()];
+				ff.second->Serialize(last);
+				last["species"][0] = species[pair.first];
+				last["species"][1] = species[pair.second];
+			}
+		}
+
+		if(_uniqueeffs.size() != 0)
+		{
+			auto& electro = json["forcefields"]["electrostatic"];
+			for(auto& ff : _uniqueeffs)
+			{
+				auto& pair = ff.first;
+				auto& last = electro[electro.size()];
+				ff.second->Serialize(last);
+				last["species"][0] = species[pair.first];
+				last["species"][1] = species[pair.second];
+			}
+		}
 	}
 
 	EPTuple ForceFieldManager::EvaluateEnergy(const Particle& particle) const

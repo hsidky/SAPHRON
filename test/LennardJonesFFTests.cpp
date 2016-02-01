@@ -26,10 +26,6 @@ TEST(LennardJonesFF, DefaultBehavior)
 	ForceFieldManager ffm;
 	ffm.AddNonBondedForceField("L1", "L1", ff);
 
-	CompositionList compositions;
-	compositions.resize(s1.GetSpeciesID() + 1, 0);
-	compositions[s1.GetSpeciesID()] = 1000;
-
 	// Validate invidual components first.
 	auto NB = ff.Evaluate(s1, s2, s1.GetPosition() - s2.GetPosition(), 0);
 	ASSERT_NEAR(-0.320336594278575, NB.energy, 1e-10);
@@ -37,10 +33,10 @@ TEST(LennardJonesFF, DefaultBehavior)
 	ASSERT_NEAR(-0.002915451636909, ff.PressureTailCorrection(0), 1e-10);
 	ASSERT_NEAR(0.772019220697437, NB.virial, 1e-10);
 
-	auto H = ffm.EvaluateHamiltonian(s2, compositions, 30*30*30);
+	auto H = ffm.EvaluateEnergy(s2);
 
-	ASSERT_NEAR(-0.320563, H.energy.intervdw, 1e-6);
-	ASSERT_NEAR(-2.144497E-05, H.pressure.isotropic(), 1e-7);
+	ASSERT_NEAR(-0.3203365, H.energy.intervdw, 1e-6);
+	ASSERT_NEAR(-0.579014415, H.pressure.isotropic(), 1e-7);
 }
 
 // Validate results from NIST MC LJ standards 
@@ -74,8 +70,9 @@ TEST(LennardJonesFF, ConfigurationValues)
 	ffm.AddNonBondedForceField("LJ", "LJ", ff);
 
 	// rcut = 3.0.
-	auto E = ffm.EvaluateHamiltonian(*w);
-	ASSERT_NEAR(-4.3515E+03-1.9849E+02, E.energy.intervdw, 1e-1);
+	auto E = ffm.EvaluateEnergy(*w);
+	ASSERT_NEAR(-4.3515E+03, E.energy.intervdw, 1e-1);
+	ASSERT_NEAR(-1.9849E+02, E.energy.tail, 1e-2);
 	auto virial = (E.pressure.pxx + E.pressure.pyy + E.pressure.pzz)*w->GetVolume();
 	ASSERT_NEAR(-5.6867E+02, virial, 1e-2);
 
@@ -86,9 +83,10 @@ TEST(LennardJonesFF, ConfigurationValues)
 	ffm.RemoveNonBondedForceField("LJ", "LJ");
 	ffm.AddNonBondedForceField("LJ", "LJ", ff2);
 	w->UpdateNeighborList();
-	E = ffm.EvaluateHamiltonian(*w);
+	E = ffm.EvaluateEnergy(*w);
 
-	ASSERT_NEAR(-4.4675E+03-8.3769E+01, E.energy.intervdw, 1e-1);
+	ASSERT_NEAR(-4.4675E+03, E.energy.intervdw, 1e-1);
+	ASSERT_NEAR(-8.3769E+01, E.energy.tail, 1e-2);
 	virial = (E.pressure.pxx + E.pressure.pyy + E.pressure.pzz)*w->GetVolume();
 	ASSERT_NEAR(-1.2639E+03, virial, 1e-1);
 
@@ -155,9 +153,14 @@ TEST(LennardJonesFF, NISTValidation1)
 	ensemble.Run(50000);
 
 	// "Conservation" of energy and pressure.
-	EPTuple H = ffm.EvaluateHamiltonian(world);
+	EPTuple H = ffm.EvaluateEnergy(world);
 	ASSERT_NEAR(H.pressure.isotropic(), world.GetPressure().isotropic()-world.GetPressure().ideal, 1e-8);
 	ASSERT_NEAR(H.energy.total(), world.GetEnergy().total(), 1e-8);
+
+	auto P = accumulator.GetAveragePressures()[&world];
+
+	std::cout << "virial: " << (P.pxx + P.pyy + P.pzz)/3.0 << " Ideal : " << P.ideal << " tail: " << P.ptail 
+	<< std::endl;
 
 	ASSERT_NEAR(-5.5121, accumulator.GetAverageEnergies()[&world].total()/(double)N, 1e-3);
 	ASSERT_NEAR(6.7714E-03, accumulator.GetAveragePressures()[&world].isotropic(), 1e-3);	

@@ -41,7 +41,7 @@ using namespace SAPHRON;
 	{
 		auto x = (1.0 + i*0.01) ;
 		p2.SetPosition({x, 0, 0});
-		auto E =  ffm.EvaluateHamiltonian(p1, {}, 1.0);
+		auto E =  ffm.EvaluateEnergy(p1, {}, 1.0);
 		std::cout << x << " " << E.energy.total() << std::endl;
 	}
 }
@@ -108,11 +108,12 @@ TEST(DSFFF, NISTConfig1)
 
 	ASSERT_NO_THROW(ForceField::BuildForceFields(root["forcefields"], &ffm, fflist));
 
-	auto E = ffm.EvaluateHamiltonian(*w);
+	auto E = ffm.EvaluateEnergy(*w);
 	// Values are checked to 6 sig figs.
 	// Cannot directly compare ewald energy to DSF. TBC.
 	E.energy /= sim.GetkB();
-	ASSERT_NEAR(9.95387E+04-8.23715E+02, E.energy.intervdw, 1e-1);
+	ASSERT_NEAR(9.95387E+04, E.energy.intervdw, 1e-1);
+	ASSERT_NEAR(-8.23715E+02, E.energy.tail, 1e-3);
 
 	// This is from DSF.
 	ASSERT_NEAR(-5.77108E+5, E.energy.interelectrostatic, 1e-1);
@@ -208,7 +209,7 @@ TEST(DSFFF, PVTValidation1)
 
 	// "Conservation" of energy and pressure.
 	liquid.UpdateNeighborList();
-	EPTuple H = ffm.EvaluateHamiltonian(liquid);
+	EPTuple H = ffm.EvaluateEnergy(liquid);
 	ASSERT_NEAR(H.pressure.isotropic(), liquid.GetPressure().isotropic()-liquid.GetPressure().ideal, 1e-10);
 	ASSERT_NEAR(H.energy.total(), liquid.GetEnergy().total(), 1e-10);
 }

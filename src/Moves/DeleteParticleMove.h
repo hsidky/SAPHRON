@@ -107,6 +107,10 @@ namespace SAPHRON
 			auto V = w->GetVolume();
 			EPTuple ei;
 			auto& comp = w->GetComposition();
+			
+			// Get previous tail energy and pressure.
+			auto wei = w->GetEnergy();
+			auto wpi = w->GetPressure();
 
 			for (unsigned int i = 0; i < NumberofParticles; i++)
 			{
@@ -121,9 +125,14 @@ namespace SAPHRON
 				// Evaluate old energy. For multi deletion moves
 				// Need to remove particle one by one so energy
 				// is not double counted.
-				ei += ffm->EvaluateHamiltonian(*plist[i], comp, V);
+				ei += ffm->EvaluateEnergy(*plist[i]);
 				w->RemoveParticle(plist[i]);
 			}
+
+			// Evaluate current tail energy and add diff to energy.
+			auto wef = ffm->EvaluateTailEnergy(*w);
+			ei.energy.tail = wei.tail - wef.energy.tail;
+			ei.pressure.ptail = wpi.ptail - wef.pressure.ptail;
 
 			++_performed;
 
@@ -209,7 +218,7 @@ namespace SAPHRON
 				// Evaluate old energy. For multi deletion moves
 				// Need to remove particle one by one so energy
 				// is not double counted.
-				ei += ffm->EvaluateHamiltonian(*plist[i], comp, V);
+				ei += ffm->EvaluateEnergy(*plist[i]);
 				w->RemoveParticle(plist[i]);
 			}
 

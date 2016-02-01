@@ -36,7 +36,7 @@ TEST(WidomInsertionMove, Default)
 	LennardJonesFF lj(1.0, 1.0, {2.5});
 	ffm.AddNonBondedForceField("LJ", "LJ", lj);
 
-	auto H1 = ffm.EvaluateHamiltonian(world);
+	auto H1 = ffm.EvaluateEnergy(world);
 
 	WorldManager wm;
 	wm.AddWorld(&world);
@@ -88,7 +88,7 @@ TEST(WidomInsertionMove, Multi_Species)
 	ffm.AddNonBondedForceField("LJ", "LJ2", lj);
 	ffm.AddNonBondedForceField("LJ2", "LJ2", lj);
 
-	auto H1 = ffm.EvaluateHamiltonian(world);
+	auto H1 = ffm.EvaluateEnergy(world);
 
 	WorldManager wm;
 	wm.AddWorld(&world);

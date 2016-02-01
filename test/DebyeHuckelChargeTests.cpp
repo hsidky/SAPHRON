@@ -86,7 +86,7 @@ TEST(DebyeHuckelFF, DefaultBehavior)
 	ASSERT_NEAR(0.33233, Energy.energy, 1e-3);
 
 	// Validate molecule test
-	auto NB = ffm.EvaluateHamiltonian(m, compositions, 0.0);
+	auto NB = ffm.EvaluateEnergy(m);
 	ASSERT_NEAR(1.4593501512, NB.energy.interelectrostatic, 1e-3);
 	ASSERT_NEAR(0.3323348318, NB.energy.intraelectrostatic,1e-3);
 	ASSERT_EQ(0, NB.energy.intervdw);
