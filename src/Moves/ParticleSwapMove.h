@@ -93,7 +93,7 @@ namespace SAPHRON
 
 			// Get final tail contributions.
 			auto w1ef = ffm->EvaluateTailEnergy(*w1);
-			auto w2ef = ffm->EvaluateEnergy(*w2);
+			auto w2ef = ffm->EvaluateTailEnergy(*w2);
 
 			// Evaluate new energy and accept/reject.
 			auto ef = ffm->EvaluateEnergy(*particle);

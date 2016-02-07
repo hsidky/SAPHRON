@@ -48,8 +48,8 @@ TEST(SpeciesSwapMove, DefaultBehavior)
 	ASSERT_EQ(4.0, s.GetMass());
 	ASSERT_EQ(2.0, s2.GetMass());
 
-	ASSERT_EQ("T1", s.GetSpecies());
-	ASSERT_EQ("T2", s2.GetSpecies());
+	ASSERT_EQ("T2", s.GetSpecies());
+	ASSERT_EQ("T1", s2.GetSpecies());
 
 	m2.Perform(&s, &s2);
 
