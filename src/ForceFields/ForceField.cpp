@@ -3,14 +3,15 @@
 #include "../Simulation/SimException.h"
 #include "../Validator/ObjectRequirement.h"
 #include "schema.h"
+#include "DebyeHuckelFF.h"
+#include "DSFFF.h"
+#include "FENEFF.h"
+#include "GayBerneFF.h"
 #include "HardSphereFF.h"
+#include "HarmonicFF.h"
 #include "LennardJonesFF.h"
 #include "LennardJonesTSFF.h"
 #include "LebwohlLasherFF.h"
-#include "DSFFF.h"
-#include "DebyeHuckelFF.h"
-#include "FENEFF.h"
-#include "HarmonicFF.h"
 #include "ModLennardJonesTSFF.h"
 
 using namespace Json;
@@ -197,6 +198,33 @@ namespace SAPHRON
 				rc.push_back(r.asDouble());
 
 			ff = new ModLennardJonesTSFF(eps, sigma, beta, rc);
+		}
+		else if(type == "GayBerne")
+		{
+			reader.parse(JsonSchema::GayBerneFF, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs. 
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			auto di = json["diameters"][0].asDouble();
+			auto dj = json["diameters"][1].asDouble();
+			auto li = json["lengths"][0].asDouble();
+			auto lj = json["lengths"][1].asDouble();
+			auto eps0 = json["eps0"].asDouble();
+			auto epsE = json["epsE"].asDouble();
+			auto epsS = json["epsS"].asDouble();
+			auto dw = json.get("dw", 1.0).asDouble();
+			auto mu = json.get("mu", 2.0).asDouble();
+			auto nu = json.get("nu", 1.0).asDouble();
+
+			CutoffList rc;
+			for(auto r : json["rcut"])
+				rc.push_back(r.asDouble());
+
+			ff = new GayBerneFF(di, dj, li, lj, eps0, epsE, epsS, dw, rc, mu, nu);
 		}
 		else
 		{

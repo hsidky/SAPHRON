@@ -1,0 +1,74 @@
+{
+	"type" : "object",
+	"varname" : "GayBerneFF",
+	"properties" : {
+		"type" : {
+			"type" : "string", 
+			"enum" : ["GayBerne"]
+		},
+		"diameters" : {
+			"type" : "array",
+			"items" : [
+				{
+					"type" : "number",
+					"minimum" : 0,
+					"exclusiveMinimum" : true
+				},
+				{
+					"type" : "number",
+					"minimum" : 0,
+					"exclusiveMinimum" : true
+				}
+			]
+		},
+		"lengths" : {
+			"type" : "array",
+			"items" : [
+				{
+					"type" : "number",
+					"minimum" : 0,
+					"exclusiveMinimum" : true
+				},
+				{
+					"type" : "number",
+					"minimum" : 0,
+					"exclusiveMinimum" : true
+				}
+			]
+		},
+		"eps0" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"epsS" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"epsE" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"mu" : {
+			"type" : "number"
+		},
+		"nu" : {
+			"type" : "number"
+		},
+		"dw" : {
+			"type" : "number", 
+			"minimum" : 0,
+			"exclusiveMinimum" : true
+		},
+		"rcut" : {
+			"type" : "array",
+			"items" : {
+				"type" : "number",
+				"minimum" : 0,
+				"exclusiveMinimum" : true
+			},
+			"minItems" : 1
+		},
+		"species" : "@file(nonbonded.forcefield.json)"
+	},
+	"required" : ["type", "diameters", "lengths", "eps0", "epsE", "epsS", "rcut", "species"]
+}
