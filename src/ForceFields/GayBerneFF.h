@@ -104,6 +104,7 @@ namespace SAPHRON
 			json["epsS"] = _epsS;
 			json["mu"] = _mu;
 			json["nu"] = _nu;
+			json["dw"] = _dw;
 			for(auto& rc : _rc)
 				json["rcut"].append(rc);
 		}
