@@ -8,7 +8,9 @@ SAPHRON
 <a id="features"></a>
 ## Features
 - *A very simple API* that is user and developer friendly
-- Lattice and off-lattice support. 
+- Lattice and off-lattice simulations.
+- Anisotropic potentials including Gay-Berne.
+- Arbitrary ensembles defined by collections of moves.
 - OpenMP parallelization.
 - Density of states (DOS) flat-histogram sampling along many order parameters (energy, mole number, etc..)
 - Much more!
