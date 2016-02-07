@@ -98,7 +98,7 @@ namespace SAPHRON
 			json["diameters"][0] = _di;
 			json["diameters"][1] = _dj;
 			json["lengths"][0] = _li;
-			json["lengths"][0] = _lj;
+			json["lengths"][1] = _lj;
 			json["eps0"] = _eps0;
 			json["epsE"] = _epsE;
 			json["epsS"] = _epsS;
