@@ -264,6 +264,12 @@ target_include_directories(ForceFieldManagerTests PRIVATE "${GTEST_INCLUDE_DIR}"
 add_dependencies(ForceFieldManagerTests googletest) 
 add_test(ForceFieldManagerTests ForceFieldManagerTests)
 
+add_executable(GayBerneFFTests test/GayBerneFFTests.cpp)
+target_link_libraries(GayBerneFFTests ${TEST_DEPS})
+target_include_directories(GayBerneFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(GayBerneFFTests googletest) 
+add_test(GayBerneFFTests GayBerneFFTests)
+
 add_executable(GibbsNVTEnsembleTests test/GibbsNVTEnsembleTests.cpp)
 target_link_libraries(GibbsNVTEnsembleTests ${TEST_DEPS})
 target_include_directories(GibbsNVTEnsembleTests PRIVATE "${GTEST_INCLUDE_DIR}")

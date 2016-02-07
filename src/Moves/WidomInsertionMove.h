@@ -133,7 +133,7 @@ namespace SAPHRON
 			}
 
 			// Update tail correction.
-			ef.energy.tail = ffm->EvaluateTailEnergy(*w).energy.tail - wei.tail;
+			ef.energy.tail = 2*(ffm->EvaluateTailEnergy(*w).energy.tail - wei.tail);
 
 			auto& sim = SimInfo::Instance();
 			auto KbT = w->GetTemperature()*sim.GetkB();

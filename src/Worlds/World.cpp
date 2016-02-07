@@ -475,41 +475,39 @@ namespace SAPHRON
 
 		World* world = nullptr;
 
-		// Validation success.
-		if(json["type"].asString() == "Simple")
-		{
-			// Parse schema.
-			reader.parse(JsonSchema::SimpleWorld, schema);
-			validator.Parse(schema, "#/worlds");
+		// TODO: there's only a simple world. Update this and schema name.
+		// Parse schema.
+		reader.parse(JsonSchema::SimpleWorld, schema);
+		validator.Parse(schema, "#/worlds");
 
-			// Validate input.
-			validator.Validate(json, "#/worlds");
+		// Validate input.
+		validator.Validate(json, "#/worlds");
 
-			if(validator.HasErrors())
-				throw BuildException(validator.GetErrors());
+		if(validator.HasErrors())
+			throw BuildException(validator.GetErrors());
 
-			Position dim{json["dimensions"][0].asDouble(), 
-						 json["dimensions"][1].asDouble(),
-						 json["dimensions"][2].asDouble()};
+		Position dim{json["dimensions"][0].asDouble(), 
+					 json["dimensions"][1].asDouble(),
+					 json["dimensions"][2].asDouble()};
 
-			// Neighbor list cutoff check.
-			double ncut = json["nlist_cutoff"].asDouble();
-			if(ncut > dim[0]/2.0 || ncut > dim[1]/2.0 || ncut > dim[2]/2.0)
-				throw BuildException({"Neighbor list cutoff must not exceed "
-									  "half the shortest box vector."});
-			
-			// Skin thickness check.
-			double skin = json["skin_thickness"].asDouble();
-			if(ncut && skin > ncut)
-				throw BuildException({"Skin thickness must not exceed neighbor list cutoff."});
+		// Neighbor list cutoff check.
+		double ncut = json["nlist_cutoff"].asDouble();
+		if(ncut > dim[0]/2.0 || ncut > dim[1]/2.0 || ncut > dim[2]/2.0)
+			throw BuildException({"Neighbor list cutoff must not exceed "
+								  "half the shortest box vector."});
+		
+		// Skin thickness check.
+		double skin = json["skin_thickness"].asDouble();
+		if(ncut && skin > ncut)
+			throw BuildException({"Skin thickness must not exceed neighbor list cutoff."});
 
-			srand(time(NULL));
-			int seed = json.isMember("seed") ? json["seed"].asInt() : rand();
+		srand(time(NULL));
+		int seed = json.isMember("seed") ? json["seed"].asInt() : rand();
 
-			world = new World(dim[0], dim[1], dim[2], ncut, skin, seed);
-			if(ncut)
-				world->SetNeighborRadius(ncut);
-		}
+		world = new World(dim[0], dim[1], dim[2], ncut, skin, seed);
+		if(ncut)
+			world->SetNeighborRadius(ncut);
+		
 
 		// Periodic. 
 		bool periodx = true, periody = true, periodz = true;
