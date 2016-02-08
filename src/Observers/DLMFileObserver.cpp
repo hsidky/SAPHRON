@@ -199,8 +199,6 @@ namespace SAPHRON
 				WriteStream(*fs, "uy");
 				WriteStream(*fs, "uz");
 			}
-			if(this->Flags.particle_neighbors)
-				WriteStream(*fs, "Neighbor IDs");
 
 			*fs << endl;
 		}
@@ -416,10 +414,20 @@ namespace SAPHRON
 			WriteStream(*fs, p.GetSpecies());
 		if(this->Flags.particle_species_id)
 			WriteStream(*fs, p.GetSpeciesID());
-		if(this->Flags.particle_parent_id && p.HasParent())
-			WriteStream(*fs, p.GetParent()->GetGlobalIdentifier());
-		if(this->Flags.particle_parent_species && p.HasParent()) 
-			WriteStream(*fs, p.GetParent()->GetSpecies());
+		if(this->Flags.particle_parent_id)
+		{
+			if(p.HasParent())
+				WriteStream(*fs, p.GetParent()->GetGlobalIdentifier());
+			else
+				WriteStream(*fs, -1);
+		}
+		if(this->Flags.particle_parent_species)
+		{
+			if(p.HasParent()) 
+				WriteStream(*fs, p.GetParent()->GetSpecies());
+			else
+				WriteStream(*fs, "N/A");
+		}
 		if(this->Flags.particle_charge)
 			WriteStream(*fs, p.GetCharge());
 		if(this->Flags.particle_position) 
@@ -439,11 +447,6 @@ namespace SAPHRON
 			WriteStream(*fs, dir[1]);
 			WriteStream(*fs, dir[2]);
 			*fs << fixed;		
-		}
-		if(this->Flags.particle_neighbors)
-		{
-			for(auto& neighbor : p.GetNeighbors())
-				WriteStream(*fs, neighbor->GetGlobalIdentifier());		
 		}
 
 		*fs << "\n";

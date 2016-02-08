@@ -14,7 +14,7 @@ namespace SAPHRON
 			unsigned int energy_mask = 63;
 			unsigned int pressure_mask = 255;
 			unsigned int histogram_mask = 63;
-			unsigned int particle_mask = 511;
+			unsigned int particle_mask = 255;
 
 		public:
 			SimFlags() : simulation(0), world(0), histogram(0), particle(0) {}
@@ -113,7 +113,6 @@ namespace SAPHRON
 					unsigned int particle_charge : 1;
 					unsigned int particle_position : 1;
 					unsigned int particle_director : 1;
-					unsigned int particle_neighbors : 1;
 				};
 				unsigned int particle;
 			};
@@ -191,7 +190,6 @@ namespace SAPHRON
 					if(particle_charge) json["particle_charge"] = 1;
 					if(particle_position) json["particle_position"] = 1;
 					if(particle_director) json["particle_director"] = 1;
-					if(particle_neighbors) json["particle_neighbors"] = 1;
 				}
 			}
 	};

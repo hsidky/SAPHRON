@@ -225,11 +225,6 @@
 			"type" : "integer", 
 			"minimum" : 0,
 			"maximum" : 1
-		},
-		"particle_neighbors" : {
-			"type" : "integer", 
-			"minimum" : 0,
-			"maximum" : 1
 		}
 	}
 }

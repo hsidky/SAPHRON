@@ -77,8 +77,6 @@ namespace SAPHRON
 			flags.histogram_on();
 		if(particle)
 			flags.particle_on();
-
-		flags.particle_neighbors = json.get("particles_neighbors", 0).asUInt();
 		
 		return flags;
 	}
