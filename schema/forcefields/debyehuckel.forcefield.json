@@ -18,9 +18,8 @@
 				"exclusiveMinimum" : true
 			},
 			"minItems" : 1
-		},
-		"species" : "@file(nonbonded.forcefield.json)"
+		}
 	},
 	"additionalProperties" : false,
-	"required" : ["type", "kappa", "species", "rcut"]
+	"required" : ["type", "kappa", "rcut"]
 }

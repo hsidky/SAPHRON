@@ -27,18 +27,18 @@ namespace SAPHRON
 		FFMap _bondedforcefields;
 
 		//electrostatic forcefield
-		FFMap _electrostaticforcefield;
+		const ForceField* _electroff; 
 
 		// Hold unique instances of non-bonded and bonded forcefield pointers.
 		FFMap _uniquenbffs;
 		FFMap _uniquebffs;
-		FFMap _uniqueeffs;
 
 	public:
 		typedef FFMap::iterator iterator;
 		typedef FFMap::const_iterator const_iterator;
 		
-		ForceFieldManager() : _nonbondedforcefields(), _bondedforcefields() {}
+		ForceFieldManager() : 
+		_nonbondedforcefields(), _bondedforcefields(), _electroff(nullptr) {}
 
 		// Adds a non-bonded forcefield to the manager.
 		void AddNonBondedForceField(std::string p1type, std::string p2type, ForceField& ff);
@@ -70,20 +70,11 @@ namespace SAPHRON
 		// Get the number of registered forcefields.
 		int BondedForceFieldCount();
 
-		// Adds a bonded forcefield to the manager.
-		void AddElectrostaticForceField(std::string p1type, std::string p2type, ForceField& ff);
+		// Sets the electrostatic forcefield to use in the system.
+		void SetElectrostaticForcefield(const ForceField& ff);
 		
-		// Adds a Electrostatic forcefield to the manager.
-		void AddElectrostaticForceField(int p1type, int p2type, ForceField& ff);
-
-		// Removes a Electrostatic forcefield from the manager.
-		void RemoveElectrostaticForceField(std::string p1type, std::string p2type);
-
-		// Removes a Electrostatic forcefield from the manager.
-		void RemoveElectrostaticForceField(int p1type, int p2type);
-
-		// Get the number of registered forcefields.
-		int ElectrostaticForceFieldCount();
+		// Resets the electrostatic forcefield (to nothing).
+		void ResetElectrostaticForceField();
 
 		// Evaluates the intermolecular energy of a particle. 
 		EPTuple EvaluateInterEnergy(const Particle& particle) const;

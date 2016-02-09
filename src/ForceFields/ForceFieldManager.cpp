@@ -113,56 +113,16 @@ namespace SAPHRON
 		return _uniquebffs.size();
 	}
 
-	// Adds a forcefield to the manager.
-	void ForceFieldManager::AddElectrostaticForceField(std::string p1type, std::string p2type, ForceField& ff)
+	// Sets the electrostatic forcefield.
+	void ForceFieldManager::SetElectrostaticForcefield(const ForceField &ff)
 	{
-		auto list = Particle::GetSpeciesList();
-		auto p1 = std::find(list.begin(), list.end(), p1type);
-		auto p2 = std::find(list.begin(), list.end(), p2type);
-
-		if(p1 == list.end() || p2 == list.end())
-			throw std::invalid_argument("Unknown particle type(s). Please register particles\n"
-						          		"   before adding the forcefield to the manager.");	
-
-		AddElectrostaticForceField(p1-list.begin(), p2-list.begin(), ff);
+		_electroff = &ff;
 	}
 
-	// Adds a forcefield to the manager.
-	void ForceFieldManager::AddElectrostaticForceField(int p1type, int p2type, ForceField& ff)
+	// Resets the electrostatic forcefield.
+	void ForceFieldManager::ResetElectrostaticForceField()
 	{
-		_electrostaticforcefield.insert(std::pair<SpeciesPair, ForceField*>({p1type, p2type}, &ff));
-		_electrostaticforcefield.insert(std::pair<SpeciesPair, ForceField*>({p2type, p1type}, &ff));
-
-		// Must be unique.
-		if(_uniqueeffs.find({p1type, p2type}) == _uniqueeffs.end() && 
-			_uniqueeffs.find({p2type, p1type}) == _uniqueeffs.end())
-			_uniqueeffs.insert(std::pair<SpeciesPair, ForceField*>({p1type, p2type}, &ff));
-	}
-
-	// Removes a forcefield from the manager.
-	void ForceFieldManager::RemoveElectrostaticForceField(std::string p1type, std::string p2type)
-	{
-		auto list = Particle::GetSpeciesList();
-		auto p1 = std::find(list.begin(), list.end(), p1type);
-		auto p2 = std::find(list.begin(), list.end(), p2type);
-		if(p1 != list.end() && p2 != list.end())
-			RemoveElectrostaticForceField(p1-list.begin(), p2-list.begin());
-	}
-
-	// Removes a forcefield from the manager.
-	void ForceFieldManager::RemoveElectrostaticForceField(int p1type, int p2type)
-	{
-		_electrostaticforcefield.erase({p1type, p2type});
-		_electrostaticforcefield.erase({p2type, p1type});
-
-		_uniqueeffs.erase({p1type, p2type});
-		_uniqueeffs.erase({p2type, p1type});
-	}
-
-	// Get the number of registered forcefields.
-	int ForceFieldManager::ElectrostaticForceFieldCount()
-	{
-		return _uniqueeffs.size();
+		_electroff = nullptr;
 	}
 
 	EPTuple ForceFieldManager::EvaluateInterEnergy(const Particle& particle) const
@@ -212,7 +172,6 @@ namespace SAPHRON
 				}
 
 				auto it = _nonbondedforcefields.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
-				auto it2 = _electrostaticforcefield.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
 
 				Interaction interij, electroij;
 
@@ -224,11 +183,8 @@ namespace SAPHRON
 				}
 
 				//Electrostatics containing energy and virial
-				if(it2 != _electrostaticforcefield.end())
-				{
-					auto* eff = it2->second;
-					electroij = eff->Evaluate(particle, *neighbor, rij, wid);
-				}
+				if(_electroff != nullptr)
+					electroij = _electroff->Evaluate(particle, *neighbor, rij, wid);
 				
 				intere += interij.energy; // Sum nonbonded van der Waal energy.
 				electroe += electroij.energy; // Sum electrostatic energy
@@ -304,13 +260,11 @@ namespace SAPHRON
 						world->ApplyMinimumImage(&rij);
 
 					auto it = _nonbondedforcefields.find({particle.GetSpeciesID(), sibling->GetSpeciesID()});
-					auto it2 = _electrostaticforcefield.find({particle.GetSpeciesID(), sibling->GetSpeciesID()});
 
 					//Electrostatics containing energy and virial
-					if(it2 != _electrostaticforcefield.end())
+					if(_electroff != nullptr)
 					{
-						auto* eff = it2->second;
-						auto ij = eff->Evaluate(particle, *sibling, rij, wid);
+						auto ij = _electroff->Evaluate(particle, *sibling, rij, wid);
 						ep.energy.intraelectrostatic += ij.energy;
 					}		
 
@@ -411,17 +365,10 @@ namespace SAPHRON
 			}
 		}
 
-		if(_uniqueeffs.size() != 0)
+		if(_electroff != nullptr)
 		{
 			auto& electro = json["forcefields"]["electrostatic"];
-			for(auto& ff : _uniqueeffs)
-			{
-				auto& pair = ff.first;
-				auto& last = electro[electro.size()];
-				ff.second->Serialize(last);
-				last["species"][0] = species[pair.first];
-				last["species"][1] = species[pair.second];
-			}
+			_electroff->Serialize(electro);
 		}
 	}
 

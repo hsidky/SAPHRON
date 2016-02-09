@@ -77,9 +77,7 @@ TEST(ThreeInteractions, DefaultBehavior)
 
 	ForceFieldManager ffm;
 
-	ffm.AddElectrostaticForceField("L1", "L1", ffe);
-	ffm.AddElectrostaticForceField("L2", "L1", ffe);
-	ffm.AddElectrostaticForceField("L2", "L2", ffe);
+	ffm.SetElectrostaticForcefield(ffe);
 	
 	ffm.AddNonBondedForceField("L1", "L1", ffnb);
 	ffm.AddNonBondedForceField("L2", "L1", ffnb);

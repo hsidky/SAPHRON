@@ -75,11 +75,7 @@ TEST(DebyeHuckelFF, DefaultBehavior)
 
 	ForceFieldManager ffm;
 
-	ffm.AddElectrostaticForceField("L1", "L1", ff);
-	ffm.AddElectrostaticForceField("L2", "L1", ff);
-	ffm.AddElectrostaticForceField("L2", "L2", ff);
-
-	CompositionList compositions{};
+	ffm.SetElectrostaticForcefield(ff);
 	
 	//Check simple atom to atom
 	auto Energy = ff.Evaluate(*s1,*s3,s1->GetPosition()-s3->GetPosition(), 0);

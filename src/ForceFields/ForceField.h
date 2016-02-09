@@ -31,17 +31,17 @@ namespace SAPHRON
 		virtual Interaction Evaluate(const Particle& p1, 
 									 const Particle& p2, 
 									 const Position& rij,
-									 unsigned int wid) = 0;
+									 unsigned int wid) const = 0;
 
 		// Evaluates the energy tail correction term. 
 		// This is precisely integral(u(r)*r^2,rc,inf). 
 		// The remainder is taken care of by the forcefield manager.
 		// The world ID (or 0) is passed in.
-		virtual double EnergyTailCorrection(unsigned int) { return 0.0; }
+		virtual double EnergyTailCorrection(unsigned int) const { return 0.0; }
 
 		// Evalutes the pressure tail correction term.
 		// The world ID (or 0) is passed in.
-		virtual double PressureTailCorrection(unsigned int) { return 0.0; }
+		virtual double PressureTailCorrection(unsigned int) const { return 0.0; }
 
 		// Serialize 
 		virtual void Serialize(Json::Value& json) const = 0;

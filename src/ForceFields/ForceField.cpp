@@ -76,14 +76,12 @@ namespace SAPHRON
 		}
 		else
 		{
-			throw BuildException({path + ": Unknown forcefield type specified."});
+			throw BuildException({path + ": Unknown electrostatic forcefield type specified."});
 		}
 
 		// Add to appropriate species pair.
 		try{
-			std::string p1type = json["species"][0].asString();
-			std::string p2type = json["species"][1].asString();
-			ffm->AddElectrostaticForceField(p1type, p2type, *ff);
+			ffm->SetElectrostaticForcefield(*ff);
 		} catch(std::exception& e) {
 			delete ff;
 			throw BuildException({
@@ -342,15 +340,11 @@ namespace SAPHRON
 			++i;
 		}
 
-		// Loop through electrostatic.
-		i = 0;
-		for(auto& ff : json["electrostatic"])
-		{
+		// Set electrostatic.
+		if(json.isMember("electrostatic"))
 			fflist.push_back(
-				BuildElectrostatic(ff, ffm, "#forcefields/electrostatic/" + std::to_string(i))
+				BuildElectrostatic(json["electrostatic"], ffm, "#forcefields/electrostatic")
 				);
-			++i;
-		}
 
 		// Loop through bonded.
 		i = 0;

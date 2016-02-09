@@ -65,7 +65,7 @@ namespace SAPHRON
 			const Particle& p1, 
 			const Particle& p2, 
 			const Position& rij, 
-			unsigned int wid) override
+			unsigned int wid) const override
 		{
 			Interaction ep;
 

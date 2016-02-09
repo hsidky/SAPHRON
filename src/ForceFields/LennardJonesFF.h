@@ -43,7 +43,7 @@ namespace SAPHRON
 		virtual Interaction Evaluate(const Particle&, 
 									 const Particle&, 
 									 const Position& rij,
-									 unsigned int wid) override
+									 unsigned int wid) const override
 		{
 			Interaction ep;
 
@@ -58,12 +58,12 @@ namespace SAPHRON
 			return ep;
 		}
 
-		virtual double EnergyTailCorrection(unsigned int wid) override
+		virtual double EnergyTailCorrection(unsigned int wid) const override
 		{
 			return _etail[wid];
 		}
 
-		virtual double PressureTailCorrection(unsigned int wid) override 
+		virtual double PressureTailCorrection(unsigned int wid) const override 
 		{
 			return _ptail[wid];
 		}

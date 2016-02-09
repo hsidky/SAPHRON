@@ -25,7 +25,7 @@ namespace SAPHRON
 			virtual Interaction Evaluate(const Particle&, 
 										 const Particle&, 
 										 const Position& rij,
-										 unsigned int) override
+										 unsigned int) const override
 			{
 				Interaction ep;
 				

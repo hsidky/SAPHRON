@@ -9,44 +9,11 @@
 				"rcut" : [10.0]
 			}
 		],
-		"electrostatic" : [
-			{
-				"type" : "DSF",
-				"alpha" : 0.20,
-				"species": ["O", "O"],
-				"rcut" : [10.0]
-			},
-			{
-				"type" : "DSF",
-				"alpha" : 0.20,
-				"species": ["O", "H1"],
-				"rcut" : [10.0]
-			},
-			{
-				"type" : "DSF",
-				"alpha" : 0.20,
-				"species": ["O", "H2"],
-				"rcut" : [10.0]
-			},
-			{
-				"type" : "DSF",
-				"alpha" : 0.20,
-				"species": ["H1", "H1"],
-				"rcut" : [10.0]
-			},
-			{
-				"type" : "DSF",
-				"alpha" : 0.20,
-				"species": ["H1", "H2"],
-				"rcut" : [10.0]
-			},
-			{
-				"type" : "DSF",
-				"alpha" : 0.20,
-				"species": ["H2", "H2"],
-				"rcut" : [10.0]
-			}
-		]
+		"electrostatic" : {
+			"type" : "DSF",
+			"alpha" : 0.20,
+			"rcut" : [10.0]
+		}
 	},
 	"blueprints" : {
 		"SPCE" : {

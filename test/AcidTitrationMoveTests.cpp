@@ -27,7 +27,7 @@ TEST(AcidTitrationMove, DefaultBehavior)
 	DebyeHuckelFF DH(0.1, {50});
 
 	ffm.AddNonBondedForceField("LJ", "LJ", lj);
-	ffm.AddElectrostaticForceField("LJ", "LJ", DH);
+	ffm.SetElectrostaticForcefield(DH);
 
 	auto H1 = ffm.EvaluateEnergy(world);
 

@@ -9,7 +9,7 @@
 			"type": "array"
 		},
 		"electrostatic" : {
-			"type": "array"
+			"type": "object"
 		}
 	},
 
