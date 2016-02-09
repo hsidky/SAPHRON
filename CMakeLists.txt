@@ -6,7 +6,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 # SAPHRON version number.
 set(SAPHRON_VERSION_MAJOR "0")
 set(SAPHRON_VERSION_MINOR "0")
-set(SAPHRON_VERSION_TINY "7")  
+set(SAPHRON_VERSION_TINY "8")  
 
 # Default type is release
 if (NOT CMAKE_BUILD_TYPE)
