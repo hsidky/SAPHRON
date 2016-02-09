@@ -8,6 +8,8 @@ namespace SAPHRON
 	{
 	public:
 		//INSERT_DEC_HERE
+		static std::string Dynamic1DP2C;
+		static std::string Constraints;
 		static std::string P2SAConnectivity;
 		static std::string Connectivities;
 		static std::string ElasticCoeffOP;

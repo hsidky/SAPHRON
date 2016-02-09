@@ -1,4 +1,5 @@
 #include "ForceFieldManager.h"
+#include "../Constraints/Constraint.h"
 #include <algorithm>
 #include <iostream>
 #include <utility>
@@ -432,6 +433,21 @@ namespace SAPHRON
 		{
 			auto& electro = json["forcefields"]["electrostatic"];
 			_electroff->Serialize(electro);
+		}
+
+		if(_constraints.size() != 0)
+		{
+			auto& constraints = json["forcefields"]["constraints"];
+			for(size_t i = 0; i < _constraints.size(); ++i)
+			{
+				auto& clist = _constraints[i];
+				for(auto& c : clist)
+				{
+					auto& last = constraints[constraints.size()];
+					c->Serialize(last);
+					last["species"] = species[i];
+				}
+			}
 		}
 	}
 

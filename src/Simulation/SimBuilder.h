@@ -4,6 +4,7 @@
 #include "Worlds/World.h"
 #include "Worlds/WorldManager.h"
 #include "ForceFields/ForceField.h"
+#include "Constraints/Constraint.h"
 #include "ForceFields/ForceFieldManager.h"
 #include "Moves/MoveManager.h"
 #include "Simulation/SimException.h"
@@ -22,6 +23,7 @@ namespace SAPHRON
 	private: 
 		WorldList _worlds;
 		ParticleList _particles;
+		ConstraintList _constraints;
 		FFList _forcefields;
 		MoveList _moves;
 		ForceFieldManager _ffm;
@@ -35,7 +37,7 @@ namespace SAPHRON
 
 	public:
 		SimBuilder() : 
-		_worlds(0), _particles(0), _forcefields(0), _moves(0), _ffm(), 
+		_worlds(0), _particles(0), _constraints(0), _forcefields(0), _moves(0), _ffm(), 
 		_mm(), _wm(), _observers(0), _hist(nullptr), _orderp(nullptr), 
 		_sim(nullptr), _ltot(81), _msgw(51), _notw(_ltot - _msgw)
 		{}
@@ -56,6 +58,10 @@ namespace SAPHRON
 			for(auto& f: _forcefields)
 				delete f;
 			_forcefields.clear();
+
+			for(auto& c : _constraints)
+				delete c;
+			_constraints.clear();
 
 			for(auto& m : _moves)
 				delete m;

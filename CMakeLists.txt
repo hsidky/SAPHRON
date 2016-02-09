@@ -120,6 +120,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${ARMA_INCLUDE}")
 
 set(SOURCE
+	src/Constraints/Constraint.cpp
 	src/DensityOfStates/DOSOrderParameter.cpp
 	src/ForceFields/ForceField.cpp
 	src/ForceFields/ForceFieldManager.cpp
@@ -127,7 +128,6 @@ set(SOURCE
 	src/JSON/schema.cpp
 	src/Moves/Move.cpp
 	src/Observers/DLMFileObserver.cpp
-#	src/Observers/ConsoleObserver.cpp
 	src/Observers/JSONObserver.cpp
 	src/Observers/XYZObserver.cpp
 	src/Particles/Particle.cpp

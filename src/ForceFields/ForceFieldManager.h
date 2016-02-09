@@ -5,7 +5,6 @@
 #include "../Observers/Visitable.h"
 #include "../JSON/Serializable.h"
 #include "ForceField.h"
-#include "../Constraints/Constraint.h"
 #include "vecmap.h"
 #include <math.h>
 #include <map>
@@ -14,8 +13,11 @@
 
 namespace SAPHRON
 {
-	typedef std::pair<int, int> SpeciesPair;
-	typedef vecmap<SpeciesPair, ForceField*> FFMap;
+	using SpeciesPair = std::pair<int, int>;
+	using FFMap = vecmap<SpeciesPair, ForceField*>;
+
+	//Forward declare. 
+	class Constraint;
 
 	// Class responsible for managing forcefields and evaluating energies of particles.
 	class ForceFieldManager : public Visitable, public Serializable

@@ -10,6 +10,9 @@
 		},
 		"electrostatic" : {
 			"type": "object"
+		},
+		"constraints" : {
+			"type" : "array"
 		}
 	},
 

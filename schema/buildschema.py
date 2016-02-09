@@ -8,9 +8,6 @@ import re
 import os
 from os import path
 import json
-import sys
-import time
-from sys import exit
 
 # Definitions
 currd = path.dirname(path.abspath(__file__))
@@ -26,7 +23,8 @@ folders = [
 	"simulation/",
 	"utils/",
 	"dos/",
-	"connectivities/"
+	"connectivities/",
+	"constraints/"
 ]
 
 exclude = [
@@ -69,11 +67,11 @@ def jsontimestamps(folders):
 
 
 def genfiles(folders):
-	# Get timestamp of header file 
+	# Get timestamp of header file
 	htime = headertimestamp()
 	jtime = jsontimestamps(folders)
 
-	# If no files have not been modded since header, 
+	# If no files have not been modded since header,
 	# don't do anything.
 	if htime >= jtime:
 		return
@@ -120,7 +118,6 @@ def genfiles(folders):
 
 	with open(path.join(currd, schemah), "w") as f:
 		f.writelines(hlines)
-
 
 	with open(path.join(currd, schemac), "w") as f:
 		f.writelines(cpplines)

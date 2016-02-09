@@ -1,0 +1,32 @@
+{
+	"type" : "object", 
+	"varname" : "Dynamic1DP2C",
+	"properties" : {
+		"type" : {
+			"type" : "string", 
+			"enum" : ["Dynamic1DP2"]
+		},
+		"coefficient" : {
+			"type" : "number"
+		},
+		"director" : "@file(../particles/director.particle.json)",
+		"index" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 2
+		},
+		"limits" : {
+			"type" : "array",
+			"items" : {
+				"type" : "number"
+			},
+			"minItems" : 2,
+			"maxItems" : 2
+		},
+		"species" : {
+			"type" : "string"
+		}
+	},
+	"required" : ["type", "coefficient", "director", "index", "limits", "species"],
+	"additionalProperties" : false
+}

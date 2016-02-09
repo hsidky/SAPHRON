@@ -149,6 +149,23 @@ namespace SAPHRON
 		DumpNoticesToConsole(notices, "",_notw);
 		notices.clear();
 
+		// Build constraints.
+		PrintBoldNotice(" > Building constraint(s)...", _msgw);
+		try{
+			auto ccs = root.get("forcefields", Json::arrayValue).get("constraints", Json::arrayValue);
+			Constraint::BuildConstraints(ccs, &_ffm, _constraints);
+		} catch(BuildException& e) {
+			DumpErrorsToConsole(e.GetErrors(), _notw);
+			return false;
+		} catch(exception& e) {
+			DumpErrorsToConsole({e.what()}, _notw);
+			return false;
+		}
+
+		notices.push_back("Initialized " +  to_string(_constraints.size()) + " constraint(s).");
+		DumpNoticesToConsole(notices, "",_notw);
+		notices.clear();
+
 		// Build move(s).
 		PrintBoldNotice(" > Building move(s)...", _msgw); 
 		try{

@@ -168,7 +168,7 @@ namespace Json
 				PushError(path + ": There must be at least " + std::to_string(_min) + " elements in the array");
 				
 			if(_setMax && (int)json.size() > _max)
-				PushError(path + ": There must be less than " + std::to_string(_max) + " elements in the array");
+				PushError(path + ": There must be no more than " + std::to_string(_max) + " elements in the array");
 
 			if(_unique && !IsUnique(json))
 				PushError(path + ": Entries must be unique");
