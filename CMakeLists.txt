@@ -186,6 +186,12 @@ set(TEST_DEPS
 	${GTEST_LIBRARY_MAIN_PATH}
 	libsaphron)
 
+add_executable(ConstraintTests test/ConstraintTests.cpp)
+target_link_libraries(ConstraintTests ${TEST_DEPS})
+target_include_directories(ConstraintTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(ConstraintTests googletest) 
+add_test(ConstraintTests ConstraintTests)
+
 add_executable(DebyeHuckelChargeTests test/DebyeHuckelChargeTests.cpp)
 target_link_libraries(DebyeHuckelChargeTests ${TEST_DEPS})
 target_include_directories(DebyeHuckelChargeTests PRIVATE "${GTEST_INCLUDE_DIR}")

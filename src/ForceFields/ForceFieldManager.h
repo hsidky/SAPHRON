@@ -5,6 +5,7 @@
 #include "../Observers/Visitable.h"
 #include "../JSON/Serializable.h"
 #include "ForceField.h"
+#include "../Constraints/Constraint.h"
 #include "vecmap.h"
 #include <math.h>
 #include <map>
@@ -20,14 +21,17 @@ namespace SAPHRON
 	class ForceFieldManager : public Visitable, public Serializable
 	{
 	private:
-		//non-bonded forcefields
+		// Bon-bonded forcefields.
 		FFMap _nonbondedforcefields;
 
-		//bonded forcefields
+		// Bonded forcefields.
 		FFMap _bondedforcefields;
 
-		//electrostatic forcefield
+		// Electrostatic forcefield.
 		const ForceField* _electroff; 
+
+		// Constraints.
+		std::vector<std::vector<Constraint*>> _constraints;
 
 		// Hold unique instances of non-bonded and bonded forcefield pointers.
 		FFMap _uniquenbffs;
@@ -38,7 +42,7 @@ namespace SAPHRON
 		typedef FFMap::const_iterator const_iterator;
 		
 		ForceFieldManager() : 
-		_nonbondedforcefields(), _bondedforcefields(), _electroff(nullptr) {}
+		_nonbondedforcefields(), _bondedforcefields(), _electroff(nullptr), _constraints(0) {}
 
 		// Adds a non-bonded forcefield to the manager.
 		void AddNonBondedForceField(std::string p1type, std::string p2type, ForceField& ff);
@@ -76,7 +80,26 @@ namespace SAPHRON
 		// Resets the electrostatic forcefield (to nothing).
 		void ResetElectrostaticForceField();
 
-		// Evaluates the intermolecular energy of a particle. 
+		// Adds a constraint to a species.
+		void AddConstraint(std::string species, Constraint* cc);
+
+		// Add a constraint to a species.
+		void AddConstraint(int species, Constraint* cc);
+
+		// Resets constraints on a species.
+		void ResetConstraints(std::string species);
+		
+		// Resets constraints on a species.
+		void ResetConstraints(int species);
+
+		// Evaluates constraint energy of a particle.
+		double EvaluateConstraintEnergy(const Particle& particle) const;
+
+		// Evaluate constraint energy of entire world.
+		double EvaluateConstraintEnergy(const World& world) const;
+
+		// Evaluates the intermolecular energy of a particle.
+		// This includes constraint energy. 
 		EPTuple EvaluateInterEnergy(const Particle& particle) const;
 
 		// Evaluates the intermolecular energy of a world.

@@ -21,7 +21,7 @@ namespace SAPHRON
 	// contribution. The virial contribution is written as in Allan & Tildesley 
 	// Eq. 2.60 and 2.63. The forcefield implementation should return w(r)/r^2.
 	// This corresponds to 1/r*dv(r)/dr.
-	class ForceField
+	class ForceField : public Serializable
 	{
 	public:
 		// Returns the potential and virial contribution between two particle. 
@@ -44,7 +44,7 @@ namespace SAPHRON
 		virtual double PressureTailCorrection(unsigned int) const { return 0.0; }
 
 		// Serialize 
-		virtual void Serialize(Json::Value& json) const = 0;
+		virtual void Serialize(Json::Value& json) const override = 0;
 
 		// Build a bonded forcefield from a JSON node. Returns a pointer to the built 
 		// FF in addition to adding it to the FFM. If return value is nullptr, then an 

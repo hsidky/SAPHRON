@@ -125,6 +125,66 @@ namespace SAPHRON
 		_electroff = nullptr;
 	}
 
+	// Adds a constraint to a species.
+	void ForceFieldManager::AddConstraint(std::string species, Constraint* cc)
+	{
+		auto list = Particle::GetSpeciesList();
+		auto p = std::find(list.begin(), list.end(), species);
+
+		if(p == list.end())
+			throw std::invalid_argument("Unknown particle type(s). Please register particles\n"
+						          		"   before adding the constraint to the manager.");		          
+
+		AddConstraint(p-list.begin(), cc);
+	}
+
+	// Add a constraint to a species.
+	void ForceFieldManager::AddConstraint(int species, Constraint* cc)
+	{
+		if((int)_constraints.size() - 1 < species)
+			_constraints.resize(species + 1);
+
+		_constraints[species].push_back(cc);
+	}
+
+	// Resets constraints on a species.
+	void ForceFieldManager::ResetConstraints(std::string species)
+	{
+		auto list = Particle::GetSpeciesList();
+		auto p = std::find(list.begin(), list.end(), species);
+
+		if(p != list.end())
+			ResetConstraints(p - list.begin());
+	}
+	
+	// Resets constraints on a species.
+	void ForceFieldManager::ResetConstraints(int species)
+	{
+		if((int)_constraints.size() - 1 >= species)
+			_constraints[species].clear();
+	}
+
+	double ForceFieldManager::EvaluateConstraintEnergy(const Particle& particle) const
+	{
+		auto energy = 0.;
+		auto s = particle.GetSpeciesID();
+		
+		if((int)_constraints.size() -1 >= s)
+			for(auto& c : _constraints[s])
+				energy += c->EvaluateEnergy(particle);
+
+		return energy;
+	}
+
+	double ForceFieldManager::EvaluateConstraintEnergy(const World& world) const
+	{
+		auto energy = 0.;
+		for(auto& p : world)
+			energy += EvaluateConstraintEnergy(*p);
+
+		return energy;
+	}
+
 	EPTuple ForceFieldManager::EvaluateInterEnergy(const Particle& particle) const
 	{
 		double intere = 0, electroe = 0, pxx = 0, pxy = 0, pxz = 0, pyy = 0, pyz = 0, pzz = 0;
@@ -201,6 +261,9 @@ namespace SAPHRON
 		}
 		EPTuple ep{intere, 0, electroe, 0, 0, 0, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
 		
+		// Evaluate constraint energy.
+		ep.energy.intervdw += EvaluateConstraintEnergy(particle);
+
 		// End timer.
 		sim.AddTime("e_inter");
 		
