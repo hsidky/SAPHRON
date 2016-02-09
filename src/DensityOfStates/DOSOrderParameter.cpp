@@ -70,23 +70,12 @@ namespace SAPHRON
 			if(xmin < 0 || xmax > boxvec(0,0))
 				throw BuildException({"#orderparameter/xrange: xmin and xmax must be within world."});
 
-			// Write filter function for proper deformation coordinate.
-			EFilterFunc filter;
-			auto mode = json["mode"].asString();
-			if(mode == "twist")
-			{
-				filter = [=](const Particle* p) -> bool {
-					auto& pos = p->GetPosition();
-					return pos[0] >= xmin && pos[0] <= xmax;
-				};
-			}
-
 			// Compute midpoint for deformation. This assumes 
 			// that the last x "layer" is anchored (at x = xmax). 
 			auto mid = boxvec[0] - 0.5*(xmax - xmin);
 
 			// Initialize order parameter.
-			op = new ElasticCoeffOP(*hist, w, mid, filter);
+			op = new ElasticCoeffOP(*hist, w, mid, {{xmin, xmax}});
 		}
 		else
 		{

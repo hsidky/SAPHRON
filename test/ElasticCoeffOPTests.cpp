@@ -18,10 +18,7 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 	// Initialize ElasticCoeffOP 
 	Histogram hist(-0.02, 0.02, 200);
 	int middle = ceil(n/2);
-	ElasticCoeffOP op(hist, &world, n - middle, [=](const Particle* p){
-		auto& pos = p->GetPosition();
-		return pos[0] == middle; 
-	});
+	ElasticCoeffOP op(hist, &world, n - middle, {{(double)middle, (double)middle}});
 
 	ASSERT_EQ(0, op.EvaluateOrderParameter(world));
 
