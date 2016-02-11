@@ -17,7 +17,8 @@ namespace SAPHRON
 			unsigned int particle_mask = 255;
 
 		public:
-			SimFlags() : simulation(0), world(0), histogram(0), particle(0) {}
+			SimFlags() : simulation(0), world(0), energy_components(0), 
+			pressure_tensor(0), histogram(0), particle(0) {}
 
 			void simulation_on() { simulation = simulation_mask; }
 			void world_on() { world = world_mask; }

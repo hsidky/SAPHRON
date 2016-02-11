@@ -91,6 +91,7 @@ namespace SAPHRON
 
 			// Average.
 			_Q *= 3.0/(2.0*_pcount);
+			UpdateQTensor();
 		}
 
 
@@ -98,10 +99,9 @@ namespace SAPHRON
 		virtual double EvaluateOrderParameter(const World&) const override
 		{
 			double dny = _eigvec(1, _imax).real();
-			
+
 			// Return dny/dx. (this is twist, hardcoded for now). 
 			return dny/_dxj;
-
 		}
 
 		// Update Q tensor on particle director change.
@@ -109,24 +109,25 @@ namespace SAPHRON
 		{
 			// Get particle and positions, directors.
 			auto* p = pEvent.GetParticle();
-			auto& ppos = pEvent.GetOldPosition();
 			auto& pos = p->GetPosition();
-			auto& pdir = pEvent.GetOldDirector();
 			auto& dir = p->GetDirector();
 			
 			// If only director has changed, check if it's in the region
 			// and update.
 			if(pEvent.director && _efunc(pos))
 			{
+				auto& pdir = pEvent.GetOldDirector();
 				_Q += 3.0/(2.0*_pcount)*(arma::kron(dir.t(), dir) - arma::kron(pdir.t(), pdir));
 				UpdateQTensor();
 				return;
 			}
 			else if(pEvent.position)
-			{			
+			{
+				auto& ppos = pEvent.GetOldPosition();
 				// Three possible cases on a position change:
 				// 1. Particle previously not in region but now in region. 
-				// 2. Particle previously in region and still in region.
+				// 2. Particle previously in region and still in region 
+				//    (we don't do anything since nothing's changed).
 				// 3. Particle previously in region but now not in region.
 				if(!_efunc(ppos) && _efunc(pos))
 				{
@@ -137,13 +138,7 @@ namespace SAPHRON
 					_Q += 3.0/(2.0*_pcount)*(arma::kron(dir.t(), dir) - 1.0/3.0*arma::eye(3,3));
 					UpdateQTensor();
 				}
-				if(_efunc(ppos) && _efunc(ppos))
-				{
-					// Normalization doesn't change. 
-					_Q += 3.0/(2.0*_pcount)*(arma::kron(dir.t(), dir) - arma::kron(pdir.t(), pdir));
-					UpdateQTensor();
-				}
-				else if(_efunc(ppos) && !_efunc(ppos))
+				else if(_efunc(ppos) && !_efunc(pos))
 				{
 					_Q *= _pcount/(_pcount - 1.);
 					--_pcount;

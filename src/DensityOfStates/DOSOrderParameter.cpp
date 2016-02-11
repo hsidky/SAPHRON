@@ -72,7 +72,7 @@ namespace SAPHRON
 
 			// Compute midpoint for deformation. This assumes 
 			// that the last x "layer" is anchored (at x = xmax). 
-			auto mid = boxvec[0] - 0.5*(xmax - xmin);
+			double mid = boxvec(0,0) - 0.5*(xmax + xmin);
 
 			// Initialize order parameter.
 			op = new ElasticCoeffOP(*hist, w, mid, {{xmin, xmax}});

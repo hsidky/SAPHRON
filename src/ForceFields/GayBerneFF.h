@@ -72,6 +72,12 @@ namespace SAPHRON
 			auto r = fnorm(rij);
 			if(r > _rc[wid])
 				return ep;
+			
+			// This is due to the weirdness with the GB potential. 
+			// It is unphysical for them to overlap so we drive them away 
+			// from each other.			
+			if(r < _dw*_sig0)
+				return {1.0e7/r, 0};
 
 			auto& ui = p1.GetDirector();
 			auto& uj = p2.GetDirector();
