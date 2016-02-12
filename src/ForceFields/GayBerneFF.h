@@ -77,7 +77,7 @@ namespace SAPHRON
 			// It is unphysical for them to overlap so we drive them away 
 			// from each other.			
 			if(r < _dw*_sig0)
-				return {1.0e7/r, 0};
+				return {1.0e10/r, 0};
 
 			auto& ui = p1.GetDirector();
 			auto& uj = p2.GetDirector();
@@ -94,6 +94,12 @@ namespace SAPHRON
 			auto eps = _eps0*pow(eps1, _nu)*pow(eps2, _mu);
 			auto R = _dw*_sig0/(r - sig + _dw*_sig0);
 			ep.energy = 4.0*eps*(pow(R, 12.) - pow(R, 6.));
+
+			// Another check for unphysicalness. R is an approximation 
+			// of the surface to surface distance. It should never be 
+			// negative. And we also place a hard wall at U = 0. 
+			if(R < 0 || ep.energy > 0.5)
+				return {1.0e10/std::abs(r), 0};
 
 			return ep;
 		}
