@@ -170,6 +170,10 @@ add_executable(saphron
 )
 target_link_libraries(saphron ${SAPH_LIBS} libsaphron)
 
+# Require C++11
+set_property(TARGET libsaphron PROPERTY CXX_STANDARD 11)
+set_property(TARGET libsaphron PROPERTY CXX_STANDARD_REQUIRED ON)
+
 # Configure flags 
 # - Globals
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math -pthread -std=c++11")
@@ -183,10 +187,12 @@ if(SAPHRON_OPENMP)
 endif()
 
 set(MULTI_WALKER OFF)
-if(Boost_FOUND AND MPI_FOUND)
-	include_directories(${MPI_INCLUDE_PATH})
+if(Boost_FOUND AND MPI_CXX_FOUND)
+	include_directories(${MPI_CXX_INCLUDE_PATH})
 	include_directories(${Boost_INCLUDE_DIRS})
-	target_link_libraries(libsaphron ${Boost_LIBRARIES})
+	add_definitions(${MPI_CXX_COMPILE_FLAGS})
+	link_directories(${MPI_CXX_LIBRARIES})
+	target_link_libraries(libsaphron ${MPI_CXX_LIBRARIES} ${Boost_LIBRARIES})
 	message(STATUS "*** MPI multi-walker DOS enabled!")
 	message(STATUS "")
 	set(MULTI_WALKER ON)

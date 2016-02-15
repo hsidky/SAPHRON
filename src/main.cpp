@@ -8,8 +8,19 @@
 
 using namespace SAPHRON;
 
-int main(int argc, char const* argv[])
+#ifdef MULTI_WALKER
+#include <boost/mpi.hpp>
+using namespace boost;
+#endif
+
+int main(int argc, char* argv[])
 {
+	#ifdef MULTI_WALKER
+	mpi::environment env(argc, argv);
+	mpi::communicator comm;
+	if(comm.rank() == 0)
+	{
+	#endif
 
   	std::string rev(GIT_SHA1, strnlen(GIT_SHA1, 40));
   	std::string revision;
@@ -19,7 +30,7 @@ int main(int argc, char const* argv[])
   
 	revision.resize(53,' ');
 
-	std::cerr << "                                                                         \n" << 
+	std::cout << "                                                                         \n" << 
 	             " **********************************************************************      \n" << 
 	             " *         ____      _     ____   _   _  ____    ___   _   _          *      \n" << 
 	             " *        / ___|    / \\   |  _ \\ | | | ||  _ \\  / _ \\ | \\ | |         * \n" << 
@@ -39,6 +50,10 @@ int main(int argc, char const* argv[])
 	             " **********************************************************************      \n" << 
 	             "                                                                         \n";
 
+	#ifdef MULTI_WALKER
+	}
+	#endif
+
 	int validate_only = 0;
 	std::string filename;
 	for(int i = 1; i < argc; ++i)
@@ -55,10 +70,18 @@ int main(int argc, char const* argv[])
 
 	if(validate_only == 0)
 	{
-		std::cerr << std::setw(47 + 8) << std::left << "\033[1m > Running simulation... \033[0m";
+		#ifdef MULTI_WALKER
+		if(comm.rank() == 0)
+		#endif
+		std::cout << std::setw(47 + 8) << std::left << "\033[1m > Running simulation... \033[0m";
 		auto* sim = builder.GetSimulation();
 		sim->Run();
-		std::cerr << std::setw(34) << std::right << "\033[32mComplete!\033[0m\n";
+		
+		#ifdef MULTI_WALKER
+		if(comm.rank() == 0)
+		{
+		#endif
+		std::cout << std::setw(34) << std::right << "\033[32mComplete!\033[0m\n";
 		
 		// Time Info. 
 		auto& info = SimInfo::Instance();
@@ -66,15 +89,18 @@ int main(int argc, char const* argv[])
 
 		auto& map = info.GetTimerMap();
 		auto tot = map.at("total").elapsed_time.count();
-		std::cerr << " * Elapsed time breakdown during simulation:\n";
-		std::cerr << std::fixed << std::setprecision(2);
+		std::cout << " * Elapsed time breakdown during simulation:\n";
+		std::cout << std::fixed << std::setprecision(2);
 		for(auto& it : map)
 		{
 			auto t = it.second.elapsed_time.count();
-			std::cerr << " * " << info.ResolveTimerName(it.first) 
+			std::cout << " * " << info.ResolveTimerName(it.first) 
 					  << ": " << t << " ms" 
 					  << " (" << (float)t/tot*100. << "%)" << std::endl;
 		}
+		#ifdef MULTI_WALKER
+		}
+		#endif
 	}
 
 	return 0;

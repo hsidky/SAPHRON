@@ -1,5 +1,10 @@
 #include "SimBuilder.h"
 #include "../JSON/JSONLoader.h"
+#include "config.h"
+
+#ifdef MULTI_WALKER
+#include <boost/mpi.hpp>
+#endif
 
 using namespace std;
 
@@ -15,17 +20,37 @@ namespace SAPHRON
 
 	void DumpNoticesToConsole(const vector<string>& msgs, string prefix, int notw)
 	{
+		#ifdef MULTI_WALKER
+		boost::mpi::communicator comm;
+		if(comm.rank() == 0)
+		{
+		#endif
+		
 		cout << setw(notw) << right << "\033[32mOK!\033[0m\n";
 		if(msgs.size() == 0)
 			return;
 		
 		for(auto& msg : msgs)
 			cout << prefix << " * " << msg << "\n";
+		
+		#ifdef MULTI_WALKER
+		}
+		#endif
 	}
 
 	void PrintBoldNotice(const string& notice, int msgw)
 	{
-		cerr << setw(msgw + 8) << left << "\033[1m" + notice + "\033[0m";
+		#ifdef MULTI_WALKER
+		boost::mpi::communicator comm;
+		if(comm.rank() == 0)
+		{
+		#endif
+
+		cout << setw(msgw + 8) << left << "\033[1m" + notice + "\033[0m";
+
+		#ifdef MULTI_WALKER
+		}
+		#endif
 	}
 
 	bool SimBuilder::BuildSimulation(const std::string& filename)
@@ -48,6 +73,10 @@ namespace SAPHRON
 			return false;
 		}
 
+		#ifdef MULTI_WALKER
+		boost::mpi::communicator comm;
+		if(comm.rank() == 0)
+		#endif
 		cout << setw(_notw) << right << "\033[32mOK!\033[0m\n";
 
 		// Set units. 
