@@ -1,5 +1,4 @@
-#include <cstdlib>
-#include <time.h>
+#include <random>
 #include "Move.h"
 #include "MoveManager.h"
 #include "json/json.h"
@@ -45,6 +44,9 @@ namespace SAPHRON
 
 		Move* move = nullptr;
 
+		// Random device for seed generation. 
+		std::random_device rd;
+
 		// Get move type. 
 		std::string type = json.get("type", "none").asString();
 
@@ -58,8 +60,7 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();	
+			int seed = json.get("seed", rd()).asInt();	
 
 			std::vector<std::string> reactants;
 			for(auto& s : json["swap"])
@@ -89,8 +90,7 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();	
+			int seed = json.get("seed",rd()).asInt();	
 
 			std::vector<std::string> species;
 			for(auto& s : json["species"])
@@ -114,8 +114,7 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();	
+			int seed = json.get("seed", rd()).asInt();	
 
 			std::vector<std::string> species;
 			for(auto& s : json["species"])
@@ -133,8 +132,7 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();
+			int seed = json.get("seed", rd()).asInt();
 			auto prefac = json.get("op_prefactor", true).asBool();
 			auto multi_d = json.get("multi_delete", false).asBool();
 			
@@ -156,8 +154,7 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();
+			int seed = json.get("seed", rd()).asInt();
 
 			move = new DirectorRotateMove(seed);
 		}
@@ -171,8 +168,7 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();
+			int seed = json.get("seed", rd()).asInt();
 
 			move = new FlipSpinMove(seed);
 		}
@@ -186,8 +182,7 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			srand(time(NULL));
-			auto seed = json.get("seed", rand()).asInt();
+			auto seed = json.get("seed", rd()).asInt();
 			auto scount = json["stash_count"].asInt();
 			auto prefac = json.get("op_prefactor", true).asBool();
 			auto multi_i = json.get("multi_insertion", false).asBool(); 
@@ -210,8 +205,7 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();
+			int seed = json.get("seed", rd()).asInt();
 
 			move = new ParticleSwapMove(seed);
 		}
@@ -229,8 +223,7 @@ namespace SAPHRON
 			for(auto& i : json["identities"])
 				identities.push_back(i.asString());
 
-			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();
+			int seed = json.get("seed", rd()).asInt();
 
 			move = new RandomIdentityMove(identities, seed);
 		}
@@ -246,8 +239,7 @@ namespace SAPHRON
 
 			double dmax = json["maxangle"].asDouble();
 
-			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();
+			int seed = json.get("seed", rd()).asInt();
 
 			move = new RotateMove(dmax, seed);
 		}
@@ -261,8 +253,7 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();
+			int seed = json.get("seed", rd()).asInt();
 			bool deepcopy = json.get("deep_copy", false).asBool();
 
 			std::vector<std::string> species;
@@ -281,8 +272,7 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 		
-			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();
+			int seed = json.get("seed", rd()).asInt();
 			if(json["dx"].isObject())
 			{
 				std::map<std::string, double> dx; 
@@ -309,8 +299,7 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 		
-			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();
+			int seed = json.get("seed", rd()).asInt();
 			if(json["dx"].isObject())
 			{
 				std::map<std::string, double> dx; 
@@ -339,8 +328,7 @@ namespace SAPHRON
 
 			auto dv = json["dv"].asDouble();
 			auto Pextern = json["Pextern"].asDouble();
-			srand(time(NULL));
-			auto seed = json.get("seed", rand()).asInt();
+			auto seed = json.get("seed", rd()).asInt();
 
 			move = new VolumeScaleMove(Pextern, dv, seed);		
 		}
@@ -355,8 +343,7 @@ namespace SAPHRON
 				throw BuildException(validator.GetErrors());
 
 			double dv = json["dv"].asDouble();
-			srand(time(NULL));
-			int seed = json.get("seed", rand()).asInt();
+			int seed = json.get("seed", rd()).asInt();
 
 			move = new VolumeSwapMove(dv, seed);
 		}
@@ -370,8 +357,7 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			srand(time(NULL));
-			auto seed = json.get("seed", rand()).asInt(); 
+			auto seed = json.get("seed", rd()).asInt(); 
 
 			std::vector<std::string> species;
 			for(auto& s : json["species"])

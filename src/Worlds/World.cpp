@@ -2,8 +2,7 @@
 #include "../Simulation/SimException.h"
 #include "../Validator/ObjectRequirement.h"
 #include "schema.h"
-#include <time.h>
-#include <cstdlib>
+#include <random>
 
 using namespace Json;
 
@@ -501,14 +500,14 @@ namespace SAPHRON
 		if(ncut && skin > ncut)
 			throw BuildException({"Skin thickness must not exceed neighbor list cutoff."});
 
-		srand(time(NULL));
-		int seed = json.isMember("seed") ? json["seed"].asInt() : rand();
+		// Get seed.
+		std::random_device rd;
+		int seed = json.get("seed", rd()).asInt();
 
 		world = new World(dim[0], dim[1], dim[2], ncut, skin, seed);
 		if(ncut)
 			world->SetNeighborRadius(ncut);
 		
-
 		// Periodic. 
 		bool periodx = true, periody = true, periodz = true;
 		if(json.isMember("periodic"))
