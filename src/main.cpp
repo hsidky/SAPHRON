@@ -33,6 +33,9 @@ int main(int argc, char const* argv[])
 	             " *  Version " << SAPHRON_VERSION_MAJOR << "." << 
 	             			   SAPHRON_VERSION_MINOR << "." << 
 	             			   SAPHRON_VERSION_TINY  << revision << "*      \n" << 
+#ifdef MULTI_WALKER
+	             " *                    MPI multi-walker DOS edition                    *\n" <<
+#endif
 	             " **********************************************************************      \n" << 
 	             "                                                                         \n";
 

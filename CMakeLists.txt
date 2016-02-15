@@ -27,6 +27,17 @@ include(FindBLAS)
 include(FindLAPACK)
 include(FindMKL)
 
+# If boost and MPI are found, turn on multi-walker
+find_package(Boost
+	1.53
+	REQUIRED false
+	COMPONENTS mpi
+)
+
+find_package(MPI 
+	REQUIRED false)
+
+message(STATUS "")
 message(STATUS "      ARMA_FOUND = ${ARMA_FOUND}"  )
 #message(STATUS "  QUADMATH_FOUND = ${QUADMATH_FOUND}"  )
 #message(STATUS "  GFORTRAN_FOUND = ${GFORTRAN_FOUND}"  )
@@ -59,12 +70,6 @@ if(GIT_FOUND)
 else()
   SET(GIT_SHA1 Release)
 endif()
-
-# Build config header
-configure_file (
-  "${PROJECT_SOURCE_DIR}/src/config.h.in"
-  "${PROJECT_BINARY_DIR}/config.h"
-)
  
 # add the binary tree to the search path for include files
 # so that we will find TutorialConfig.h
@@ -175,8 +180,25 @@ if(SAPHRON_OPENMP)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fopenmp")
 	message(STATUS "*** OpenMP Parallelization enabled!")
-	message(STATUS "")
 endif()
+
+set(MULTI_WALKER OFF)
+if(Boost_FOUND AND MPI_FOUND)
+	include_directories(${MPI_INCLUDE_PATH})
+	include_directories(${Boost_INCLUDE_DIRS})
+	target_link_libraries(libsaphron ${Boost_LIBRARIES})
+	message(STATUS "*** MPI multi-walker DOS enabled!")
+	message(STATUS "")
+	set(MULTI_WALKER ON)
+endif()
+
+# Build config header
+configure_file (
+  "${PROJECT_SOURCE_DIR}/src/config.h.in"
+  "${PROJECT_BINARY_DIR}/config.h"
+)
+
+message(STATUS "")
 
 # Add testing 
 enable_testing()
