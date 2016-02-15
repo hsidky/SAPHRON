@@ -30,12 +30,10 @@ include(FindMKL)
 # If boost and MPI are found, turn on multi-walker
 find_package(Boost
 	1.53
-	REQUIRED false
 	COMPONENTS mpi
 )
 
-find_package(MPI 
-	REQUIRED false)
+find_package(MPI)
 
 message(STATUS "")
 message(STATUS "      ARMA_FOUND = ${ARMA_FOUND}"  )
