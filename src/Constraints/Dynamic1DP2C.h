@@ -56,7 +56,8 @@ namespace SAPHRON
 
 		void Serialize(Json::Value& json) const override
 		{
-			json["coeff"] = _coeff;
+			json["type"] = "Dynamic1DP2";
+			json["coefficient"] = _coeff;
 			json["director"][0] = _dir[0];
 			json["director"][1] = _dir[1];
 			json["director"][2] = _dir[2];
