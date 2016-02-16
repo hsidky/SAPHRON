@@ -74,11 +74,13 @@ namespace SAPHRON
 			auto resetfreq = json.get("reset_freq", 0).asInt();
 			auto conv = json.get("convergence_factor", 1.0).asDouble();
 			auto flatness = json.get("target_flatness", 0.80).asDouble();
+			auto sync = json.get("sync_frequency", 100).asInt();
 
 			auto* dos = new DOSSimulation(wm, ffm, mm, dop, hist);
 			dos->SetHistogramResetFrequency(resetfreq);
 			dos->SetConvergenceFactor(conv);
 			dos->SetTargetFlatness(flatness);
+			dos->SetSyncFrequency(sync);
 
 			sim = static_cast<Simulation*>(dos);
 		}

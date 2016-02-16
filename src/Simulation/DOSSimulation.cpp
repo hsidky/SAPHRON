@@ -29,6 +29,18 @@ namespace SAPHRON
 			_flatness = _hist->CalculateFlatness();
 			UpdateAcceptances();
 			this->IncrementIterations();
+
+			#ifdef MULTI_WALKER
+			// Sync periodically.
+			if(this->GetIteration() % _syncfreq == 0)
+			{
+				// Combine histograms.
+				_hist->ReduceValues();
+				boost::mpi::broadcast(_comm, _f, 0);
+			}
+
+			if(_comm.rank() == 0)
+			#endif
 			this->NotifyObservers(SimEvent(this, this->GetIteration()));
 		}
 	}
@@ -36,13 +48,32 @@ namespace SAPHRON
 	// Run the DOS algorithm for a specified number of scale factor reductions.
 	void DOSSimulation::Run(int iterations)
 	{
+		#ifdef MULTI_WALKER
+		if(_comm.rank() == 0)
+		#endif
 		this->NotifyObservers(SimEvent(this, this->GetIteration()));
+		
 		for(int i = 0; i < iterations; ++i)
 		{
 			Iterate();
+			
+			// Only root walker updates convergence factor.
+			#ifdef MULTI_WALKER
+			if(_comm.rank() == 0)
+			{
+			#endif
+			
 			_hist->ResetHistogram();
 			ReduceConvergenceFactor();
+			
+			#ifdef MULTI_WALKER
+			}
+			#endif
 		}
+		
+		#ifdef MULTI_WALKER
+		if(_comm.rank() == 0)
+		#endif
 		this->NotifyObservers(SimEvent(this, this->GetIteration(), true));
 	}
 }

@@ -7,6 +7,11 @@
 #include <vector>
 #include <limits>
 #include "json/json.h"
+#include "config.h"
+
+#ifdef MULTI_WALKER
+#include <boost/mpi.hpp>
+#endif
 
 namespace SAPHRON
 {
@@ -182,6 +187,11 @@ namespace SAPHRON
 
 			return minVal/avg;
 		}
+
+		#ifdef MULTI_WALKER
+		// Reduces histogram values across all processors.
+		void ReduceValues();
+		#endif
 
 		// Visitable interface.
 		virtual void AcceptVisitor(Visitor& v) const override

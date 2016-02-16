@@ -8,7 +8,12 @@
 #include "../JSON/Serializable.h"
 #include "json/json.h"
 #include "vecmap.h"
+#include "config.h"
 #include <vector>
+
+#ifdef MULTI_WALKER
+#include <boost/mpi.hpp>
+#endif
 
 namespace SAPHRON
 {
@@ -29,6 +34,10 @@ namespace SAPHRON
 		int _targetit;
 
 	protected:
+
+		#ifdef MULTI_WALKER
+		boost::mpi::communicator _comm;
+		#endif
 
 		// Increment iterations.
 		inline void IncrementIterations()

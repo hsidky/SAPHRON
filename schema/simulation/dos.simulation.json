@@ -17,6 +17,10 @@
 			"maximum" : 1,
 			"exclusiveMinimum" : true,
 			"exclusiveMaximum" : true
+		},
+		"sync_frequency" : {
+			"type" : "integer",
+			"minimum" : 0
 		}
 	},
 	"additionalProperties" : false

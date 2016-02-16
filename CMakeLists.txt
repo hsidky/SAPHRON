@@ -29,7 +29,7 @@ include(FindMKL)
 
 # If boost and MPI are found, turn on multi-walker
 find_package(Boost
-	1.53
+	1.55
 	COMPONENTS mpi
 )
 

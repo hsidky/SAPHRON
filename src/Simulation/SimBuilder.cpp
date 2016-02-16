@@ -117,7 +117,7 @@ namespace SAPHRON
 
 				notices.push_back("Setting seed to " + 
 					to_string(world->GetSeed()) + ".");
-
+				std::cout << "MY SEED " << world->GetSeed() << std::endl;
 				notices.push_back("Setting temperature to " + 
 					to_string(world->GetTemperature()) + "K.");
 
@@ -220,6 +220,12 @@ namespace SAPHRON
 		DumpNoticesToConsole(notices, "",_notw);
 		notices.clear();
 
+		// Only build observers on master rank.
+		#ifdef MULTI_WALKER
+		if(comm.rank() == 0)
+		{
+		#endif
+
 		// Build observers.
 		PrintBoldNotice(" > Building observer(s)...", _msgw); 
 		try{
@@ -248,6 +254,11 @@ namespace SAPHRON
 
 		DumpNoticesToConsole(notices, "",_notw);
 		notices.clear();
+
+		// End build walkers on master rank.
+		#ifdef MULTI_WALKER
+		}
+		#endif
 
 		if(root.isMember("histogram")) 
 		{

@@ -7,6 +7,7 @@
 #include "../Worlds/World.h"
 #include "Simulation.h"
 #include <cmath>
+#include <exception>
 
 namespace SAPHRON
 {
@@ -51,6 +52,14 @@ namespace SAPHRON
 		StandardSimulation(WorldManager* wm, ForceFieldManager* ffm, MoveManager* mm) :
 			_wmanager(wm), _ffmanager(ffm), _mmanager(mm), _accmap()
 		{
+			#ifdef MULTI_WALKER
+			if(_comm.size() > 1)
+			{
+				if(_comm.rank() == 0)
+					throw std::logic_error("Standard simulations cannot be run in multi-walker mode.");
+			}
+			#endif
+
 			// Moves per iteration.
 			int mpi = 0;
 

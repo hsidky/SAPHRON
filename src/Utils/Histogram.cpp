@@ -80,4 +80,22 @@ namespace SAPHRON
 
 		return hist;
 	}
+
+	#ifdef MULTI_WALKER
+	void Histogram::ReduceValues()
+	{
+		using namespace boost::mpi;
+		communicator comm;
+
+		// Reduce across all processors.
+		all_reduce(comm, inplace(&_values.front()), _values.size(), std::plus<double>());
+
+		// Subtract back down to zero.
+		double m = *std::min_element(_values.begin(), _values.end());
+
+		#pragma omp parallel for
+		for(size_t i = 0; i < _values.size(); ++i)
+			_values[i] -= m;
+	}
+	#endif
 }

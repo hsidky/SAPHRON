@@ -38,6 +38,9 @@ namespace SAPHRON
 			// Histogram reset frequency. 
 			int _hreset; 
 
+			// MPI DOS synchronization frequency.
+			int _syncfreq;
+
 			// Convergence factor 
 			double _f; 
 
@@ -73,7 +76,8 @@ namespace SAPHRON
 						  DOSOrderParameter* dop,
 						  Histogram* hist) : 
 				_wmanager(wm), _ffmanager(ffm), _mmanager(mm), _orderp(dop), _hist(hist),
-				_accmap(), _hreset(0), _f(1.0), _flatness(0.0), _targetFlatness(0.80)			
+				_accmap(), _hreset(0), _syncfreq(100), _f(1.0), _flatness(0.0), 
+				_targetFlatness(0.80)			
 			{
 				// Moves per iteration.
 				int mpi = 0;
@@ -109,6 +113,12 @@ namespace SAPHRON
 				return _accmap;
 			}
 
+			// Get multi-walker synchronization frequency. 
+			double GetSyncFrequency() const { return _syncfreq; }
+
+			// Set multi-walker synchronization frequency.
+			void SetSyncFrequency(int freq) { _syncfreq = freq; }
+
 			// Get current flatness.
 			double GetFlatness() const { return _flatness; }
 
@@ -141,6 +151,7 @@ namespace SAPHRON
 				json["reset_freq"] = _hreset;
 				json["convergence_factor"] = _f; 
 				json["target_flatness"] = _targetFlatness;
+				json["sync_frequency"] = _syncfreq;
 				
 				// Serialize DOS Order parameter.
 				_orderp->Serialize(json["orderparameter"]);
