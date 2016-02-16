@@ -51,7 +51,7 @@ namespace SAPHRON
 
 		Json::StreamWriterBuilder builder;
 		builder["commentStyle"] = "None";
-		builder["indentation"] = "   ";
+		builder["indentation"] = "\t";
 		std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
 		writer->write(_root, &*_jsonfs);
 		*_jsonfs << std::endl;

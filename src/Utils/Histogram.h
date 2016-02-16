@@ -36,8 +36,8 @@ namespace SAPHRON
 		// Histogram counts.
 		std::vector<unsigned int> _counts;
 
-		// Histogram values.
-		std::vector<double> _values;
+		// Histogram values (and previous for multi-walker use).
+		std::vector<double> _values, _pvalues;
 
 	public:
 		Histogram(double min, double max, int numberOfBins) :
@@ -46,6 +46,7 @@ namespace SAPHRON
 			_binWidth = (max-min)/numberOfBins;
 			_counts.resize(numberOfBins, 0);
 			_values.resize(numberOfBins, 0.0);
+			_pvalues = _values;
 		}
 
 		Histogram(double min, double max, double binWidth) :
@@ -54,6 +55,7 @@ namespace SAPHRON
 			_binCount = (int) ceil((max-min)/binWidth);
 			_counts.resize(_binCount, 0);
 			_values.resize(_binCount, 0.0);
+			_pvalues = _values;
 		}
 
 		// Record a data point in the histogram and returns the bin index updated.
@@ -160,6 +162,9 @@ namespace SAPHRON
 
 		// Gets the maximum histogram value.
 		double GetMaximum() const { return _max; }
+
+		// Sync previous values with current values.
+		void SyncPrevValues() { _pvalues = _values; }
 
 		// Resets the histogram.
 		void ResetHistogram()

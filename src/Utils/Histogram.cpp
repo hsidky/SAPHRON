@@ -78,6 +78,9 @@ namespace SAPHRON
 		for(size_t i = 0; i < counts.size(); ++i)
 			hist->SetCount(i, counts[i]);
 
+		// Synchronize previous with current. 
+		hist->SyncPrevValues();
+
 		return hist;
 	}
 
@@ -87,15 +90,24 @@ namespace SAPHRON
 		using namespace boost::mpi;
 		communicator comm;
 
+		// Find difference in values since last sync.
+	    std::transform(_values.begin(), _values.end(), _pvalues.begin(), _values.begin(), std::minus<double>());
+
 		// Reduce across all processors.
 		all_reduce(comm, inplace(&_values.front()), _values.size(), std::plus<double>());
 
+		// Add reduced difference to previous values and take that as new values.
+		std::transform(_pvalues.begin(), _pvalues.end(), _values.begin(), _pvalues.begin(), std::plus<double>());
+/*
 		// Subtract back down to zero.
-		double m = *std::min_element(_values.begin(), _values.end());
+		double m = *std::min_element(_pvalues.begin(), _pvalues.end());
 
 		#pragma omp parallel for
-		for(size_t i = 0; i < _values.size(); ++i)
-			_values[i] -= m;
+		for(size_t i = 0; i < _pvalues.size(); ++i)
+			_pvalues[i] -= m;*/
+
+		// Set values to final previous values.
+		_values = _pvalues;
 	}
 	#endif
 }

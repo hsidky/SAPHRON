@@ -58,6 +58,10 @@ namespace SAPHRON
 		Json::Value root;
 		vector<string> notices;
 		JSONLoader loader;
+		
+		#ifdef MULTI_WALKER
+		boost::mpi::communicator comm;
+		#endif
 
 		// Parse JSON.
 		PrintBoldNotice(" > Validating JSON...", _msgw);
@@ -65,16 +69,24 @@ namespace SAPHRON
 		try{
 			root = loader.LoadFile(filename);
 		} catch(std::exception& e) {
+			
+			#ifdef MULTI_WALKER
+			if(comm.rank() == 0)
+			#endif
 			DumpErrorsToConsole({e.what()}, _notw);
+			
 			return false;
 		} catch(int& k) { 
 			std::string err = strerror(k);
+			
+			#ifdef MULTI_WALKER
+			if(comm.rank() == 0)
+			#endif
 			DumpErrorsToConsole({"File IO error: " + err}, _notw);
 			return false;
 		}
 
 		#ifdef MULTI_WALKER
-		boost::mpi::communicator comm;
 		if(comm.rank() == 0)
 		#endif
 		cout << setw(_notw) << right << "\033[32mOK!\033[0m\n";
