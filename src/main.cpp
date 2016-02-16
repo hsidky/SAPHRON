@@ -73,15 +73,22 @@ int main(int argc, char* argv[])
 		#ifdef MULTI_WALKER
 		if(comm.rank() == 0)
 		#endif
-		std::cout << std::setw(47 + 8) << std::left << "\033[1m > Running simulation... \033[0m";
+		std::cout << std::setw(47 + 8) << std::left << "\033[1m > Running simulation... \033[0m" << std::flush;
+	
 		try{
 			auto* sim = builder.GetSimulation();
 			sim->Run();
 		}catch(std::exception& e){
+			#ifdef MULTI_WALKER
+			if(comm.rank() == 0)
+			{
+			#endif
+
 			std::cout << std::setw(30) << std::right << "\033[1;31mError(s)! See below.\033[0m\n";
 			std::cout << " * " << e.what() << std::endl;
 
 			#ifdef MULTI_WALKER
+			}
 			env.abort(-1);
 			#endif
 		}

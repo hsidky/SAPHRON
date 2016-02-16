@@ -20,7 +20,7 @@ namespace SAPHRON
 		std::vector<double> _normprob;
 		Rand _rand;
 		MoveList _moves;
-		int _seed;
+		unsigned _seed;
 
 		void NormalizeProbabilities()
 		{
@@ -39,7 +39,7 @@ namespace SAPHRON
 		typedef MoveList::iterator iterator;
 		typedef MoveList::const_iterator const_iterator;
 
-		MoveManager(int seed = 7654) : 
+		MoveManager(unsigned seed = 7654) : 
 		_prob(0), _normprob(0), _rand(seed), 
 		_moves(0), _seed(seed){}
 
@@ -91,14 +91,14 @@ namespace SAPHRON
 		}
 
 		// Set seed.
-		void SetSeed(int seed)
+		void SetSeed(unsigned seed)
 		{
 			_seed = seed;
 			_rand.seed(seed);
 		}
 
 		// Get seed.
-		int GetSeed() const	{ return _seed; }
+		unsigned GetSeed() const { return _seed; }
 
 		// Serialize.
 		virtual void Serialize(Json::Value& json) const override

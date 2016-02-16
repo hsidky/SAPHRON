@@ -74,7 +74,7 @@ namespace SAPHRON
 		StashList _stash;
 		
 		// Seed.
-		int _seed;		
+		unsigned _seed;		
 
 		// World ID.
 		int _id; 
@@ -151,7 +151,7 @@ namespace SAPHRON
 		typedef ParticleList::const_iterator const_iterator;
 
 		// Initialize an orthorhombic world.
-		World(double xl, double yl, double zl, double ncut, double skin, int seed = 1) : 
+		World(double xl, double yl, double zl, double ncut, double skin, unsigned seed = 1) : 
 		_ncut(ncut), _ncutsq(ncut*ncut), _H(arma::fill::zeros), _diag(true),
 		_periodx(true), _periody(true), _periodz(true), _skin(skin), _skinsq(skin*skin), 
 		_temperature(0.0), _chemp(0), _debroglie(0), _particles(0), _primitives(0), 
@@ -596,7 +596,7 @@ namespace SAPHRON
 		void SetStringID(std::string stringid) { _stringid = stringid; }
 
 		// Get seed.
-		int GetSeed() const { return _seed; }
+		unsigned GetSeed() const { return _seed; }
 
 		// Get world temperature.
 		double GetTemperature() const { return _temperature; }

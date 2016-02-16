@@ -19,11 +19,11 @@ namespace SAPHRON
 		std::vector<int> _species;
 		bool _prefac;
 		bool _multi_delete;
-		int _seed;
+		unsigned _seed;
 
 	public:
 		DeleteParticleMove(const std::vector<int>& species, 
-						   bool multi_delete, int seed = 45843) :
+						   bool multi_delete, unsigned seed = 45843) :
 		_rand(seed), _rejected(0), _performed(0), _species(0), 
 		_prefac(true), _multi_delete(multi_delete), _seed(seed)
 		{
@@ -43,7 +43,7 @@ namespace SAPHRON
 		}
 
 		DeleteParticleMove(const std::vector<std::string>& species,
-						   bool multi_delete, int seed = 45843) :
+						   bool multi_delete, unsigned seed = 45843) :
 		_rand(seed), _rejected(0), _performed(0), _species(0), 
 		_prefac(true), _multi_delete(multi_delete), _seed(seed)
 		{

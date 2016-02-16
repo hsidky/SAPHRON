@@ -23,10 +23,10 @@ namespace SAPHRON
 		int _rejected;
 		int _performed;
 		bool _prefac;
-		int _seed;
+		unsigned _seed;
 
 	public:
-		VolumeScaleMove(double Pextern, double dvmax, int seed = 593857) : 
+		VolumeScaleMove(double Pextern, double dvmax, unsigned seed = 593857) : 
 		_pextern(Pextern), _dvmax(dvmax), _rand(seed), _rejected(0), 
 		_performed(0), _prefac(false), _seed(seed)
 		{

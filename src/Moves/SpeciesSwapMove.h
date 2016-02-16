@@ -19,13 +19,13 @@ namespace SAPHRON
 		std::vector<int> _species;
 		Rand _rand;
 		bool _deepcopy;
-		int _seed;
+		unsigned _seed;
 		int _rejected;
 		int _performed;
 
 	public:
 		SpeciesSwapMove(const std::vector<std::string>& species,
-		bool deepcopy, int seed = 2446) :
+		bool deepcopy, unsigned seed = 2446) :
 		_species(0), _rand(seed), _deepcopy(deepcopy),
 		_seed(seed), _rejected(0), _performed(0)  
 		{
@@ -55,7 +55,7 @@ namespace SAPHRON
 		}
 
 		SpeciesSwapMove(const std::vector<int>& species,
-		bool deepcopy, int seed = 2446) :
+		bool deepcopy, unsigned seed = 2446) :
 		_species(0), _rand(seed), _deepcopy(deepcopy),
 		_seed(seed), _rejected(0), _performed(0)  
 		{

@@ -117,7 +117,7 @@ namespace SAPHRON
 
 				notices.push_back("Setting seed to " + 
 					to_string(world->GetSeed()) + ".");
-				std::cout << "MY SEED " << world->GetSeed() << std::endl;
+
 				notices.push_back("Setting temperature to " + 
 					to_string(world->GetTemperature()) + "K.");
 

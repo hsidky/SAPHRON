@@ -19,12 +19,12 @@ namespace SAPHRON
 		Rand _rand;
 		int _rejected;
 		int _performed;
-		int _seed;
+		unsigned _seed;
 		std::vector<int> _identities;
 
 	public:
 		// Initialize identity change move from a list of species IDs.
-		RandomIdentityMove(const std::vector<int>& identities, int seed = 1337) :
+		RandomIdentityMove(const std::vector<int>& identities, unsigned seed = 1337) :
 			_rand(seed), _rejected(0), _performed(0), _seed(seed), _identities(0)
 		{
 			// Verify the identities exist.
@@ -41,7 +41,7 @@ namespace SAPHRON
 		}
 
 		// Initialize identity change move from a list of species names.
-		RandomIdentityMove(const std::vector<std::string>& identities, int seed = 1337) :
+		RandomIdentityMove(const std::vector<std::string>& identities, unsigned seed = 1337) :
 			_rand(seed), _rejected(0), _performed(0), _seed(seed), _identities(0)
 		{
 			// Verify the identities exist.

@@ -36,7 +36,7 @@ namespace SAPHRON
 		double _c1;
 		double _c2;
 
-		int _seed;
+		unsigned _seed;
 
 		void InitStashParticles(const WorldManager& wm)
 		{
@@ -66,7 +66,7 @@ namespace SAPHRON
 		AcidReactionMove(const std::vector<std::string>& swap,
 		const std::vector<std::string>& products,
 		const WorldManager& wm,
-		int stashcount, double pKo,int seed = 7456253) : 
+		int stashcount, double pKo,unsigned seed = 7456253) : 
 		_swap(0),_products(0), _rand(seed), _performed(0),
 		 _rejected(0), _prefac(true), _scount(stashcount),
 		 _pKo(pKo), _m1(0), _m2(0), _i1(0), _i2(1), _c1(0),
@@ -134,7 +134,7 @@ namespace SAPHRON
 		AcidReactionMove(const std::vector<int>& swap,
 		const std::vector<int>& products,
 		const WorldManager& wm,
-		int stashcount, double pKo,int seed = 7456253) : 
+		int stashcount, double pKo,unsigned seed = 7456253) : 
 		_swap(0),_products(0), _rand(seed), _performed(0),
 		 _rejected(0), _prefac(true), _scount(stashcount),
 		 _pKo(pKo), _m1(0), _m2(0), _i1(0), _i2(1), _c1(0),

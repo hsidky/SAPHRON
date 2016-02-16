@@ -31,7 +31,7 @@ namespace SAPHRON
 		typedef WorldList::iterator iterator;
 		typedef WorldList::const_iterator const_iterator;
 
-		WorldManager(int seed = 1090) : 
+		WorldManager(unsigned seed = 1090) : 
 		_worlds(0), _active(nullptr), _rand(seed) {}
 
 		// Adds a world to the world list. Note: Last added world becomes 

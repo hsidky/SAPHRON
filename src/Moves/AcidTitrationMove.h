@@ -17,7 +17,7 @@ namespace SAPHRON
 
 		int _performed;
 		int _rejected;
-		int _seed;
+		unsigned _seed;
 
 		double _protoncharge;
 		double _mu;
@@ -26,7 +26,7 @@ namespace SAPHRON
 
 	public:
 		AcidTitrationMove(const std::vector<std::string>& species,
-		double protoncharge, double mu, int seed = 7456253) : 
+		double protoncharge, double mu, unsigned seed = 7456253) : 
 		_species(0), _rand(seed), _performed(0), _rejected(0),
 		_seed(seed), _protoncharge(protoncharge), _mu(mu),
 		_prefac(true)
@@ -48,7 +48,7 @@ namespace SAPHRON
 		}
 
 		AcidTitrationMove(const std::vector<int>& species,
-		double protoncharge, double mu, int seed = 7456253) : 
+		double protoncharge, double mu, unsigned seed = 7456253) : 
 		_species(0), _rand(seed), _performed(0), _rejected(0),
 		_seed(seed), _protoncharge(protoncharge), _mu(mu),
 		_prefac(true)

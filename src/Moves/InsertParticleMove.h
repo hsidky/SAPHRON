@@ -24,7 +24,7 @@ namespace SAPHRON
 		bool _prefac;
 		int _scount; // Stash count.
 		bool _multi_insert;
-		int _seed;
+		unsigned _seed;
 
 		void InitStashParticles(const WorldManager& wm)
 		{
@@ -54,7 +54,7 @@ namespace SAPHRON
 		InsertParticleMove(const std::vector<int>& species, 
 						   const WorldManager& wm,
 						   int stashcount, bool multi_insert,
-						   int seed = 45843) :
+						   unsigned seed = 45843) :
 		_rand(seed), _rejected(0), _performed(0), _species(0), 
 		_prefac(true), _scount(stashcount), 
 		_multi_insert(multi_insert), _seed(seed)
@@ -79,7 +79,7 @@ namespace SAPHRON
 		InsertParticleMove(const std::vector<std::string>& species, 
 						   const WorldManager& wm,
 						   int stashcount, bool multi_insert,
-						   int seed = 45843) :
+						   unsigned seed = 45843) :
 		_rand(seed), _rejected(0), _performed(0), _species(0), 
 		_prefac(true), _scount(stashcount), 
 		_multi_insert(multi_insert), _seed(seed)

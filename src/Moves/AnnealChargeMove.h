@@ -17,10 +17,10 @@ namespace SAPHRON
 
 		int _performed;
 		int _rejected;
-		int _seed;
+		unsigned _seed;
 
 	public:
-		AnnealChargeMove(const std::vector<std::string>& species, int seed = 2474) : 
+		AnnealChargeMove(const std::vector<std::string>& species, unsigned seed = 2474) : 
 		_species(0), _rand(seed), _performed(0), _rejected(0), _seed(seed)
 		{
 			// Verify species list and add to local vector.
@@ -39,7 +39,7 @@ namespace SAPHRON
 			}
 		}
 
-		AnnealChargeMove(const std::vector<int>& species, int seed = 438765) :
+		AnnealChargeMove(const std::vector<int>& species, unsigned seed = 438765) :
 		_species(0), _rand(seed), _performed(0), _rejected(0), _seed(seed)
 		{
 			// Verify species list and add to local vector.

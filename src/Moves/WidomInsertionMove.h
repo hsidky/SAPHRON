@@ -25,7 +25,7 @@ namespace SAPHRON
 		double _sum_energies;
 		/////////////////////////////////////////
 
-		int _seed;
+		unsigned _seed;
 
 		void InitGhostParticle(std::vector<int> IDs)
 		{
@@ -51,7 +51,7 @@ namespace SAPHRON
 	public:
 		WidomInsertionMove(const std::vector<int>& species, 
 						   const WorldManager&,
-						   int seed = 45843) :
+						   unsigned seed = 45843) :
 		_rand(seed), _rejected(0), _performed(0), _ghosts(), 
 		_sum_energies(0), _seed(seed)
 		{
@@ -74,7 +74,7 @@ namespace SAPHRON
 
 		WidomInsertionMove(const std::vector<std::string>& species, 
 						   const WorldManager&,
-						   int seed = 45843) :
+						   unsigned seed = 45843) :
 		_rand(seed), _rejected(0), _performed(0), _ghosts(), 
 		_sum_energies(0), _seed(seed)
 		{

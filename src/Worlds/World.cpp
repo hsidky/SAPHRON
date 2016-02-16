@@ -502,7 +502,7 @@ namespace SAPHRON
 
 		// Get seed.
 		std::random_device rd;
-		int seed = json.get("seed", rd()).asUInt();
+		unsigned seed = json.get("seed", rd()).asUInt();
 
 		world = new World(dim[0], dim[1], dim[2], ncut, skin, seed);
 		if(ncut)

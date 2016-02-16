@@ -17,11 +17,11 @@ namespace SAPHRON
 		Rand _rand;
 		int _rejected;
 		int _performed;
-		int _seed;
+		unsigned _seed;
 
 	public:
 
-		FlipSpinMove(int seed = 76345) 
+		FlipSpinMove(unsigned seed = 76345) 
 		: _rand(seed), _rejected(0), _performed(0), _seed(seed) {} 
 
 		void Perform(Particle* p, const Director& d)

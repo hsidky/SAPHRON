@@ -20,10 +20,10 @@ namespace SAPHRON
 		Rand _rand;
 		int _rejected;
 		int _performed;
-		int _seed;
+		unsigned _seed;
 
 	public:
-		RotateMove(double maxangle, int seed = 98476) : 
+		RotateMove(double maxangle, unsigned seed = 98476) : 
 		_maxangle(maxangle), _rand(seed), 
 		_rejected(0), _performed(0), _seed(seed)
 		{

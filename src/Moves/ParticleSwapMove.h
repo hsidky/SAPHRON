@@ -16,10 +16,10 @@ namespace SAPHRON
 		Rand _rand;
 		int _rejected;
 		int _performed;
-		int _seed;
+		unsigned _seed;
 
 	public:
-		ParticleSwapMove(int seed = 3429329) : 
+		ParticleSwapMove(unsigned seed = 3429329) : 
 		_rand(seed), _rejected(0), _performed(0), _seed(seed)
 		{
 		}

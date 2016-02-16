@@ -17,7 +17,7 @@ namespace SAPHRON
 		Rand _rand;
 		int _rejected;
 		int _performed;
-		int _seed;
+		unsigned _seed;
 
 		// Explicit draw for _sdx? Use for low fraction particles.
 		bool _explicit;
@@ -29,7 +29,7 @@ namespace SAPHRON
 	public: 
 		// Initialize translate move with species based dx. Anything not 
 		// specified will initialize to zero.
-		TranslateMove(const std::map<int, double>& dx, bool expl, int seed = 2496) : 
+		TranslateMove(const std::map<int, double>& dx, bool expl, unsigned seed = 2496) : 
 		_dx(0), _rand(seed), _rejected(0), _performed(0), _seed(seed), _explicit(expl), 
 		_sdx(0), _species(0)
 		{
@@ -53,7 +53,7 @@ namespace SAPHRON
 
 		// Initialize translate move with species based dx. Anything not specified 
 		// will initialize to zero.
-		TranslateMove(const std::map<std::string, double>& dx, bool expl, int seed = 2496) : 
+		TranslateMove(const std::map<std::string, double>& dx, bool expl, unsigned seed = 2496) : 
 		_dx(0), _rand(seed), _rejected(0), _performed(0), _seed(seed), _explicit(expl), 
 		_sdx(0), _species(0)
 		{
@@ -79,7 +79,7 @@ namespace SAPHRON
 			}
 		}
 
-		TranslateMove(double dx, int seed = 2496) : 
+		TranslateMove(double dx, unsigned seed = 2496) : 
 		_dx(dx), _rand(seed), _rejected(0), _performed(0), _seed(seed), _explicit(false), _sdx(0)
 		{
 		}
