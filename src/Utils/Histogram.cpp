@@ -79,7 +79,7 @@ namespace SAPHRON
 			hist->SetCount(i, counts[i]);
 
 		// Synchronize previous with current. 
-		hist->SyncPrevValues();
+		hist->SyncPrevious();
 
 		return hist;
 	}
@@ -92,12 +92,15 @@ namespace SAPHRON
 
 		// Find difference in values since last sync.
 	    std::transform(_values.begin(), _values.end(), _pvalues.begin(), _values.begin(), std::minus<double>());
+	    std::transform(_counts.begin(), _counts.end(), _pcounts.begin(), _counts.begin(), std::minus<int>());
 
-		// Reduce across all processors.
+		// Reduce values across all processors.
 		all_reduce(comm, inplace(&_values.front()), _values.size(), std::plus<double>());
+		all_reduce(comm, inplace(&_counts.front()), _counts.size(), std::plus<int>());
 
 		// Add reduced difference to previous values and take that as new values.
 		std::transform(_pvalues.begin(), _pvalues.end(), _values.begin(), _pvalues.begin(), std::plus<double>());
+		std::transform(_pcounts.begin(), _pcounts.end(), _counts.begin(), _pcounts.begin(), std::plus<int>());
 /*
 		// Subtract back down to zero.
 		double m = *std::min_element(_pvalues.begin(), _pvalues.end());
@@ -108,6 +111,7 @@ namespace SAPHRON
 
 		// Set values to final previous values.
 		_values = _pvalues;
+		_counts = _pcounts;
 	}
 	#endif
 }

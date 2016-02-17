@@ -33,8 +33,8 @@ namespace SAPHRON
 		// Count of histogram outliers.
 		unsigned int _lowerOutlierCount = 0, _upperOutlierCount = 0;
 
-		// Histogram counts.
-		std::vector<unsigned int> _counts;
+		// Histogram counts (and previous for multi-walker use).
+		std::vector<unsigned> _counts, _pcounts;
 
 		// Histogram values (and previous for multi-walker use).
 		std::vector<double> _values, _pvalues;
@@ -46,6 +46,7 @@ namespace SAPHRON
 			_binWidth = (max-min)/numberOfBins;
 			_counts.resize(numberOfBins, 0);
 			_values.resize(numberOfBins, 0.0);
+			_pcounts = _counts;
 			_pvalues = _values;
 		}
 
@@ -55,6 +56,7 @@ namespace SAPHRON
 			_binCount = (int) ceil((max-min)/binWidth);
 			_counts.resize(_binCount, 0);
 			_values.resize(_binCount, 0.0);
+			_pcounts = _counts;
 			_pvalues = _values;
 		}
 
@@ -163,14 +165,21 @@ namespace SAPHRON
 		// Gets the maximum histogram value.
 		double GetMaximum() const { return _max; }
 
-		// Sync previous values with current values.
-		void SyncPrevValues() { _pvalues = _values; }
+		// Sync previous values and counts with current values.
+		void SyncPrevious() 
+		{ 
+			_pvalues = _values; 
+			_pcounts = _counts;
+		}
 
 		// Resets the histogram.
 		void ResetHistogram()
 		{
 			for(size_t i = 0; i < _counts.size(); i++)
+			{
 				_counts[i] = 0;
+				_pcounts[i] = 0;
+			}
 		}
 
 		// Calculates the "flatness" of the histogram. That is, the maximum
