@@ -12,7 +12,7 @@ SAPHRON
 - Anisotropic potentials including Gay-Berne.
 - Arbitrary ensembles defined by collections of moves.
 - OpenMP parallelization.
-- Density of states (DOS) flat-histogram sampling along many order parameters (energy, mole number, etc..)
+- Multi-walker Density of states (DOS) flat-histogram sampling along many order parameters.
 - Much more!
 
 Check out the documentation for a more detailed list of features
