@@ -52,25 +52,29 @@ namespace SAPHRON
 		if(_comm.rank() == 0)
 		#endif
 		this->NotifyObservers(SimEvent(this, this->GetIteration()));
-		
+
+		// Cheap hack. Slaves iterate forever.
+		#ifdef MULTI_WALKER
+		if(_comm.rank() != 0)
+			iterations = 1e5;
+		#endif
+
 		for(int i = 0; i < iterations; ++i)
 		{
 			Iterate();
-			
+			_hist->ResetHistogram();
+
 			// Only root walker updates convergence factor.
 			#ifdef MULTI_WALKER
 			if(_comm.rank() == 0)
 			{
 			#endif
-			
-			_hist->ResetHistogram();
-			ReduceConvergenceFactor();
-			
+			ReduceConvergenceFactor();			
 			#ifdef MULTI_WALKER
 			}
 			#endif
 		}
-		
+
 		#ifdef MULTI_WALKER
 		if(_comm.rank() == 0)
 		#endif

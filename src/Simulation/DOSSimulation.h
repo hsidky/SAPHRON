@@ -41,6 +41,9 @@ namespace SAPHRON
 			// MPI DOS synchronization frequency.
 			int _syncfreq;
 
+			// Finalizing DOS.
+			bool _finalized;
+
 			// Convergence factor 
 			double _f; 
 
@@ -76,7 +79,7 @@ namespace SAPHRON
 						  DOSOrderParameter* dop,
 						  Histogram* hist) : 
 				_wmanager(wm), _ffmanager(ffm), _mmanager(mm), _orderp(dop), _hist(hist),
-				_accmap(), _hreset(0), _syncfreq(100), _f(1.0), _flatness(0.0), 
+				_accmap(), _hreset(0), _syncfreq(100), _finalized(false), _f(1.0), _flatness(0.0), 
 				_targetFlatness(0.80)			
 			{
 				// Moves per iteration.

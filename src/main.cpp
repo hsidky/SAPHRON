@@ -119,5 +119,10 @@ int main(int argc, char* argv[])
 		#endif
 	}
 
+	#ifdef MULTI_WALKER
+	if(comm.rank() == 0)
+		env.abort(0);
+	#endif
+
 	return 0;
 }
