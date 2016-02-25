@@ -18,7 +18,8 @@ namespace SAPHRON
 				move->Perform(world, _ffmanager, _orderp, MoveOverride::None);
 
 				// Update bins and histogram. 
-				int bin = _hist->Record(_orderp->EvaluateOrderParameter(*world));
+				_opval = _orderp->EvaluateOrderParameter(*world);
+				int bin = _hist->Record(_opval);
 				_hist->UpdateValue(bin, _hist->GetValue(bin) + _f);
 			}
 

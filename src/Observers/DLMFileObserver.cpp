@@ -79,6 +79,8 @@ namespace SAPHRON
 			WriteStream(*_simfs, "DOS Factor");
 		if(this->Flags.dos_flatness)
 			WriteStream(*_simfs, "DOS Flatness");
+		if(this->Flags.dos_op)
+			WriteStream(*_simfs, "DOS OP");
 		if(this->Flags.move_acceptances)
 			for(auto& acceptance : e.GetAcceptanceRatio())
 				WriteStream(*_simfs, acceptance.first + " Acc.");
@@ -236,6 +238,9 @@ namespace SAPHRON
 			for(int i = 0; i < hist.GetBinCount(); ++i)
 				WriteStream(*_histfs, to_string(min + i*bw));
 		}
+		if(this->Flags.hist_counts)
+			for(int i = 0; i < hist.GetBinCount(); ++i)
+				WriteStream(*_histfs, "Bin #" + to_string(i));
 		
 		*_histfs << endl;
 	}
@@ -270,6 +275,8 @@ namespace SAPHRON
 			WriteStream(*_simfs, e.GetConvergenceFactor());
 		if(this->Flags.dos_flatness)
 			WriteStream(*_simfs, e.GetFlatness());
+		if(this->Flags.dos_op)
+			WriteStream(*_simfs,e.GetOPValue());
 		if(this->Flags.move_acceptances)
 			for(auto& acceptance : e.GetAcceptanceRatio())
 				WriteStream(*_simfs, acceptance.second);
@@ -308,6 +315,9 @@ namespace SAPHRON
 			
 			_histfs->precision(8);
 		}
+		if(this->Flags.hist_counts)
+			for(const auto& v : hist.GetHistogram())
+				WriteStream(*_histfs, v);
 	}
 
 	void DLMFileObserver::Visit(const WorldManager &wm)

@@ -51,6 +51,11 @@
 			"minimum" : 0,
 			"maximum" : 1
 		},
+		"dos_op" : {
+			"type" : "integer",
+			"minimum" : 0,
+			"maximum" : 1
+		},
 		"world_pressure" : {
 			"type" : "integer", 
 			"minimum" : 0,

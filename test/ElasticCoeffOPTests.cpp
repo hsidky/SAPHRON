@@ -7,6 +7,35 @@
 
 using namespace SAPHRON;
 
+TEST(ElasticCoeffOP, Dynamics)
+{
+	auto l = 10.;
+	World world(l, l, l, 1.0, 1.0);
+	Site* site1 = new Site({l/2., 0.0, 0.0}, {0.0, 0.0, 1.0}, "E1");
+	Site* site2 = new Site({l/2., 0.0, 10.0}, {0.0, 0.0, 1.0}, "E1");
+	world.AddParticle(site1);
+	world.AddParticle(site2);
+
+	ASSERT_EQ(2, world.GetParticleCount());
+
+	Histogram hist(-0.02, 0.02, 200);
+	ElasticCoeffOP op(hist, &world, l/2., {{4.0, 6.0}});
+
+	ASSERT_EQ(0.0, op.EvaluateOrderParameter(world));
+
+	site1->SetDirector({0.0, 1.0, 0.0});
+	site2->SetDirector({0.0, 1.0, 0.0});
+	ASSERT_EQ(2.0/l, op.EvaluateOrderParameter(world));
+
+	// Move site 2 outside, change its director. Only site1 should be represented.
+	site2->SetPosition({7.0, 0.0, 0.0});
+	site2->SetDirector({0.0, 0.0, 1.0});
+	ASSERT_EQ(2.0/l, op.EvaluateOrderParameter(world));
+
+	// Move it back in.
+	site2->SetPosition({l/2., 0.0, 10.0});
+}
+
 TEST(ElasticCoeffOP, DefaultBehavior)
 {
 	int n = 25;

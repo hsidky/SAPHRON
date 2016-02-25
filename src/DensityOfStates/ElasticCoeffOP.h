@@ -100,6 +100,11 @@ namespace SAPHRON
 		{
 			double dny = _eigvec(1, _imax).real();
 
+			// We expect the eigenvector to point in the first two quadrants. 
+			// Flip sign of dny if it's not. This is to prevent fluctuations of the 
+			// order parameter from one side to the other. 
+			dny = (_eigvec(2, _imax).real() < 0) ? -dny : dny;
+
 			// Return dny/dx. (this is twist, hardcoded for now). 
 			return dny/_dxj;
 		}

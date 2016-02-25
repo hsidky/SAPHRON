@@ -9,7 +9,7 @@ namespace SAPHRON
 	class SimFlags : public Serializable
 	{
 		private:
-			unsigned int simulation_mask = 15;
+			unsigned int simulation_mask = 31;
 			unsigned int world_mask = 127;
 			unsigned int energy_mask = 63;
 			unsigned int pressure_mask = 255;
@@ -35,6 +35,7 @@ namespace SAPHRON
 					unsigned int move_acceptances: 1;
 					unsigned int dos_factor : 1;
 					unsigned int dos_flatness : 1;
+					unsigned int dos_op : 1;
 				};
 
 				unsigned int simulation;
@@ -128,6 +129,7 @@ namespace SAPHRON
 					if(move_acceptances) json["move_acceptances"] = 1;
 					if(dos_factor) json["dos_factor"] = 1;
 					if(dos_flatness) json["dos_flatness"] = 1;
+					if(dos_op) json["dos_op"] = 1;
 				}
 
 				if(world == world_mask)

@@ -52,7 +52,10 @@ namespace SAPHRON
 
 			// Target flatness.
 			double _targetFlatness;
-		
+			
+			// Current value of order parameter.
+			double _opval; 
+
 			void Iterate();
 
 			inline void UpdateAcceptances()
@@ -80,7 +83,7 @@ namespace SAPHRON
 						  Histogram* hist) : 
 				_wmanager(wm), _ffmanager(ffm), _mmanager(mm), _orderp(dop), _hist(hist),
 				_accmap(), _hreset(0), _syncfreq(100), _finalized(false), _f(1.0), _flatness(0.0), 
-				_targetFlatness(0.80)			
+				_targetFlatness(0.80), _opval(0)
 			{
 				// Moves per iteration.
 				int mpi = 0;
@@ -142,6 +145,9 @@ namespace SAPHRON
 
         	// Set histogram reset frequency. 
         	void SetHistogramResetFrequency(int hreset) { _hreset = hreset; }
+
+        	// Get the current value of the order parameter.
+        	double GetOPValue() const { return _opval; }
 
         	// Get ensemble name.
 			virtual std::string GetName() const override { return "DOS"; }
