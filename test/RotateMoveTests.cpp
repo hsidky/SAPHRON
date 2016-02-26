@@ -100,4 +100,11 @@ TEST(RotateMove, MoveInterface)
 		auto dot = fdot(d,s1->GetDirector());
 		ASSERT_LE(acos(dot), M_PI/4.0);
 	}
+
+	for(int i = 0; i < 1000; ++i)
+	{
+		Director d = s1->GetDirector();
+		mv.Perform(&wm, &ffm, MoveOverride::ForceReject);
+		ASSERT_TRUE(is_close(d, s1->GetDirector(), 1e-11));
+	}
 }

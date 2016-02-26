@@ -75,12 +75,12 @@ namespace SAPHRON
 			Rotate(particle, R);
 			++_performed;
 
+			// Update neighbor list if needed.
+			w->CheckNeighborListUpdate(particle->GetChildren());
+
 			// Evaluate final particle energy and get delta E. 
 			auto ef = ffm->EvaluateInterEnergy(*particle);
 			Energy de = ef.energy - ei.energy;
-
-			// Update neighbor list if needed.
-			w->CheckNeighborListUpdate(particle->GetChildren());
 
 			// Get sim info for kB.
 			auto sim = SimInfo::Instance();
@@ -94,6 +94,10 @@ namespace SAPHRON
 			{
 				// Rotate back. 
 				Rotate(particle, R.t());
+	
+				// Update neighbor list if needed.
+				w->CheckNeighborListUpdate(particle->GetChildren());
+
 				++_rejected;
 			}
 			else
@@ -125,6 +129,9 @@ namespace SAPHRON
 			Rotate(particle, R);
 			++_performed;
 
+			// Update neighbor list if needed.
+			w->CheckNeighborListUpdate(particle->GetChildren());
+
 			// Evaluate final particle energy and get delta E. 
 			auto ef = ffm->EvaluateInterEnergy(*particle);
 			Energy de = ef.energy - ei.energy;
@@ -135,9 +142,6 @@ namespace SAPHRON
 
 			auto opf = op->EvaluateOrderParameter(*w);
 			
-			// Update neighbor list if needed.
-			w->CheckNeighborListUpdate(particle);
-
 			// Acceptance probability.
 			double p = op->AcceptanceProbability(ei.energy, ef.energy, opi, opf, *w);
 
@@ -149,7 +153,10 @@ namespace SAPHRON
 				// Update energies and pressures.
 				w->IncrementEnergy(-1.0*de);
 				w->IncrementPressure(ei.pressure - ef.pressure);
-				
+		
+				// Update neighbor list if needed.
+				w->CheckNeighborListUpdate(particle->GetChildren());
+	
 				++_rejected;
 			}	
 

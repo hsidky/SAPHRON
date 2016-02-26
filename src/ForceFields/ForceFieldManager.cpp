@@ -170,7 +170,7 @@ namespace SAPHRON
 		auto energy = 0.;
 		auto s = particle.GetSpeciesID();
 		
-		if((int)_constraints.size() -1 >= s)
+		if((int)_constraints.size() - 1 >= s)
 			for(auto& c : _constraints[s])
 				energy += c->EvaluateEnergy(particle);
 
@@ -260,10 +260,10 @@ namespace SAPHRON
 				pyz += totalvirial * 0.5 * (rij[1] * rab[2] + rij[2] * rab[1]);				
 			}
 		}
-		EPTuple ep{intere, 0, electroe, 0, 0, 0, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
+		EPTuple ep{intere, 0, electroe, 0, 0, 0, 0, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
 		
 		// Evaluate constraint energy.
-		ep.energy.intervdw += EvaluateConstraintEnergy(particle);
+		ep.energy.constraint += EvaluateConstraintEnergy(particle);
 
 		// End timer.
 		sim.AddTime("e_inter");

@@ -137,15 +137,15 @@ namespace SAPHRON
 			
 			w->ApplyPeriodicBoundaries(&newPos);
 			particle->SetPosition(newPos);
-			++_performed;										
+			++_performed;		
+
+			// Update neighbor list if needed.
+			w->CheckNeighborListUpdate(particle);						
 
 			// Evaluate final particle energy and get delta E. 
 			auto ef = ffm->EvaluateInterEnergy(*particle);
 			Energy de = ef.energy - ei.energy;
 			
-			// Update neighbor list if needed.
-			w->CheckNeighborListUpdate(particle);
-
 			// Get sim info for kB.
 			auto& sim = SimInfo::Instance();
 
@@ -157,6 +157,9 @@ namespace SAPHRON
 			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
 				particle->SetPosition(posi);
+
+				// Update neighbor list if needed.
+				w->CheckNeighborListUpdate(particle);
 				++_rejected;
 			}
 			else
@@ -210,6 +213,9 @@ namespace SAPHRON
 			w->ApplyPeriodicBoundaries(&newPos);
 			particle->SetPosition(newPos);
 			++_performed;										
+			
+			// Update neighbor list if needed.
+			w->CheckNeighborListUpdate(particle);
 
 			// Evaluate final particle energy and get delta E. 
 			auto ef = ffm->EvaluateInterEnergy(*particle);
@@ -220,9 +226,6 @@ namespace SAPHRON
 			w->IncrementPressure(ef.pressure - ei.pressure);
 
 			auto opf = op->EvaluateOrderParameter(*w);
-			
-			// Update neighbor list if needed.
-			w->CheckNeighborListUpdate(particle);
 
 			// Acceptance probability.
 			double p = op->AcceptanceProbability(ei.energy, ef.energy, opi, opf, *w);
@@ -235,7 +238,10 @@ namespace SAPHRON
 				// Update energies and pressures.
 				w->IncrementEnergy(-1.0*de);
 				w->IncrementPressure(ei.pressure - ef.pressure);
-				
+
+				// Update neighbor list if needed.
+				w->CheckNeighborListUpdate(particle);
+			
 				++_rejected;
 			}	
 		}
