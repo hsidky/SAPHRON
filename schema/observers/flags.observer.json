@@ -121,6 +121,16 @@
 			"minimum" : 0,
 			"maximum" : 1
 		},
+		"energy_constraint" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
+		"energy_tail" : {
+			"type" : "integer", 
+			"minimum" : 0,
+			"maximum" : 1
+		},
 		"pressure_ideal" : {
 			"type" : "integer", 
 			"minimum" : 0,
