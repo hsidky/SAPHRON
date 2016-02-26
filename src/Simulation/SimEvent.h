@@ -11,7 +11,7 @@ namespace SAPHRON
 		private:
 			unsigned int simulation_mask = 31;
 			unsigned int world_mask = 127;
-			unsigned int energy_mask = 63;
+			unsigned int energy_mask = 255;
 			unsigned int pressure_mask = 255;
 			unsigned int histogram_mask = 63;
 			unsigned int particle_mask = 255;
@@ -68,6 +68,8 @@ namespace SAPHRON
 					unsigned int eintraelect: 1;
 					unsigned int ebonded: 1;
 					unsigned int econnectivity: 1;
+					unsigned int econstraint : 1;
+					unsigned int etail : 1;
 				};
 				unsigned int energy_components;
 			};
@@ -154,6 +156,8 @@ namespace SAPHRON
 					if(einterelect) json["energy_intraelect"] = 1;
 					if(ebonded) json["energy_bonded"] = 1;
 					if(econnectivity) json["energy_connectivity"] = 1;
+					if(econstraint) json["energy_constraint"] = 1;
+					if(etail) json["energy_tail"] = 1;
 				}
 
 				if(pressure_tensor == pressure_mask)

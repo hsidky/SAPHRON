@@ -144,6 +144,10 @@ namespace SAPHRON
 				WriteStream(*_worldfs.back(), "E Bonded");
 			if(this->Flags.econnectivity)
 				WriteStream(*_worldfs.back(), "E Connectivity");
+			if(this->Flags.econstraint)
+				WriteStream(*_worldfs.back(), "E Constraint");
+			if(this->Flags.etail)
+				WriteStream(*_worldfs.back(), "E tail");
 			if(this->Flags.world_chem_pot)
 			{
 				const auto& species = Particle::GetSpeciesList(); 
@@ -382,6 +386,10 @@ namespace SAPHRON
 				WriteStream(*fs, E.bonded);
 			if(this->Flags.econnectivity)
 				WriteStream(*fs, E.connectivity);
+			if(this->Flags.econstraint)
+				WriteStream(*fs, E.constraint);
+			if(this->Flags.etail)
+				WriteStream(*fs, E.tail);
 			if(this->Flags.world_chem_pot)
 			{
 				int st = w->GetComposition().size();
