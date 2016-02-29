@@ -56,7 +56,7 @@ namespace SAPHRON
 		{
 			auto& sim = SimInfo::Instance();
 			auto de = ef.total() - ei.total();
-			double p = exp(-de/(sim.GetkB()*w.GetTemperature()) + opi - opf);
+			double p = exp(-de/(sim.GetkB()*w.GetTemperature()) + GetHistValue(opi) - GetHistValue(opf));
 			return p > 1.0 ? 1.0 : p;
 		}
 
