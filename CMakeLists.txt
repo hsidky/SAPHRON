@@ -380,6 +380,12 @@ target_include_directories(P2SFAConnectivityTests PRIVATE "${GTEST_INCLUDE_DIR}"
 add_dependencies(P2SFAConnectivityTests googletest) 
 add_test(P2SFAConnectivityTests P2SFAConnectivityTests)
 
+add_executable(ParticleDistanceOPTests test/ParticleDistanceOPTests.cpp)
+target_link_libraries(ParticleDistanceOPTests ${TEST_DEPS})
+target_include_directories(ParticleDistanceOPTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(ParticleDistanceOPTests googletest) 
+add_test(ParticleDistanceOPTests ParticleDistanceOPTests)
+
 add_executable(ParticleObserverTests test/ParticleObserverTests.cpp)
 target_link_libraries(ParticleObserverTests ${TEST_DEPS})
 target_include_directories(ParticleObserverTests PRIVATE "${GTEST_INCLUDE_DIR}")
