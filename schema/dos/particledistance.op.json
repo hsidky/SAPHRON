@@ -1,0 +1,28 @@
+{
+	"type" : "object",
+	"varname" : "ParticleDistanceOP",
+	"properties" : {
+		"type" : {
+			"type" : "string",
+			"enum" : ["ParticleDistance"]
+		},
+		"group1" : {
+			"type" : "array",
+			"items" : {
+				"type" : "integer",
+				"minimum" : 0
+			},
+			"minItems" : 1
+		},
+		"group2" : {
+			"type" : "array",
+			"items" : {
+				"type" : "integer",
+				"minimum" : 0
+			},
+			"minItems" : 1
+		}
+	},
+	"required" : ["type", "group1", "group2"],
+	"additionalProperties" : false
+}

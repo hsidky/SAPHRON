@@ -7,6 +7,7 @@
 #include "../Worlds/WorldManager.h"
 #include "WangLandauOP.h"
 #include "ElasticCoeffOP.h"
+#include "ParticleDistanceOP.h"
 
 using namespace Json; 
 
@@ -27,7 +28,36 @@ namespace SAPHRON
 		DOSOrderParameter* op = nullptr;
 
 		auto type = json.get("type", "none").asString();
-		if(type == "WangLandau")
+		if(type == "ParticleDistance")
+		{
+			reader.parse(JsonSchema::ParticleDistanceOP, schema);
+			validator.Parse(schema, "#/orderparameter");
+
+			// Validate inputs. 
+			validator.Validate(json, "#/orderparameter");
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			ParticleList group1, group2;
+			auto& plist = Particle::GetParticleMap();
+
+			for(auto& id : json["group1"])
+			{
+				if(plist.find(id.asInt()) == plist.end())
+					throw BuildException({"#orderparameter/group1 : unknown particle ID " + id.asString()});
+				group1.push_back(plist[id.asInt()]);				
+			}
+
+			for(auto& id : json["group2"])
+			{
+				if(plist.find(id.asInt()) == plist.end())
+					throw BuildException({"#orderparameter/group1 : unknown particle ID " + id.asString()});
+				group2.push_back(plist[id.asInt()]);				
+			}
+
+			op = new ParticleDistanceOP(*hist, group1, group2);
+		}
+		else if(type == "WangLandau")
 		{
 			reader.parse(JsonSchema::WangLandauOP, schema);
 			validator.Parse(schema, "#/orderparameter");

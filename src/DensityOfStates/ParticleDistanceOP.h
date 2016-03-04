@@ -45,7 +45,7 @@ namespace SAPHRON
 		{
 		}
 
-		double EvaluateOrderParameter(const World&) const override
+		double EvaluateOrderParameter(const World& w) const override
 		{
 			// Compute COM of each group.
 			Position pos1{0,0,0}, pos2{0,0,0};
@@ -65,7 +65,9 @@ namespace SAPHRON
 			}
 			pos2 /= m2;
 
-			return fnorm(pos2 - pos1);
+			Position r = pos2 - pos1;
+			w.ApplyMinimumImage(&r);
+			return fnorm(r);
 		}
 
 		// Serialize.
