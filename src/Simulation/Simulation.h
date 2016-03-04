@@ -68,7 +68,7 @@ namespace SAPHRON
 		void SetMovesPerIteration(int mpi) { _mpi = mpi; }
 
 		// Gets the current iteration count.
-		inline int GetIteration() const { return _iterations; }
+		inline unsigned GetIteration() const { return _iterations; }
 
 		// Reset iteration count.
 		void ResetIterations()

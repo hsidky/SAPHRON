@@ -41,8 +41,8 @@ namespace SAPHRON
 			// MPI DOS synchronization frequency.
 			int _syncfreq;
 
-			// Finalizing DOS.
-			bool _finalized;
+			// Equilibration frequency.
+			unsigned _equilib; 
 
 			// Convergence factor 
 			double _f; 
@@ -82,7 +82,7 @@ namespace SAPHRON
 						  DOSOrderParameter* dop,
 						  Histogram* hist) : 
 				_wmanager(wm), _ffmanager(ffm), _mmanager(mm), _orderp(dop), _hist(hist),
-				_accmap(), _hreset(0), _syncfreq(100), _finalized(false), _f(1.0), _flatness(0.0), 
+				_accmap(), _hreset(0), _syncfreq(100), _equilib(0), _f(1.0), _flatness(0.0), 
 				_targetFlatness(0.80), _opval(0)
 			{
 				// Moves per iteration.
@@ -125,6 +125,12 @@ namespace SAPHRON
 			// Set multi-walker synchronization frequency.
 			void SetSyncFrequency(int freq) { _syncfreq = freq; }
 
+			// Set equilibration sweeps.
+			void SetEquilibrationSweeps(unsigned equilib) { _equilib = equilib; }
+
+			// Get equilibration sweeps.
+			unsigned GetEquilibrationSweeps() { return _equilib; }
+
 			// Get current flatness.
 			double GetFlatness() const { return _flatness; }
 
@@ -161,7 +167,8 @@ namespace SAPHRON
 				json["convergence_factor"] = _f; 
 				json["target_flatness"] = _targetFlatness;
 				json["sync_frequency"] = _syncfreq;
-				
+				json["equilibration"] = _equilib;
+
 				// Serialize DOS Order parameter.
 				_orderp->Serialize(json["orderparameter"]);
 			}
