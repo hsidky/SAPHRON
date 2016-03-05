@@ -77,7 +77,7 @@ TEST(GayBerneFF, NoSkinConservation)
 
 	// Get constraints.
 	std::vector<Constraint*> constraints;
-	ASSERT_NO_THROW(Constraint::BuildConstraints(root["forcefields"]["constraints"], &ffm, constraints));
+	ASSERT_NO_THROW(Constraint::BuildConstraints(root["forcefields"]["constraints"], &ffm, &wm, constraints));
 
 	// Get moves.
 	MoveManager mm;

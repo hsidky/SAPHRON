@@ -194,7 +194,7 @@ namespace SAPHRON
 		PrintBoldNotice(" > Building constraint(s)...", _msgw);
 		try{
 			auto ccs = root.get("forcefields", Json::arrayValue).get("constraints", Json::arrayValue);
-			Constraint::BuildConstraints(ccs, &_ffm, _constraints);
+			Constraint::BuildConstraints(ccs, &_ffm, &_wm, _constraints);
 		} catch(BuildException& e) {
 			DumpErrorsToConsole(e.GetErrors(), _notw);
 			return false;

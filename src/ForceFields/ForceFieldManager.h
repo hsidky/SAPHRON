@@ -82,21 +82,12 @@ namespace SAPHRON
 		// Resets the electrostatic forcefield (to nothing).
 		void ResetElectrostaticForceField();
 
-		// Adds a constraint to a species.
-		void AddConstraint(std::string species, Constraint* cc);
+		// Adds a constraint to a world.
+		void AddConstraint(const World& world, Constraint* cc);
 
-		// Add a constraint to a species.
-		void AddConstraint(int species, Constraint* cc);
-
-		// Resets constraints on a species.
-		void ResetConstraints(std::string species);
+		// Resets constraints on a world.
+		void ResetConstraints(const World& world);
 		
-		// Resets constraints on a species.
-		void ResetConstraints(int species);
-
-		// Evaluates constraint energy of a particle.
-		double EvaluateConstraintEnergy(const Particle& particle) const;
-
 		// Evaluate constraint energy of entire world.
 		double EvaluateConstraintEnergy(const World& world) const;
 

@@ -55,12 +55,14 @@ namespace SAPHRON
 			// Get initial director, energy.
 			Director di = particle->GetDirector();
 			auto ei = ffm->EvaluateEnergy(*particle);
+			ei.energy.constraint = ffm->EvaluateConstraintEnergy(*w);
 
 			// Perform director rotation.
 			Perform(particle);
 
 			// Evaluate final energy and check probability.
 			auto ef = ffm->EvaluateEnergy(*particle);
+			ef.energy.constraint = ffm->EvaluateConstraintEnergy(*w);
 			Energy de = ef.energy - ei.energy;
 				
 			// Get sim info for kB.

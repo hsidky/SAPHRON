@@ -65,6 +65,7 @@ namespace SAPHRON
 
 			// Evaluate initial particle energy. 
 			auto ei = ffm->EvaluateInterEnergy(*particle);
+			ei.energy.constraint = ffm->EvaluateConstraintEnergy(*w);
 
 			// Choose random axis, and generate random angle.
 			int axis = _rand.int32() % 3 + 1;
@@ -80,6 +81,8 @@ namespace SAPHRON
 
 			// Evaluate final particle energy and get delta E. 
 			auto ef = ffm->EvaluateInterEnergy(*particle);
+			ef.energy.constraint = ffm->EvaluateConstraintEnergy(*w);
+
 			Energy de = ef.energy - ei.energy;
 
 			// Get sim info for kB.
@@ -118,6 +121,7 @@ namespace SAPHRON
 
 			// Evaluate initial particle energy. 
 			auto ei = ffm->EvaluateInterEnergy(*particle);
+			ei.energy.constraint = ffm->EvaluateConstraintEnergy(*w);
 			auto opi = op->EvaluateOrderParameter(*w);
 
 			// Choose random axis, and generate random angle.
@@ -134,6 +138,7 @@ namespace SAPHRON
 
 			// Evaluate final particle energy and get delta E. 
 			auto ef = ffm->EvaluateInterEnergy(*particle);
+			ef.energy.constraint = ffm->EvaluateConstraintEnergy(*w);
 			Energy de = ef.energy - ei.energy;
 
 			// Update energies and pressures.

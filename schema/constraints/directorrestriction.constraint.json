@@ -1,10 +1,10 @@
 {
 	"type" : "object", 
-	"varname" : "Dynamic1DP2C",
+	"varname" : "DirectorRestrictionC",
 	"properties" : {
 		"type" : {
 			"type" : "string", 
-			"enum" : ["Dynamic1DP2"]
+			"enum" : ["DirectorRestriction"]
 		},
 		"coefficient" : {
 			"type" : "number"
@@ -23,10 +23,11 @@
 			"minItems" : 2,
 			"maxItems" : 2
 		},
-		"species" : {
-			"type" : "string"
+		"world" : {
+			"type" : "integer",
+			"minimum" : 0
 		}
 	},
-	"required" : ["type", "coefficient", "director", "index", "limits", "species"],
+	"required" : ["type", "coefficient", "director", "index", "limits", "world"],
 	"additionalProperties" : false
 }

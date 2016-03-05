@@ -85,7 +85,8 @@ namespace SAPHRON
 		// Returns world "i". Throws out of range exception for invalid index.
 		World* GetWorld(size_t i)
 		{
-			assert(i < _worlds.size());	
+			if(i >= _worlds.size())
+				throw std::out_of_range("World ID is out of range.");
 			return _worlds[i];
 		}
 
