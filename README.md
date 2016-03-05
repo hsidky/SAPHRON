@@ -11,8 +11,8 @@ SAPHRON
 - Lattice and off-lattice simulations.
 - Anisotropic potentials including Gay-Berne.
 - Arbitrary ensembles defined by collections of moves.
-- OpenMP parallelization.
-- Multi-walker Density of states (DOS) flat-histogram sampling along many order parameters.
+- OpenMP parallelization for energy and neighbor list calculation.
+- MPI large scale multi-walker density of states (DOS) flat-histogram sampling along many order parameters.
 - Much more!
 
 Check out the documentation for a more detailed list of features
@@ -41,6 +41,20 @@ Simply comment out the line that says `#define ARMA_USE_WRAPPER` and you're good
 ##### OpenMP 
 
 SAPHRON uses OpenMP to parallelize energy and neighbor list calculations. It relies on compilers that support the `-fopenmp` flag. Any recent C++11 compatible compiler should support this, including GCC 4.9.x at **minimum** (required for regex support) and Clang 3.4+.
+
+##### Boost and MPI 
+
+SAPHRON uses Boost MPI to provide support for multi-walker density of states simulations. The requirement is for 
+Boost >= 1.55 with the MPI and serialization modules. A requisite underlying MPI library is also required. On recent Debian
+based systems using OpenMPI, the requirement can be installed via:
+
+```bash
+$ sudo apt-get install libopenmpi-dev openmpi-bin libboost-all-dev
+```
+
+To run a multi-walker simulation, the number of threads per processes is specified by the OpenMP `OMP_NUM_THREADS`
+environment variable, and the number of walkers (processes) by `mpirun`. It is necessary to map by nodes to ensure proper
+distribution of processors to each walker. See the [documentation](https://hsidky.github.io/SAPHRON) for more information.
 
 ##### Additional information
 
