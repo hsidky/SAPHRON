@@ -11,16 +11,20 @@ namespace SAPHRON
 			for(int i = 0; i < GetMovesPerIteration(); ++i)
 			{
 				// Get world 0. Multiple worlds not supported. 
-				World* world = _wmanager->GetWorld(0);
+				auto* world = _wmanager->GetWorld(0);
 				auto* move = _mmanager->SelectRandomMove();
 
 				// Perform move. 
 				move->Perform(world, _ffmanager, _orderp, MoveOverride::None);
 
-				// Update bins and histogram. 
 				_opval = _orderp->EvaluateOrderParameter(*world);
-				int bin = _hist->Record(_opval);
-				_hist->UpdateValue(bin, _hist->GetValue(bin) + _f);
+				// Only begin recording after equilibration period.
+				if(this->GetIteration() > _equilib)
+				{
+					// Update bins and histogram. 
+					auto bin = _hist->Record(_opval);
+					_hist->UpdateValue(bin, _hist->GetValue(bin) + _f);
+				}
 			}
 
 			// Reset histogram if desired.

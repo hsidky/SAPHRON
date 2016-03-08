@@ -126,62 +126,32 @@ namespace SAPHRON
 		_electroff = nullptr;
 	}
 
-	// Adds a constraint to a species.
-	void ForceFieldManager::AddConstraint(std::string species, Constraint* cc)
+	// Add a constraint to a world.
+	void ForceFieldManager::AddConstraint(const World& world, Constraint* cc)
 	{
-		auto list = Particle::GetSpeciesList();
-		auto p = std::find(list.begin(), list.end(), species);
+		auto id = world.GetID();
+		if((int)_constraints.size() - 1 < id)
+			_constraints.resize(id + 1);
 
-		if(p == list.end())
-			throw std::invalid_argument("Unknown particle type(s). Please register particles\n"
-						          		"   before adding the constraint to the manager.");		          
-
-		AddConstraint(p-list.begin(), cc);
-	}
-
-	// Add a constraint to a species.
-	void ForceFieldManager::AddConstraint(int species, Constraint* cc)
-	{
-		if((int)_constraints.size() - 1 < species)
-			_constraints.resize(species + 1);
-
-		_constraints[species].push_back(cc);
-	}
-
-	// Resets constraints on a species.
-	void ForceFieldManager::ResetConstraints(std::string species)
-	{
-		auto list = Particle::GetSpeciesList();
-		auto p = std::find(list.begin(), list.end(), species);
-
-		if(p != list.end())
-			ResetConstraints(p - list.begin());
+		_constraints[id].push_back(cc);
 	}
 	
-	// Resets constraints on a species.
-	void ForceFieldManager::ResetConstraints(int species)
+	// Resets constraints on a world.
+	void ForceFieldManager::ResetConstraints(const World& world)
 	{
-		if((int)_constraints.size() - 1 >= species)
-			_constraints[species].clear();
-	}
-
-	double ForceFieldManager::EvaluateConstraintEnergy(const Particle& particle) const
-	{
-		auto energy = 0.;
-		auto s = particle.GetSpeciesID();
-		
-		if((int)_constraints.size() - 1 >= s)
-			for(auto& c : _constraints[s])
-				energy += c->EvaluateEnergy(particle);
-
-		return energy;
+		auto id = world.GetID();
+		if((int)_constraints.size() - 1 >= id)
+			_constraints[id].clear();
 	}
 
 	double ForceFieldManager::EvaluateConstraintEnergy(const World& world) const
 	{
 		auto energy = 0.;
-		for(auto& p : world)
-			energy += EvaluateConstraintEnergy(*p);
+		auto id = world.GetID();
+		
+		if((int)_constraints.size() - 1 >= id)
+			for(auto& c : _constraints[id])
+				energy += c->EvaluateEnergy();
 
 		return energy;
 	}
@@ -262,9 +232,6 @@ namespace SAPHRON
 		}
 		EPTuple ep{intere, 0, electroe, 0, 0, 0, 0, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
 		
-		// Evaluate constraint energy.
-		ep.energy.constraint += EvaluateConstraintEnergy(particle);
-
 		// End timer.
 		sim.AddTime("e_inter");
 		
@@ -445,7 +412,7 @@ namespace SAPHRON
 				{
 					auto& last = constraints[constraints.size()];
 					c->Serialize(last);
-					last["species"] = species[i];
+					last["world"] = static_cast<int>(i);
 				}
 			}
 		}
@@ -458,6 +425,8 @@ namespace SAPHRON
 
 	EPTuple ForceFieldManager::EvaluateEnergy(const World& world) const
 	{
-		return EvaluateInterEnergy(world) + EvaluateIntraEnergy(world) + EvaluateTailEnergy(world);
+		auto e = EvaluateInterEnergy(world) + EvaluateIntraEnergy(world) + EvaluateTailEnergy(world);
+		e.energy.constraint = EvaluateConstraintEnergy(world);
+		return e;
 	}
 }

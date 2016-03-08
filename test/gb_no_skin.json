@@ -21,16 +21,16 @@
 				"director" : [ 0, 0, 1 ],
 				"index" : 0,
 				"limits" : [ 0, 1 ],
-				"species" : "GB",
-				"type" : "Dynamic1DP2"
+				"world" : 0,
+				"type" : "DirectorRestriction"
 			},
 			{
 				"coefficient" : 1,
 				"director" : [ 0, 0, 1 ],
 				"index" : 0,
 				"limits" : [ 9, 10 ],
-				"species" : "GB",
-				"type" : "Dynamic1DP2"
+				"world" : 0,
+				"type" : "DirectorRestriction"
 			}
 		],
 		"nonbonded" : 

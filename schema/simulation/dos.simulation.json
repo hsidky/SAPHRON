@@ -21,6 +21,10 @@
 		"sync_frequency" : {
 			"type" : "integer",
 			"minimum" : 0
+		},
+		"equilibration" : {
+			"type" : "integer", 
+			"minimum" : 0
 		}
 	},
 	"additionalProperties" : false

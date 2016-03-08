@@ -2,21 +2,22 @@
 #include "../Validator/ObjectRequirement.h"
 #include "../Validator/ArrayRequirement.h"
 #include "../Simulation/SimException.h"
+#include "DirectorRestrictionC.h"
 #include "schema.h"
-#include "Dynamic1DP2C.h"
 
 using namespace Json;
 
 namespace SAPHRON
 {
-	Constraint* Constraint::BuildConstraint(const Json::Value& json, ForceFieldManager* ffm)
+	Constraint* Constraint::BuildConstraint(const Json::Value& json, ForceFieldManager* ffm, WorldManager* wm)
 	{
-		return BuildConstraint(json, ffm, "#/forcefields/constraints");
+		return BuildConstraint(json, ffm, wm, "#/forcefields/constraints");
 	}
 
 	Constraint* Constraint::BuildConstraint(
 		const Json::Value& json, 
 		ForceFieldManager* ffm, 
+		WorldManager* wm,
 		const std::string& path)
 	{
 		ObjectRequirement validator;
@@ -25,11 +26,11 @@ namespace SAPHRON
 
 		Constraint* c = nullptr; 
 
-		// Get constraint type. 
+		// Get constraint type and world. 
 		auto type = json.get("type", "none").asString();
-		if(type == "Dynamic1DP2")
+		if(type == "DirectorRestriction")
 		{
-			reader.parse(JsonSchema::Dynamic1DP2C, schema);
+			reader.parse(JsonSchema::DirectorRestrictionC, schema);
 			validator.Parse(schema, path);
 
 			// Validate inputs. 
@@ -53,7 +54,8 @@ namespace SAPHRON
 			if(lim[0] > lim[1])
 				throw BuildException({path + ": Limit minimum cannot exceed maximum."});
 
-			c = new Dynamic1DP2C(coeff, dir, index, lim);
+			auto w = wm->GetWorld(json["world"].asInt());
+			c = new DirectorRestrictionC(w, coeff, dir, index, lim);
 		}
 		else
 		{
@@ -62,8 +64,8 @@ namespace SAPHRON
 
 		// Add appropriate species. 
 		try{
-			auto species = json["species"].asString();
-			ffm->AddConstraint(species, c);
+			auto wid = json["world"].asInt();
+			ffm->AddConstraint(*wm->GetWorld(wid), c);
 		} catch(std::exception& e) {
 			delete c; 
 			throw BuildException({
@@ -77,6 +79,7 @@ namespace SAPHRON
 	void Constraint::BuildConstraints(
 		const Value& json, 
 		ForceFieldManager* ffm, 
+		WorldManager* wm,
 		ConstraintList& ccl)
 	{
 		ArrayRequirement validator;
@@ -95,7 +98,7 @@ namespace SAPHRON
 		int i = 0; 
 		for(auto& c : json)
 		{
-			ccl.push_back(BuildConstraint(c, ffm, "#/forcefields/constraints/" + std::to_string(i))
+			ccl.push_back(BuildConstraint(c, ffm, wm, "#/forcefields/constraints/" + std::to_string(i))
 				);
 			++i;
 		}

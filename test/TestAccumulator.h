@@ -13,8 +13,8 @@ namespace SAPHRON
 	{
 		private:
 			double _temperature; 
-			int _counter;
-			int _start;
+			unsigned _counter;
+			unsigned _start;
 			std::map<World*, double> _density;
 			std::map<World*, Energy> _energy;
 			std::map<World*, Pressure> _pressure;
@@ -43,7 +43,7 @@ namespace SAPHRON
 
 			virtual void Visit(const WorldManager& wm) override
 			{
-				if((int)this->GetIteration() < _start)
+				if(this->GetIteration() < _start)
 					return;
 				
 				for(auto& world : wm)
