@@ -16,6 +16,9 @@ endif()
 # Default is openmp.
 set(SAPHRON_OPENMP true CACHE BOOL "Enable OpenMP parallelization")
 
+# Default is MPI.
+set(SAPHRON_MPI true CACHE BOOL "Enable MPI parallelization")
+
 set(SAPH_USE_LINAL false)
 SET(ARMA_PATHS "" CACHE STRING "Search directory for Armadillo")
 
@@ -185,7 +188,7 @@ if(SAPHRON_OPENMP)
 endif()
 
 set(MULTI_WALKER OFF)
-if(Boost_FOUND AND MPI_CXX_FOUND)
+if(Boost_FOUND AND MPI_CXX_FOUND AND SAPHRON_MPI)
 	include_directories(${MPI_CXX_INCLUDE_PATH})
 	include_directories(${Boost_INCLUDE_DIRS})
 	add_definitions(${MPI_CXX_COMPILE_FLAGS})
