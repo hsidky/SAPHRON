@@ -575,7 +575,13 @@ namespace SAPHRON
 			else 
 			{
 				for(auto& p : particles)
+				{
+					// Apply periodic boundary conditions.
+					auto pos = p->GetPosition();
+					world->ApplyPeriodicBoundaries(&pos);
+					p->SetPosition(pos);
 					world->AddParticle(p);
+				}
 			}
 		}
 

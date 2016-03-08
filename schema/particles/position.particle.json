@@ -4,8 +4,7 @@
 	"minItems": 3,
 	"maxItems": 3,
 	"items" : {
-		"type" : "number",
-		"minimum" : 0
+		"type" : "number"
 	},
 	"additionalItems" : false
 }
