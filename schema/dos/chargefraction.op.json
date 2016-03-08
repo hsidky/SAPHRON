@@ -1,0 +1,24 @@
+{
+	"type" : "object", 
+	"varname" : "ChargeFraction",
+	"properties" : {
+		"type" : {
+			"type" : "string",
+			"enum" : ["ChargeFraction"]
+		},
+		"group1" : {
+			"type" : "array",
+			"items" : {
+				"type" : "integer",
+				"minimum" : 0
+			}
+		},
+		"Charge" : {
+			"type" : "number",
+			"minimum" : 0,
+			"maximum" :1
+		}
+	},
+	"required" : ["type", "group1", "Charge"],
+	"additionalProperties" : false
+}
