@@ -8,6 +8,8 @@
 #include "WangLandauOP.h"
 #include "ElasticCoeffOP.h"
 #include "ParticleDistanceOP.h"
+#include "RgOP.h"
+#include "ChargeFractionOP.h"
 
 using namespace Json; 
 
@@ -106,6 +108,54 @@ namespace SAPHRON
 
 			// Initialize order parameter.
 			op = new ElasticCoeffOP(*hist, w, mid, {{xmin, xmax}});
+		}
+		else if(type == "ChargeFraction")
+		{
+			reader.parse(JsonSchema::RgOP, schema);
+			validator.Parse(schema, "#/orderparameter");
+
+			// Validate inputs. 
+			validator.Validate(json, "#/orderparameter");
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			ParticleList group1;
+			auto& plist = Particle::GetParticleMap();
+
+			for(auto& id : json["group1"])
+			{
+				if(plist.find(id.asInt()) == plist.end())
+					throw BuildException({"#orderparameter/group1 : unknown particle ID " + id.asString()});
+				group1.push_back(plist[id.asInt()]);				
+			}
+
+			auto charge = json["Charge"][0].asDouble();
+
+			// Initialize order parameter.
+			op = new ChargeFractionOP(*hist, group1, charge);
+		}
+		else if(type == "Rg")
+		{
+			reader.parse(JsonSchema::RgOP, schema);
+			validator.Parse(schema, "#/orderparameter");
+
+			// Validate inputs. 
+			validator.Validate(json, "#/orderparameter");
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			ParticleList group1;
+			auto& plist = Particle::GetParticleMap();
+
+			for(auto& id : json["group1"])
+			{
+				if(plist.find(id.asInt()) == plist.end())
+					throw BuildException({"#orderparameter/group1 : unknown particle ID " + id.asString()});
+				group1.push_back(plist[id.asInt()]);				
+			}
+
+			// Initialize order parameter.
+			op = new RgOP(*hist, group1);
 		}
 		else
 		{
