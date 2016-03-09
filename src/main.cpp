@@ -104,15 +104,15 @@ int main(int argc, char* argv[])
 		info.AddTime("total");
 
 		auto& map = info.GetTimerMap();
-		auto tot = map.at("total").elapsed_time.count();
+		auto tot = map.at("total").elapsed_time;
 		std::cout << " * Elapsed time breakdown during simulation:\n";
 		std::cout << std::fixed << std::setprecision(2);
 		for(auto& it : map)
 		{
-			auto t = it.second.elapsed_time.count();
+			auto t = it.second.elapsed_time;
 			std::cout << " * " << info.ResolveTimerName(it.first) 
-					  << ": " << t << " ms" 
-					  << " (" << (float)t/tot*100. << "%)" << std::endl;
+					  << ": " << std::chrono::duration_cast<std::chrono::seconds>(t).count() << " s" 
+					  << " (" << (double)t.count()/(double)tot.count()*100. << "%)" << std::endl;
 		}
 		#ifdef MULTI_WALKER
 		}
