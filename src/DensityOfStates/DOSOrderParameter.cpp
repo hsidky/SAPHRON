@@ -111,7 +111,7 @@ namespace SAPHRON
 		}
 		else if(type == "ChargeFraction")
 		{
-			reader.parse(JsonSchema::RgOP, schema);
+			reader.parse(JsonSchema::ChargeFractionOP, schema);
 			validator.Parse(schema, "#/orderparameter");
 
 			// Validate inputs. 
@@ -129,7 +129,7 @@ namespace SAPHRON
 				group1.push_back(plist[id.asInt()]);				
 			}
 
-			auto charge = json["Charge"][0].asDouble();
+			double charge = json.get("Charge",0).asDouble();
 
 			// Initialize order parameter.
 			op = new ChargeFractionOP(*hist, group1, charge);

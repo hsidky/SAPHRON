@@ -12,7 +12,7 @@ namespace SAPHRON
 		static std::string Constraints;
 		static std::string Connectivities;
 		static std::string P2SAConnectivity;
-		static std::string ChargeFraction;
+		static std::string ChargeFractionOP;
 		static std::string ParticleDistanceOP;
 		static std::string RgOP;
 		static std::string WangLandauOP;

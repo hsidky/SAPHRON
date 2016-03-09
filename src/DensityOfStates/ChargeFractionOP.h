@@ -35,8 +35,8 @@ namespace SAPHRON
 
 	public:
 
-		// Initialize RgOP class. This will define an order parameter 
-		// based on the Rg of the group of supplied particles
+		// Initialize ChargeFractionOP class. This will define an order parameter 
+		// based on the charge fraction of the group of supplied particles
 		ChargeFractionOP(
 			const Histogram& hist, 
 			const ParticleList& group1,
@@ -47,7 +47,7 @@ namespace SAPHRON
 
 		double EvaluateOrderParameter(const World& w) const override
 		{
-			// Compute COM of each group.
+			
 			auto ChargeFrac = 0.;
 
 			for(auto& p : _group1)
@@ -55,19 +55,19 @@ namespace SAPHRON
 				ChargeFrac += p->GetCharge();
 			}
 
-
 			ChargeFrac /= _group1.size();
 			ChargeFrac /= _base_charge;
-
-			return abs(ChargeFrac);
+			
+			return fabs(ChargeFrac);
 		}
 
 		// Serialize.
 		void Serialize(Json::Value& json) const override
 		{
-			json["type"] = "Rg";
+			json["type"] = "ChargeFraction";
 			for(auto& p : _group1)
 				json["group1"].append(p->GetGlobalIdentifier());
+			json["Charge"] = _base_charge;
 		}
 	};
 }

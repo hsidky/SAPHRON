@@ -1,6 +1,6 @@
 {
 	"type" : "object", 
-	"varname" : "ChargeFraction",
+	"varname" : "ChargeFractionOP",
 	"properties" : {
 		"type" : {
 			"type" : "string",
@@ -15,8 +15,8 @@
 		},
 		"Charge" : {
 			"type" : "number",
-			"minimum" : 0,
-			"maximum" :1
+			"minimum" : 0.0,
+			"maximum" : 1.0
 		}
 	},
 	"required" : ["type", "group1", "Charge"],
