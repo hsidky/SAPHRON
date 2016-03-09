@@ -212,6 +212,8 @@ namespace SAPHRON
 		// Serialize.
 		virtual void Serialize(Json::Value& json) const override
 		{
+			auto& refspecies = Particle::GetSpeciesList();
+
 			json["type"] = GetName();
 			json["seed"] = _seed;
 			json["mu"] = _mu;
@@ -219,7 +221,7 @@ namespace SAPHRON
 			json["op_prefactor"] = _prefac;
 
 			for(auto& s : _species)
-				json["species"].append(s);
+				json["species"].append(refspecies[s]);
 		}
 
 		virtual std::string GetName() const override { return "AcidTitrate"; }

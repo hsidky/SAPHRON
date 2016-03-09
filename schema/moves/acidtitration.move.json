@@ -6,9 +6,6 @@
 			"type" : "string",
 			"enum" : ["AcidTitrate"]
 		},
-		"explicit_draw" : {
-			"type" : "boolean"
-		},
 		"species" : {
 			"type" : "array",
 			"minItems" : 1,
