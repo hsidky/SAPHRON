@@ -222,7 +222,7 @@ namespace SAPHRON
 				json["species"].append(s);
 		}
 
-		virtual std::string GetName() const override { return "AcidTitration"; }
+		virtual std::string GetName() const override { return "AcidTitrate"; }
 
 		// Clone move.
 		Move* Clone() const override
