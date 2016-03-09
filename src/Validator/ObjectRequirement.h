@@ -16,10 +16,10 @@ namespace Json
 	class ObjectRequirement : public Requirement
 	{
 	private:
-		std::map<std::string, Requirement*> _properties;
-		std::map<std::string, Requirement*> _patternProps;
-		std::vector<Requirement*> _extended;
-		DependencyRequirement* _dependency;
+		std::map<std::string, std::unique_ptr<Requirement>> _properties;
+		std::map<std::string, std::unique_ptr<Requirement>> _patternProps;
+		RequireList _extended;
+		std::unique_ptr<DependencyRequirement> _dependency;
 
 		std::vector<std::string> _required;
 		bool _moreProps, _setMin, _setMax;
@@ -33,19 +33,11 @@ namespace Json
 
 		~ObjectRequirement()
 		{
-			for(auto& c : _properties)
-				delete c.second;
 			_properties.clear();
 
-			for(auto& c : _patternProps)
-				delete c.second;
 			_patternProps.clear();
 
-			for(auto& c : _extended)
-				delete c;
 			_extended.clear();
-
-			delete _dependency;
 		}
 
 		virtual void ClearErrors() override
@@ -87,23 +79,14 @@ namespace Json
 			ClearErrors();
 			ClearNotices();
 
-			for(auto& c : _properties)
-				delete c.second;
 			_properties.clear();
-
-			for(auto& c : _patternProps)
-				delete c.second;
 			_patternProps.clear();
-
-			for(auto& c: _extended)
-				delete c;
 
 			_moreProps = true;
 			_setMin = _setMax = false;
 			_min = _max = 0;
 			_required.clear();
-			delete _dependency;
-			_dependency = nullptr;
+			_dependency.reset();
 		}
 
 		virtual void Parse(Value json, const std::string& path) override
@@ -128,9 +111,9 @@ namespace Json
 				int i = 0;
 				for(auto& prop : props)
 				{
-					if(auto* property = loader.LoadRequirement(prop))
+					if(auto property = loader.LoadRequirement(prop))
 					{
-						_properties.insert({names[i], property});
+						_properties[names[i]] = std::move(property);
 						_properties[names[i]]->Parse(prop, path + "/" + names[i]);
 					}
 
@@ -148,9 +131,9 @@ namespace Json
 				{
 					if(prop.isObject())
 					{
-						if(auto* property = loader.LoadRequirement(prop))
+						if(auto property = loader.LoadRequirement(prop))
 						{
-							_patternProps.insert({names[i], property});
+							_patternProps[names[i]] = std::move(property);
 							_patternProps[names[i]]->Parse(prop, path + "/" + names[i]);
 						}
 					}
@@ -183,16 +166,16 @@ namespace Json
 			// Dependencies
 			if(json.isMember("dependencies") && json["dependencies"].isObject())
 			{
-				_dependency = new DependencyRequirement();
+				_dependency = std::move(std::unique_ptr<DependencyRequirement>(new DependencyRequirement()));
 				_dependency->Parse(json["dependencies"], path);
 			}
 
 			// Extended properties. 
 			for(auto& prop : json)
 			{
-				if(auto* req  = loader.LoadExtended(prop))
+				if(auto req  = loader.LoadExtended(prop))
 				{
-					_extended.push_back(req);
+					_extended.push_back(std::move(req));
 					_extended.back()->Parse(prop, path);
 				}
 			}
@@ -235,21 +218,21 @@ namespace Json
 				Requirement* requirement = nullptr; 
 				auto it = _properties.find(names[i]);
 				if(it != _properties.end())
-					requirement = it->second;					
+					requirement = it->second.get();					
 				else if(_patternProps.size() != 0)
 				{
 					for(auto& pattern : _patternProps)
 					{
 						auto regex = std::regex(pattern.first, std::regex::ECMAScript);
 						if(std::regex_search(names[i], regex))
-							requirement = pattern.second;
+							requirement = pattern.second.get();
 					}
 				}
 				
-				if(requirement == nullptr && _properties.find("additionalProperties") != _properties.end())
-					requirement = _properties["additionalProperties"];
+				if(!requirement && _properties.find("additionalProperties") != _properties.end())
+					requirement = _properties["additionalProperties"].get();
 				
-				if(requirement != nullptr)
+				if(requirement)
 				{
 					requirement->Validate(prop, path + "/" + names[i]);
 					if(requirement->HasErrors())

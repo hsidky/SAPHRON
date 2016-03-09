@@ -14,80 +14,80 @@
 
 namespace Json
 {
-	Requirement* RequirementLoader::LoadRequirement(const Value &json)
+	std::unique_ptr<Requirement> RequirementLoader::LoadRequirement(const Value &json)
 	{
-		Requirement* item = nullptr;
+		std::unique_ptr<Requirement> item = nullptr;
 		// Load up apitemriate requirement type.
 		if(json["type"].asString() == "string")
-			item = new StringRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new StringRequirement()));
 		else if(json["type"].asString() == "integer")
-			item = new IntegerRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new IntegerRequirement()));
 		else if(json["type"].asString() == "number")
-			item = new NumberRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new NumberRequirement()));
 		else if(json["type"].asString() == "object")
-			item = new ObjectRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new ObjectRequirement()));
 		else if(json["type"].asString() == "array")
-			item = new ArrayRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new ArrayRequirement()));
 		else if(json["type"].asString() == "boolean")
-			item = new BooleanRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new BooleanRequirement()));
 		else if(json["type"].asString() == "null")
-			item = new NullRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new NullRequirement()));
 		else if(json["allOf"].isArray())
-			item = new AllOfRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new AllOfRequirement()));
 		else if(json["anyOf"].isArray())
-			item = new AnyOfRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new AnyOfRequirement()));
 		else if(json["oneOf"].isArray())
-			item = new OneOfRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new OneOfRequirement()));
 		else if(json["enum"].isArray())
-			item = new EnumRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new EnumRequirement()));
 		else if(json["not"].isObject())
-			item = new NotRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new NotRequirement()));
 		// last resort.
 		else if(json.isObject())
-			item = new ObjectRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new ObjectRequirement()));
 
 		return item;
 	}
 
-	Requirement* RequirementLoader::LoadExtended(const Value &json)
+	std::unique_ptr<Requirement> RequirementLoader::LoadExtended(const Value &json)
 	{
-		Requirement* item = nullptr;
+		std::unique_ptr<Requirement> item = nullptr;
 		if(json.isObject() && json.isMember("allOf") && json["allOf"].isArray())
-			item = new AllOfRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new AllOfRequirement()));
 		else if(json.isObject() && json.isMember("anyOf") && json["anyOf"].isArray())
-			item = new AnyOfRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new AnyOfRequirement()));
 		else if(json.isObject() && json.isMember("oneOf") && json["oneOf"].isArray())
-			item = new OneOfRequirement();
+			item = std::move(std::unique_ptr<Requirement>(new OneOfRequirement()));
 
 		return item;
 	}
 
-	Requirement* RequirementLoader::LoadRequirement(const ValueType& type)
+	std::unique_ptr<Requirement> RequirementLoader::LoadRequirement(const ValueType& type)
 	{
-		Requirement* item = nullptr; 
+		std::unique_ptr<Requirement> item = nullptr; 
 
 		switch(type)
 		{
 			case nullValue:
-				item = new NullRequirement();
+				item = std::move(std::unique_ptr<Requirement>(new NullRequirement()));
 				break;
 			case intValue:
-				item = new IntegerRequirement();
+				item = std::move(std::unique_ptr<Requirement>(new IntegerRequirement()));
 				break;
 			case realValue:
-				item = new NumberRequirement();
+				item = std::move(std::unique_ptr<Requirement>(new NumberRequirement()));
 				break;
 			case stringValue:
-				item = new StringRequirement();
+				item = std::move(std::unique_ptr<Requirement>(new StringRequirement()));
 				break;
 			case booleanValue:
-				item = new BooleanRequirement();
+				item = std::move(std::unique_ptr<Requirement>(new BooleanRequirement()));
 				break;
 			case arrayValue:
-				item = new ArrayRequirement();
+				item = std::move(std::unique_ptr<Requirement>(new ArrayRequirement()));
 				break;
 			case objectValue:
-				item = new ObjectRequirement();
+				item = std::move(std::unique_ptr<Requirement>(new ObjectRequirement()));
 				break;
 			default:
 				item = nullptr;

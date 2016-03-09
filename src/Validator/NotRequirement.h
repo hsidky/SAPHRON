@@ -8,14 +8,14 @@ namespace Json
 	class NotRequirement : public Requirement
 	{
 	private:
-		Requirement* _req;
+		std::unique_ptr<Requirement> _req;
 
 	public:
 		NotRequirement() : _req(nullptr) {}
 
 		virtual void ClearErrors() override
 		{
-			if(_req != nullptr)
+			if(_req)
 				_req->ClearErrors();
 
 			Requirement::ClearErrors();
@@ -34,7 +34,7 @@ namespace Json
 			ClearErrors();
 			ClearNotices();
 			
-			delete _req;			
+			_req.reset();		
 		}
 
 		virtual void Parse(Value json, const std::string& path) override

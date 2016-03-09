@@ -2,13 +2,14 @@
 
 #include "Requirement.h"
 #include "RequirementLoader.h"
+#include <memory>
 
 namespace Json
 {
 	class AllOfRequirement : public Requirement
 	{
 	private:
-		std::vector<Requirement*> _reqs;
+		RequireList _reqs;
 
 	public:
 		AllOfRequirement() : _reqs(0) {}
@@ -33,9 +34,6 @@ namespace Json
 		{
 			ClearErrors();
 			ClearNotices();
-		
-			for(auto& r : _reqs)
-				delete r;
 			_reqs.clear();
 		}
 
@@ -47,9 +45,9 @@ namespace Json
 			auto& head = json.isMember("allOf") ? json["allOf"] : json;
 
 			for(auto& val : head)
-				if(auto* req = loader.LoadRequirement(val))
+				if(auto req = loader.LoadRequirement(val))
 				{
-					_reqs.push_back(req);
+					_reqs.push_back(std::move(req));
 					_reqs.back()->Parse(val, path);
 				}
 

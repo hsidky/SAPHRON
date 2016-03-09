@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <map>
+#include <memory>
 #include "json/json.h"
 
 namespace Json
@@ -38,4 +39,6 @@ namespace Json
 
 		virtual ~Requirement() {}
 	};
+
+	using RequireList = std::vector<std::unique_ptr<Requirement>>;
 }

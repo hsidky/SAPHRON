@@ -14,8 +14,8 @@ namespace Json
 	class ArrayRequirement : public Requirement
 	{
 	private:
-		std::vector<Requirement*> _items;
-		Requirement* _item;
+		RequireList _items;
+		std::unique_ptr<Requirement> _item;
 
 		bool _addItems, _setMin, _setMax, _unique;
 
@@ -35,11 +35,7 @@ namespace Json
 		_min(0), _max(0) {}
 		~ArrayRequirement() 
 		{
-			for(auto& c : _items)	
-				delete c;
 			_items.clear();
-
-			delete _item;
 		}
 
 		virtual void ClearErrors() override
@@ -66,12 +62,9 @@ namespace Json
 
 		virtual void Reset() override
 		{
-			for(auto& c : _items)
-				delete c;
 			_items.clear();
 
-			delete _item;
-			_item = nullptr;
+			_item.reset();
 
 			_addItems = true;
 			_setMin = _setMax = _unique = false;
@@ -92,9 +85,9 @@ namespace Json
 			{
 				for(auto& item : json["items"])
 				{			
-					if(auto* iptr = loader.LoadRequirement(item))
+					if(auto iptr = loader.LoadRequirement(item))
 					{
-						_items.push_back(iptr);
+						_items.push_back(std::move(iptr));
 						_items.back()->Parse(item, path);
 					}
 				}
