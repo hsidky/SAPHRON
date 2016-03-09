@@ -1,5 +1,6 @@
 #include "ForceFieldManager.h"
 #include "../Constraints/Constraint.h"
+#include "config.h"
 #include <algorithm>
 #include <iostream>
 #include <utility>
@@ -168,11 +169,14 @@ namespace SAPHRON
 		World* world = particle.GetWorld();
 		if(!particle.HasChildren())
 		{
-			unsigned int wid = (world == nullptr) ? 0 : world->GetID();
+			unsigned wid = (world == nullptr) ? 0 : world->GetID();
 			auto& neighbors = particle.GetNeighbors();
+			auto n = neighbors.size();
 
-			#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pxz,pyy,pyz,pzz)
-			for(size_t k = 0; k < neighbors.size(); ++k)
+			#ifdef PARALLEL_INTER
+			#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pxz,pyy,pyz,pzz) if(n >= MIN_INTER_NEIGH)
+			#endif
+			for(size_t k = 0; k < n; ++k)
 			{
 				auto* neighbor = neighbors[k];
 
@@ -280,8 +284,16 @@ namespace SAPHRON
 		// Go to particle parent and evaluate non-bonded interactions with siblings.
         if(particle.HasParent())
         { 
-            for(auto& sibling : *particle.GetParent())
+			double electro = 0, vdw = 0;
+        	auto& siblings = particle.GetParent()->GetChildren();
+        	auto n = siblings.size();
+
+        	#ifdef PARALLEL_INTRA
+        	#pragma omp parallel for reduction(+:electro,vdw) if(n >= MIN_INTRA_NEIGH)
+        	#endif
+            for(size_t i = 0; i < n; ++i)
             {
+            	auto& sibling = siblings[i];
                 if(!particle.IsBondedNeighbor(sibling) && sibling != &particle)
                 {
                 	
@@ -296,7 +308,7 @@ namespace SAPHRON
 					if(_electroff != nullptr)
 					{
 						auto ij = _electroff->Evaluate(particle, *sibling, rij, wid);
-						ep.energy.intraelectrostatic += ij.energy;
+						electro += ij.energy;
 					}		
 
 					if(it != _nonbondedforcefields.end())
@@ -304,10 +316,13 @@ namespace SAPHRON
 						auto* ff = it->second;
 						auto ij = ff->Evaluate(particle, *sibling, rij, wid);
 
-						ep.energy.intravdw += ij.energy; // Sum nonbonded energy.
+						vdw += ij.energy; // Sum nonbonded energy.
 					}
                 }
             }
+
+            ep.energy.intraelectrostatic += electro;
+            ep.energy.intravdw += vdw;
         }
 
         for(auto* bondedneighbor : particle.GetBondedNeighbors())

@@ -13,6 +13,14 @@ if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Release")
 endif()
 
+# Enable/disable energy evaluation parallelization. 
+# Also sets the minimum value of intermolecular and 
+# intramolecular neighbors for parallelization. 
+set(PARALLEL_INTER true)
+set(PARALLEL_INTRA true)
+set(MIN_INTER_NEIGH 10)
+set(MIN_INTRA_NEIGH 10)
+
 # Default is openmp.
 set(SAPHRON_OPENMP true CACHE BOOL "Enable OpenMP parallelization")
 
