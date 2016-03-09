@@ -40,3 +40,6 @@ build/
 *.exe
 *.out
 *.app
+
+# Files generated during build
+src/JSON/schema.cpp

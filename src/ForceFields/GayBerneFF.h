@@ -73,12 +73,6 @@ namespace SAPHRON
 			if(r > _rc[wid])
 				return ep;
 			
-			// This is due to the weirdness with the GB potential. 
-			// It is unphysical for them to overlap so we drive them away 
-			// from each other.			
-			if(r < _dw*_sig0)
-				return {1.0e10/r, 0};
-
 			auto& ui = p1.GetDirector();
 			auto& uj = p2.GetDirector();
 
@@ -97,8 +91,8 @@ namespace SAPHRON
 
 			// Another check for unphysicalness. R is an approximation 
 			// of the surface to surface distance. It should never be 
-			// negative. And we also place a hard wall at U = 0. 
-			if(R < 0 || ep.energy > 0.5)
+			// negative.
+			if(R < 0)
 				return {1.0e10/std::abs(r), 0};
 
 			return ep;

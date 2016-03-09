@@ -17,13 +17,13 @@ namespace SAPHRON
 		std::chrono::high_resolution_clock::time_point t1; 
 
 		// Total elapsed time so far. Incremented by adding time. 
-		std::chrono::milliseconds elapsed_time;
+		std::chrono::microseconds elapsed_time;
 
 		// How many times this category has been timed.
 		int num_calls_timed;
 
 		TimerData() :
-		elapsed_time(std::chrono::milliseconds(0)), num_calls_timed(0)
+		elapsed_time(std::chrono::microseconds(0)), num_calls_timed(0)
 		{
 		}
 	};
@@ -76,7 +76,7 @@ namespace SAPHRON
 				exit(-1);
 			}
 
-			_timers[name].elapsed_time += std::chrono::duration_cast<std::chrono::milliseconds>(
+			_timers[name].elapsed_time += std::chrono::duration_cast<std::chrono::microseconds>(
 				std::chrono::high_resolution_clock::now() - _timers[name].t1
 			);
 
