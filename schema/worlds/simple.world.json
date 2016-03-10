@@ -68,6 +68,22 @@
 				}
 			}
 		},
+		"lattice" : {
+			"type" : "object",
+			"properties" : {
+				"composition" : {
+					"type" : "object",
+					"patternProperties" : {
+						"^[A-z][A-z0-9]+$" : {
+							"type" : "number",
+							"minimum" : 0.0, 
+							"maximum" : 1.0,
+							"exclusiveMinimum" : true
+						}
+					}
+				}
+			}
+		},
 		"chemical_potential" : {
 			"type" : "object",
 			"patternProperties" : {

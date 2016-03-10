@@ -502,7 +502,8 @@ namespace SAPHRON
 
 		// Get seed.
 		std::random_device rd;
-		unsigned seed = json.get("seed", rd()).asUInt();
+		auto maxi = std::numeric_limits<int>::max();
+		auto seed = json.get("seed", rd() % maxi).asUInt();
 
 		world = new World(dim[0], dim[1], dim[2], ncut, skin, seed);
 		if(ncut)
@@ -529,6 +530,10 @@ namespace SAPHRON
 									 json["components"], 
 									 particles);
 			
+			if(json.isMember("pack") && json.isMember("lattice"))
+				throw BuildException({"Both lattice and pack options cannot be specified" + 
+					std::string(" simultaneously.")});
+
 			// Use these to pack the box. 
 			if(json.isMember("pack"))
 			{
@@ -565,6 +570,36 @@ namespace SAPHRON
 				}
 				else
 					world->PackWorld(particles, xi, count, rho);
+
+				// Clean up our mess.
+				for(auto& p : particles)
+					delete p;
+
+				particles.clear();
+			}
+			else if(json.isMember("lattice")) // Make lattice.
+			{
+				// We expect a single particle prototype 
+				// for each species defined in composition.
+				auto& comp = json["lattice"]["composition"];
+				if(comp.size() != particles.size())
+					throw BuildException({"Expected " + std::to_string(comp.size()) + 
+						" particles for lattice but " + std::to_string(particles.size()) + 
+						" were defined."});
+
+				// Get compositions.
+				std::vector<double> xi;
+				for(auto& p : particles)
+				{
+					auto s = p->GetSpecies();
+					if(!comp.isMember(s))
+						throw BuildException({"Particle of type " + s + " defined " + 
+							"but no composition specified."});
+
+					xi.push_back(comp[s].asDouble());
+				}
+
+				world->PackWorld(particles, xi);
 
 				// Clean up our mess.
 				for(auto& p : particles)

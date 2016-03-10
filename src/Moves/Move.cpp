@@ -46,6 +46,8 @@ namespace SAPHRON
 
 		// Random device for seed generation. 
 		std::random_device rd;
+		auto maxi = std::numeric_limits<int>::max();
+		auto seed = json.get("seed", rd() % maxi).asUInt();
 
 		// Get move type. 
 		std::string type = json.get("type", "none").asString();
@@ -59,8 +61,6 @@ namespace SAPHRON
 			validator.Validate(json, path);
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
-
-			unsigned seed = json.get("seed", rd()).asUInt();	
 
 			std::vector<std::string> reactants;
 			for(auto& s : json["swap"])
@@ -90,8 +90,6 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			unsigned seed = json.get("seed", rd()).asUInt();	
-
 			std::vector<std::string> species;
 			for(auto& s : json["species"])
 				species.push_back(s.asString());
@@ -114,8 +112,6 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			unsigned seed = json.get("seed", rd()).asUInt();	
-
 			std::vector<std::string> species;
 			for(auto& s : json["species"])
 				species.push_back(s.asString());
@@ -132,7 +128,6 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			unsigned seed = json.get("seed", rd()).asUInt();
 			auto prefac = json.get("op_prefactor", true).asBool();
 			auto multi_d = json.get("multi_delete", false).asBool();
 			
@@ -154,8 +149,6 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			unsigned seed = json.get("seed", rd()).asUInt();
-
 			move = new DirectorRotateMove(seed);
 		}
 		else if(type == "FlipSpin")
@@ -167,8 +160,6 @@ namespace SAPHRON
 			validator.Validate(json, path);
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
-
-			unsigned seed = json.get("seed", rd()).asUInt();
 
 			move = new FlipSpinMove(seed);
 		}
@@ -182,7 +173,6 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			auto seed = json.get("seed", rd()).asUInt();
 			auto scount = json["stash_count"].asInt();
 			auto prefac = json.get("op_prefactor", true).asBool();
 			auto multi_i = json.get("multi_insertion", false).asBool(); 
@@ -205,8 +195,6 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			unsigned seed = json.get("seed", rd()).asUInt();
-
 			move = new ParticleSwapMove(seed);
 		}
 		else if(type == "RandomIdentity")
@@ -223,8 +211,6 @@ namespace SAPHRON
 			for(auto& i : json["identities"])
 				identities.push_back(i.asString());
 
-			unsigned seed = json.get("seed", rd()).asUInt();
-
 			move = new RandomIdentityMove(identities, seed);
 		}
 		else if(type == "Rotate")
@@ -239,8 +225,6 @@ namespace SAPHRON
 
 			double dmax = json["maxangle"].asDouble();
 
-			unsigned seed = json.get("seed", rd()).asUInt();
-
 			move = new RotateMove(dmax, seed);
 		}
 		else if(type == "SpeciesSwap")
@@ -253,7 +237,6 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			unsigned seed = json.get("seed", rd()).asUInt();
 			bool deepcopy = json.get("deep_copy", false).asBool();
 
 			std::vector<std::string> species;
@@ -272,7 +255,6 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 		
-			unsigned seed = json.get("seed", rd()).asUInt();
 			if(json["dx"].isObject())
 			{
 				std::map<std::string, double> dx; 
@@ -299,7 +281,6 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 		
-			unsigned seed = json.get("seed", rd()).asUInt();
 			if(json["dx"].isObject())
 			{
 				std::map<std::string, double> dx; 
@@ -328,7 +309,6 @@ namespace SAPHRON
 
 			auto dv = json["dv"].asDouble();
 			auto Pextern = json["Pextern"].asDouble();
-			auto seed = json.get("seed", rd()).asUInt();
 
 			move = new VolumeScaleMove(Pextern, dv, seed);		
 		}
@@ -343,7 +323,6 @@ namespace SAPHRON
 				throw BuildException(validator.GetErrors());
 
 			double dv = json["dv"].asDouble();
-			unsigned seed = json.get("seed", rd()).asUInt();
 
 			move = new VolumeSwapMove(dv, seed);
 		}
@@ -356,8 +335,6 @@ namespace SAPHRON
 			validator.Validate(json, path);
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
-
-			auto seed = json.get("seed", rd()).asUInt(); 
 
 			std::vector<std::string> species;
 			for(auto& s : json["species"])

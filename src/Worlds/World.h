@@ -58,6 +58,8 @@ namespace SAPHRON
 		// de Broglie wavelength.
 		std::vector<double> _debroglie;
 
+		std::vector<std::vector<int>> _nbrs;
+
 		// Particle list.
 		ParticleList _particles;
 
@@ -154,7 +156,7 @@ namespace SAPHRON
 		World(double xl, double yl, double zl, double ncut, double skin, unsigned seed = 1) : 
 		_ncut(ncut), _ncutsq(ncut*ncut), _H(arma::fill::zeros), _diag(true),
 		_periodx(true), _periody(true), _periodz(true), _skin(skin), _skinsq(skin*skin), 
-		_temperature(0.0), _chemp(0), _debroglie(0), _particles(0), _primitives(0), 
+		_temperature(0.0), _chemp(0), _debroglie(0), _nbrs(0), _particles(0), _primitives(0), 
 		_rand(seed), _composition(0), _stash(0), _seed(seed), _id(_nextID++)
 		{
 			_stringid = "world" + std::to_string(_id);
