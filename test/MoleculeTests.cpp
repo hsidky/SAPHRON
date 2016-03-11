@@ -1,16 +1,16 @@
-#include "../src/Particles/Site.h"
-#include "../src/Particles/Molecule.h"
+#include "../src/Particles/Particle.h"
+
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
 
 TEST(Molecule, DefaultBehavior)
 {
-	Site* s1 = new Site({1.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
-	Site* s2 = new Site({2.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L2");
-	Site* s3 = new Site({3.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L3");
+	Particle* s1 = new Particle({1.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle* s2 = new Particle({2.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L2");
+	Particle* s3 = new Particle({3.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L3");
 
-	Molecule m("M1");
+	Particle m("M1");
 
 	m.AddChild(s1);
 	m.AddChild(s2);
@@ -40,11 +40,11 @@ TEST(Molecule, DefaultBehavior)
 
 TEST(Molecule, CopyConstructor)
 {
-	Site* s1 = new Site({1.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
-	Site* s2 = new Site({2.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
-	Site* s3 = new Site({3.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle* s1 = new Particle({1.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle* s2 = new Particle({2.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle* s3 = new Particle({3.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 
-	Molecule m("M1");
+	Particle m("M1");
 	m.AddChild(s1);
 	m.AddChild(s2);
 	m.AddChild(s3);

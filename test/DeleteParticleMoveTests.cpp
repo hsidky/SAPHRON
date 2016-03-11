@@ -3,14 +3,14 @@
 #include "../src/ForceFields/LennardJonesFF.h"
 #include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
 
 TEST(DeleteParticleMove, DefaultBehavior)
 {
-	Site s({0, 0, 0},{0,0,0}, "LJ");
+	Particle s({0, 0, 0},{0,0,0}, "LJ");
 
 	World world(1, 1, 1, 5.0, 1.0);
 
@@ -53,8 +53,8 @@ TEST(DeleteParticleMove, DefaultBehavior)
 
 TEST(DeleteParticleMove, MultiSpecies)
 {
-	Site s({0, 0, 0},{0,0,0}, "LJ");
-	Site s2({0, 0, 0},{0,0,0}, "LJ2");
+	Particle s({0, 0, 0},{0,0,0}, "LJ");
+	Particle s2({0, 0, 0},{0,0,0}, "LJ2");
 
 	World world2(1, 1, 1, 5.0, 1.0);
 

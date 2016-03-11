@@ -1,5 +1,5 @@
 #include "../src/Connectivities/P2SFAConnectivity.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "../src/ForceFields/ForceFieldManager.h"
 #include "gtest/gtest.h"
 
@@ -14,7 +14,7 @@ TEST(P2SFAConnectivity, DefaultBehavior)
 		dir[2] = 0.0;
 	});
 
-	Site site1({0, 0, 0}, {1.0, 0, 0}, "E1");
+	Particle site1({0, 0, 0}, {1.0, 0, 0}, "E1");
 	site1.AddConnectivity(&connectivity);
 
 	ForceFieldManager ffm;

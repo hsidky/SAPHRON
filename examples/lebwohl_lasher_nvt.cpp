@@ -8,7 +8,7 @@
 #include "../src/ForceFields/LebwohlLasherFF.h"
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/SphereUnitVectorMove.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "../src/Observers/CSVObserver.h"
 #include "../src/Observers/ConsoleObserver.h"
 #include "../src/Worlds/SimpleWorld.h"
@@ -55,7 +55,7 @@ int main(int argc, char const* argv[])
 	// The constructor takes in an initial position, director and species type (string). Note that 
 	// the position is irrelevant since this site will be copied and configured appropriately for 
 	// the system.
-	Site site1({ 0, 0, 0 }, { 1.0, 0, 0 }, "E1");
+	Particle site1({ 0, 0, 0 }, { 1.0, 0, 0 }, "E1");
 
 	// Now we configure the world but providing a reference to our spin and telling it to fill the 
 	// box entirely with that site. We then configure connectivity through neighbor list 

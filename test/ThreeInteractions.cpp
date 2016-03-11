@@ -2,8 +2,8 @@
 #include "../src/ForceFields/FENEFF.h"
 #include "../src/ForceFields/LennardJonesFF.h"
 #include "../src/ForceFields/ForceFieldManager.h"
-#include "../src/Particles/Site.h"
-#include "../src/Particles/Molecule.h"
+#include "../src/Particles/Particle.h"
+
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
@@ -14,17 +14,17 @@ TEST(ThreeInteractions, DefaultBehavior)
 	FENEFF ffb(2,2.5,8,10);
 	LennardJonesFF ffnb(5,1.5,{100.0});
 
-	Site* s1 = new Site({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle* s1 = new Particle({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 	s1->SetCharge(true);
-	Site* s2 = new Site({1.5, 1.5, 0.0}, {0.0, 0.0, 0.0}, "L2");
-	Site* s3 = new Site({3.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle* s2 = new Particle({1.5, 1.5, 0.0}, {0.0, 0.0, 0.0}, "L2");
+	Particle* s3 = new Particle({3.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 	s3->SetCharge(true);
 	
-	Site* s4 = new Site({0.0, 0.0, 2.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle* s4 = new Particle({0.0, 0.0, 2.0}, {0.0, 0.0, 0.0}, "L1");
 	s4->SetCharge(true);
-	Site* s5 = new Site({1.5, 1.5, 2.0}, {0.0, 0.0, 0.0}, "L2");
+	Particle* s5 = new Particle({1.5, 1.5, 2.0}, {0.0, 0.0, 0.0}, "L2");
 	s5->SetCharge(true);
-	Site* s6 = new Site({3.0, 0.0, 2.0}, {0.0, 0.0, 0.0}, "L2");
+	Particle* s6 = new Particle({3.0, 0.0, 2.0}, {0.0, 0.0, 0.0}, "L2");
 
 	s1->AddBondedNeighbor(s2);
 	s2->AddBondedNeighbor(s1);
@@ -60,9 +60,9 @@ TEST(ThreeInteractions, DefaultBehavior)
 	s6->AddNeighbor(s2);
 	s6->AddNeighbor(s3);
 
-	Molecule m("M1");
+	Particle m("M1");
 
-	Molecule m2("M2");
+	Particle m2("M2");
 
 	m.AddNeighbor(&m2);
 	m.AddChild(s1);

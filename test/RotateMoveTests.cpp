@@ -1,6 +1,6 @@
 #include "../src/Moves/RotateMove.h"
-#include "../src/Particles/Site.h"
-#include "../src/Particles/Molecule.h"
+#include "../src/Particles/Particle.h"
+
 #include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
 #include "../src/Moves/MoveManager.h"
@@ -13,7 +13,7 @@ using namespace SAPHRON;
 // Tests rotations on individual sites.
 TEST(RotateMove, SiteRotations)
 {
-	Site s({0, 0, 0}, {0, 0, 1}, "T1");
+	Particle s({0, 0, 0}, {0, 0, 1}, "T1");
 	RotateMove m(3.1415);
 
 	// x-axis rotations.
@@ -45,11 +45,11 @@ TEST(RotateMove, SiteRotations)
 // Test rotations on molecules
 TEST(RotateMove, MoleculeRotations)
 {
-	Site* s1 = new Site({1, 0, 0}, {0, 0, 1}, "T1");	
-	Site* s2 = new Site({-1, 0, 0}, {0, 0, 1}, "T1");
-	Site* s3 = new Site({0, 0, 1}, {0, 0, 1}, "T1");
-	Site* s4 = new Site({0, 0, -1}, {0, 0, 1}, "T1");
-	Molecule m1("M1");
+	Particle* s1 = new Particle({1, 0, 0}, {0, 0, 1}, "T1");	
+	Particle* s2 = new Particle({-1, 0, 0}, {0, 0, 1}, "T1");
+	Particle* s3 = new Particle({0, 0, 1}, {0, 0, 1}, "T1");
+	Particle* s4 = new Particle({0, 0, -1}, {0, 0, 1}, "T1");
+	Particle m1("M1");
 	m1.AddChild(s1);
 	m1.AddChild(s2);
 	m1.AddChild(s3);
@@ -79,7 +79,7 @@ TEST(RotateMove, MoveInterface)
 	World w(10.0, 10.0, 10.0, 2.0, 1.0);
 
 	// Create a new site.
-	Site* s1 = new Site({0, 0, 0}, {0, 0, 1}, "T1");	
+	Particle* s1 = new Particle({0, 0, 0}, {0, 0, 1}, "T1");	
 	w.AddParticle(s1);
 
 	// Max rotation of 45 degrees.

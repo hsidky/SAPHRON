@@ -1,11 +1,11 @@
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
 
 TEST(Site, DefaultConstructor)
 {
-	Site s({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 
 	auto pos = s.GetPosition();
 	ASSERT_EQ(0.0, pos[0]);
@@ -36,13 +36,13 @@ TEST(Site, DefaultConstructor)
 
 TEST(Site, Identifiers)
 {
-	Site s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 
 	ASSERT_EQ("L1", s1.GetSpecies());
 	ASSERT_EQ(0, s1.GetSpeciesID());
 	ASSERT_EQ(2, s1.GetGlobalIdentifier());
 
-	Site s2({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s2({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 
 	ASSERT_EQ("L1", s2.GetSpecies());
 	ASSERT_EQ(0, s2.GetSpeciesID());
@@ -51,7 +51,7 @@ TEST(Site, Identifiers)
 	Director dir{4.0, 5.0, 6.0};
 	Position pos{1.0, 2.0, 3.0};
 
-	Site s3({1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}, "L2");
+	Particle s3({1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}, "L2");
 
 	ASSERT_EQ("L2", s3.GetSpecies());
 	ASSERT_EQ(1, s3.GetSpeciesID());
@@ -85,10 +85,10 @@ TEST(Site, Identifiers)
 
 TEST(Site, Neighbors)
 {
-	Site s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
-	Site s2({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L2");
-	Site s3({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L3");
-	Site s4({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L4");
+	Particle s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s2({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L2");
+	Particle s3({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L3");
+	Particle s4({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L4");
 
 	// Add neighbors.
 	s1.AddNeighbor(&s2);
@@ -108,7 +108,7 @@ TEST(Site, Neighbors)
 	}
 
 	// Check that neighbor destructor works. 
-	Site* s5 = new Site({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L5");
+	Particle* s5 = new Particle({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L5");
 	s1.AddNeighbor(s5);
 	s5->AddNeighbor(&s1);
 
@@ -123,10 +123,10 @@ TEST(Site, Neighbors)
 
 TEST(Site, PositionArithmetic)
 {
-	Site s1({1.0, 1.0, 1.0}, {0.0, 0.0, 0.0}, "L1");
-	Site s2({1.0, 1.0, 2.0}, {0.0, 0.0, 0.0}, "L2");
-	Site s3({1.0, 2.0, 1.0}, {0.0, 0.0, 0.0}, "L3");
-	Site s4({2.0, 1.0, 1.0}, {0.0, 0.0, 0.0}, "L4");
+	Particle s1({1.0, 1.0, 1.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s2({1.0, 1.0, 2.0}, {0.0, 0.0, 0.0}, "L2");
+	Particle s3({1.0, 2.0, 1.0}, {0.0, 0.0, 0.0}, "L3");
+	Particle s4({2.0, 1.0, 1.0}, {0.0, 0.0, 0.0}, "L4");
 
 	Position p1({2.0, 2.0, 3.0});
 	Position p2({2.0, 3.0, 2.0});

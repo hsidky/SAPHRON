@@ -1,4 +1,4 @@
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "../src/Worlds/World.h"
 #include "gtest/gtest.h"
 #include <map>
@@ -11,9 +11,9 @@ TEST(SimpleWorld, WorldProps)
 {
 	// Pack the world.
 	World world(1, 1, 1, 1.0, 1.0);
-	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
-	Site site2({0, 0, 0}, {0, 1, 0}, "E2");
-	Site site3({0, 0, 0}, {0, 0, 1}, "E3");
+	Particle site1({0, 0, 0}, {1, 0, 0}, "E1");
+	Particle site2({0, 0, 0}, {0, 1, 0}, "E2");
+	Particle site3({0, 0, 0}, {0, 0, 1}, "E3");
 
 	// Pack the world with 3 species.
 	world.PackWorld({&site1, &site2, &site3}, 
@@ -73,9 +73,9 @@ TEST(SimpleWorld, WorldProps)
 TEST(SimpleWorld, DrawParticlesBySpecies)
 {
 	World world(1, 1, 1, 1.0, 1.0);
-	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
-	Site site2({0, 0, 0}, {0, 1, 0}, "E2");
-	Site site3({0, 0, 0}, {0, 0, 1}, "E3");
+	Particle site1({0, 0, 0}, {1, 0, 0}, "E1");
+	Particle site2({0, 0, 0}, {0, 1, 0}, "E2");
+	Particle site3({0, 0, 0}, {0, 0, 1}, "E3");
 
 	// Pack the world with 3 species.
 	world.PackWorld({&site1, &site2, &site3}, 
@@ -114,7 +114,7 @@ TEST(SimpleWorld, NeighborList)
 	ASSERT_DOUBLE_EQ(0.3*rcut, world.GetSkinThickness());
 
 	// Pack a world with a decent number of of particles.
-	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
+	Particle site1({0, 0, 0}, {1, 0, 0}, "E1");
 	world.PackWorld({&site1}, {1.0}, 5000, 0.5);
 
 
@@ -134,9 +134,9 @@ TEST(SimpleWorld, DefaultBehavior)
 {
 	int n = 30;
 	World world(n, n, n, 1.0, 1.0);
-	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
-	Site site2({0, 0, 0}, {0, 1, 0}, "E2");
-	Site site3({0, 0, 0}, {0, 0, 1}, "E3");
+	Particle site1({0, 0, 0}, {1, 0, 0}, "E1");
+	Particle site2({0, 0, 0}, {0, 1, 0}, "E2");
+	Particle site3({0, 0, 0}, {0, 0, 1}, "E3");
 
 	world.PackWorld({&site1, &site2, &site3}, {1.0/3.0, 1.0/3.0, 1.0/3.0});
 
@@ -258,7 +258,7 @@ TEST(SimpleWorld, MoveParticleSemantics)
 	World world(n, n, n, 1.0, 1.0);
 
 	ASSERT_EQ(0, world.GetParticleCount());
-	world.AddParticle(new Site({0,0,0}, {1,0,0}, "E1"));
+	world.AddParticle(new Particle({0,0,0}, {1,0,0}, "E1"));
 	ASSERT_EQ(1, world.GetParticleCount());
 	ASSERT_EQ(1, world.GetPrimitiveCount());
 	auto * p = world.SelectParticle(0);
@@ -270,7 +270,7 @@ TEST(SimpleWorld, VolumeScaling)
 {
 	int n = 30;
 	World world(n, n, n, 1.0, 1.0);
-	Site site1({0, 0, 0}, {1, 0, 0}, "E1");
+	Particle site1({0, 0, 0}, {1, 0, 0}, "E1");
 	world.PackWorld({&site1}, {1.0}, 500, 1.0);
 	ASSERT_EQ(500, world.GetParticleCount());
 	ASSERT_EQ(500, world.GetPrimitiveCount());

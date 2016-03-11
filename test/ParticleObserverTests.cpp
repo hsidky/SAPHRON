@@ -1,5 +1,5 @@
-#include "../src/Particles/Site.h"
-#include "../src/Particles/Molecule.h"
+#include "../src/Particles/Particle.h"
+
 #include "../src/Particles/ParticleObserver.h"
 #include "../src/Worlds/World.h"
 #include "gtest/gtest.h"
@@ -46,7 +46,7 @@ using namespace SAPHRON;
 
 TEST(ParticleObserver, DefaultBehavior)
 {
-	Site s1({ 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, "L1");
+	Particle s1({ 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, "L1");
 
 	// Add observer.
 	MockParticleObserver observer;
@@ -67,10 +67,10 @@ TEST(ParticleObserver, AddRemoveChild)
 {
 	World sw(10.0, 10.0, 10.0, 1.0, 1.0);
 
-	Site* s1 = new Site({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "S1");
-	Site* s2 = new Site({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "S1");
+	auto* s1 = new Particle({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "S1");
+	auto* s2 = new Particle({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "S1");
 
-	Molecule* m1 = new Molecule("M1"); 
+	auto* m1 = new Particle("M1"); 
 	m1->AddChild(s1);
 	sw.AddParticle(m1);
 

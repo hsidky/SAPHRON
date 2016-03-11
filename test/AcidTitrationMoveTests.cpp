@@ -5,14 +5,14 @@
 #include "../src/ForceFields/DebyeHuckelFF.h"
 #include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
 
 TEST(AcidTitrationMove, DefaultBehavior)
 {
-	Site s({0, 0, 0},{0,0,0}, "LJ");
+	Particle s({0, 0, 0},{0,0,0}, "LJ");
 
 	World world(1, 1, 1, 5.0, 1.0);
 

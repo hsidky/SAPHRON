@@ -2,7 +2,7 @@
 #include "../src/ForceFields/ForceFieldManager.h"
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/TranslateMove.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "../src/Observers/DLMFileObserver.h"
 #include "../src/Observers/JSONObserver.h"
 #include "TestAccumulator.h"
@@ -13,12 +13,12 @@ using namespace SAPHRON;
 TEST(Harmonic, DefaultBehavior)
 {
 	Harmonic ff(0.9, 1.0);
-	Site s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
-	Site s2({0.9, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
-	Site s3({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
-	Site s4({1.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
-	Site s5({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
-	Site s6({6.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s2({0.9, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s3({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s4({1.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s5({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s6({6.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 	s1.AddBondedNeighbor(&s2);
 	s2.AddBondedNeighbor(&s1);
 	s3.AddBondedNeighbor(&s4);

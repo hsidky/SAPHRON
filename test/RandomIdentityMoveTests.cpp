@@ -1,5 +1,5 @@
 #include "../src/Moves/RandomIdentityMove.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
@@ -7,9 +7,9 @@ using namespace SAPHRON;
 // Test the default behavior of the species change move.
 TEST(RandomIdentityMove, DefaultBehavior)
 {
-	Site s({0, 0, 0},{0,0,0}, "T1");
-	Site s2({0, 0, 0},{0,0,0}, "T2");
-	Site s3({0, 0, 0},{0,0,0}, "T3");
+	Particle s({0, 0, 0},{0,0,0}, "T1");
+	Particle s2({0, 0, 0},{0,0,0}, "T2");
+	Particle s3({0, 0, 0},{0,0,0}, "T3");
 	RandomIdentityMove m({"T1", "T2", "T3"});
 
 	//ASSERT_EQ(0, s.GetSpeciesID());

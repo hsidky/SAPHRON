@@ -3,14 +3,14 @@
 #include "../src/ForceFields/LennardJonesFF.h"
 #include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
 
 TEST(ParticleSwapMove, DefaultBehavior)
 {
-	Site s({0, 0, 0},{0,0,0}, "LJ");
+	Particle s({0, 0, 0},{0,0,0}, "LJ");
 
 	// "Liquid-like" world. Volumes adjusted by packworld.
 	World liquid(1, 1, 1,  4.5, 0.5);

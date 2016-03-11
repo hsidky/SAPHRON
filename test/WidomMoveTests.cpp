@@ -6,8 +6,8 @@
 #include "../src/Moves/InsertParticleMove.h"
 #include "../src/Moves/DeleteParticleMove.h"
 #include "../src/Moves/WidomInsertionMove.h"
-#include "../src/Particles/Site.h"
-#include "../src/Particles/Molecule.h"
+#include "../src/Particles/Particle.h"
+
 #include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
 #include "TestAccumulator.h"
@@ -21,7 +21,7 @@ using namespace SAPHRON;
 // Grand canonical simulation tests.
 TEST(WidomInsertionMove, Default)
 {
-	Site s({0, 0, 0},{0,0,0}, "LJ");
+	Particle s({0, 0, 0},{0,0,0}, "LJ");
 
 	World world(1, 1, 1, 5.0, 1.0);
 	world.SetTemperature(1.0);
@@ -69,8 +69,8 @@ TEST(WidomInsertionMove, Default)
 TEST(WidomInsertionMove, Multi_Species)
 {	
 
-	Site s({0, 0, 0},{0,0,0}, "LJ");
-	Site s2({1, 1, 1},{0,0,0}, "LJ2");
+	Particle s({0, 0, 0},{0,0,0}, "LJ");
+	Particle s2({1, 1, 1},{0,0,0}, "LJ2");
 
 	World world(1, 1, 1, 5.0, 1.0);
 	world.SetTemperature(1.0);
@@ -142,7 +142,7 @@ TEST(WidomInsertionMove, LJFluid)
 	auto N = 500;
 
 	// Prototype particle. 
-	Site lj({0, 0, 0}, {0, 0, 0}, "LJ");
+	Particle lj({0, 0, 0}, {0, 0, 0}, "LJ");
 
 	// Initialze worlds for widom, set densities. 
 	// World world(1, 1, 1, rcut + 1.0, 1.0);

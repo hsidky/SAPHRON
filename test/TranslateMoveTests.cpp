@@ -1,5 +1,5 @@
 #include "../src/Moves/TranslateMove.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
 #include "../src/ForceFields/ForceFieldManager.h"
@@ -38,7 +38,7 @@ using namespace SAPHRON;
 // Test TranslateMove default behavior
 TEST(TranslateMove, DefaultBehavior)
 {
-	Site s({0, 0, 0},{0,0,0}, "T1");
+	Particle s({0, 0, 0},{0,0,0}, "T1");
 	TranslateMove m(1.0);
 
 	// Do a bunch of these for good measure
@@ -62,8 +62,8 @@ TEST(TranslateMove, Selector)
 	Position p1 = {0, 0, 1.0};
 	Position p2 = {0, 0, 0};
 
-	Site s1(p1, {0, 0, 0}, "S1");
-	Site s2(p2, {0, 0, 0}, "S2");
+	Particle s1(p1, {0, 0, 0}, "S1");
+	Particle s2(p2, {0, 0, 0}, "S2");
 
 	for(size_t i = 0; i < 100; ++i)
 	{
@@ -105,9 +105,9 @@ TEST(TranslateMove, ExplicitDraw)
 	Position p1 = {0, 0, 1.0};
 	Position p2 = {0, 0, 0};
 
-	Site s1(p1, {0, 0, 0}, "S1");
-	Site s2(p2, {0, 0, 0}, "S2");
-	Site s3(p2, {0, 0, 0}, "S3");
+	Particle s1(p1, {0, 0, 0}, "S1");
+	Particle s2(p2, {0, 0, 0}, "S2");
+	Particle s3(p2, {0, 0, 0}, "S3");
 
 	world.PackWorld({&s1, &s2, &s3}, {0.1, 0.3, 0.6}, 1000, 0.01);
 

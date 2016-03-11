@@ -1,5 +1,5 @@
 #include "../src/ForceFields/ForceFieldManager.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "../src/Constraints/DirectorRestrictionC.h"
 #include "gtest/gtest.h"
 
@@ -10,8 +10,8 @@ TEST(DirectorRestrictionC, DefaultBehavior)
 	// Initialize particles and world.
 	auto l = 10.;
 	World world(l, l, l, 1.0, 1.0);
-	Site* site1 = new Site({l/2., 0.0, 0.0}, {0.0, 0.0, 1.0}, "E1");
-	Site* site2 = new Site({l/2., 0.0, 10.0}, {0.0, 0.0, 1.0}, "E1");
+	Particle* site1 = new Particle({l/2., 0.0, 0.0}, {0.0, 0.0, 1.0}, "E1");
+	Particle* site2 = new Particle({l/2., 0.0, 10.0}, {0.0, 0.0, 1.0}, "E1");
 	world.AddParticle(site1);
 	world.AddParticle(site2);
 

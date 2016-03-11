@@ -1,5 +1,5 @@
 #include "../src/Moves/SpeciesSwapMove.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
@@ -7,8 +7,8 @@ using namespace SAPHRON;
 TEST(SpeciesSwapMove, DefaultBehavior)
 {
 	std::vector<int> species;
-	Site s({0, 0, 0},{0,0,0}, "T1");
-	Site s2({0, 0, 0},{0,0,0}, "T2");	
+	Particle s({0, 0, 0},{0,0,0}, "T1");
+	Particle s2({0, 0, 0},{0,0,0}, "T2");	
 	SpeciesSwapMove m(species, false);
 
 	ASSERT_EQ("T1", s.GetSpecies());
