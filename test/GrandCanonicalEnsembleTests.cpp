@@ -5,8 +5,8 @@
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Moves/InsertParticleMove.h"
 #include "../src/Moves/DeleteParticleMove.h"
-#include "../src/Particles/Site.h"
-#include "../src/Particles/Molecule.h"
+#include "../src/Particles/Particle.h"
+
 #include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
 #include "TestAccumulator.h"
@@ -28,7 +28,7 @@ TEST(GrandCanonicalEnsembleTests, Default)
 	auto rcut = 3.*sigma;
 
 	// Prototype particle. 
-	Site lj({0, 0, 0}, {0, 0, 0}, "LJ");
+	Particle lj({0, 0, 0}, {0, 0, 0}, "LJ");
 
 	// Initialze world, set chemical potential and pack with lj. 
 	World world(1, 1, 1, rcut + 1.0, 1.0);

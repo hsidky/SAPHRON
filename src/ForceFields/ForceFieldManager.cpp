@@ -185,7 +185,7 @@ namespace SAPHRON
 				if(world != nullptr)
 					world->ApplyMinimumImage(&rij);
 
-				// If particle has parent, compute vector between parent molecule(s).
+				// If particle has parent, compute vector between parent Particle(s).
 				Position rab = rij;
 				if(particle.HasParent() && neighbor->HasParent())
 				{

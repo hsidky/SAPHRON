@@ -1,5 +1,5 @@
 #include "../src/Moves/DirectorRotateMove.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "gtest/gtest.h"
 #include <cmath>
 #include <numeric>
@@ -9,7 +9,7 @@ using namespace SAPHRON;
 // Test DirectorRotateMove default behavior
 TEST(DirectorRotateMove, DefaultBehavior)
 {
-	Site s({0, 0, 0},{0,0,0}, "T1");
+	Particle s({0, 0, 0},{0,0,0}, "T1");
 	DirectorRotateMove m;
 
 	// Get random unit vector and check that its norm is 1.

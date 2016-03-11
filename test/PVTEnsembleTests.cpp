@@ -5,7 +5,7 @@
 #include "../src/ForceFields/LennardJonesFF.h"
 #include "../src/Worlds/WorldManager.h"
 #include "../src/Worlds/World.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "../src/Observers/DLMFileObserver.h"
 #include "../src/Simulation/StandardSimulation.h"
 #include "gtest/gtest.h"
@@ -25,7 +25,7 @@ TEST(PVTEnsembleTests, NISTValidation)
 	auto rho = 8.00781E-01; 
 	auto P = 5.22522E-01;
 
-	Site lj({0,0,0}, {0,0,0}, "LJ");
+	Particle lj({0,0,0}, {0,0,0}, "LJ");
 
 	World world(1, 1, 1, 3.0*sigma + 1.0, 1.0);
 	world.PackWorld({&lj}, {1.0}, N, rho);

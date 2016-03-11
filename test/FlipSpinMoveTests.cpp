@@ -1,5 +1,5 @@
 #include "../src/Moves/FlipSpinMove.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
@@ -7,7 +7,7 @@ using namespace SAPHRON;
 // Test FlipSpinMove default behavior.
 TEST(FlipSpinMove, DefaultBehavior)
 {
-	Site s({0, 0, 0},{0,0,0}, "T1");
+	Particle s({0, 0, 0},{0,0,0}, "T1");
 	FlipSpinMove m;
 
 	// Set the Z unit vector and test move
@@ -21,8 +21,8 @@ TEST(FlipSpinMove, DefaultBehavior)
 // Test reusability of move on different sites.
 TEST(FlipSpinMove, ChangeSiteReusability)
 {
-	Site s1({0, 0, 0},{0,0,0}, "T1");
-	Site s2({0, 0, 0},{0,0,0}, "T1");
+	Particle s1({0, 0, 0},{0,0,0}, "T1");
+	Particle s2({0, 0, 0},{0,0,0}, "T1");
 	FlipSpinMove m;
 
 	// Set the Z unit vector and test move
@@ -41,10 +41,10 @@ TEST(FlipSpinMove, ChangeSiteReusability)
 
 TEST(FlipSpinMove, PassPointerByReference)
 {
-	Site s({0, 0, 0},{0,0,0}, "T1");
+	Particle s({0, 0, 0},{0,0,0}, "T1");
 	FlipSpinMove m;
 
-	Site* sp = &s;
+	Particle* sp = &s;
 
 	// Set the Z unit vector and test move
 	sp->SetDirector({-1.0,0,0});

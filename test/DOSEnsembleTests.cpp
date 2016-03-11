@@ -4,7 +4,7 @@
 #include "../src/ForceFields/LebwohlLasherFF.h"
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/DirectorRotateMove.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "../src/Observers/DLMFileObserver.h"
 #include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
@@ -17,7 +17,7 @@ TEST(DOSSimulation, DefaultBehavior)
 	/*double n = 20;
 	// Initialize world.
 	World world(n, n, n, 1.0, 1.0);
-	Site site1({0, 0, 0}, {1.0, 0, 0}, "E1");
+	Particle site1({0, 0, 0}, {1.0, 0, 0}, "E1");
 	world.PackWorld({&site1}, {1.0});
 
 	// Initialize forcefields.

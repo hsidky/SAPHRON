@@ -2,8 +2,6 @@
 #include "../Simulation/SimException.h"
 #include "../Validator/ObjectRequirement.h"
 #include "../Validator/ArrayRequirement.h"
-#include "Site.h"
-#include "Molecule.h"
 #include "schema.h"
 #include <queue>
 #include <set>
@@ -51,6 +49,7 @@ namespace SAPHRON
 		this->_pEvent.child_add = 1;
 
 		UpdateCenterOfMass();
+		UpdateCharge();
 
 		// Add all the same observers for children.
 		for(auto& o : _observers)
@@ -76,6 +75,7 @@ namespace SAPHRON
 			_children.erase(it);
 			
 			UpdateCenterOfMass();
+			UpdateCharge();
 			
 			// Fire event.
 			NotifyObservers();
@@ -193,7 +193,7 @@ namespace SAPHRON
 			);
 
 		// Create the particle.
-		particle = new Site(pos, dir, species);
+		particle = new Particle(pos, dir, species);
 		particle->SetGlobalIdentifier(id);
 
 		return particle;
@@ -337,7 +337,7 @@ namespace SAPHRON
 				dir = {p[3][0].asDouble(), p[3][1].asDouble(), p[3][2].asDouble()};
 
 			// Create the particle.
-			Particle* particle = new Site(pos, dir, species);
+			Particle* particle = new Particle(pos, dir, species);
 			particle->SetGlobalIdentifier(id);
 			pcontainer.push(particle);
 		}
@@ -365,7 +365,7 @@ namespace SAPHRON
 				else
 				{
 					// Pop children.
-					Particle* parent = new Molecule(component);
+					Particle* parent = new Particle(component);
 					for(int k = 0; k < ccount; ++k)
 					{
 						auto* p = pcontainer.front();

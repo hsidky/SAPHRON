@@ -2,8 +2,8 @@
 #include "../src/ForceFields/ForceFieldManager.h"
 #include "../src/ForceFields/DebyeHuckelFF.h"
 #include "../src/Moves/MoveManager.h"
-#include "../src/Particles/Site.h"
-#include "../src/Particles/Molecule.h"
+#include "../src/Particles/Particle.h"
+
 #include "../src/Moves/ImplicitProtonationMove.h"
 #include "../src/Moves/ChargeSwapMove.h"
 #include "../src/Observers/ConsoleObserver.h"
@@ -17,12 +17,12 @@ TEST(ProtonationMDEnsemble, HighChemical)
 {
 	// Initialize world.
 	World world(1000, 1000, 1000, 100);
-	Site* site1= new Site({0, 1, 0}, {0, 0, 0}, "Monomer");
-	Site* site2= new Site({0, 0, 0}, {0, 0, 0}, "Monomer");
-	Site* site3= new Site({1, 0, 0}, {0, 0, 0}, "Monomer");
-	Site* site4= new Site({2, 0, 0}, {0, 0, 0}, "Monomer");
-	Site* site5= new Site({3, 0, 0}, {0, 0, 0}, "Monomer");
-	Site* site6= new Site({3, 1, 0}, {0, 0, 0}, "Monomer");
+	Particle* site1= new Particle({0, 1, 0}, {0, 0, 0}, "Monomer");
+	Particle* site2= new Particle({0, 0, 0}, {0, 0, 0}, "Monomer");
+	Particle* site3= new Particle({1, 0, 0}, {0, 0, 0}, "Monomer");
+	Particle* site4= new Particle({2, 0, 0}, {0, 0, 0}, "Monomer");
+	Particle* site5= new Particle({3, 0, 0}, {0, 0, 0}, "Monomer");
+	Particle* site6= new Particle({3, 1, 0}, {0, 0, 0}, "Monomer");
 
 	site1->AddBondedNeighbor(site2);
 	site2->AddBondedNeighbor(site1);
@@ -35,7 +35,7 @@ TEST(ProtonationMDEnsemble, HighChemical)
 	site5->AddBondedNeighbor(site6);
 	site6->AddBondedNeighbor(site5);
 
-	Molecule m("M1");
+	Particle m("M1");
 
 	m.AddChild(site1);
 	m.AddChild(site2);
@@ -85,12 +85,12 @@ TEST(ProtonationMDEnsemble, LowChemical)
 {
 	// Initialize world.
 	World world(1000, 1000, 1000, 100);
-	Site* site1= new Site({0, 1, 0}, {0, 0, 0}, "Monomer");
-	Site* site2= new Site({0, 0, 0}, {0, 0, 0}, "Monomer");
-	Site* site3= new Site({1, 0, 0}, {0, 0, 0}, "Monomer");
-	Site* site4= new Site({2, 0, 0}, {0, 0, 0}, "Monomer");
-	Site* site5= new Site({3, 0, 0}, {0, 0, 0}, "Monomer");
-	Site* site6= new Site({3, 1, 0}, {0, 0, 0}, "Monomer");
+	Particle* site1= new Particle({0, 1, 0}, {0, 0, 0}, "Monomer");
+	Particle* site2= new Particle({0, 0, 0}, {0, 0, 0}, "Monomer");
+	Particle* site3= new Particle({1, 0, 0}, {0, 0, 0}, "Monomer");
+	Particle* site4= new Particle({2, 0, 0}, {0, 0, 0}, "Monomer");
+	Particle* site5= new Particle({3, 0, 0}, {0, 0, 0}, "Monomer");
+	Particle* site6= new Particle({3, 1, 0}, {0, 0, 0}, "Monomer");
 
 	site1->AddBondedNeighbor(site2);
 	site2->AddBondedNeighbor(site1);
@@ -103,7 +103,7 @@ TEST(ProtonationMDEnsemble, LowChemical)
 	site5->AddBondedNeighbor(site6);
 	site6->AddBondedNeighbor(site5);
 
-	Molecule m("M1");
+	Particle m("M1");
 
 	m.AddChild(site1);
 	m.AddChild(site2);
@@ -153,16 +153,16 @@ TEST(ProtonationMDEnsemble, ChargeSwap)
 {
 	// Initialize world.
 	World world(1000, 1000, 1000, 100);
-	Site* site1= new Site({0, 1, 0}, {0, 0, 0}, "Monomer");
+	Particle* site1= new Particle({0, 1, 0}, {0, 0, 0}, "Monomer");
 	site1->SetCharge(1.0);
-	Site* site2= new Site({0, 0, 0}, {0, 0, 0}, "Monomer");
+	Particle* site2= new Particle({0, 0, 0}, {0, 0, 0}, "Monomer");
 	site2->SetCharge(1.0);
-	Site* site3= new Site({1, 0, 0}, {0, 0, 0}, "Monomer");
-	Site* site4= new Site({2, 0, 0}, {0, 0, 0}, "Monomer");
-	Site* site5= new Site({3, 0, 0}, {0, 0, 0}, "Monomer");
-	Site* site6= new Site({3, 1, 0}, {0, 0, 0}, "Monomer");
+	Particle* site3= new Particle({1, 0, 0}, {0, 0, 0}, "Monomer");
+	Particle* site4= new Particle({2, 0, 0}, {0, 0, 0}, "Monomer");
+	Particle* site5= new Particle({3, 0, 0}, {0, 0, 0}, "Monomer");
+	Particle* site6= new Particle({3, 1, 0}, {0, 0, 0}, "Monomer");
 
-	Molecule m("M1");
+	Particle m("M1");
 
 	m.AddChild(site1);
 	m.AddChild(site2);

@@ -1,7 +1,7 @@
 #include "../src/ForceFields/ForceFieldManager.h"
 #include "../src/ForceFields/LebwohlLasherFF.h"
 #include "../src/ForceFields/FENEFF.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;
@@ -9,10 +9,10 @@ using namespace SAPHRON;
 TEST(ForceFieldManager, DefaultBehavior)
 {
 	// Define sites.
-	Site s1({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "L1");
-	Site s2({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "L1");
-	Site s3({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "L1");
-	Site s4({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "L2");
+	Particle s1({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "L1");
+	Particle s2({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "L1");
+	Particle s3({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "L1");
+	Particle s4({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "L2");
 
 	// Add neighbors.
 	s1.AddNeighbor(&s2);
@@ -40,10 +40,10 @@ TEST(ForceFieldManager, DefaultBehavior)
 
 TEST(ForceFieldManager, FFIterator)
 {
-	Site s1({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "J1");
-	Site s2({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "J1");
-	Site s3({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "J1");
-	Site s4({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "J2");
+	Particle s1({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "J1");
+	Particle s2({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "J1");
+	Particle s3({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "J1");
+	Particle s4({0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, "J2");
 
 	// Define force field.
 	LebwohlLasherFF ff(1.0, 0);

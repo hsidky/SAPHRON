@@ -1,8 +1,8 @@
 #include "../src/ForceFields/DSFFF.h"
 #include "../src/ForceFields/LennardJonesFF.h"
 #include "../src/ForceFields/ForceFieldManager.h"
-#include "../src/Particles/Molecule.h"
-#include "../src/Particles/Site.h"
+
+#include "../src/Particles/Particle.h"
 #include "../src/Simulation/SimInfo.h"
 #include "../src/Simulation/SimException.h"
 #include "../src/Worlds/World.h"
@@ -24,8 +24,8 @@ using namespace SAPHRON;
 // Validation of potential. 
 /*TEST(DSFFF, Potential)
 {
-	Site p1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "LJ");
-	Site p2({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "LJ");
+	Particle p1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "LJ");
+	Particle p2({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "LJ");
 	p1.AddNeighbor(&p2);
 	p2.AddNeighbor(&p1);
 	p1.SetCharge(0.5);
@@ -138,17 +138,17 @@ TEST(DSFFF, PVTValidation1)
 	double rcut = 8; // Angstrom.
 
 	// Prototype molecule.
-	Site* O = new Site({0.72707694246,0.62783284768,0.88326560728},{0,0,1}, "O");
+	Particle* O = new Particle({0.72707694246,0.62783284768,0.88326560728},{0,0,1}, "O");
 	O->SetMass(15.9994);
 	O->SetCharge(-0.84760);
-	Site* H1 = new Site({0, 0, 1.16108755587}, {0, 0, 1}, "H1");
+	Particle* H1 = new Particle({0, 0, 1.16108755587}, {0, 0, 1}, "H1");
 	H1->SetMass(1.00794);
 	H1->SetCharge(0.42380);
-	Site* H2 = new Site({1.09689283867, 0.33960018140, 0}, {0, 0, 1}, "H2");
+	Particle* H2 = new Particle({1.09689283867, 0.33960018140, 0}, {0, 0, 1}, "H2");
 	H2->SetMass(1.00794);
 	H2->SetCharge(0.42380);
 	
-	Molecule h2o("H2O");	
+	Particle h2o("H2O");	
 	h2o.AddChild(O);
 	h2o.AddChild(H1);
 	h2o.AddChild(H2);
@@ -231,17 +231,17 @@ TEST(DSFFF, NISTValidation1)
 	double rcut = 8.0; // Angstrom.
 
 	// Prototype molecule.
-	Site* O = new Site({0.72707694246,0.62783284768,0.88326560728},{0,0,1}, "O");
+	Particle* O = new Particle({0.72707694246,0.62783284768,0.88326560728},{0,0,1}, "O");
 	O->SetMass(15.9994);
 	O->SetCharge(-0.84760);
-	Site* H1 = new Site({0, 0, 1.16108755587}, {0, 0, 1}, "H1");
+	Particle* H1 = new Particle({0, 0, 1.16108755587}, {0, 0, 1}, "H1");
 	H1->SetMass(1.00794);
 	H1->SetCharge(0.42380);
-	Site* H2 = new Site({1.09689283867, 0.33960018140, 0}, {0, 0, 1}, "H2");
+	Particle* H2 = new Particle({1.09689283867, 0.33960018140, 0}, {0, 0, 1}, "H2");
 	H2->SetMass(1.00794);
 	H2->SetCharge(0.42380);
 	
-	Molecule h2o("H2O");	
+	Particle h2o("H2O");	
 	h2o.AddChild(O);
 	h2o.AddChild(H1);
 	h2o.AddChild(H2);

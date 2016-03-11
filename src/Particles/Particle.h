@@ -41,13 +41,19 @@ namespace SAPHRON
 	// Forward declare.
 	class World;
 
-	// Abstract class Particle represents either a composite or primitive object, 
+	// Particle represents either a composite or primitive object, 
 	// from an atom/site to a molecule to a collection of molecules. 
 	// It represents an common interface allowing the manipulation
 	// of all of the above through a common interface.
 	class Particle : public Visitable, public Serializable
 	{
 	private:
+		Position _position;
+		Director _director;
+		Position _checkpoint;
+
+		double _charge;
+		double _mass;
 
 		// String species.
 		std::string _species;
@@ -109,8 +115,24 @@ namespace SAPHRON
 
 		// Initialize a particle with a particular species. This string 
 		// represents the global type species for this particle.
+		Particle(const Position& pos, const Director& dir, std::string species) : 
+		_position(pos), _director(dir), _checkpoint(), _charge(0), _mass(1.0), _species(species), 
+		_speciesID(0), _neighbors(0), _bondedneighbors(0), 
+		_children(0), _observers(), _globalID(-1), _world(nullptr), _parent(nullptr),
+		_connectivities(0), _pEvent(this)
+		{
+			_globalID = SetGlobalIdentifier(GetNextGlobalID());
+			SetSpecies(species);
+			_neighbors.reserve(100);
+			_bondedneighbors.reserve(10);
+			_observers.reserve(10);
+		}
+
+		// Initialize a particle with a particular species. This string 
+		// represents the global type species for this particle.
 		Particle(std::string species) : 
-		_species(species), _speciesID(0), _neighbors(0), _bondedneighbors(0), 
+		_position(), _director(), _checkpoint(), _charge(0), _mass(1.0), _species(species), 
+		_speciesID(0), _neighbors(0), _bondedneighbors(0), 
 		_children(0), _observers(), _globalID(-1), _world(nullptr), _parent(nullptr),
 		_connectivities(0), _pEvent(this)
 		{
@@ -123,7 +145,9 @@ namespace SAPHRON
 
 		// Copy constructor.
 		Particle(const Particle& particle) : 
-		_species(particle._species), _speciesID(particle._speciesID), 
+		_position(particle._position), _director(particle._director),
+		_checkpoint(particle._checkpoint), _charge(particle._charge), 
+		_mass(particle._mass), _species(particle._species), _speciesID(particle._speciesID), 
 		_neighbors(particle._neighbors), _bondedneighbors(0), _children(0), 
 		_observers(particle._observers), _globalID(-1),	_world(particle._world), 
 		_parent(particle._parent), _connectivities(particle._connectivities), 
@@ -241,48 +265,131 @@ namespace SAPHRON
 		void SetSpeciesID(int id);
 
 		// Get particle charge
-		virtual double GetCharge() const = 0;
+		double GetCharge() const
+		{
+			return _charge;
+		}
 
 		// Set particle charge
-		virtual void SetCharge(double charge) = 0;
+		void SetCharge(double charge)
+		{
+			if(_children.size() != 0)
+			{
+				std::cerr << "ERROR: Cannot set the charge for a molecule directly." << std::endl;
+				exit(-1);
+			}
+
+			this->_pEvent.SetOldCharge(_charge);
+			_charge = charge;
+			this->_pEvent.charge = 1;
+			this->NotifyObservers();
+
+			// If we change charge of a child particle. Notify parent. 
+			if(HasParent())
+			{
+				_parent->UpdateCharge();
+				_parent->NotifyObservers();
+			}
+		}
 
 		// Get particle position.
-		virtual const Position& GetPosition() const = 0;
+		const Position& GetPosition() const { return _position; }
 
 		// Move a particle to a new set of coordinates.
-		virtual void SetPosition(const Position& position) = 0;
+		void SetPosition(const Position& position)
+		{
+			this->_pEvent.SetOldPosition(_position);
+			if(_children.size() != 0)
+			{
+				Position dij = position - _position;
+				for(auto& child : *this)
+					child->SetPosition(child->GetPosition() + dij);
+			}
+			_position = position;
+			this->_pEvent.position = 1;
+			this->NotifyObservers();	
+		}
 
-		// Move a particle to a new set of coordinates.
-		virtual void SetPosition(Position && position) = 0;
-
-		// Set a particle position.
-		virtual void SetPosition(double x, double y, double z) = 0;
+		// Sets the molecule position.
+		void SetPosition(double x, double y, double z)
+		{
+			this->_pEvent.SetOldPosition(_position);
+			if(_children.size() != 0)
+			{
+				Position dij {_position[0] - x, _position[1] - y, _position[2] - z};
+				for(auto& child : *this)
+					child->SetPosition(child->GetPosition() + dij);
+			}
+			_position[0] = x;
+			_position[1] = y;
+			_position[2] = z;
+			this->_pEvent.position = 1;
+			this->NotifyObservers();
+		}
 
 		// Gets a particle's position at the checkpoint.
-		virtual const Position& GetCheckpoint() const = 0;
+		const Position& GetCheckpoint() const
+		{
+			return _checkpoint;
+		}
 
 		// Get a particle's distance from checkpoint. 
-		virtual Position GetCheckpointDist() const = 0;
+		Position GetCheckpointDist() const
+		{
+			return _position - _checkpoint;
+		}
 
 		// Sets a checkpoint where the particle records its position at that moment. 
-		virtual void SetCheckpoint() = 0;
+		void SetCheckpoint()
+		{
+			_checkpoint = _position;
+			
+			for(auto& c : *this)
+				c->SetCheckpoint();	
+		}
 
 		// Get the particle director.
-		virtual const Director& GetDirector() const = 0;
+		const Director& GetDirector() const
+		{
+			return _director;
+		}
 
 		// Set the particle director.
-		virtual void SetDirector(const Director& director) = 0;
+		void SetDirector(const Director& director)
+		{
+			this->_pEvent.SetOldDirector(_director);
+			_director = director;
+			this->_pEvent.director = 1;
+			this->NotifyObservers();
+		}
 
 		// Set the particle director.
-		virtual void SetDirector(Director&& director) = 0;
-
-		// Set the particle director.
-		virtual void SetDirector(double ux, double uy, double uz) = 0;
-
+		void SetDirector(double ux, double uy, double uz)
+		{
+			this->_pEvent.SetOldDirector(_director);
+			_director[0] = ux;
+			_director[1] = uy;
+			_director[2] = uz;
+			this->_pEvent.director = 1;
+			this->NotifyObservers();
+		}
+		
 		// Get the mass of a particle.
-		virtual double GetMass() const = 0;
+		double GetMass() const 
+		{
+			return _mass;
+		}
 
-		virtual void SetMass(double m) = 0;
+		void SetMass(double mass)
+		{
+			if(_children.size() != 0)
+			{
+				std::cerr << "ERROR: Cannot set the mass for a molecule directly." << std::endl;
+				exit(-1);
+			}
+
+			_mass = mass;
+		}
 
 		/****************************
 		 *                          *
@@ -290,8 +397,43 @@ namespace SAPHRON
 		 *                          *
 		 ****************************/
 
-		// Update center of mass.
-		virtual void UpdateCenterOfMass() {}
+		// Update center of (and) mass (containing children).
+		void UpdateCenterOfMass()
+		{
+			if(_children.size() != 0)
+			{
+				// We don't fire event here because it's fired by the 
+				// caller.
+				this->_pEvent.SetOldPosition(_position);
+				this->_pEvent.position = 1;
+
+				_position = {0, 0, 0};
+				_mass = 0; 
+				for(auto& child : *this)
+				{
+					_position += child->GetPosition()*child->GetMass();
+					_mass += child->GetMass();
+				}	
+
+				// Avoid divide by zero.
+				if(_mass) _position /= _mass;
+			}
+		}
+
+		// Updates the charge for a particle (containing children).
+		void UpdateCharge()
+		{
+			if(_children.size() != 0)
+			{
+
+				this->_pEvent.SetOldCharge(_charge);
+				this->_pEvent.charge = 1;
+
+				_charge = 0;
+				for(auto& child : *this)
+					_charge += child->GetCharge();
+			}
+		}
 
 		// Has Parent?
 		bool HasParent() const { return _parent != nullptr; }
@@ -468,7 +610,7 @@ namespace SAPHRON
 		// Get the number of observers.
 		inline int ObserverCount() const {	return (int)_observers.size(); }
 
-		virtual void AcceptVisitor(Visitor& v) const override
+		void AcceptVisitor(Visitor& v) const override
 		{
 			for (auto &c :_children)
 				c->AcceptVisitor(v);
@@ -476,7 +618,10 @@ namespace SAPHRON
 		}
 
 		// Clone particle.
-		virtual Particle* Clone() const = 0;
+		Particle* Clone() const
+		{
+			return new Particle(*this);
+		}
 
 		/****************************
 		 *                          *
@@ -488,7 +633,7 @@ namespace SAPHRON
 		void GetBlueprint(Json::Value& json) const;
 
 		// Serialize particle.
-		virtual void Serialize(Json::Value& json) const override
+		void Serialize(Json::Value& json) const override
 		{
 			json[0] = GetGlobalIdentifier();
 			json[1] = GetSpecies();

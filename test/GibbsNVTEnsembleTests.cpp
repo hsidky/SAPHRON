@@ -4,7 +4,7 @@
 #include "../src/Moves/TranslateMove.h"
 #include "../src/Moves/VolumeSwapMove.h"
 #include "../src/Moves/ParticleSwapMove.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "../src/Simulation/StandardSimulation.h"
 #include "../src/Worlds/WorldManager.h"
 #include "../src/Worlds/World.h"
@@ -24,7 +24,7 @@ TEST(GibbsNVTEnsemble, LJNISTValidation1)
 	double rcut = 3.0*sigma;
 
 	// Prototype particle.
-	Site ljatom({0,0,0}, {0,0,0}, "LJ");
+	Particle ljatom({0,0,0}, {0,0,0}, "LJ");
 
 	// Add lj atom to world and initialize in simple lattice configuration.
 	// World volume is adjusted by packworld.

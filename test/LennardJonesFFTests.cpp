@@ -3,8 +3,8 @@
 #include "../src/Simulation/StandardSimulation.h"
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/TranslateMove.h"
-#include "../src/Particles/Site.h"
-#include "../src/Particles/Molecule.h"
+#include "../src/Particles/Particle.h"
+
 #include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
 #include "TestAccumulator.h"
@@ -18,8 +18,8 @@ TEST(LennardJonesFF, DefaultBehavior)
 {
 	double rcut = 14.0;
 	LennardJonesFF ff(1.0, 1.0, {rcut});
-	Site s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
-	Site s2({1.5, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s2({1.5, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 	s1.AddNeighbor(&s2);
 	s2.AddNeighbor(&s1);
 
@@ -107,8 +107,8 @@ TEST(LennardJonesFF, NISTValidation1)
 	double rcut = 3.0*sigma;
 
 	// Prototype particle.
-	Site* ljatom = new Site({0,0,0}, {0,0,0}, "LJ");
-	Molecule ljm("LJM");
+	Particle* ljatom = new Particle({0,0,0}, {0,0,0}, "LJ");
+	Particle ljm("LJM");
 	//ljm.AddChild(ljatom);
 
 	// Add lj atom to world and initialize in simple lattice configuration.

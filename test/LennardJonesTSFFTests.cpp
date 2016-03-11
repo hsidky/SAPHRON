@@ -1,6 +1,6 @@
 #include "../src/ForceFields/LennardJonesTSFF.h"
-#include "../src/Particles/Site.h"
-#include "../src/Particles/Molecule.h"
+#include "../src/Particles/Particle.h"
+
 #include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
 #include "json/json.h"
@@ -13,8 +13,8 @@ TEST(LennardJonesFF, DefaultBehavior)
 {
 	double rcut = pow(2.0, 1.0/6.0);
 	LennardJonesTSFF ff(1.0, 1.0, {rcut});
-	Site s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
-	Site s2({rcut, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s1({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
+	Particle s2({rcut, 0.0, 0.0}, {0.0, 0.0, 0.0}, "L1");
 	s1.AddNeighbor(&s2);
 	s2.AddNeighbor(&s1);
 

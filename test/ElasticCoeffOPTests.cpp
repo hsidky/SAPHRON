@@ -1,5 +1,5 @@
 #include "../src/DensityOfStates/ElasticCoeffOP.h"
-#include "../src/Particles/Site.h"
+#include "../src/Particles/Particle.h"
 #include "../src/Worlds/World.h"
 #include "../src/Utils/Histogram.h"
 #include "gtest/gtest.h"
@@ -11,8 +11,8 @@ TEST(ElasticCoeffOP, Dynamics)
 {
 	auto l = 10.;
 	World world(l, l, l, 1.0, 1.0);
-	Site* site1 = new Site({l/2., 0.0, 0.0}, {0.0, 0.0, 1.0}, "E1");
-	Site* site2 = new Site({l/2., 0.0, 10.0}, {0.0, 0.0, 1.0}, "E1");
+	Particle* site1 = new Particle({l/2., 0.0, 0.0}, {0.0, 0.0, 1.0}, "E1");
+	Particle* site2 = new Particle({l/2., 0.0, 10.0}, {0.0, 0.0, 1.0}, "E1");
 	world.AddParticle(site1);
 	world.AddParticle(site2);
 
@@ -41,7 +41,7 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 	int n = 25;
 	// Initialize world.
 	World world(n, n, n, 1.0, 1.0);
-	Site site1({0, 0, 0}, {0, 0, 1.0}, "E1");
+	Particle site1({0, 0, 0}, {0, 0, 1.0}, "E1");
 	world.PackWorld({&site1}, {1.0});
 
 	// Initialize ElasticCoeffOP 

@@ -3,8 +3,8 @@
 #include "../src/Simulation/StandardSimulation.h"
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/TranslateMove.h"
-#include "../src/Particles/Site.h"
-#include "../src/Particles/Molecule.h"
+#include "../src/Particles/Particle.h"
+
 #include "../src/Worlds/World.h"
 #include "../src/Worlds/WorldManager.h"
 #include "../src/Constraints/Constraint.h"
@@ -26,8 +26,8 @@ TEST(GayBerneFF, DefaultBehavior)
 	double rcut = 55.0;
 	GayBerneFF ff(16.27, 16.27, 3.254, 3.254, 418.0, 10.0, 1.0, 0.20, {rcut}, 1.0, 2.0);
 
-	Site s1({0.0, 0.0, 0.0}, {0.0, 0.0, 1.0}, "L1");
-	Site s2({0.0, 0.0, 0.0}, {0.0, 0.0, 1.0}, "L1");
+	Particle s1({0.0, 0.0, 0.0}, {0.0, 0.0, 1.0}, "L1");
+	Particle s2({0.0, 0.0, 0.0}, {0.0, 0.0, 1.0}, "L1");
 	s1.AddNeighbor(&s2);
 	s2.AddNeighbor(&s1);
 
