@@ -491,9 +491,9 @@ namespace SAPHRON
 
 		// Neighbor list cutoff check.
 		double ncut = json["nlist_cutoff"].asDouble();
-		if(ncut > dim[0]/2.0 || ncut > dim[1]/2.0 || ncut > dim[2]/2.0)
-			throw BuildException({"Neighbor list cutoff must not exceed "
-								  "half the shortest box vector."});
+		//if(ncut > dim[0]/2.0 || ncut > dim[1]/2.0 || ncut > dim[2]/2.0)
+		//	throw BuildException({"Neighbor list cutoff must not exceed "
+		//						  "half the shortest box vector."});
 		
 		// Skin thickness check.
 		double skin = json["skin_thickness"].asDouble();
