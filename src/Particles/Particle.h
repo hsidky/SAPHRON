@@ -41,7 +41,7 @@ namespace SAPHRON
 	// Forward declare.
 	class World;
 
-	// Abstract class Particle represents either a composite or primitive object, 
+	// Particle represents either a composite or primitive object, 
 	// from an atom/site to a molecule to a collection of molecules. 
 	// It represents an common interface allowing the manipulation
 	// of all of the above through a common interface.
@@ -334,7 +334,7 @@ namespace SAPHRON
 		}
 
 		// Get a particle's distance from checkpoint. 
-		virtual Position GetCheckpointDist() const
+		Position GetCheckpointDist() const
 		{
 			return _position - _checkpoint;
 		}
@@ -610,7 +610,7 @@ namespace SAPHRON
 		// Get the number of observers.
 		inline int ObserverCount() const {	return (int)_observers.size(); }
 
-		virtual void AcceptVisitor(Visitor& v) const override
+		void AcceptVisitor(Visitor& v) const override
 		{
 			for (auto &c :_children)
 				c->AcceptVisitor(v);
@@ -633,7 +633,7 @@ namespace SAPHRON
 		void GetBlueprint(Json::Value& json) const;
 
 		// Serialize particle.
-		virtual void Serialize(Json::Value& json) const override
+		void Serialize(Json::Value& json) const override
 		{
 			json[0] = GetGlobalIdentifier();
 			json[1] = GetSpecies();
