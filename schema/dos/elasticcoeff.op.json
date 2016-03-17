@@ -8,7 +8,7 @@
 		},
 		"mode" : {
 			"type" : "string",
-			"enum" : ["twist"]
+			"enum" : ["splay", "twist", "bend"]
 		},
 		"xrange": {
 			"type" : "array",

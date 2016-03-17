@@ -13,6 +13,13 @@ namespace SAPHRON
 {
 	using PosFilter =  std::function<bool(const Position&)>;
 
+	enum ElasticMode
+	{
+		Splay,
+		Bend,
+		Twist
+	};
+
 	// Class for elastic coefficient order parameter of liquid crystals, based on the 
 	// Frank-Oseen elastic free energy. 
 	class ElasticCoeffOP : public DOSOrderParameter, public ParticleObserver
@@ -35,6 +42,9 @@ namespace SAPHRON
 
 		// x-range for filter function.
 		std::array<double, 2> _xrange;
+
+		// Elastic mode. 
+		ElasticMode _mode;
 
 		// Update Q tensor by performing eigen decomposition.
 		void UpdateQTensor()
@@ -65,10 +75,10 @@ namespace SAPHRON
 		// Initialize ElasticCoeffOP class. A user supplied filter function will determine which 
 		// particles will contribute to the elastic order parameter (true for include, false otherwise).
 		// The value h represents the length over which to compute the derivative (dni/dxj).
-		ElasticCoeffOP(const Histogram& hist, World* world, double dxj, std::array<double, 2> xrange) : 
+		ElasticCoeffOP(const Histogram& hist, World* world, double dxj, std::array<double, 2> xrange, ElasticMode mode) : 
 			DOSOrderParameter(hist), _Q(arma::fill::zeros), _efunc(), _eigval(arma::fill::zeros), 
 			_eigvec(arma::fill::zeros), _imax(0), _pcount(0), _dxj(dxj), _wid(world->GetID()),
-			_xrange(xrange)
+			_xrange(xrange), _mode(mode)
 		{
 
 			_efunc = [=](const Position& pos) -> bool {
@@ -98,15 +108,26 @@ namespace SAPHRON
 		// Evaluate the order parameter.
 		virtual double EvaluateOrderParameter(const World&) const override
 		{
-			double dny = _eigvec(1, _imax).real();
+			double dni;
+			switch(_mode)
+			{
+				case Splay:
+					dni = _eigvec(0, _imax).real();
+					break;
+				case Twist:
+					dni = _eigvec(1, _imax).real();
+					break;
+				case Bend:
+					dni = _eigvec(0, _imax).real();
+			}
 
 			// We expect the eigenvector to point in the first two quadrants. 
-			// Flip sign of dny if it's not. This is to prevent fluctuations of the 
+			// Flip sign of dni if it's not. This is to prevent fluctuations of the 
 			// order parameter from one side to the other. 
-			dny = (_eigvec(2, _imax).real() < 0) ? -dny : dny;
+			dni = (_eigvec(2, _imax).real() < 0) ? -dni : dni;
 
-			// Return dny/dx. (this is twist, hardcoded for now). 
-			return dny/_dxj;
+			// Return dni/dx. (this is twist, hardcoded for now). 
+			return dni/_dxj;
 		}
 
 		// Update Q tensor on particle director change.
@@ -158,7 +179,19 @@ namespace SAPHRON
 		virtual void Serialize(Json::Value& json) const override
 		{
 			json["type"] = "ElasticCoeff";
-			json["mode"] = "twist";
+			
+			switch(_mode)
+			{
+				case Splay:
+					json["mode"] = "splay";
+					break;
+				case Twist:
+					json["mode"] = "twist";
+					break;
+				case Bend:
+					json["mode"] = "bend";
+			}
+			
 			json["world"] = _wid;
 			json["xrange"][0] = _xrange[0];
 			json["xrange"][1] = _xrange[1];

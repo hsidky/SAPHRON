@@ -106,8 +106,17 @@ namespace SAPHRON
 			// that the last x "layer" is anchored (at x = xmax). 
 			double mid = boxvec(0,0) - 0.5*(xmax + xmin);
 
+			auto mode = json["mode"].asString();
+			ElasticMode elmode;
+			if(mode == "splay")
+				elmode = Splay;
+			else if(mode == "twist")
+				elmode = Twist;
+			else
+				elmode = Bend;
+
 			// Initialize order parameter.
-			op = new ElasticCoeffOP(*hist, w, mid, {{xmin, xmax}});
+			op = new ElasticCoeffOP(*hist, w, mid, {{xmin, xmax}}, elmode);
 		}
 		else if(type == "ChargeFraction")
 		{

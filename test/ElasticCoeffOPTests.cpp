@@ -19,7 +19,7 @@ TEST(ElasticCoeffOP, Dynamics)
 	ASSERT_EQ(2, world.GetParticleCount());
 
 	Histogram hist(-0.02, 0.02, 200);
-	ElasticCoeffOP op(hist, &world, l/2., {{4.0, 6.0}});
+	ElasticCoeffOP op(hist, &world, l/2., {{4.0, 6.0}}, Twist);
 
 	ASSERT_EQ(0.0, op.EvaluateOrderParameter(world));
 
@@ -47,7 +47,7 @@ TEST(ElasticCoeffOP, DefaultBehavior)
 	// Initialize ElasticCoeffOP 
 	Histogram hist(-0.02, 0.02, 200);
 	int middle = ceil(n/2);
-	ElasticCoeffOP op(hist, &world, n - middle, {{(double)middle, (double)middle}});
+	ElasticCoeffOP op(hist, &world, n - middle, {{(double)middle, (double)middle}}, Twist);
 
 	ASSERT_EQ(0, op.EvaluateOrderParameter(world));
 
