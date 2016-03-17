@@ -56,4 +56,27 @@ TEST(Particle, DefaultBehavior)
 	particle.AddBond(0, 1);
 	ASSERT_TRUE(particle.IsBonded(0, 1));
 	ASSERT_EQ(2, particle.SiteCount());
+
+	// Test "copy" constructor.
+	std::vector<Site> sites;
+	NewParticle particle2(particle, sites);
+
+	ASSERT_EQ(particle2.GetPosition(), particle.GetPosition());
+	ASSERT_EQ(particle2.GetCharge(), particle.GetCharge());
+	ASSERT_EQ(particle2.GetMass(), particle.GetMass());
+	ASSERT_EQ(particle2.GetSpecies(), particle.GetSpecies());
+	ASSERT_EQ(particle2.GetBonds(), particle.GetBonds());
+	ASSERT_EQ(particle2.SiteCount(), particle.SiteCount());
+
+	ASSERT_EQ(site1.position, sites[0].position);
+	ASSERT_EQ(site1.director, sites[0].director);
+	ASSERT_EQ(site1.species, sites[0].species);
+	ASSERT_EQ(site1.charge, sites[0].charge);
+	ASSERT_EQ(site1.mass, sites[0].mass);
+
+	ASSERT_EQ(site2.position, sites[1].position);
+	ASSERT_EQ(site2.director, sites[1].director);
+	ASSERT_EQ(site2.species, sites[1].species);
+	ASSERT_EQ(site2.charge, sites[1].charge);
+	ASSERT_EQ(site2.mass, sites[1].mass);
 }

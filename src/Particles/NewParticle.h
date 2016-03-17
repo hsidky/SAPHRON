@@ -31,7 +31,27 @@ namespace SAPHRON
 		// Adjacency matrix for bonds.
 		BondMatrix bonds_;
 
+		// Private copy constructor. 
+		// No real benefit in copying this directly since someone must 
+		// own the container. 
+		NewParticle(const NewParticle& p);
+
 	public:
+		// Copy particle and store sites in container reference provided.
+		NewParticle(const NewParticle& p, std::vector<Site>& sites) : 
+		sites_(0), position_(p.position_), mass_(p.mass_), charge_(p.charge_),
+		species_(p.species_), bonds_(p.bonds_) 
+		{
+			// Copy sites.
+			for(auto& s : p)
+			{
+				sites.emplace_back(*s);
+				sites_.push_back(&sites.back());
+			}
+			UpdateConfiguration();
+		}
+
+		// New particle of type species with sites contained in plist.
 		NewParticle(uint species, const SiteList& plist) : 
 		sites_(plist), position_{0, 0, 0}, mass_(0), charge_(0),
 		species_(species), bonds_(plist.size(), plist.size())
@@ -108,7 +128,7 @@ namespace SAPHRON
 		}
 
 		// Get speices ID.
-		uint GetSpecies() { return species_; }
+		uint GetSpecies() const { return species_; }
 
 		// Adds a bond between sites i and j.
 		void AddBond(uint i, uint j)
