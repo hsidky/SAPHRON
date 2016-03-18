@@ -40,8 +40,8 @@ namespace SAPHRON
 		// World ID. 
 		int _wid;
 
-		// x-range for filter function.
-		std::array<double, 2> _xrange;
+		// Range for filter function.
+		std::array<double, 2> _range;
 
 		// Elastic mode. 
 		ElasticMode _mode;
@@ -75,15 +75,23 @@ namespace SAPHRON
 		// Initialize ElasticCoeffOP class. A user supplied filter function will determine which 
 		// particles will contribute to the elastic order parameter (true for include, false otherwise).
 		// The value h represents the length over which to compute the derivative (dni/dxj).
-		ElasticCoeffOP(const Histogram& hist, World* world, double dxj, std::array<double, 2> xrange, ElasticMode mode) : 
+		ElasticCoeffOP(const Histogram& hist, World* world, double dxj, std::array<double, 2> range, ElasticMode mode) : 
 			DOSOrderParameter(hist), _Q(arma::fill::zeros), _efunc(), _eigval(arma::fill::zeros), 
 			_eigvec(arma::fill::zeros), _imax(0), _pcount(0), _dxj(dxj), _wid(world->GetID()),
-			_xrange(xrange), _mode(mode)
+			_range(range), _mode(mode)
 		{
-
-			_efunc = [=](const Position& pos) -> bool {
-				return pos[0] >= _xrange[0] && pos[0] <= _xrange[1];
-			};
+			if(_mode == Bend)
+			{
+				_efunc = [=](const Position& pos) -> bool {
+					return pos[2] >= _range[0] && pos[2] <= _range[1];
+				};
+			}
+			else
+			{
+				_efunc = [=](const Position& pos) -> bool {
+					return pos[0] >= _range[0] && pos[0] <= _range[1];
+				};
+			}
 
 			for (int i = 0; i < world->GetParticleCount(); ++i)
 			{
@@ -193,8 +201,8 @@ namespace SAPHRON
 			}
 			
 			json["world"] = _wid;
-			json["xrange"][0] = _xrange[0];
-			json["xrange"][1] = _xrange[1];
+			json["range"][0] = _range[0];
+			json["range"][1] = _range[1];
 		}
 
 		// Get layer director.

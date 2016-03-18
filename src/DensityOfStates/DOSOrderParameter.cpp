@@ -90,22 +90,13 @@ namespace SAPHRON
 
 			auto* w = wm->GetWorld(windex);
 
-			// Get x interval and check bounds.
-			auto xmin = json["xrange"][0].asDouble();
-			auto xmax = json["xrange"][1].asDouble();
-			if(xmin > xmax)
-				throw BuildException({"#orderparameter/xrange: xmin cannot exceed xmax."});
+			// Get range and check bounds.
+			auto rmin = json["range"][0].asDouble();
+			auto rmax = json["range"][1].asDouble();
+			if(rmin > rmax)
+				throw BuildException({"#orderparameter/range: rmin cannot exceed rmax."});
 
-			// TODO: Generalize (in particular lambda fxn) for
-			// many geometries.
-			const auto& boxvec = w->GetHMatrix();
-			if(xmin < 0 || xmax > boxvec(0,0))
-				throw BuildException({"#orderparameter/xrange: xmin and xmax must be within world."});
-
-			// Compute midpoint for deformation. This assumes 
-			// that the last x "layer" is anchored (at x = xmax). 
-			double mid = boxvec(0,0) - 0.5*(xmax + xmin);
-
+			// Get mode.
 			auto mode = json["mode"].asString();
 			ElasticMode elmode;
 			if(mode == "splay")
@@ -115,8 +106,21 @@ namespace SAPHRON
 			else
 				elmode = Bend;
 
+			// TODO: Generalize (in particular lambda fxn) for
+			// many geometries.
+			const auto& boxvec = w->GetHMatrix();
+
+			// Get length of appropriate dimension.
+			auto rlen = (elmode == Bend) ? boxvec(2,2) : boxvec(0,0);
+			if(rmin < 0 || rmax > rlen)
+				throw BuildException({"#orderparameter/range: rmin and rmax must be within world."});
+
+			// Compute midpoint for deformation. This assumes 
+			// that the last "layer" is anchored.
+			double mid = rlen - 0.5*(rmax + rmin);
+
 			// Initialize order parameter.
-			op = new ElasticCoeffOP(*hist, w, mid, {{xmin, xmax}}, elmode);
+			op = new ElasticCoeffOP(*hist, w, mid, {{rmin, rmax}}, elmode);
 		}
 		else if(type == "ChargeFraction")
 		{

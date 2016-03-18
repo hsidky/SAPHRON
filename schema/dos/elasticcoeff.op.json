@@ -10,7 +10,7 @@
 			"type" : "string",
 			"enum" : ["splay", "twist", "bend"]
 		},
-		"xrange": {
+		"range": {
 			"type" : "array",
 			"items" : {
 				"type" : "number"
@@ -23,6 +23,6 @@
 			"minimum" : 0
 		}
 	},
-	"required" : ["type", "mode", "xrange", "world"],
+	"required" : ["type", "mode", "range", "world"],
 	"additionalProperties" : false
 }
