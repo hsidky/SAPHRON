@@ -1,6 +1,7 @@
 #pragma once 
 #include <Eigen/Dense>
 #include <iostream>
+#include <armadillo>
 
 namespace SAPHRON
 {
@@ -10,9 +11,10 @@ namespace SAPHRON
 	// Structure for interaction site.
 	struct Site
 	{
-		Vector3 position;
+		Vector3 position = {0, 0, 0};
 		Vector3 director = {0, 0, 1};
-		uint species;
+		uint species = 0;
+		uint pid = 0;
 		double charge = 0.0;
 		double mass = 1.0;
 	};
@@ -31,17 +33,13 @@ namespace SAPHRON
 		// Adjacency matrix for bonds.
 		BondMatrix bonds_;
 
-		// Private copy constructor. 
-		// No real benefit in copying this directly since someone must 
-		// own the container. 
-		NewParticle(const NewParticle& p);
-
 	public:
 		// Copy particle and store sites in container reference provided.
 		NewParticle(const NewParticle& p, std::vector<Site>& sites) : 
 		sites_(0), position_(p.position_), mass_(p.mass_), charge_(p.charge_),
 		species_(p.species_), bonds_(p.bonds_) 
 		{
+			sites.reserve(sites.size() + p.SiteCount());
 			// Copy sites.
 			for(auto& s : p)
 			{
