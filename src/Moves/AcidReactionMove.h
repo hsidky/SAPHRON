@@ -252,6 +252,10 @@ namespace SAPHRON
 			// Evaluate initial energy. 
 			EPTuple ei, ef;
 
+			// Get previous tail energy and pressure.
+			auto wei = w->GetEnergy();
+			auto wpi = w->GetPressure();
+
 			if(RxnExtent == -1)
 			{
 				Nratio = comp2*compph/(comp1 + 1.0);
@@ -292,6 +296,13 @@ namespace SAPHRON
 				ef += ffm->EvaluateEnergy(*ph);
 				lambdaratio = pow(_m2/_m1,3.0/2.0);
 			}
+
+			// Evaluate current tail energy and add diff to energy.
+			auto wef = ffm->EvaluateTailEnergy(*w);
+			ef.energy.tail = wef.energy.tail;
+			ef.pressure.ptail = wef.pressure.ptail;
+			ei.energy.tail= wei.tail;
+			ei.pressure.ptail = wpi.ptail;
 
 			++_performed;
 
