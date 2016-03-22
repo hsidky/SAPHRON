@@ -188,7 +188,7 @@ namespace SAPHRON
 
 			// The acceptance rule is from Frenkel & Smit Eq. 5.6.8.
 			// However,t iwas modified since we are using the *final* particle number.
-			auto pacc = Prefactor*exp(-beta*ef.energy.total());;
+			auto pacc = Prefactor*exp(-beta*ef.energy.total());
 			pacc = pacc > 1.0 ? 1.0 : pacc;
 
 			if(!(override == ForceAccept) && (pacc < _rand.doub() || override == ForceReject))
