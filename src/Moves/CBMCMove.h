@@ -49,9 +49,9 @@ namespace SAPHRON
 		{
 			// Get species and initialize all dx's with zeros.
 			auto& list = Particle::GetSpeciesList();
-			_startingbead.resize(list.size(), 0);
+			_sstartingbead.resize(list.size(), 0);
 
-			for(auto& id : startbead)
+			for(auto& id : StartBead)
 			{	
 				if(id.first >= (int)list.size())
 				{
@@ -75,7 +75,7 @@ namespace SAPHRON
 		{
 			// Get species and initialize all dx's with zeros.
 			auto& list = Particle::GetSpeciesList();
-			_startingbead.resize(list.size(), 0);
+			_sstartingbead.resize(list.size(), 0);
 			_species.resize(StartBead.size());
 
 			for(auto& id : StartBead)
@@ -88,7 +88,7 @@ namespace SAPHRON
 							  << std::endl;
 					exit(-1);
 				}
-				_startingbead[it - list.begin()] = id.second;
+				_sstartingbead[it - list.begin()] = id.second;
 				_species.push_back(it - list.begin());
 			}
 		}
@@ -100,9 +100,11 @@ namespace SAPHRON
 		{
 		}
 
-		PlaceBeads(Particle* particle, double& rosenbluth, World* w, EPTuple& EP, bool retrace)
+		void PlaceBeads(Particle* particle, double& rosenbluth,
+		double& beta, World* w, ForceFieldManager* ffm,
+		EPTuple& EP, bool retrace)
 		{
-			auto* bondedneighbor = particle.GetBondedNeighbors()
+			auto& bondedneighbor = particle->GetBondedNeighbors();
 
 			for(size_t i = 0; i < bondedneighbor.size(); i++)
 			{
@@ -116,25 +118,25 @@ namespace SAPHRON
 				}
 				
 				double sumrosenbluth = 0;
-				for (size_t i = 0; i < _numexploration; i++)
+				for (size_t j = 0; i < _numexploration; i++)
 				{
-					if(!retrace && i!=0)
+					if(!retrace && j!=0)
 					{
 						double r = _rand.doub()*(_maxr - _minr) + _minr;
 
 						// Random Placement on sphere, dont forget boundary conditions
-						Position newPos({pos1, pos2, pos3});
+						Position newPos({0.0, 0.0, 0.0});
 						w->ApplyPeriodicBoundaries(&newPos);
-						_positions[i] = newPos;
+						_positions[j] = newPos;
 
-						bondedneighbor[i]->SetPosition(_positions[i]);
+						bondedneighbor[i]->SetPosition(_positions[j]);
 						w->CheckNeighborListUpdate(bondedneighbor[i]);
 					}
 
 					//Store trial widoms
-					_wenergy[i] = ffm->EvaluateEnergy(*bondedneighbor[i]);
-					_rosenbluths[i] = exp(-beta*_wenergy[i].energy.total());
-					sumrosenbluth += _rosenbluths[i];
+					_wenergy[j] = ffm->EvaluateEnergy(*bondedneighbor[i]);
+					_rosenbluths[j] = exp(-beta*_wenergy[j].energy.total());
+					sumrosenbluth += _rosenbluths[j];
 				}
 
 				rosenbluth *= sumrosenbluth;
@@ -147,29 +149,28 @@ namespace SAPHRON
 				{
 					double prob = sumrosenbluth*_rand.doub();
 
-					int i = 0;
-					sumrosenbluth = _rosenbluths[i];
-					while(prob >= sumrosenbluth && i < _numexploration)
+					int j = 0;
+					sumrosenbluth = _rosenbluths[j];
+					while(prob >= sumrosenbluth && j < _numexploration)
 					{
-						i++;
-						sumrosenbluth += _rosenbluths[i];
+						j++;
+						sumrosenbluth += _rosenbluths[j];
 					}
 
-					bondedneighbor->SetPosition(_positions[i]);
+					bondedneighbor[i]->SetPosition(_positions[j]);
 					
-					EP += _wenergy[i];
+					EP += _wenergy[j];
 				}
 
-				PlaceBeads(bondedneighbor[i], rosenbluth, w, EP, retrace);
+				PlaceBeads(bondedneighbor[i], rosenbluth, beta, w, ffm, EP, retrace);
 			}
 		}
 
-		EPTuple PlaceFirstBead(Particle* particle, double& rosenbluth, double& beta, World* w, bool retrace)
+		EPTuple PlaceFirstBead(Particle* particle, double& rosenbluth,
+		double& beta, World* w, ForceFieldManager* ffm, bool retrace)
 		{
 
-			auto& sim = SimInfo::Instance();
-			auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
-
+			const auto& H = w->GetHMatrix();
 			if(!retrace)
 			{
 				Vector3D pr{_rand.doub(), _rand.doub(), _rand.doub()};
@@ -277,21 +278,21 @@ namespace SAPHRON
 			// Remove particle from the world so you can regrow it
 			w->RemoveParticle(particle);
 
+			auto& sim = SimInfo::Instance();
+			auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
+
 			// Retrace old configuration (true)
-			EPTuple ei = PlaceFirstBead(child, oldrosenbluth, w, true);
-			PlaceBeads(child, oldrosenbluth, w, ei, true);
+			EPTuple ei = PlaceFirstBead(child, oldrosenbluth, beta, w, ffm, true);
+			PlaceBeads(child, oldrosenbluth, beta, w, ffm, ei, true);
 			
 			// Grow new configuration (false)
-			EPTuple ef = PlaceFirstBead(child, newrosenbluth, w, false);
-			PlaceBeads(child, newrosenbluth, w, ef, false);
+			EPTuple ef = PlaceFirstBead(child, newrosenbluth, beta, w, ffm, false);
+			PlaceBeads(child, newrosenbluth, beta, w, ffm, ef, false);
 			
 			++_performed;	
 
 			ef.energy.constraint = ffm->EvaluateConstraintEnergy(*w);
 			Energy de = ef.energy - ei.energy;
-
-			auto& sim = SimInfo::Instance();
-			auto beta = 1.0/(sim.GetkB()*w->GetTemperature());
 
 			// Acceptance probability.
 			double p = newrosenbluth/oldrosenbluth*exp(-beta*de.total());
@@ -343,7 +344,7 @@ namespace SAPHRON
 			json["maxr"] = _maxr;
 			json["trials"] = _numexploration;
 
-			if(_startingbead.size() != 0)
+			if(_sstartingbead.size() != 0)
 			{
 				auto& species = Particle::GetSpeciesList();
 				for(size_t i = 0; i < species.size(); ++i)
@@ -361,7 +362,7 @@ namespace SAPHRON
 		// Clone move.
 		Move* Clone() const override
 		{
-			return new TranslateMove(static_cast<const TranslateMove&>(*this));
+			return new CBMCMove(static_cast<const CBMCMove&>(*this));
 		}
 	};
 }

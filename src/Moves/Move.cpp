@@ -23,7 +23,7 @@
 #include "AcidTitrationMove.h"
 #include "AcidReactionMove.h"
 #include "WidomInsertionMove.h"
-#include "RegrowParticleMove.h"
+#include "CBMCMove.h"
 
 using namespace Json;
 
@@ -141,14 +141,14 @@ namespace SAPHRON
 
 				auto expl = json.get("explicit_draw", false).asBool();
 
-				move = new TranslateMove(minr, maxr, StartingBead, trials, expl, seed);
+				move = new CBMCMove(minr, maxr, StartingBead, trials, expl, seed);
 			}
 			else
 			{
 				auto StartingBead = json["starting bead"].asInt();
 
 				auto expl = json.get("explicit_draw", false).asBool();
-				move = new TranslateMove(minr, maxr, StartingBead, trials, expl, seed);
+				move = new CBMCMove(minr, maxr, StartingBead, trials, expl, seed);
 			}
 		}
 		else if(type == "DeleteParticle")
