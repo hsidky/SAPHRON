@@ -295,6 +295,12 @@ target_include_directories(AcidTitrationMoveTests PRIVATE "${GTEST_INCLUDE_DIR}"
 add_dependencies(AcidTitrationMoveTests googletest) 
 add_test(AcidTitrationMoveTests AcidTitrationMoveTests)
 
+add_executable(AcidReactionMoveTests test/AcidReactionMoveTests.cpp)
+target_link_libraries(AcidReactionMoveTests ${TEST_DEPS})
+target_include_directories(AcidReactionMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(AcidReactionMoveTests googletest) 
+add_test(AcidReactionMoveTests AcidReactionMoveTests)
+
 add_executable(FlipSpinMoveTests test/FlipSpinMoveTests.cpp)
 target_link_libraries(FlipSpinMoveTests ${TEST_DEPS})
 target_include_directories(FlipSpinMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
