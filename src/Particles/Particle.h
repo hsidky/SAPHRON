@@ -55,6 +55,9 @@ namespace SAPHRON
 		double _charge;
 		double _mass;
 
+		// Used in CBMC
+		bool _visited;
+
 		// String species.
 		std::string _species;
 
@@ -116,8 +119,8 @@ namespace SAPHRON
 		// Initialize a particle with a particular species. This string 
 		// represents the global type species for this particle.
 		Particle(const Position& pos, const Director& dir, std::string species) : 
-		_position(pos), _director(dir), _checkpoint(), _charge(0), _mass(1.0), _species(species), 
-		_speciesID(0), _neighbors(0), _bondedneighbors(0), 
+		_position(pos), _director(dir), _checkpoint(), _charge(0), _mass(1.0), _visited(false),
+		_species(species), _speciesID(0), _neighbors(0), _bondedneighbors(0), 
 		_children(0), _observers(), _globalID(-1), _world(nullptr), _parent(nullptr),
 		_connectivities(0), _pEvent(this)
 		{
@@ -131,8 +134,8 @@ namespace SAPHRON
 		// Initialize a particle with a particular species. This string 
 		// represents the global type species for this particle.
 		Particle(std::string species) : 
-		_position(), _director(), _checkpoint(), _charge(0), _mass(1.0), _species(species), 
-		_speciesID(0), _neighbors(0), _bondedneighbors(0), 
+		_position(), _director(), _checkpoint(), _charge(0), _mass(1.0), _visited(false),
+		_species(species), _speciesID(0), _neighbors(0), _bondedneighbors(0), 
 		_children(0), _observers(), _globalID(-1), _world(nullptr), _parent(nullptr),
 		_connectivities(0), _pEvent(this)
 		{
@@ -147,11 +150,11 @@ namespace SAPHRON
 		Particle(const Particle& particle) : 
 		_position(particle._position), _director(particle._director),
 		_checkpoint(particle._checkpoint), _charge(particle._charge), 
-		_mass(particle._mass), _species(particle._species), _speciesID(particle._speciesID), 
-		_neighbors(particle._neighbors), _bondedneighbors(0), _children(0), 
-		_observers(particle._observers), _globalID(-1),	_world(particle._world), 
-		_parent(particle._parent), _connectivities(particle._connectivities), 
-		_pEvent(this)
+		_mass(particle._mass), _visited(particle._visited), _species(particle._species),
+		_speciesID(particle._speciesID), _neighbors(particle._neighbors),
+		_bondedneighbors(0), _children(0), _observers(particle._observers), _globalID(-1), 
+		_world(particle._world), _parent(particle._parent), 
+		_connectivities(particle._connectivities), _pEvent(this)
 		{
 			_globalID = SetGlobalIdentifier(GetNextGlobalID());
 			for(const auto& child : particle)
@@ -391,6 +394,23 @@ namespace SAPHRON
 			_mass = mass;
 		}
 
+		// Get the visited state of a particle.
+		bool GetVisit() const 
+		{
+			return _visited;
+		}
+
+		void SetVisit(bool visited)
+		{
+			if(_children.size() != 0)
+			{
+				std::cerr << "ERROR: Cannot set the mass for a molecule directly." << std::endl;
+				exit(-1);
+			}
+
+			_visited = visited;
+		}
+		
 		/****************************
 		 *                          *
 		 *      Basic helpers       *
