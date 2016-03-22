@@ -23,6 +23,7 @@
 #include "AcidTitrationMove.h"
 #include "AcidReactionMove.h"
 #include "WidomInsertionMove.h"
+#include "RegrowParticleMove.h"
 
 using namespace Json;
 
@@ -117,6 +118,38 @@ namespace SAPHRON
 				species.push_back(s.asString());
 
 			move = new AnnealChargeMove(species, seed);
+		}
+		else if(type == "CBMC")
+		{
+			reader.parse(JsonSchema::CBMCMove, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			auto minr = json["minr"].asDouble();
+			auto maxr = json["maxr"].asDouble();
+			auto trials = json.get("trials", 8).asInt();
+
+			if(json["starting bead"].isObject())
+			{
+				std::map<std::string, int> StartingBead; 
+				for(auto& s : json["starting bead"].getMemberNames())
+					StartingBead[s] = json["starting bead"][s].asInt();
+
+				auto expl = json.get("explicit_draw", false).asBool();
+
+				move = new TranslateMove(minr, maxr, StartingBead, trials, expl, seed);
+			}
+			else
+			{
+				auto StartingBead = json["starting bead"].asInt();
+
+				auto expl = json.get("explicit_draw", false).asBool();
+				move = new TranslateMove(minr, maxr, StartingBead, trials, expl, seed);
+			}
 		}
 		else if(type == "DeleteParticle")
 		{

@@ -1,0 +1,60 @@
+{
+	"type" : "object",
+	"varname" : "CBMCMove",
+	"properties" : {
+		"type" : { 
+			"type" : "string",
+			"enum" : ["CBMC"]
+		},
+		"species" : {
+			"type" : "array",
+			"items" : {
+				"type" : "string"
+			},
+			"minimumItems" : 1
+		},
+		"seed" : {
+			"type" : "integer",
+			"minimum" : 0
+		},
+		"minr" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"maxr" : {
+			"type" : "number"
+		},
+		"starting bead" : {
+			"oneOf" : [
+				{
+					"type" : "integer",
+					"minimum" : 0
+				},
+				{
+					"type" : "object",
+					"patternProperties": {
+						"^[A-z][A-z0-9]+$": {
+                            "minimum": 0,
+                            "type": "integer"
+                   		}
+					},
+					"minProperties" : 1
+				}
+			]
+		},
+		"explicit_draw" : {
+			"type" : "boolean"
+		},
+		"trials" :{
+			"type" : "integer",
+			"minimum" : 1,
+			"maximum" : 8
+		},
+		"weight" : {
+			"type" : "integer",
+			"minimum" : 1
+		}
+	},
+	"required" : ["type", "species", "starting bead", "minr", "maxr"],
+	"additionalProperties": false
+}
