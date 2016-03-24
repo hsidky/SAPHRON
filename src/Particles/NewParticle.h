@@ -20,11 +20,13 @@ namespace SAPHRON
 	};
 
 	using SiteList = std::vector<Site*>;
+	using IndexList = std::vector<uint>;
 
 	class NewParticle
 	{
 	private:
-		SiteList sites_;
+		std::vector<Site>& sites_;
+		IndexList indices_;
 		Vector3 position_;
 		double mass_;
 		double charge_;
@@ -36,23 +38,24 @@ namespace SAPHRON
 	public:
 		// Copy particle and store sites in container reference provided.
 		NewParticle(const NewParticle& p, std::vector<Site>& sites) : 
-		sites_(0), position_(p.position_), mass_(p.mass_), charge_(p.charge_),
-		species_(p.species_), bonds_(p.bonds_) 
+		sites_(sites), indices_(0), position_(p.position_), mass_(p.mass_), 
+		charge_(p.charge_), species_(p.species_), bonds_(p.bonds_) 
 		{
 			sites.reserve(sites.size() + p.SiteCount());
 			// Copy sites.
-			for(auto& s : p)
+			for(uint i = 0; i < p.indices_.size(); ++i)
 			{
-				sites.emplace_back(*s);
-				sites_.push_back(&sites.back());
+				sites.emplace_back(p.sites_[p.indices_[i]]);
+				indices_.push_back(sites.size() - 1);
 			}
 			UpdateConfiguration();
 		}
 
-		// New particle of type species with sites contained in plist.
-		NewParticle(uint species, const SiteList& plist) : 
-		sites_(plist), position_{0, 0, 0}, mass_(0), charge_(0),
-		species_(species), bonds_(plist.size(), plist.size())
+		// New particle of type species with sites contained in sites vector at locations
+		// specified in indices.
+		NewParticle(uint species, const IndexList& indices, std::vector<Site>& sites) : 
+		sites_(sites), indices_(indices), position_{0, 0, 0}, mass_(0), charge_(0),
+		species_(species), bonds_(sites.size(), sites.size())
 		{
 			bonds_.fill(0);
 			UpdateConfiguration();
@@ -65,8 +68,8 @@ namespace SAPHRON
 		void SetPosition(const Vector3& position)
 		{
 			auto pos = position - position_;
-			for(auto& p : sites_)
-				p->position += pos;
+			for(auto& i : indices_)
+				sites_[i].position += pos;
 
 			position_ = position;
 		}
@@ -74,55 +77,64 @@ namespace SAPHRON
 		// Get position of individual site.
 		const Vector3& GetPosition(uint i) const
 		{
-			return sites_[i]->position;
+			return sites_[indices_[i]].position;
 		}
 
 		// Set position of individual site.
 		void SetPosition(uint i, const Vector3& pos)
 		{
-			auto& data = sites_[i];
-			auto dp = pos - data->position;
-			position_ += data->mass/mass_*dp;
-			data->position = pos;
+			auto& data = sites_[indices_[i]];
+			auto dp = pos - data.position;
+			position_ += data.mass/mass_*dp;
+			data.position = pos;
 		}
 
 		// Get overall particle charge.
 		double GetCharge() const { return charge_; }
 
 		// Return charge of individual site.
-		double GetCharge(uint i) const { return sites_[i]->charge; }
+		double GetCharge(uint i) const 
+		{ 
+			return sites_[indices_[i]].charge; 
+		}
 
 		// Set charge of individual site.
 		void SetCharge(uint i, double q) 
 		{
-			auto& data = sites_[i];
-			auto dc = q - data->charge;
+			auto& data = sites_[indices_[i]];
+			auto dc = q - data.charge;
 			charge_ += dc;
-			data->charge = q;
+			data.charge = q;
 		}
 
 		// Get director of individual site.
-		const Vector3& GetDirector(uint i) const { return sites_[i]->director; }
+		const Vector3& GetDirector(uint i) const 
+		{ 
+			return sites_[indices_[i]].director; 
+		}
 
 		// Set director of individual site.
 		void SetDirector(uint i, const Vector3& dir)
 		{
-			sites_[i]->director = dir;
+			sites_[indices_[i]].director = dir;
 		}
 
 		// Get particle mass.
 		double GetMass() const { return mass_; }
 
 		// Get mass of individual site.
-		double GetMass(uint i) const { return sites_[i]->mass; }
+		double GetMass(uint i) const 
+		{ 
+			return sites_[indices_[i]].mass; 
+		}
 
 		// Set mass of individual site.
 		void SetMass(uint i, double mass)
 		{
-			auto& data = sites_[i];
-			auto dm = mass - data->mass;
+			auto& data = sites_[indices_[i]];
+			auto dm = mass - data.mass;
 			mass_ += dm;
-			data->mass = mass;
+			data.mass = mass;
 		}
 
 		// Get speices ID.
@@ -163,19 +175,14 @@ namespace SAPHRON
 			mass_ = 0;
 			charge_ = 0;
 			position_ = {0, 0, 0};
-			for(auto& p : sites_)
+			for(auto& i : indices_)
 			{
-				position_ += p->position;
-				mass_ += p->mass;
-				charge_ += p->charge;
+				position_ += sites_[i].position;
+				mass_ += sites_[i].mass;
+				charge_ += sites_[i].charge;
 			}
 
 			position_ /= mass_;
 		}
-
-		// Iterators.
-		using const_iterator = SiteList::const_iterator;
-		const_iterator begin() const { return sites_.begin(); }
-		const_iterator end() const { return sites_.end(); }
 	};
 }

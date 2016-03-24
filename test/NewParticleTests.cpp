@@ -6,11 +6,13 @@ using namespace SAPHRON;
 TEST(Particle, DefaultBehavior)
 {
 	// Test basic methods, getters and setters.
-	Site site1, site2;
-	site1.position = {1, 1, 2};
-	site2.position = {1, 1, 4};
+	std::vector<Site> sites;
+	sites.push_back(Site());
+	sites.push_back(Site());
+	sites[0].position = {1, 1, 2};
+	sites[1].position = {1, 1, 4};
 
-	NewParticle particle(0, {&site1, &site2});
+	NewParticle particle(0, {0, 1}, sites);
 
 	Vector3 pos{1,1,3};
 	ASSERT_EQ(pos, particle.GetPosition());
@@ -58,8 +60,8 @@ TEST(Particle, DefaultBehavior)
 	ASSERT_EQ(2, particle.SiteCount());
 
 	// Test "copy" constructor.
-	std::vector<Site> sites;
-	NewParticle particle2(particle, sites);
+	std::vector<Site> csites;
+	NewParticle particle2(particle, csites);
 
 	ASSERT_EQ(particle2.GetPosition(), particle.GetPosition());
 	ASSERT_EQ(particle2.GetCharge(), particle.GetCharge());
@@ -68,15 +70,15 @@ TEST(Particle, DefaultBehavior)
 	ASSERT_EQ(particle2.GetBonds(), particle.GetBonds());
 	ASSERT_EQ(particle2.SiteCount(), particle.SiteCount());
 
-	ASSERT_EQ(site1.position, sites[0].position);
-	ASSERT_EQ(site1.director, sites[0].director);
-	ASSERT_EQ(site1.species, sites[0].species);
-	ASSERT_EQ(site1.charge, sites[0].charge);
-	ASSERT_EQ(site1.mass, sites[0].mass);
+	ASSERT_EQ(sites[0].position, csites[0].position);
+	ASSERT_EQ(sites[0].director, csites[0].director);
+	ASSERT_EQ(sites[0].species, csites[0].species);
+	ASSERT_EQ(sites[0].charge, csites[0].charge);
+	ASSERT_EQ(sites[0].mass, csites[0].mass);
 
-	ASSERT_EQ(site2.position, sites[1].position);
-	ASSERT_EQ(site2.director, sites[1].director);
-	ASSERT_EQ(site2.species, sites[1].species);
-	ASSERT_EQ(site2.charge, sites[1].charge);
-	ASSERT_EQ(site2.mass, sites[1].mass);
+	ASSERT_EQ(sites[1].position, csites[1].position);
+	ASSERT_EQ(sites[1].director, csites[1].director);
+	ASSERT_EQ(sites[1].species, csites[1].species);
+	ASSERT_EQ(sites[1].charge, csites[1].charge);
+	ASSERT_EQ(sites[1].mass, csites[1].mass);
 }
