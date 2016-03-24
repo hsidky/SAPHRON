@@ -135,25 +135,26 @@ include_directories("${ARMA_INCLUDE}")
 include_directories("${EIGEN_INCLUDE}")
 
 set(SOURCE
-	src/Constraints/Constraint.cpp
-	src/DensityOfStates/DOSOrderParameter.cpp
-	src/ForceFields/ForceField.cpp
-	src/ForceFields/ForceFieldManager.cpp
-	src/JSON/jsoncpp.cpp
-	src/JSON/schema.cpp
-	src/Moves/Move.cpp
-	src/Observers/DLMFileObserver.cpp
-	src/Observers/JSONObserver.cpp
-	src/Observers/XYZObserver.cpp
-	src/Particles/Particle.cpp
-	src/Simulation/SimObservable.cpp
-	src/Simulation/SimObserver.cpp
-	src/Simulation/DOSSimulation.cpp
-	src/Simulation/Simulation.cpp
-	src/Simulation/StandardSimulation.cpp
-	src/Utils/Histogram.cpp
-	src/Worlds/World.cpp
-	src/Validator/RequirementLoader.cpp
+	src/Worlds/NewWorld.cpp
+	#src/Constraints/Constraint.cpp
+	#src/DensityOfStates/DOSOrderParameter.cpp
+	#src/ForceFields/ForceField.cpp
+	#src/ForceFields/ForceFieldManager.cpp
+	#src/JSON/jsoncpp.cpp
+	#src/JSON/schema.cpp
+	#src/Moves/Move.cpp
+	#src/Observers/DLMFileObserver.cpp
+	#src/Observers/JSONObserver.cpp
+	#src/Observers/XYZObserver.cpp
+	#src/Particles/Particle.cpp
+	#src/Simulation/SimObservable.cpp
+	#src/Simulation/SimObserver.cpp
+	#src/Simulation/DOSSimulation.cpp
+	#src/Simulation/Simulation.cpp
+	#src/Simulation/StandardSimulation.cpp
+	#src/Utils/Histogram.cpp
+	#src/Worlds/World.cpp
+	#src/Validator/RequirementLoader.cpp
 )
 
 
@@ -174,11 +175,11 @@ set_target_properties(libsaphron PROPERTIES PREFIX "")
 target_link_libraries(libsaphron ${SAPH_LIBS})
 add_dependencies(libsaphron schema)
 
-add_executable(saphron 
-	src/main.cpp 
-	src/Simulation/SimBuilder.cpp
-)
-target_link_libraries(saphron ${SAPH_LIBS} libsaphron)
+# add_executable(saphron 
+# 	src/main.cpp 
+# 	src/Simulation/SimBuilder.cpp
+# )
+# target_link_libraries(saphron ${SAPH_LIBS} libsaphron)
 
 # Require C++11
 set_property(TARGET libsaphron PROPERTY CXX_STANDARD 11)
@@ -187,7 +188,8 @@ set_property(TARGET libsaphron PROPERTY CXX_STANDARD_REQUIRED ON)
 # Configure flags 
 # - Globals
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math -pthread -std=c++11")
-set_target_properties(libsaphron saphron PROPERTIES COMPILE_FLAGS "-Wall -Wextra")
+#set_target_properties(libsaphron saphron PROPERTIES COMPILE_FLAGS "-Wall -Wextra")
+set_target_properties(libsaphron PROPERTIES COMPILE_FLAGS "-Wall -Wextra")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-as-needed")
 
 if(SAPHRON_OPENMP)
@@ -235,6 +237,12 @@ target_link_libraries(NewParticleTests ${TEST_DEPS})
 target_include_directories(NewParticleTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(NewParticleTests googletest) 
 add_test(NewParticleTests NewParticleTests)
+
+add_executable(NewWorldTests test/NewWorldTests.cpp)
+target_link_libraries(NewWorldTests ${TEST_DEPS})
+target_include_directories(NewWorldTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(NewWorldTests googletest) 
+add_test(NewWorldTests NewWorldTests)
 
 # add_executable(ConstraintTests test/ConstraintTests.cpp)
 # target_link_libraries(ConstraintTests ${TEST_DEPS})
@@ -509,11 +517,11 @@ add_test(NewParticleTests NewParticleTests)
 
 # end add testing 
 
-install(TARGETS saphron libsaphron 
-	RUNTIME DESTINATION bin PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-	LIBRARY DESTINATION lib PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ 
-	ARCHIVE DESTINATION lib PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
-)
+# install(TARGETS saphron libsaphron 
+# 	RUNTIME DESTINATION bin PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+# 	LIBRARY DESTINATION lib PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ 
+# 	ARCHIVE DESTINATION lib PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
+# )
 
 message(STATUS "CMAKE_CXX_FLAGS           = ${CMAKE_CXX_FLAGS}"          )
 message(STATUS "CMAKE_SHARED_LINKER_FLAGS = ${CMAKE_SHARED_LINKER_FLAGS}")

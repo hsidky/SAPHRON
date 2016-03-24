@@ -46,7 +46,7 @@ TEST(BlueprintManager, DefaultBehavior)
 	site1.position = {1, 1, -2};
 	site2.position = {1, 1, 2};
 	std::vector<Site> psites{site1, site2};
-	NewParticle p1{bp.GetNextID(), {0, 1}, psites};
+	NewParticle p1{bp.GetNextID(), {0, 1}, &psites};
 	bp.AddBlueprint("P1", p1);
 	ASSERT_EQ(1, bp.GetBlueprintCount());
 	ASSERT_EQ(4, bp.GetBlueprintSize());

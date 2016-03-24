@@ -12,7 +12,7 @@ TEST(Particle, DefaultBehavior)
 	sites[0].position = {1, 1, 2};
 	sites[1].position = {1, 1, 4};
 
-	NewParticle particle(0, {0, 1}, sites);
+	NewParticle particle(0, {0, 1}, &sites);
 
 	Vector3 pos{1,1,3};
 	ASSERT_EQ(pos, particle.GetPosition());
