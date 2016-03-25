@@ -79,7 +79,8 @@ namespace SAPHRON
 
 	public: 
 		NewWorld(double x, double y, double z, double ncut, uint seed) : 
-		ncut_(ncut), ncutsq_(ncut*ncut), H_(), Hinv_(), periodx_(true),
+		ncut_(ncut), ncutsq_(ncut*ncut), H_(Eigen::Matrix3d::Zero()), 
+		Hinv_(Eigen::Matrix3d::Zero()), periodx_(true),
 		periody_(true), periodz_(true), temperature_(0.), particles_(),
 		sites_(0), rand_(seed), sitecomp_(0), particlecomp_(0), seed_(seed), 
 		id_(nextID_++)
@@ -162,15 +163,15 @@ namespace SAPHRON
 		}
 
 		// Select particle by location.
-		NewParticle* SelectParticle(uint loc)
+		NewParticle* SelectParticle(uint i)
 		{
-			return &particles_[loc];
+			return &particles_[i];
 		}
 
 		// Add particle. 
 		void AddParticle(const NewParticle&  p)
 		{
-			particles_.push_back(NewParticle(p, sites_));
+			particles_.emplace_back(NewParticle(p, sites_));
 			AddParticleComposition(particles_.back());
 			particles_.back().SetIndex(particles_.size() - 1);
 		}
@@ -189,6 +190,25 @@ namespace SAPHRON
 			// Finally delete particle.
 			particles_.erase(particles_.begin() + p.GetIndex());
 		}
+
+		// Packs a world with the given particle blueprints and 
+		// compositions to with "count" total particles and a 
+		// specified density.
+		void PackWorld(const std::vector<NewParticle*>& particles,
+					   const std::vector<double>& fractions, 
+					   int count, double density);
+
+		// Get world volume.
+		double GetVolume() const
+		{
+			return H_.determinant();
+		}
+
+		// Get world temperature.
+		double GetTemperature() const { return temperature_; }
+
+		// Sets world temperature.
+		void SetTemperature(double temperature) { temperature_ = temperature; }
 
 		// Get particle count.
 		uint GetParticleCount() const
