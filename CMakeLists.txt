@@ -232,6 +232,13 @@ target_include_directories(BlueprintManagerTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(BlueprintManagerTests googletest) 
 add_test(BlueprintManagerTests BlueprintManagerTests)
 
+add_executable(LennardJonesNBFFTests test/LennardJonesNBFFTests.cpp)
+target_link_libraries(LennardJonesNBFFTests ${TEST_DEPS})
+target_include_directories(LennardJonesNBFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(LennardJonesNBFFTests googletest) 
+add_test(LennardJonesNBFFTests LennardJonesNBFFTests)
+
+add_test(NewParticleTests NewParticleTests)
 add_executable(NewParticleTests test/NewParticleTests.cpp)
 target_link_libraries(NewParticleTests ${TEST_DEPS})
 target_include_directories(NewParticleTests PRIVATE "${GTEST_INCLUDE_DIR}")

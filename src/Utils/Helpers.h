@@ -70,4 +70,24 @@ namespace SAPHRON
 			return "./";
 		return str.substr(0, found);
 	}
+
+	//Compute square of a number. 
+	template<typename  T>
+	inline T fsq(const T x) { return x*x; }
+	
+	//Compute cube of a number. 
+	template<typename  T>
+	inline T fcb(const T x) { return x*x*x; }
+	
+	//Compute power 4 of a number. 
+	template<typename  T>
+	inline T fpow4(const T x) { return x*x*x*x; }
+	
+	//Compute power 5 of a number. 
+	template<typename  T>
+	inline T fpow5(const T x) { return x*x*x*x*x; }
+
+	//Compute power 6 of a number. 
+	template<typename  T>
+	inline T fpow6(const T x) { return x*x*x*x*x*x; }
 }
