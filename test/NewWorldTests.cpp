@@ -61,3 +61,39 @@ TEST(World, PackBox)
 	ASSERT_EQ(4500, world.GetParticleCount());
 	ASSERT_EQ(4500, world.GetSiteCount());
 }
+
+TEST(World, MaskPointer)
+{
+	// Create world with neighbor cutoff = half the box.
+	NewWorld world(10.0, 10.0, 10.0, 5./3., 1);
+
+	world.SetCellRatio(1.0);
+
+	// Generate cell list. 
+	world.GenerateCellList();
+
+	// Manually verified for this setup.
+	std::vector<uint> pref = {
+	1,1,5,7,11,11,25,25,29,31,35,37,41,43,47,47,
+	61,61,65,67,71,71,145,145,149,151,155,155,169,
+	169,173,175,179,181,185,187,191,191,205,205,
+	209,211,215,215};
+
+	auto& Pm = world.GetMaskPointer();
+	ASSERT_EQ(pref, Pm);
+
+	// Pack it. 
+	std::vector<Site> sites;
+	sites.push_back(Site());
+	NewParticle p(3, {0}, &sites);
+
+	world.PackWorld({&p}, {1.0}, 100, 0.1);
+	ASSERT_EQ(1000, world.GetVolume());
+	world.GenerateCellList();
+
+	auto& C = world.GetCellVector();
+	auto& Pc = world.GetCellPointer();
+
+	for(auto& c : C)
+		std::cout << c << std::endl;
+}

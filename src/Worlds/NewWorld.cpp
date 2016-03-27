@@ -2,7 +2,7 @@
 
 namespace SAPHRON
 {
-	int NewWorld::nextID_ = 0;
+	uint NewWorld::nextID_ = 0;
 
 	// Round to the nearest whole number. 
 	// Adapeted from OpenMD 2.4.
@@ -115,47 +115,48 @@ namespace SAPHRON
 		pmask_.clear();
 
 		// Define number of cells in each direction. 
-		auto Nx = static_cast<int>(H_(0,0)/(cellratio_*ncut_));
-		auto Ny = static_cast<int>(H_(1,1)/(cellratio_*ncut_));
-		auto Nz = static_cast<int>(H_(2,2)/(cellratio_*ncut_));
-		auto M = Nx*Ny*Nz;
+		Nx_ = static_cast<int>(H_(0,0)/(cellratio_*ncut_));
+		Ny_ = static_cast<int>(H_(1,1)/(cellratio_*ncut_));
+		Nz_ = static_cast<int>(H_(2,2)/(cellratio_*ncut_));
+		auto M = Nx_*Ny_*Nz_;
+		ccount_ = M;
 
 		// Compute grid cell edges (A.1).
-		auto lx = H_(0,0)/Nx;
-		auto ly = H_(1,1)/Ny;
-		auto lz = H_(2,2)/Nz;
+		auto lx = H_(0,0)/Nx_;
+		auto ly = H_(1,1)/Ny_;
+		auto lz = H_(2,2)/Nz_;
 
 		// Loop through cell differences.
 		int cdm = 1; // Last value of dm that was within neighbor radius.
 		for(int dm = 1; dm < M; ++dm)
 		{
 			// Compute cell difference components (A.7-9).
-			auto dmz = static_cast<int>(dm / (Nx * Ny));
-			auto dmy = static_cast<int>((dm % (Nx * Ny)) / Nx);
-			auto dmx = dm % Nx;
+			auto dmz = static_cast<int>(dm / (Nx_ * Ny_));
+			auto dmy = static_cast<int>((dm % (Nx_ * Ny_)) / Nx_);
+			auto dmx = dm % Nx_;
 
 			// Compute minimum image cell distances (A.14-16).
 			int dnx = abs(dmx);
 			if(periodx_)
-				dnx = abs(dmx - Nx*anint(static_cast<double>(dmx)/static_cast<double>(Nx)));
+				dnx = abs(dmx - Nx_*anint(static_cast<double>(dmx)/static_cast<double>(Nx_)));
 			
 			int dny = abs(dmy);
 			if(periody_)
 			{
-				int dny1 = abs(dmy - Ny*anint(static_cast<double>(dmy)/static_cast<double>(Ny)));
-				int dny2 = abs((dmy + 1) - Ny*anint(static_cast<double>(dmy + 1)/static_cast<double>(Ny)));
+				int dny1 = abs(dmy - Ny_*anint(static_cast<double>(dmy)/static_cast<double>(Ny_)));
+				int dny2 = abs((dmy + 1) - Ny_*anint(static_cast<double>(dmy + 1)/static_cast<double>(Ny_)));
 				dny = min(dny1, dny2);
-				if((dmx == 0) || ((dmy == Ny - 1) && (dmz == Nz - 1)))
+				if((dmx == 0) || ((dmy == Ny_ - 1) && (dmz == Nz_ - 1)))
 					dny = dny1;
 			}
 
 			int dnz = abs(dmz);
 			if(periodz_)
 			{
-				int dnz1 = abs(dmz - Nz*anint(static_cast<double>(dmz)/static_cast<double>(Nz)));
-				int dnz2 = abs((dmz + 1) - Nz*anint(static_cast<double>(dmz + 1)/static_cast<double>(Nz)));
+				int dnz1 = abs(dmz - Nz_*anint(static_cast<double>(dmz)/static_cast<double>(Nz_)));
+				int dnz2 = abs((dmz + 1) - Nz_*anint(static_cast<double>(dmz + 1)/static_cast<double>(Nz_)));
 				dnz = min(dnz1, dnz2);
-				if((dmz == Nz - 1) || (dmx == 0 && dmy == 0))
+				if((dmz == Nz_ - 1) || (dmx == 0 && dmy == 0))
 					dnz = dnz1;
 			}
 
@@ -175,6 +176,8 @@ namespace SAPHRON
 			}
 		}
 
+		scount_ = pmask_.size()/2;
+
 		// Atoms per cell, heuristic from paper.
 		int N = sites_.size();
 		auto apc = max(1, static_cast<int>(1.5 * N / M));
@@ -188,15 +191,9 @@ namespace SAPHRON
 		cellptr_[M] = N;
 
 		for(int i = 0; i < N; ++i)
-		{
-			auto& p = sites_[i].position;
-			
-			// Get cell index of site (Eq. 5). Here we don't add 
-			// 1 because indexing starts from 0 in array.
-			auto m = 
-			Nx*Ny*static_cast<int>(Nz*p[2]*Hinv_(2,2)) + 
-			Nx*static_cast<int>(Ny*p[1]*Hinv_(1,1)) + 
-			static_cast<int>(Nx*p[0]*Hinv_(0,0));
+		{			
+			// Get cell index of site.
+			auto m = GetCellIndex(sites_[i].position);
 
 			cell_[cellptr_[m]] = i;
 			assert(cellptr_[m] < m*apc + 1);

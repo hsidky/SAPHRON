@@ -33,6 +33,12 @@ namespace SAPHRON
 		//  Cell list properties   //
 		/////////////////////////////
 
+		// Number of cells in each direction. 
+		int Nx_, Ny_, Nz_;
+
+		// Cell, stripe count.
+		int ccount_, scount_;
+
 		// Ratio of ncut to define cell size.
 		// cellsize = cellratio*ncut. 
 		double cellratio_;
@@ -56,7 +62,7 @@ namespace SAPHRON
 		uint id_;
 
 		// Global world ID counter.
-		static int nextID_;
+		static uint nextID_;
 
 		// Adds composition of particle and sites to local map.
 		void AddParticleComposition(const NewParticle& p)
@@ -100,9 +106,9 @@ namespace SAPHRON
 		ncut_(ncut), ncutsq_(ncut*ncut), H_(Eigen::Matrix3d::Zero()), 
 		Hinv_(Eigen::Matrix3d::Zero()), periodx_(true),
 		periody_(true), periodz_(true), temperature_(0.), particles_(),
-		sites_(0), cellratio_(0.2), pmask_(0), cell_(0), cellptr_(0), 
-		rand_(seed), sitecomp_(0), particlecomp_(0), seed_(seed), 
-		id_(nextID_++)
+		sites_(0), Nx_(0), Ny_(0), Nz_(0), ccount_(0), scount_(0), cellratio_(0.2), 
+		pmask_(0), cell_(0), cellptr_(0), rand_(seed), sitecomp_(0), particlecomp_(0), 
+		seed_(seed), id_(nextID_++)
 		{
 			H_(0,0) = x;
 			H_(1,1) = y;
@@ -229,6 +235,18 @@ namespace SAPHRON
 		// Sets world temperature.
 		void SetTemperature(double temperature) { temperature_ = temperature; }
 
+		// Get const reference to sites vector.
+		const std::vector<Site>& GetSites() const
+		{
+			return sites_;
+		}
+
+		// Get const reference to particles vector.
+		const std::vector<NewParticle>& GetParticles() const
+		{
+			return particles_;
+		}
+
 		// Get particle count.
 		uint GetParticleCount() const
 		{
@@ -280,16 +298,55 @@ namespace SAPHRON
 
 		// Get cell ratio which is the fraction of neighbor cutoff 
 		// that a cell is.
-		double GetCellRatio() const
-		{
-			return cellratio_;
-		}
+		double GetCellRatio() const { return cellratio_; }
 
 		// Sets the size of a cell as a fraction of the neighbor 
 		// cutoff radius.
-		void SetCellRatio(double cratio)
+		void SetCellRatio(double cratio) { cellratio_ = cratio; }
+
+		// Get cell count.
+		int GetCellCount() const { return ccount_; }
+
+		// Get stripe count.
+		int GetStripeCount() const { return scount_; }
+
+		// Gets the cell index based on position.
+		inline uint GetCellIndex(const Vector3& r) const
 		{
-			cellratio_ = cratio;
+			return Nx_*Ny_*static_cast<int>(Nz_*r[2]*Hinv_(2,2)) + 
+			Nx_*static_cast<int>(Ny_*r[1]*Hinv_(1,1)) + 
+			static_cast<int>(Nx_*r[0]*Hinv_(0,0));
+		}
+
+		// Applies minimum image convention to distances.
+		inline void ApplyMinimumImage(Vector3& p) const
+		{
+			if(periodx_)
+			{
+				auto Hx = 0.5*H_(0,0);
+				if(p[0] > Hx)
+					p[0] -= H_(0,0);
+				else if(p[0] < -Hx)
+					p[0] += H_(0,0);
+			}
+
+			if(periody_)
+			{
+				auto Hy = 0.5*H_(1,1);
+				if(p[1] > Hy)
+					p[1] -= H_(1,1);
+				else if(p[1] < -Hy)
+					p[1] += H_(1,1);
+			}
+
+			if(periodz_)
+			{
+				auto Hz = 0.5*H_(2,2);
+				if(p[2] > Hz)
+					p[2] -= H_(2,2);
+				else if(p[2] < -Hz)
+					p[2] += H_(2,2);
+			}
 		}
 
 		// Generate cell list. Algorithm based on:
@@ -299,22 +356,16 @@ namespace SAPHRON
 		// Nomenclature generally follows paper.
 		void GenerateCellList();
 
-		// Get cell list pointer mask.
-		const std::vector<uint>& GetMaskPtr() const
-		{
-			return pmask_;
-		}
+		// Get cell list pointer mask of stripes.
+		const std::vector<uint>& GetMaskPointer() const { return pmask_; }
 
 		// Get cell list vector.
-		const std::vector<uint>& GetCellVector() const
-		{
-			return cell_;
-		}
+		const std::vector<uint>& GetCellVector() const { return cell_; }
 
 		// Get cell pointer vector.
-		const std::vector<uint>& GetCellPointer() const
-		{
-			return cellptr_;
-		}
+		const std::vector<uint>& GetCellPointer() const { return cellptr_; }
+
+		// Get world ID.
+		uint GetID() const { return id_; }
 	};
 }
