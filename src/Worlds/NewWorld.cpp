@@ -1,4 +1,12 @@
 #include "NewWorld.h"
+#include "json/json.h"
+#include "../Particles/BlueprintManager.h"
+#include "../Simulation/SimException.h"
+#include "../Validator/ObjectRequirement.h"
+#include "schema.h"
+#include <random>
+
+using namespace Json;
 
 namespace SAPHRON
 {
@@ -163,7 +171,7 @@ namespace SAPHRON
 			// Compute minimum distance Rsq (A.5).
 			auto Rsq = sq(max(dnx, 1) - 1)*lx*lx + sq(max(dny, 1) - 1)*ly*ly + sq(max(dnz, 1) - 1)*lz*lz;
 			// Add to mask pointer vector.
-			if(Rsq < ncutsq_)
+			if(Rsq <= ncutsq_)
 			{
 				if(cdm != dm - 1)
 				{
@@ -180,7 +188,7 @@ namespace SAPHRON
 
 		// Atoms per cell, heuristic from paper.
 		int N = sites_.size();
-		auto apc = max(1, static_cast<int>(1.5 * N / M));
+		auto apc = max(2, static_cast<int>(2.0 * N / M));
 
 		// Generate cell and cell pointer vectors. 
 		cellptr_.resize(M + 1);
@@ -217,5 +225,105 @@ namespace SAPHRON
 			}
 		}
 		cell_.resize(N);
+	}
+
+	std::shared_ptr<NewWorld> NewWorld::Build(const Json::Value& json)
+	{
+		using std::to_string;
+
+		ObjectRequirement validator;
+		Value schema;
+		Reader reader;
+
+		// Parse schema.
+		reader.parse(JsonSchema::SimpleWorld, schema);
+		validator.Parse(schema, "#/worlds");
+
+		// Validate input.
+		validator.Validate(json, "#/worlds");
+
+		if(validator.HasErrors())
+			throw BuildException(validator.GetErrors());
+
+		Vector3 dim{
+			json["dimensions"][0].asDouble(), 
+			json["dimensions"][1].asDouble(),
+			json["dimensions"][2].asDouble()
+		};
+
+		// Neighbor cutoff and cell ratio.
+		auto ncut = json["ncut"].asDouble();
+		auto cellratio = json.get("cell_ratio", 0.2).asDouble();
+
+		// Get seed.
+		std::random_device rd;
+		auto maxi = std::numeric_limits<int>::max();
+		auto seed = json.get("seed", rd() % maxi).asUInt();
+
+		std::shared_ptr<NewWorld> world = std::make_shared<NewWorld>(dim[0], dim[1], dim[2], ncut, seed);
+
+		// Cell ratio
+		world->SetCellRatio(cellratio);
+
+		// Periodic. 
+		bool periodx = true, periody = true, periodz = true;
+		if(json.isMember("periodic"))
+		{
+			periodx = json["periodic"].get("x", true).asBool();
+			periody = json["periodic"].get("y", true).asBool();
+			periodz = json["periodic"].get("z", true).asBool();
+		}
+		world->SetPeriodicX(periodx);
+		world->SetPeriodicY(periody);
+		world->SetPeriodicZ(periodz);
+
+		// Go through components and add particles to world. 
+		int k = 0;
+		std::vector<Site> sites;
+		auto& bp = BlueprintManager::Instance();
+		for(auto& c : json["components"])
+		{
+			auto species = c[0].asString();
+			auto count = c[1].asInt();
+
+			// Get protoype from blueprint.
+			sites.clear();
+			if(!bp.IsRegisteredBlueprint(species))
+				throw BuildException({"Blueprint of species \"" + species + "\" does not exist."});
+
+			// Make sure we have enough remaining.
+			auto rm = (int)json["particles"].size() - k;
+			if(rm < count)
+				throw BuildException({"#/worlds/i/components/" + species + 
+					": Expected " + to_string(count) + " but got " + to_string(rm) + "."});
+
+			auto proto = bp.GetBlueprint(species, sites);
+			for(int j = 0; j < count; ++j)
+			{
+				for(uint i = 0; i < proto.SiteCount(); ++i)
+				{
+					// Resolve expected species string.
+					auto sstr = bp.GetSpeciesString(proto.GetSpecies(i));
+
+					// Get json particle and compare.
+					auto& p = json["particles"][k];
+					auto ps = p[1].asString();
+					if(ps != sstr)
+						throw BuildException({"#/worlds/i/particles/" + to_string(k) + 
+							": Expected \"" + sstr + "\" but got \"" + ps + "\"."});
+
+					// Set site properties.
+					proto.SetPosition(i, {p[2][0].asDouble(), p[2][1].asDouble(), p[2][2].asDouble()});
+
+					if(p.size() > 3)
+						proto.SetDirector(i, {p[3][0].asDouble(), p[3][1].asDouble(), p[3][2].asDouble()});
+
+					++k;
+				}
+				world->AddParticle(proto);
+			}
+		}
+
+		return world;
 	}
 }

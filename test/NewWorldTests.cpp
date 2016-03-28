@@ -91,9 +91,5 @@ TEST(World, MaskPointer)
 	ASSERT_EQ(1000, world.GetVolume());
 	world.GenerateCellList();
 
-	auto& C = world.GetCellVector();
-	auto& Pc = world.GetCellPointer();
-
-	for(auto& c : C)
-		std::cout << c << std::endl;
+	// TODO: check this more thoroughly.
 }

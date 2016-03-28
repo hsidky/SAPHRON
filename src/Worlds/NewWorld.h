@@ -2,7 +2,14 @@
 
 #include "../Particles/NewParticle.h"
 #include "../Utils/Rand.h"
+#include <memory>
 #include <Eigen/Dense>
+
+// Forward declare.
+namespace Json
+{
+	class Value;
+}
 
 namespace SAPHRON
 {
@@ -367,5 +374,9 @@ namespace SAPHRON
 
 		// Get world ID.
 		uint GetID() const { return id_; }
+
+		// Builds a world from JSON node. Returns a smart pointer to a world object,
+		// or throws a BuildException if validation fails.
+		static std::shared_ptr<NewWorld> Build(const Json::Value& json);
 	};
 }

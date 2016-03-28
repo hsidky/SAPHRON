@@ -43,3 +43,4 @@ build/
 
 # Files generated during build
 src/JSON/schema.cpp
+include/schema.h

@@ -1,13 +1,11 @@
 #pragma once 
+
 #include <Eigen/Dense>
 #include <iostream>
-#include <armadillo>
+#include "../Utils/Types.h"
 
 namespace SAPHRON
 {
-	using Vector3 = Eigen::Vector3d; 	
-	using BondMatrix = Eigen::MatrixXi;
-
 	// Structure for interaction site.
 	struct Site
 	{
@@ -15,12 +13,11 @@ namespace SAPHRON
 		Vector3 director = {0, 0, 1};
 		uint species = 0;
 		uint pid = 0;
+		// To be used by cell list manager, not forcefield manager.
+		uint cellid = 0;
 		double charge = 0.0;
 		double mass = 1.0;
 	};
-
-	using SiteList = std::vector<Site*>;
-	using IndexList = std::vector<uint>;
 
 	class NewParticle
 	{
@@ -167,10 +164,12 @@ namespace SAPHRON
 			return idx_;
 		}
 
-		// Sets container index.
+		// Sets container index and parent id in sites.
 		void SetIndex(uint idx)
 		{
 			idx_ = idx;
+			for(auto& i : indices_)
+				(*sites_)[i].pid = idx;
 		}
 
 		// Adds a bond between sites i and j.

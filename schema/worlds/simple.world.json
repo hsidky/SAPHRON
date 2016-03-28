@@ -2,23 +2,20 @@
 	"type" : "object",
 	"varname" : "SimpleWorld",
 	"properties" : {
-		"type" : {
-			"type" : "string",
-			"enum" : ["Simple"]
-		},
 		"dimensions" : "@file(../particles/position.particle.json)",
 		"seed" : {
 			"type" : "integer",
 			"minimum" : 0
 		},
-		"nlist_cutoff" : {
+		"ncut" : {
 			"type" : "number",
 			"minimum" : 0,
 			"exclusiveMinimum": true
 		},
-		"skin_thickness" : {
+		"cell_ratio" : {
 			"type" : "number",
-			"minimum" : 0
+			"minimum" : 0,
+			"exclusiveMinimum": true
 		},
 		"particles" : {
 			"type": "array"
@@ -94,10 +91,8 @@
 		}
 	},
 	"required" : [
-		"type", 
 		"dimensions", 
-		"nlist_cutoff", 
-		"skin_thickness", 
+		"ncut", 
 		"components"
 	],
 	"additionalProperties" : false

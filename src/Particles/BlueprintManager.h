@@ -2,6 +2,13 @@
 
 #include "NewParticle.h"
 #include <memory>
+#include <exception>
+
+// Forward declare.
+namespace Json
+{
+	class Value;
+}
 
 namespace SAPHRON
 {
@@ -36,12 +43,10 @@ namespace SAPHRON
 			if(id >= particles_.size())
 				particles_.resize(id+1);
 
-			if(particles_[id])
+			if(IsRegistered(species))
 			{
-				std::cerr << "ERROR: Species \"" << species << "\" is already registered "
-				"with the blueprint manager. Please remove the previous blueprint before "
-				"registering." << std::endl;
-				exit(-1);
+				throw std::invalid_argument("Species \"" + species  + "\" is already registered "
+				"with the blueprint manager.");
 			}
 			particles_[id] = std::unique_ptr<NewParticle>(new NewParticle(p, sites_));
 			particles_[id]->SetPosition({0, 0,0 }); // Center it so coordinates are local frame.
@@ -86,10 +91,13 @@ namespace SAPHRON
 			species_[id].clear();
 		}
 
-		// Gets the index associated with a species string. Returns vector size on failure.
-		uint GetSpeciesIndex(const std::string& species) const
+		// Gets the index associated with a species string. Returns -1 on failure.
+		int GetSpeciesIndex(const std::string& species) const
 		{
-			return std::find(species_.begin(), species_.end(), species) - species_.begin();
+			auto it = std::find(species_.begin(), species_.end(), species);
+			if(it == species_.end())
+				return -1;
+			return it - species_.begin();
 		}
 
 		// Gets the size of the blueprint vector. This is not necessarily the 
@@ -122,6 +130,12 @@ namespace SAPHRON
 			return std::find(species_.begin(), species_.end(), species) != species_.end();
 		}
 
+		// Checks if a species string has a blueprint registered.
+		bool IsRegisteredBlueprint(const std::string& species) const
+		{
+			return IsRegistered(species) && !(!particles_[GetSpeciesIndex(species)]);
+		}
+
 		// Gets the next available (unused) id.
 		uint GetNextID() const
 		{
@@ -132,5 +146,9 @@ namespace SAPHRON
 				}
 			) - species_.begin();
 		}
+
+		// Builds blueprints from a JSON node. If validation fails, throws 
+		// a BuildException.
+		static void Build(const Json::Value& json);
 	};
 }

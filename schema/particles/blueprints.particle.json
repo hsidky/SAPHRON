@@ -17,7 +17,7 @@
 						"maxItems" : 2
 					}
 				},
-				"children" : {
+				"sites" : {
 					"type" : "array",
 					"items" : {
 						"type" : "object",
@@ -31,21 +31,16 @@
 							},
 							"charge" : {
 								"type" : "number"
-							}
+							},
+							"position" : "@file(position.particle.json)",
+							"director" : "@file(director.particle.json)"
 						},
-						"required" : ["species"]
+						"required" : ["species", "mass", "position"]
 					},
 					"minItems" : 1
-				},
-				"mass" : {
-					"type" : "number",
-					"minimum": 0
-				},
-				"charge" : {
-					"type" : "number"
 				}
 			},
-			"minProperties" : 1,
+			"required" : ["sites"],
 			"additionalProperties": false
 		}	
 	},
