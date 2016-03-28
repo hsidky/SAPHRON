@@ -65,4 +65,19 @@ TEST(LennardJonesNBFF, ConfigurationValues)
 	auto u = ffm.EvaluateInterEnergy(*world);
 	ASSERT_NEAR(-4.3515E+03, u.intervdw, 1e-1);
 	ASSERT_NEAR(-5.6867E+02, u.virial.trace(), 1e-2);
+	u = ffm.EvaluateTailEnergy(*world);
+	ASSERT_NEAR(-1.9849E+02, u.etail, 1e-2);
+
+	// Test rcut = 4*sigma.
+	LennardJonesNBFF ff2(1.0, 1.0, {4.0, 4.0});
+	world->SetNeighborRadius(4.5);
+	world->GenerateCellList();
+	ffm.RemoveNonBondedForceField(ljs, ljs);
+	ffm.AddNonBondedForceField(ljs, ljs, ff2);
+	
+	u = ffm.EvaluateInterEnergy(*world);
+	ASSERT_NEAR(-4.4675E+03, u.intervdw, 1e-1);
+	ASSERT_NEAR(-1.2639E+03, u.virial.trace(), 1e-1);
+	u = ffm.EvaluateTailEnergy(*world);
+	ASSERT_NEAR(-8.3769E+01, u.etail, 1e-2);
 }

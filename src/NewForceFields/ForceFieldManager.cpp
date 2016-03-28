@@ -134,4 +134,29 @@ namespace SAPHRON
 
 		return u;
 	}
+
+	EP ForceFieldManager::EvaluateTailEnergy(const NewWorld& w) const
+	{
+		auto& comp = w.GetSiteCompositions();
+		auto wid = w.GetID();
+		auto v = w.GetVolume();
+
+		EP u;
+		// Go through unique pairs of species.
+		for(uint i = 0; i < nbcount_; ++i)
+			for(uint j = i; j < nbcount_; ++j)
+			{
+				auto na = comp[i];
+				auto nb = comp[j];
+				auto idx = GetIndex(i, j);
+
+				u.etail += na*nb*nonbondedffs_[idx]->EnergyTailCorrection(wid);
+				u.ptail += na*nb*nonbondedffs_[idx]->PressureTailCorrection(wid);
+			}
+
+		u.etail *= 2.*M_PI/v;
+		u.ptail *= 2.*M_PI/(3.*v*v);
+
+		return u;
+	}
 }

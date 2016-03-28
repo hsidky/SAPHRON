@@ -14,12 +14,15 @@ namespace SAPHRON
 	// Struct representing energy and virial tensor.
 	struct EP
 	{
-		double intervdw = 0.;
+		double intervdw = 0., etail = 0.;
+		double ptail = 0.;
 		Matrix3 virial = Eigen::Matrix3d::Zero();
 
 		inline EP& operator+=(const EP& rhs)
 		{
 			intervdw += rhs.intervdw;
+			etail += rhs.etail;
+			ptail += rhs.ptail;
 			virial += rhs.virial;
 			return *this;
 		}

@@ -35,6 +35,9 @@ namespace SAPHRON
 		// Evaluates the intermolecular energy of a world.
 		EP EvaluateInterEnergy(const NewWorld& w) const;
 
+		// Evaluates the tail contribution (long range corrections) for a world.
+		EP EvaluateTailEnergy(const NewWorld& w) const;
+
 		// Maps a species pair to an index. 
 		inline uint GetIndex(uint i, uint j) const
 		{
