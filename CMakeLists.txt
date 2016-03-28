@@ -136,12 +136,13 @@ include_directories("${EIGEN_INCLUDE}")
 
 set(SOURCE
 	src/Worlds/NewWorld.cpp
+	src/Particles/BlueprintManager.cpp
 	#src/Constraints/Constraint.cpp
 	#src/DensityOfStates/DOSOrderParameter.cpp
 	#src/ForceFields/ForceField.cpp
-	#src/ForceFields/ForceFieldManager.cpp
-	#src/JSON/jsoncpp.cpp
-	#src/JSON/schema.cpp
+	src/NewForceFields/ForceFieldManager.cpp
+	src/JSON/jsoncpp.cpp
+	src/JSON/schema.cpp
 	#src/Moves/Move.cpp
 	#src/Observers/DLMFileObserver.cpp
 	#src/Observers/JSONObserver.cpp
@@ -154,7 +155,7 @@ set(SOURCE
 	#src/Simulation/StandardSimulation.cpp
 	#src/Utils/Histogram.cpp
 	#src/Worlds/World.cpp
-	#src/Validator/RequirementLoader.cpp
+	src/Validator/RequirementLoader.cpp
 )
 
 

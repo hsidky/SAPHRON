@@ -1,18 +1,22 @@
 {
 	"blueprints" : {
-		"LJ" : {
-			"mass" : 1.0
+		"LJ1" : {
+			"sites" : [
+				{
+					"species" : "LJ",
+					"mass" : 1.0,
+					"position" : [0, 0, 0]
+				}
+			]
 		}
 	},
 	"worlds" : [
 		{
-			"type" : "Simple",
 			"dimensions" : [10, 10, 10],
 			"seed" : 300, 
-			"nlist_cutoff" : 3.5,
-			"skin_thickness": 0.5,
+			"ncut" : 3.5,
 			"components" : [
-				["LJ", 800]
+				["LJ1", 800]
 			], 
 			"particles" : [
 				[1, "LJ", [4.881841346822,6.371867327468,4.106571184116], [0.0, 0.0, 1.0]],

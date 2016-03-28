@@ -32,6 +32,9 @@ namespace SAPHRON
 		// The world is needed for traversing neighbors.
 		EP EvaluateInterEnergy(const Site& s, const NewWorld& w) const;
 
+		// Evaluates the intermolecular energy of a world.
+		EP EvaluateInterEnergy(const NewWorld& w) const;
+
 		// Maps a species pair to an index. 
 		inline uint GetIndex(uint i, uint j) const
 		{
