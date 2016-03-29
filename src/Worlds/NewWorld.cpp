@@ -114,7 +114,7 @@ namespace SAPHRON
 	// J. Comp. Chem., 25(12), 1474–1486. 
 	// http://doi.org/10.1002/jcc.20071
 	// Nomenclature generally follows paper.
-	void NewWorld::GenerateCellList()
+	void NewWorld::BuildCellList()
 	{
 		using std::abs;
 		using std::min;
@@ -171,7 +171,7 @@ namespace SAPHRON
 			// Compute minimum distance Rsq (A.5).
 			auto Rsq = sq(max(dnx, 1) - 1)*lx*lx + sq(max(dny, 1) - 1)*ly*ly + sq(max(dnz, 1) - 1)*lz*lz;
 			// Add to mask pointer vector.
-			if(Rsq <= ncutsq_)
+			if(Rsq < ncutsq_)
 			{
 				if(cdm != dm - 1)
 				{
@@ -185,23 +185,30 @@ namespace SAPHRON
 		}
 
 		scount_ = pmask_.size()/2;
+		UpdateCellList();
+	}
+
+	void NewWorld::UpdateCellList()
+	{
+		using std::max;
 
 		// Atoms per cell, heuristic from paper.
 		int N = sites_.size();
-		auto apc = max(2, static_cast<int>(2.0 * N / M));
+		auto apc = max(2, static_cast<int>(2.0 * N / ccount_));
 
 		// Generate cell and cell pointer vectors. 
-		cellptr_.resize(M + 1);
-		cell_.resize(apc*M);
-		for(int i = 0; i < M + 1; ++i)
+		cellptr_.resize(ccount_ + 1);
+		cell_.resize(apc*ccount_);
+		for(int i = 0; i < ccount_ + 1; ++i)
 			cellptr_[i] = i*apc;
 		
-		cellptr_[M] = N;
+		cellptr_[ccount_] = N;
 
 		for(int i = 0; i < N; ++i)
 		{			
 			// Get cell index of site.
 			auto m = GetCellIndex(sites_[i].position);
+			sites_[i].cellid = m;
 
 			cell_[cellptr_[m]] = i;
 			assert(cellptr_[m] < m*apc + 1);
@@ -211,7 +218,7 @@ namespace SAPHRON
 		// Compact cell vector and update cell pointer accordingly. 
 		int j = cellptr_[0]; // Contains final filled entry in a cell.
 		cellptr_[0] = 0; // This will inherently start at 0.
-		for(int m = 1; m < M; ++m)
+		for(int m = 1; m < ccount_; ++m)
 		{
 			int k = cellptr_[m];
 			cellptr_[m] = j; // Update cellptr with compact index.

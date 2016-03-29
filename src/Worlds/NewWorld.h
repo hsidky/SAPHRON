@@ -2,6 +2,7 @@
 
 #include "../Particles/NewParticle.h"
 #include "../Utils/Rand.h"
+#include "../Observers/Visitable.h"
 #include <memory>
 #include <Eigen/Dense>
 
@@ -15,7 +16,7 @@ namespace SAPHRON
 {
 	using Matrix3 = Eigen::Matrix3d;
 	using CompositionList = std::vector<uint>;
-	class NewWorld
+	class NewWorld : public Visitable
 	{
 	private:
 		// Neighbor cutoff radius.
@@ -272,11 +273,14 @@ namespace SAPHRON
 			return ncut_;
 		}
 
-		// Set neighbor cutoff radius.
+		// Set neighbor cutoff radius. 
+		// Automatically rebuilds the cell list.
 		void SetNeighborRadius(double ncut)
 		{
 			ncut_ = ncut;
 			ncutsq_ = ncut*ncut;
+
+			BuildCellList();
 		}
 
 		// Get particle compositions.
@@ -308,8 +312,12 @@ namespace SAPHRON
 		double GetCellRatio() const { return cellratio_; }
 
 		// Sets the size of a cell as a fraction of the neighbor 
-		// cutoff radius.
-		void SetCellRatio(double cratio) { cellratio_ = cratio; }
+		// cutoff radius. Automatically rebuilds the cell list.
+		void SetCellRatio(double cratio) 
+		{ 
+			cellratio_ = cratio; 
+			BuildCellList();
+		}
 
 		// Get cell count.
 		int GetCellCount() const { return ccount_; }
@@ -356,12 +364,15 @@ namespace SAPHRON
 			}
 		}
 
-		// Generate cell list. Algorithm based on:
-		// Heinz, T. N., Hunenberger, P. H. (2004). 
+		// Builds the cell lists and mask, and calls update cell list (below). 
+		// Algorithm based on Heinz, T. N., Hunenberger, P. H. (2004). 
 		// J. Comp. Chem., 25(12), 1474–1486. 
 		// http://doi.org/10.1002/jcc.20071
 		// Nomenclature generally follows paper.
-		void GenerateCellList();
+		void BuildCellList();
+
+		// Updates the particle locations within the cells.
+		void UpdateCellList();
 
 		// Get cell list pointer mask of stripes.
 		const std::vector<uint>& GetMaskPointer() const { return pmask_; }
@@ -374,6 +385,12 @@ namespace SAPHRON
 
 		// Get world ID.
 		uint GetID() const { return id_; }
+
+		// Accept a visitor.
+		void AcceptVisitor(Visitor&) const override
+		{
+
+		}
 
 		// Builds a world from JSON node. Returns a smart pointer to a world object,
 		// or throws a BuildException if validation fails.

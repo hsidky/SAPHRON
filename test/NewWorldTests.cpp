@@ -70,7 +70,7 @@ TEST(World, MaskPointer)
 	world.SetCellRatio(1.0);
 
 	// Generate cell list. 
-	world.GenerateCellList();
+	world.BuildCellList();
 
 	// Manually verified for this setup.
 	std::vector<uint> pref = {
@@ -89,7 +89,7 @@ TEST(World, MaskPointer)
 
 	world.PackWorld({&p}, {1.0}, 100, 0.1);
 	ASSERT_EQ(1000, world.GetVolume());
-	world.GenerateCellList();
+	world.BuildCellList();
 
 	// TODO: check this more thoroughly.
 }

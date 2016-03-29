@@ -1,9 +1,8 @@
 #pragma once
 
+#include "SimInfo.h"
 #include "../Simulation/SimObservable.h"
-#include "../Properties/Energy.h"
-#include "../Properties/Pressure.h"
-#include "../Worlds/World.h"
+#include "../Worlds/NewWorld.h"
 #include "../DensityOfStates/DOSOrderParameter.h"
 #include "../JSON/Serializable.h"
 #include "json/json.h"
@@ -102,25 +101,7 @@ namespace SAPHRON
 			json["iterations"] = GetTargetIterations();
 			json["mpi"] = GetMovesPerIteration();
 
-			auto& blueprint = json["blueprints"];
-			// Serialize particle blueprint. 
-			for(auto& it : Particle::GetParticleMap())
-			{
-				auto& p = it.second;
-				// If primitive has no parent it belongs in components.
-				if(p->HasParent())
-				{
-					auto& component = blueprint[p->GetParent()->GetSpecies()];
-					if(component == Json::nullValue)
-						p->GetParent()->GetBlueprint(component);
-				}
-				else
-				{
-					auto& component = blueprint[p->GetSpecies()];
-					if(component == Json::nullValue)
-						p->GetBlueprint(component);
-				}
-			}
+			// TODO: serialize blueprints.
 
 			SerializeObservers(json["observers"]);
 		}

@@ -1,9 +1,7 @@
 #pragma once 
 #include "../src/Simulation/SimObserver.h"
 #include "../src/Simulation/Simulation.h"
-#include "../src/Properties/Pressure.h"
-#include "../src/Properties/Energy.h"
-#include "../src/Worlds/World.h"
+#include "../src/Worlds/NewWorld.h"
 #include "../src/Worlds/WorldManager.h"
 
 namespace SAPHRON
@@ -15,10 +13,10 @@ namespace SAPHRON
 			double _temperature; 
 			unsigned _counter;
 			unsigned _start;
-			std::map<World*, double> _density;
-			std::map<World*, Energy> _energy;
-			std::map<World*, Pressure> _pressure;
-			std::map<World*, double> _chemicalpotential;
+			std::map<NewWorld*, double> _density;
+			std::map<NewWorld*, Energy> _energy;
+			std::map<NewWorld*, Pressure> _pressure;
+			std::map<NewWorld*, double> _chemicalpotential;
 			
 		public: 
 			TestAccumulator(SimFlags flags, unsigned int frequency, unsigned int start) : 

@@ -89,7 +89,7 @@ namespace SAPHRON
 			for(auto j = m1; j < m2 + 1; ++j)
 			{
 				// Wrap stripe index around.
-				auto k = j - (int)(j/M)*M;
+				auto k = j - (j/M)*M;
 				for(auto l = Pc[k]; l < Pc[k + 1]; ++l)
 				{
 					auto& sj = sites[C[l]];
@@ -135,13 +135,13 @@ namespace SAPHRON
 		return u;
 	}
 
-	EP ForceFieldManager::EvaluateTailEnergy(const NewWorld& w) const
+	EPTail ForceFieldManager::EvaluateTailEnergy(const NewWorld& w) const
 	{
 		auto& comp = w.GetSiteCompositions();
 		auto wid = w.GetID();
 		auto v = w.GetVolume();
 
-		EP u;
+		EPTail u;
 		// Go through unique pairs of species.
 		for(uint i = 0; i < nbcount_; ++i)
 			for(uint j = i; j < nbcount_; ++j)

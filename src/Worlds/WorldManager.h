@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "World.h"
+#include "NewWorld.h"
 #include "../Utils/Rand.h"
 #include "../Observers/Visitable.h"
 #include "../JSON/Serializable.h"
@@ -15,7 +15,7 @@ namespace SAPHRON
 		WorldList _worlds;
 
 		// Active world.
-		World* _active;
+		NewWorld* _active;
 
 		// Random number generator.
 		Rand _rand;
@@ -36,7 +36,7 @@ namespace SAPHRON
 
 		// Adds a world to the world list. Note: Last added world becomes 
 		// the "active" world.
-		void AddWorld(World* world)
+		void AddWorld(NewWorld* world)
 		{
 			if(std::find(_worlds.begin(), _worlds.end(), world) == _worlds.end())
 			{
@@ -46,7 +46,7 @@ namespace SAPHRON
 		}
 
 		// Removes a world from the world list.
-		void RemoveWorld(World* world)
+		void RemoveWorld(NewWorld* world)
 		{
 			size_t pos = std::find(_worlds.begin(), _worlds.end(), world) - _worlds.begin();
 			if(pos < _worlds.size())
@@ -66,9 +66,9 @@ namespace SAPHRON
 			_active = _worlds[i];			
 		}
 
-		// Sets the active world to "World*". 
+		// Sets the active world to "NewWorld*". 
 		// If world does not exist in the list, it is added.
-		void SetActiveWorld(World* world)
+		void SetActiveWorld(NewWorld* world)
 		{
 			if(std::find(_worlds.begin(), _worlds.end(), world) == _worlds.end())
 				AddWorld(world);
@@ -77,13 +77,13 @@ namespace SAPHRON
 		}
 
 		// Returns active world.
-		World* GetWorld() { return _active; }
+		NewWorld* GetWorld() { return _active; }
 
 		// Returns active world (const).
-		World* GetWorld() const {return _active; }
+		NewWorld* GetWorld() const {return _active; }
 
 		// Returns world "i". Throws out of range exception for invalid index.
-		World* GetWorld(size_t i)
+		NewWorld* GetWorld(size_t i)
 		{
 			if(i >= _worlds.size())
 				throw std::out_of_range("World ID is out of range.");
@@ -91,13 +91,13 @@ namespace SAPHRON
 		}
 
 		// Returns world "i" (const).
-		World* GetWorld(size_t i) const { return GetWorld(i); }
+		NewWorld* GetWorld(size_t i) const { return GetWorld(i); }
 
 		// Returns the number of worlds.
 		size_t GetWorldCount() const { return _worlds.size(); }
 
 		// Returns a random world.
-		World* GetRandomWorld()
+		NewWorld* GetRandomWorld()
 		{
 			return _worlds[_rand.int32() % _worlds.size()];
 		}
@@ -113,8 +113,8 @@ namespace SAPHRON
 		virtual void Serialize(Json::Value& json) const override
 		{
 			auto& worlds = json["worlds"];
-			for(int i = 0; i < (int)_worlds.size(); ++i)
-				_worlds[i]->Serialize(worlds[i]);
+			///for(int i = 0; i < (int)_worlds.size(); ++i)
+			//	_worlds[i]->Serialize(worlds[i]);
 		}
 
 		// Iterators.
