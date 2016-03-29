@@ -12,115 +12,102 @@ namespace SAPHRON
 	{
 	private:
 		// List of worlds. 
-		WorldList _worlds;
+		WorldList worlds_;
 
 		// Active world.
-		NewWorld* _active;
+		NewWorld* active_;
 
 		// Random number generator.
-		Rand _rand;
-
-		// Helper method to remove items from vectors.
-		template <typename T> 
-		void remove(std::vector<T>& vec, size_t pos) 
-		{ 
-			vec.erase(vec.begin() + pos); 
-		}
+		Rand rand_;
 
 	public:
 		typedef WorldList::iterator iterator;
 		typedef WorldList::const_iterator const_iterator;
 
 		WorldManager(unsigned seed = 1090) : 
-		_worlds(0), _active(nullptr), _rand(seed) {}
+		worlds_(0), active_(nullptr), rand_(seed) {}
 
 		// Adds a world to the world list. Note: Last added world becomes 
 		// the "active" world.
 		void AddWorld(NewWorld* world)
 		{
-			if(std::find(_worlds.begin(), _worlds.end(), world) == _worlds.end())
+			if(std::find(worlds_.begin(), worlds_.end(), world) == worlds_.end())
 			{
-				_worlds.push_back(world);
-				_active = world;
+				worlds_.push_back(world);
+				active_ = world;
 			}
 		}
 
 		// Removes a world from the world list.
 		void RemoveWorld(NewWorld* world)
 		{
-			size_t pos = std::find(_worlds.begin(), _worlds.end(), world) - _worlds.begin();
-			if(pos < _worlds.size())
-			{
-				remove(_worlds, pos);
-
-				// If it was active world, remove it.
-				if(_active == world)
-					_active = _worlds.back();
-			}
+			worlds_.erase(std::remove(worlds_.begin(), worlds_.end(), world), worlds_.end());
+			if(active_ == world)
+				active_ = worlds_.back();
 		}
 
 		// Sets the active world to "i".
 		void SetActiveWorld(size_t i)
 		{
-			assert(i < _worlds.size());				
-			_active = _worlds[i];			
+			assert(i < worlds_.size());				
+			active_ = worlds_[i];			
 		}
 
 		// Sets the active world to "NewWorld*". 
 		// If world does not exist in the list, it is added.
 		void SetActiveWorld(NewWorld* world)
 		{
-			if(std::find(_worlds.begin(), _worlds.end(), world) == _worlds.end())
+			if(std::find(worlds_.begin(), worlds_.end(), world) == worlds_.end())
 				AddWorld(world);
 
-			_active = world;
+			active_ = world;
 		}
 
 		// Returns active world.
-		NewWorld* GetWorld() { return _active; }
+		NewWorld* GetWorld() { return active_; }
 
 		// Returns active world (const).
-		NewWorld* GetWorld() const {return _active; }
+		NewWorld* GetWorld() const {return active_; }
 
 		// Returns world "i". Throws out of range exception for invalid index.
 		NewWorld* GetWorld(size_t i)
 		{
-			if(i >= _worlds.size())
+			if(i >= worlds_.size())
 				throw std::out_of_range("World ID is out of range.");
-			return _worlds[i];
+			return worlds_[i];
 		}
 
 		// Returns world "i" (const).
 		NewWorld* GetWorld(size_t i) const { return GetWorld(i); }
 
 		// Returns the number of worlds.
-		size_t GetWorldCount() const { return _worlds.size(); }
+		size_t GetWorldCount() const { return worlds_.size(); }
 
 		// Returns a random world.
 		NewWorld* GetRandomWorld()
 		{
-			return _worlds[_rand.int32() % _worlds.size()];
+			return worlds_[rand_.int32() % worlds_.size()];
 		}
 
 		// Accept visitor.
 		virtual void AcceptVisitor(Visitor& v) const override
 		{
 			v.Visit(*this);
-			for(auto& w : _worlds)
+			for(auto& w : worlds_)
 				w->AcceptVisitor(v);
 		}
 
 		virtual void Serialize(Json::Value& json) const override
 		{
 			auto& worlds = json["worlds"];
-			///for(int i = 0; i < (int)_worlds.size(); ++i)
-			//	_worlds[i]->Serialize(worlds[i]);
+			///for(int i = 0; i < (int)worlds_.size(); ++i)
+			//	worlds_[i]->Serialize(worlds[i]);
 		}
 
 		// Iterators.
-		iterator begin() { return _worlds.begin(); }
-		iterator end() { return _worlds.end(); }
-		const_iterator begin() const { return _worlds.begin(); }
-		const_iterator end() const { return _worlds.end(); }
+		iterator begin() { return worlds_.begin(); }
+		iterator end() { return worlds_.end(); }
+		const_iterator begin() const { return worlds_.begin(); }
+		const_iterator end() const { return worlds_.end(); }
 	};
 }

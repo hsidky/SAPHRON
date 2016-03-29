@@ -252,6 +252,12 @@ target_include_directories(NewWorldTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(NewWorldTests googletest) 
 add_test(NewWorldTests NewWorldTests)
 
+add_executable(WorldManagerTests test/WorldManagerTests.cpp)
+target_link_libraries(WorldManagerTests ${TEST_DEPS})
+target_include_directories(WorldManagerTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(WorldManagerTests googletest) 
+add_test(WorldManagerTests WorldManagerTests)
+
 # add_executable(ConstraintTests test/ConstraintTests.cpp)
 # target_link_libraries(ConstraintTests ${TEST_DEPS})
 # target_include_directories(ConstraintTests PRIVATE "${GTEST_INCLUDE_DIR}")
@@ -516,11 +522,6 @@ add_test(NewWorldTests NewWorldTests)
 # add_dependencies(WidomMoveTests googletest) 
 # add_test(WidomMoveTests WidomMoveTests)
 
-# add_executable(WorldManagerTests test/WorldManagerTests.cpp)
-# target_link_libraries(WorldManagerTests ${TEST_DEPS})
-# target_include_directories(WorldManagerTests PRIVATE "${GTEST_INCLUDE_DIR}")
-# add_dependencies(WorldManagerTests googletest) 
-# add_test(WorldManagerTests WorldManagerTests)
 
 
 # end add testing 
