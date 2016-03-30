@@ -3,6 +3,8 @@
 #include "../Particles/NewParticle.h"
 #include "../Utils/Rand.h"
 #include "../Observers/Visitable.h"
+#include "../NewForceFields/EF.h"
+#include "../Simulation/SimInfo.h"
 #include <memory>
 #include <Eigen/Dense>
 
@@ -36,6 +38,12 @@ namespace SAPHRON
 
 		// Site list.
 		std::vector<Site> sites_;
+
+		//////////////////////////////
+		//  Energy/pressure structs //
+		//////////////////////////////
+		EV inter_, intra_;
+		EPTail tail_;
 
 		/////////////////////////////
 		//  Cell list properties   //
@@ -293,6 +301,55 @@ namespace SAPHRON
 		const CompositionList& GetSiteCompositions() const
 		{
 			return sitecomp_;
+		}
+
+		// Get intermolecular energy/virial.
+		const EV& GetInterEV() const { return inter_; }
+
+		// Set intermolecular energy.
+		void SetInterEV(const EV& ev) { inter_ = ev; }
+
+		// Increment intermolecular energy.
+		void IncrementInterEV(const EV& de) { inter_ += de; }
+
+		// Get intramolecular energy/virial.
+		const EV& GetIntraEV() const { return intra_; }
+
+		// Set intramolecular energy/virial.
+		void SetIntraEV(const EV& ev) { intra_ = ev; }
+
+		// Increment intramolecular energy/virial.
+		void IncrementIntraEV(const EV& de) { intra_ += de; }
+
+		// Get tail/long range correction energy/pressure.
+		const EPTail GetTailEP() const { return tail_; }
+
+		// Set tail long range correction energy/pressure.
+		void SetTailEP(const EPTail& ep) { tail_ = ep; }
+
+		// Get total world energy.
+		double GetEnergy() const 
+		{
+			return inter_.energy() + intra_.energy() + tail_.energy;
+		}
+
+		// Get isotropic pressure.
+		double GetTotalPressure() const
+		{
+			auto& sim = SimInfo::Instance();
+
+			auto p = 1./(3.*GetVolume())*(inter_ + intra_).virial.trace();
+			p += tail_.pressure;
+			p *= sim.GetPressureConv();
+			p += GetIdealPressure();
+			return p;
+		}
+
+		// Get ideal pressure (P = NRT/V).
+		double GetIdealPressure() const
+		{
+			auto& sim = SimInfo::Instance();
+			return sim.GetPressureConv()*GetParticleCount()*sim.GetkB()*temperature_/GetVolume();
 		}
 
 		// Gets/sets the periodicity of the x-coordinate.

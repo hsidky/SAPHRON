@@ -1,11 +1,9 @@
-#pragma once
+#pragma once 
 
 #include "Move.h"
 #include "../Utils/Rand.h"
 #include "../Observers/Visitable.h"
 #include "../JSON/Serializable.h"
-#include <numeric>
-#include <algorithm>
 
 namespace SAPHRON
 {
@@ -16,20 +14,20 @@ namespace SAPHRON
 	{
 	private:
 		typedef std::vector<Move*> MoveList;
-		std::vector<int> _prob;
+		std::vector<double> _prob;
 		std::vector<double> _normprob;
 		Rand _rand;
 		MoveList _moves;
-		unsigned _seed;
+		uint _seed;
 
 		void NormalizeProbabilities()
 		{
 			// Re-normalize probabilities.
-			double sum = std::accumulate(_prob.begin(), _prob.end(), 0.0);
+			auto sum = std::accumulate(_prob.begin(), _prob.end(), 0.);
 			_normprob.resize(_prob.size());
 
 			for(size_t i = 0; i < _normprob.size(); ++i)
-				_normprob[i] = (double)_prob[i]/sum;
+				_normprob[i] = _prob[i]/sum;
 
 			for(size_t i = 1; i < _normprob.size(); ++i)
 				_normprob[i] = _normprob[i-1] + _normprob[i];
@@ -39,12 +37,12 @@ namespace SAPHRON
 		typedef MoveList::iterator iterator;
 		typedef MoveList::const_iterator const_iterator;
 
-		MoveManager(unsigned seed = 7654) : 
+		MoveManager(uint seed = 7654) : 
 		_prob(0), _normprob(0), _rand(seed), 
 		_moves(0), _seed(seed){}
 
 		// Add a move to the move queue with a relative probability (default 1).
-		void AddMove(Move* move, unsigned int probability = 1)
+		void AddMove(Move* move, double probability = 1.)
 		{
 			_moves.push_back(move);
 			_prob.push_back(probability);
@@ -58,7 +56,7 @@ namespace SAPHRON
 			auto it = std::find(_moves.begin(), _moves.end(), move);
 			if(it != _moves.end())
 			{
-				size_t pos = it - _moves.begin();
+				auto pos = it - _moves.begin();
 				_prob.erase(pos + _prob.begin());
 				_normprob.erase(pos + _normprob.begin());
 				_moves.erase(it);
@@ -74,7 +72,7 @@ namespace SAPHRON
 		}
 
 		// Get the number of moves.
-		int GetMoveCount() const { return (int)_moves.size(); }
+		uint GetMoveCount() const { return _moves.size(); }
 
 		// Reset acceptance ratio on moves.
 		void ResetMoveAcceptances()
@@ -98,7 +96,7 @@ namespace SAPHRON
 		}
 
 		// Get seed.
-		unsigned GetSeed() const { return _seed; }
+		uint GetSeed() const { return _seed; }
 
 		// Serialize.
 		virtual void Serialize(Json::Value& json) const override
@@ -106,7 +104,7 @@ namespace SAPHRON
 			auto& moves = json["moves"];
 			for(int i = 0; i < (int)_moves.size(); ++i)
 			{
-				_moves[i]->Serialize(moves[i]);
+				//_moves[i]->Serialize(moves[i]);
 				moves[i]["weight"] = _prob[i];
 			}
 		}

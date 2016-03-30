@@ -63,10 +63,10 @@ TEST(LennardJonesNBFF, ConfigurationValues)
 	ffm.AddNonBondedForceField(ljs, ljs, ff);
 
 	auto u = ffm.EvaluateInterEnergy(*world);
-	ASSERT_NEAR(-4.3515E+03, u.intervdw, 1e-1);
+	ASSERT_NEAR(-4.3515E+03, u.vdw, 1e-1);
 	ASSERT_NEAR(-5.6867E+02, u.virial.trace(), 1e-2);
 	auto ut = ffm.EvaluateTailEnergy(*world);
-	ASSERT_NEAR(-1.9849E+02, ut.etail, 1e-2);
+	ASSERT_NEAR(-1.9849E+02, ut.energy, 1e-2);
 
 	// Test rcut = 4*sigma.
 	LennardJonesNBFF ff2(1.0, 1.0, {4.0, 4.0});
@@ -75,8 +75,8 @@ TEST(LennardJonesNBFF, ConfigurationValues)
 	ffm.AddNonBondedForceField(ljs, ljs, ff2);
 	
 	u = ffm.EvaluateInterEnergy(*world);
-	ASSERT_NEAR(-4.4675E+03, u.intervdw, 1e-1);
+	ASSERT_NEAR(-4.4675E+03, u.vdw, 1e-1);
 	ASSERT_NEAR(-1.2639E+03, u.virial.trace(), 1e-1);
 	ut = ffm.EvaluateTailEnergy(*world);
-	ASSERT_NEAR(-8.3769E+01, ut.etail, 1e-2);
+	ASSERT_NEAR(-8.3769E+01, ut.energy, 1e-2);
 }

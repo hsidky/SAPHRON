@@ -30,10 +30,10 @@ namespace SAPHRON
 
 		// Evaluates the intermolecular energy of a site. 
 		// The world is needed for traversing neighbors.
-		EP EvaluateInterEnergy(const Site& s, const NewWorld& w) const;
+		EV EvaluateInterEnergy(const Site& s, const NewWorld& w) const;
 
 		// Evaluates the intermolecular energy of a world.
-		EP EvaluateInterEnergy(const NewWorld& w) const;
+		EV EvaluateInterEnergy(const NewWorld& w) const;
 
 		// Evaluates the tail contribution (long range corrections) for a world.
 		EPTail EvaluateTailEnergy(const NewWorld& w) const;

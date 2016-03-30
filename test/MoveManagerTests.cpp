@@ -1,5 +1,5 @@
-#include "../src/Moves/MoveManager.h"
-#include "../src/Moves/FlipSpinMove.h"
+#include "../src/NewMoves/MoveManager.h"
+#include "../src/NewMoves/FlipSpinMove.h"
 #include "gtest/gtest.h"
 
 using namespace SAPHRON;

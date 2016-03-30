@@ -63,6 +63,9 @@ namespace SAPHRON
 		double _ekbamu = 1.0;
 		double _epconv = 1.0;
 
+		// Private constructor. 
+		SimInfo(const SimInfo&);
+
 	public:
 		SimInfo() : _timer() {}
 

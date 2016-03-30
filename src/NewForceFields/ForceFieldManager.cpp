@@ -35,9 +35,9 @@ namespace SAPHRON
 		}
 	}
 
-	EP ForceFieldManager::EvaluateInterEnergy(const Site& s, const NewWorld& w) const
+	EV ForceFieldManager::EvaluateInterEnergy(const Site& s, const NewWorld& w) const
 	{
-		EP ep;
+		EV ep;
 
 		// Get appropriate references.
 		auto& particles = w.GetParticles();
@@ -74,7 +74,7 @@ namespace SAPHRON
 			if(ff != nullptr)
 			{
 				auto ef = ff->Evaluate(s, sj, rij, rsq, wid);
-				ep.intervdw += ef.energy;
+				ep.vdw += ef.energy;
 				ep.virial.noalias() -= ef.force*rab.transpose();
 			}
 		}
@@ -113,7 +113,7 @@ namespace SAPHRON
 					if(ff != nullptr)
 					{
 						auto ef = ff->Evaluate(s, sj, rij, rsq, wid);
-						ep.intervdw += ef.energy;
+						ep.vdw += ef.energy;
 						ep.virial.noalias() -= ef.force*rab.transpose();
 					}
 				}
@@ -123,13 +123,13 @@ namespace SAPHRON
 		return ep;
 	}
 
-	EP ForceFieldManager::EvaluateInterEnergy(const NewWorld& w) const
+	EV ForceFieldManager::EvaluateInterEnergy(const NewWorld& w) const
 	{
-		EP u;
+		EV u;
 		for(auto& s : w.GetSites())
 			u += EvaluateInterEnergy(s, w);
 
-		u.intervdw *= 0.5;
+		u.vdw *= 0.5;
 		u.virial *= 0.5;
 
 		return u;
@@ -150,12 +150,12 @@ namespace SAPHRON
 				auto nb = comp[j];
 				auto idx = GetIndex(i, j);
 
-				u.etail += na*nb*nonbondedffs_[idx]->EnergyTailCorrection(wid);
-				u.ptail += na*nb*nonbondedffs_[idx]->PressureTailCorrection(wid);
+				u.energy += na*nb*nonbondedffs_[idx]->EnergyTailCorrection(wid);
+				u.pressure += na*nb*nonbondedffs_[idx]->PressureTailCorrection(wid);
 			}
 
-		u.etail *= 2.*M_PI/v;
-		u.ptail *= 2.*M_PI/(3.*v*v);
+		u.energy *= 2.*M_PI/v;
+		u.pressure *= 2.*M_PI/(3.*v*v);
 
 		return u;
 	}
