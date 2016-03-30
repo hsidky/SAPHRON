@@ -16,10 +16,10 @@ TEST(MoveManager, DefaultBehavior)
 	MoveManager mm;
 
 	// Add the moves with a specified probability. 
-	mm.AddMove(&move1, 50);
-	mm.AddMove(&move2, 100);
-	mm.AddMove(&move3, 50);
-	mm.AddMove(&move4, 200);
+	mm.AddMove(&move1, 0.125);
+	mm.AddMove(&move2, 0.250);
+	mm.AddMove(&move3, 0.125);
+	mm.AddMove(&move4, 0.500);
 	ASSERT_EQ(4, mm.GetMoveCount());
 
 	mm.RemoveMove(&move4);
@@ -29,7 +29,7 @@ TEST(MoveManager, DefaultBehavior)
 	ASSERT_EQ(3, mm.GetMoveCount());
 
 	// Re-add.
-	mm.AddMove(&move4, 200);
+	mm.AddMove(&move4, 0.500);
 	ASSERT_EQ(4, mm.GetMoveCount());
 
 	// Accumulate probabilities. 

@@ -245,6 +245,12 @@ target_include_directories(LennardJonesNBFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(LennardJonesNBFFTests googletest) 
 add_test(LennardJonesNBFFTests LennardJonesNBFFTests)
 
+add_executable(MoveManagerTests test/MoveManagerTests.cpp)
+target_link_libraries(MoveManagerTests ${TEST_DEPS})
+target_include_directories(MoveManagerTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(MoveManagerTests googletest) 
+add_test(MoveManagerTests MoveManagerTests)
+
 add_test(NewParticleTests NewParticleTests)
 add_executable(NewParticleTests test/NewParticleTests.cpp)
 target_link_libraries(NewParticleTests ${TEST_DEPS})
