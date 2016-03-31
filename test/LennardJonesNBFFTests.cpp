@@ -1,8 +1,13 @@
+#include "../src/NewMoves/MoveManager.h"
+#include "../src/NewMoves/TranslateMove.h"
 #include "../src/NewForceFields/LennardJonesNBFF.h"
 #include "../src/NewForceFields/ForceFieldManager.h"
 #include "../src/Particles/BlueprintManager.h"
 #include "../src/Simulation/SimException.h"
+#include "../src/Simulation/StandardSimulation.h"
 #include "../src/Worlds/NewWorld.h"
+#include "../src/Worlds/WorldManager.h"
+#include "TestAccumulator.h"
 #include "gtest/gtest.h"
 #include "json/json.h"
 
@@ -79,4 +84,66 @@ TEST(LennardJonesNBFF, ConfigurationValues)
 	ASSERT_NEAR(-1.2639E+03, u.virial.trace(), 1e-1);
 	ut = ffm.EvaluateTailEnergy(*world);
 	ASSERT_NEAR(-8.3769E+01, ut.energy, 1e-2);
+}
+
+// Validate results from NIST MC LJ standards page.
+// http://mmlapps.nist.gov/srs/LJ_PURE/mc.htm
+TEST(LennardJonesFF, NISTValidation1)
+{
+	// Target reduced density to validate.
+	auto rdensity = 7.76E-01;
+	auto N = 500; // Number of LJ particles per NIST.
+	auto sigma = 1.0; 
+	auto eps   = 1.0; 
+	auto T = 0.85;
+	auto rcut = 3.0*sigma;
+
+	// Keep everything default. Species is 0.
+	std::vector<Site> sites;
+	sites.push_back(Site());
+
+	NewParticle particle(1, {0}, &sites);
+
+	NewWorld world(1, 1, 1, rcut, 1.0);
+	world.PackWorld({&particle}, {1.0}, N, rdensity);
+	world.BuildCellList();
+	world.SetTemperature(T);
+
+	ASSERT_EQ(N, world.GetParticleCount());
+	ASSERT_NEAR((double)N*pow(sigma,3)/rdensity, world.GetVolume(), 1e-10);
+
+	WorldManager wm; 
+	wm.AddWorld(&world);
+
+	// Initialize LJ forcefield.
+	LennardJonesNBFF ff(eps, sigma, {rcut, rcut, rcut, rcut});
+	ForceFieldManager ffm;
+	ffm.AddNonBondedForceField(0, 0, ff);
+
+	// Initialize moves. 
+	TranslateMove move(0.22);
+	MoveManager mm;
+	mm.AddMove(&move);
+
+	// Initialize observer.
+	SimFlags flags;
+	flags.world_energy = 1;
+	flags.iteration = 1;
+	flags.move_acceptances = 1;
+	flags.world_pressure = 1;
+
+	// Initialize accumulator. 
+	TestAccumulator accumulator(flags, 10, 20000);
+
+	// Initialize ensemble. 
+	StandardSimulation ensemble(&wm, &ffm, &mm);
+	ensemble.AddObserver(&accumulator);
+
+	// Run 
+	ensemble.Run(500);
+
+	// Conversation of energy and pressure.
+	world.BuildCellList();
+	auto u = ffm.EvaluateInterEnergy(world);
+	ASSERT_NEAR(u.energy(), world.GetInterEV().energy(), 1e-8);
 }

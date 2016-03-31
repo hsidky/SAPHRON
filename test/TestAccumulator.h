@@ -14,8 +14,8 @@ namespace SAPHRON
 			unsigned _counter;
 			unsigned _start;
 			std::map<NewWorld*, double> _density;
-			std::map<NewWorld*, Energy> _energy;
-			std::map<NewWorld*, Pressure> _pressure;
+			std::map<NewWorld*, double> _energy;
+			std::map<NewWorld*, double> _pressure;
 			std::map<NewWorld*, double> _chemicalpotential;
 			
 		public: 
@@ -59,10 +59,10 @@ namespace SAPHRON
 					if(this->Flags.world_pressure)
 					{
 						if(_pressure.find(world) == _pressure.end())
-							_pressure[world] = world->GetPressure();
+							_pressure[world] = world->GetTotalPressure();
 						else
-							_pressure[world] += world->GetPressure();
-					}
+							_pressure[world] += world->GetTotalPressure();
+					}/*
 					if(this->Flags.world_chem_pot)
 					{
 						if(_chemicalpotential.find(world) == _chemicalpotential.end())
@@ -75,6 +75,7 @@ namespace SAPHRON
 						_density[world]  = world->GetNumberDensity();
 					else
 						_density[world] += world->GetNumberDensity();
+					*/
 				}
 
 				
@@ -105,7 +106,7 @@ namespace SAPHRON
 				
 			}
 
-			std::map<World*, Energy> GetAverageEnergies()
+			std::map<NewWorld*, double> GetAverageEnergies()
 			{
 				auto emap = _energy;
 				for(auto& world : emap)
@@ -114,7 +115,7 @@ namespace SAPHRON
 				return emap;
 			}
 
-			std::map<World*, Pressure> GetAveragePressures()
+			std::map<NewWorld*, double> GetAveragePressures()
 			{
 				auto pmap = _pressure;
 				for(auto& world : pmap)
@@ -123,7 +124,7 @@ namespace SAPHRON
 				return pmap;
 			}
 
-			std::map<World*, double> GetAverageChemicalPotential()
+			std::map<NewWorld*, double> GetAverageChemicalPotential()
 			{
 				auto mumap = _chemicalpotential;
 				for(auto& world : mumap)
@@ -137,7 +138,7 @@ namespace SAPHRON
 				return _temperature / (double)_counter;
 			}
 
-			std::map<World*, double> GetAverageDensities()
+			std::map<NewWorld*, double> GetAverageDensities()
 			{
 				auto dmap = _density;
 				for(auto& world : dmap)

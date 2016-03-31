@@ -14,7 +14,7 @@ namespace SAPHRON
 
 	// Round to the nearest whole number. 
 	// Adapeted from OpenMD 2.4.
-	int anint(double x)
+	int nint(double x)
 	{
 		return (x >= 0.) ? static_cast<int>((x) + 0.5) : static_cast<int>((x) - 0.5);
 	}
@@ -61,6 +61,7 @@ namespace SAPHRON
 		// New volume.
 		double vn = (double)n/density;
 		H_ *= std::cbrt(vn/GetVolume());
+		Hinv_ = H_.inverse();
 
 		// Get corresponding box size.
 		double L = std::cbrt(vn);
@@ -146,13 +147,13 @@ namespace SAPHRON
 			// Compute minimum image cell distances (A.14-16).
 			int dnx = abs(dmx);
 			if(periodx_)
-				dnx = abs(dmx - Nx_*anint(static_cast<double>(dmx)/static_cast<double>(Nx_)));
+				dnx = abs(dmx - Nx_*nint(static_cast<double>(dmx)/static_cast<double>(Nx_)));
 			
 			int dny = abs(dmy);
 			if(periody_)
 			{
-				int dny1 = abs(dmy - Ny_*anint(static_cast<double>(dmy)/static_cast<double>(Ny_)));
-				int dny2 = abs((dmy + 1) - Ny_*anint(static_cast<double>(dmy + 1)/static_cast<double>(Ny_)));
+				int dny1 = abs(dmy - Ny_*nint(static_cast<double>(dmy)/static_cast<double>(Ny_)));
+				int dny2 = abs((dmy + 1) - Ny_*nint(static_cast<double>(dmy + 1)/static_cast<double>(Ny_)));
 				dny = min(dny1, dny2);
 				if((dmx == 0) || ((dmy == Ny_ - 1) && (dmz == Nz_ - 1)))
 					dny = dny1;
@@ -161,8 +162,8 @@ namespace SAPHRON
 			int dnz = abs(dmz);
 			if(periodz_)
 			{
-				int dnz1 = abs(dmz - Nz_*anint(static_cast<double>(dmz)/static_cast<double>(Nz_)));
-				int dnz2 = abs((dmz + 1) - Nz_*anint(static_cast<double>(dmz + 1)/static_cast<double>(Nz_)));
+				int dnz1 = abs(dmz - Nz_*nint(static_cast<double>(dmz)/static_cast<double>(Nz_)));
+				int dnz2 = abs((dmz + 1) - Nz_*nint(static_cast<double>(dmz + 1)/static_cast<double>(Nz_)));
 				dnz = min(dnz1, dnz2);
 				if((dmz == Nz_ - 1) || (dmx == 0 && dmy == 0))
 					dnz = dnz1;
@@ -197,7 +198,7 @@ namespace SAPHRON
 		auto apc = max(2, static_cast<int>(2.0 * N / ccount_));
 
 		// Generate cell and cell pointer vectors. 
-		cellptr_.resize(ccount_ + 1);
+		cellptr_.resize(2*(ccount_ + 1));
 		cell_.resize(apc*ccount_);
 		for(int i = 0; i < ccount_ + 1; ++i)
 			cellptr_[i] = i*apc;
@@ -231,7 +232,13 @@ namespace SAPHRON
 				++j;
 			}
 		}
-		cell_.resize(N);
+		cell_.resize(2*N);
+
+		for(int i = 1; i <= ccount_ + 1; ++i)
+			cellptr_[i + ccount_] = cellptr_[i] + N;
+
+		for(int i = 0; i < N; ++i)
+			cell_[i + N] = cell_[i];
 	}
 
 	std::shared_ptr<NewWorld> NewWorld::Build(const Json::Value& json)

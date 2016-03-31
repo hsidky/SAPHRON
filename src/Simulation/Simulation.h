@@ -3,7 +3,6 @@
 #include "SimInfo.h"
 #include "../Simulation/SimObservable.h"
 #include "../Worlds/NewWorld.h"
-#include "../DensityOfStates/DOSOrderParameter.h"
 #include "../JSON/Serializable.h"
 #include "json/json.h"
 #include "vecmap.h"
@@ -111,12 +110,12 @@ namespace SAPHRON
 		// Builds a simulation from a JSON node, along with the
 		// required dependencies. If a dependency is not needed/initialized, 
 		// simply pass a nullptr. I
-		static Simulation* BuildSimulation(const Json::Value& json,
+		/*static Simulation* BuildSimulation(const Json::Value& json,
 										   WorldManager* wm, 
 										   ForceFieldManager* ffm,
 										   MoveManager* mm, 
 										   DOSOrderParameter* dop,
-										   Histogram* hist);
+										   Histogram* hist);*/
 		virtual ~Simulation(){}
 	};
 }

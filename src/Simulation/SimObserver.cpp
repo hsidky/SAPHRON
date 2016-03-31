@@ -94,7 +94,7 @@ namespace SAPHRON
 			_mutex.unlock();
 		}
 	};
-
+	/*
 	SimObserver* SimObserver::BuildObserver(const Value &json)
 	{
 		return BuildObserver(json, "#/observers");
@@ -205,5 +205,5 @@ namespace SAPHRON
 			ol.push_back(BuildObserver(obs, "#/observers/" + std::to_string(i)));
 			++i;
 		}
-	}
+	}*/
 }

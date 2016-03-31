@@ -64,7 +64,7 @@ TEST(World, PackBox)
 
 TEST(World, MaskPointer)
 {
-	// Create world with neighbor cutoff = half the box.
+	// Create world.
 	NewWorld world(10.0, 10.0, 10.0, 5./3., 1);
 
 	world.SetCellRatio(1.0);
@@ -92,4 +92,20 @@ TEST(World, MaskPointer)
 	world.BuildCellList();
 
 	// TODO: check this more thoroughly.
+}
+
+TEST(World, PeriodicBoundaries)
+{
+	NewWorld world(10.0, 10.0, 10.0, 5., 1);
+
+	// Vector should not change. 
+	Vector3 posi = {5., 5., 5.};
+	Vector3 pos = posi;
+	world.ApplyPeriodicBoundaries(pos);
+	ASSERT_EQ(pos, posi);
+
+	// Vector should map back to 5.5.5
+	pos = {15.0, 15.0, 15.0};
+	world.ApplyPeriodicBoundaries(pos);
+	ASSERT_EQ(pos, posi);
 }

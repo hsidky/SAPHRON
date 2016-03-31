@@ -2,6 +2,7 @@
 
 #include "../Particles/NewParticle.h"
 #include "../Utils/Rand.h"
+#include "../Utils/Helpers.h"
 #include "../Observers/Visitable.h"
 #include "../NewForceFields/EF.h"
 #include "../Simulation/SimInfo.h"
@@ -336,13 +337,23 @@ namespace SAPHRON
 		// Get isotropic pressure.
 		double GetTotalPressure() const
 		{
-			auto& sim = SimInfo::Instance();
+			return GetVirialPressure() + GetTailPressure() + GetIdealPressure();
+		}
 
+		// Get tail (long range corrections) pressure.
+		double GetTailPressure() const
+		{
+			auto& sim = SimInfo::Instance();
+			return sim.GetPressureConv()*tail_.pressure;
+		}
+
+		// Get isotropic virial pressure. 
+		double GetVirialPressure() const
+		{
+			auto& sim = SimInfo::Instance();
 			auto p = 1./(3.*GetVolume())*(inter_ + intra_).virial.trace();
-			p += tail_.pressure;
-			p *= sim.GetPressureConv();
-			p += GetIdealPressure();
-			return p;
+
+			return p*sim.GetPressureConv();
 		}
 
 		// Get ideal pressure (P = NRT/V).
@@ -390,6 +401,27 @@ namespace SAPHRON
 			static_cast<int>(Nx_*r[0]*Hinv_(0,0));
 		}
 
+		// Update the cell list if necessary.
+		void CheckCellListUpdate(const NewParticle& p)
+		{
+			for(size_t i = 0; i < p.SiteCount(); ++i)
+			{
+				if(CheckCellListUpdate(p.GetSite(i)))
+					return;
+			}
+		}
+
+		// Update the cell list if necessary.
+		bool CheckCellListUpdate(const Site& s)
+		{
+			if(GetCellIndex(s.position) != s.cellid)
+			{
+				UpdateCellList();
+				return true;
+			}
+			return false;
+		}
+
 		// Applies minimum image convention to distances.
 		inline void ApplyMinimumImage(Vector3& p) const
 		{
@@ -419,6 +451,17 @@ namespace SAPHRON
 				else if(p[2] < -Hz)
 					p[2] += H_(2,2);
 			}
+		}
+
+		// Applies periodic boundaries to positions.
+		inline void ApplyPeriodicBoundaries(Vector3& p) const 
+		{
+			if(periodx_)
+				p[0] -= H_(0,0)*ffloor(p[0]/H_(0,0));
+			if(periody_)
+				p[1] -= H_(1,1)*ffloor(p[1]/H_(1,1));
+			if(periodz_)
+				p[2] -= H_(2,2)*ffloor(p[2]/H_(2,2));
 		}
 
 		// Builds the cell lists and mask, and calls update cell list (below). 

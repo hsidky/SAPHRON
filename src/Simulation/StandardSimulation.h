@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../NewForceFields/ForceFieldManager.h"
-#include "../Moves/MoveManager.h"
+#include "../NewMoves/MoveManager.h"
 #include "../Worlds/WorldManager.h"
 #include "../Utils/Rand.h"
 #include "Simulation.h"
@@ -30,8 +30,8 @@ namespace SAPHRON
 
 		inline void UpdateAcceptances()
 		{
-			for(auto& move : *_mmanager)
-				_accmap[move->GetName()] = move->GetAcceptanceRatio();
+			//for(auto& move : *_mmanager)
+			//	_accmap[move->GetName()] = move->GetAcceptanceRatio();
 		}
 
 		void Iterate();
@@ -41,9 +41,9 @@ namespace SAPHRON
 		// Visit children.
 		virtual void VisitChildren(Visitor& v) const override
 		{
-			_wmanager->AcceptVisitor(v);
-			_mmanager->AcceptVisitor(v);
-			_ffmanager->AcceptVisitor(v);
+			//_wmanager->AcceptVisitor(v);
+			//_mmanager->AcceptVisitor(v);
+			//_ffmanager->AcceptVisitor(v);
 		}
 
 	public:
@@ -65,9 +65,9 @@ namespace SAPHRON
 			// Evaluate energies of systems. 
 			for(auto& world : *_wmanager)
 			{
-				auto EP = _ffmanager->EvaluateEnergy(*world);
-				world->SetEnergy(EP.energy);
-				world->SetPressure(EP.pressure);
+				world->SetInterEV(_ffmanager->EvaluateInterEnergy(*world));
+				world->SetTailEP(_ffmanager->EvaluateTailEnergy(*world));
+
 				mpi += world->GetParticleCount();
 			}
 

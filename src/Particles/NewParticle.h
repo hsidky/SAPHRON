@@ -13,10 +13,10 @@ namespace SAPHRON
 		Vector3 director = {0, 0, 1};
 		uint species = 0;
 		uint pid = 0;
-		// To be used by cell list manager, not forcefield manager.
-		uint cellid = 0;
 		double charge = 0.0;
 		double mass = 1.0;
+		// To be used by cell list manager, not forcefield manager.
+		uint cellid = 0;
 	};
 
 	class NewParticle

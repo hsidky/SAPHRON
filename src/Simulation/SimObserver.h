@@ -74,7 +74,7 @@ namespace SAPHRON
 
 			// Serialize observer.
 			virtual void Serialize(Json::Value& json) const = 0;
-
+			/*
 			// Static builder method for simobserver. If return value is nullptr, 
 			// then an unknown error occurred. It will throw a BuildException on 
 			// failure.  Object lifetime is caller's responsibility!
@@ -89,7 +89,7 @@ namespace SAPHRON
 			// which will be populated with initialized observers. Object lifetime
 			// is caller's responsibility!
 			static void BuildObservers(const Json::Value& json, ObserverList& ol);
-
+			*/
 			virtual ~SimObserver(){}	
 	};
 }

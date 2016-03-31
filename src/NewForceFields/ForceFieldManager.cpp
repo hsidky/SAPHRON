@@ -35,6 +35,14 @@ namespace SAPHRON
 		}
 	}
 
+	EV ForceFieldManager::EvaluateInterEnergy(const NewParticle& p, const NewWorld& w) const
+	{
+		EV ev;
+		for(size_t i = 0; i < p.SiteCount(); ++i)
+			ev += EvaluateInterEnergy(p.GetSite(i), w);
+		return ev;
+	}
+
 	EV ForceFieldManager::EvaluateInterEnergy(const Site& s, const NewWorld& w) const
 	{
 		EV ep;
@@ -49,7 +57,6 @@ namespace SAPHRON
 		auto wid = w.GetID();
 		// Get current cell and loop through all interacting stripes.
 		auto S = w.GetStripeCount();
-		auto M = w.GetCellCount();
 		auto mi = w.GetCellIndex(s.position);
 
 		// Evaluate current cell. 
@@ -85,37 +92,31 @@ namespace SAPHRON
 			auto m1 = mi + Pm[2*i];
 			auto m2 = mi + Pm[2*i+1];
 
-			// Go through each stripe.
-			for(auto j = m1; j < m2 + 1; ++j)
+			for(auto l = Pc[m1]; l < Pc[m2 + 1]; ++l)
 			{
-				// Wrap stripe index around.
-				auto k = j - (j/M)*M;
-				for(auto l = Pc[k]; l < Pc[k + 1]; ++l)
+				auto& sj = sites[C[l]];
+
+				// Skip species with same parent (intramolecular).
+				if(s.pid == sj.pid)
+					continue;
+
+				// Get site-site distance.
+				Vector3 rij = s.position - sj.position;
+				w.ApplyMinimumImage(rij);
+				auto rsq = rij.squaredNorm();
+
+				// Get molecule-molecule distance.
+				Vector3 rab = particles[s.pid].GetPosition() - particles[sj.pid].GetPosition();
+				w.ApplyMinimumImage(rab);
+
+				// Get forcefield index and evaluate nonbonded. 
+				auto idx = GetIndex(s.species, sj.species);
+				auto& ff = nonbondedffs_[idx];
+				if(ff != nullptr)
 				{
-					auto& sj = sites[C[l]];
-
-					// Skip species with same parent (intramolecular).
-					if(s.pid == sj.pid)
-						continue;
-
-					// Get site-site distance.
-					Vector3 rij = s.position - sj.position;
-					w.ApplyMinimumImage(rij);
-					auto rsq = rij.squaredNorm();
-
-					// Get molecule-molecule distance.
-					Vector3 rab = particles[s.pid].GetPosition() - particles[sj.pid].GetPosition();
-					w.ApplyMinimumImage(rab);
-
-					// Get forcefield index and evaluate nonbonded. 
-					auto idx = GetIndex(s.species, sj.species);
-					auto& ff = nonbondedffs_[idx];
-					if(ff != nullptr)
-					{
-						auto ef = ff->Evaluate(s, sj, rij, rsq, wid);
-						ep.vdw += ef.energy;
-						ep.virial.noalias() -= ef.force*rab.transpose();
-					}
+					auto ef = ff->Evaluate(s, sj, rij, rsq, wid);
+					ep.vdw += ef.energy;
+					ep.virial.noalias() -= ef.force*rab.transpose();
 				}
 			}
 		}

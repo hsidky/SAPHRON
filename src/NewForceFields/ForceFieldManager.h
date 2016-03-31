@@ -6,7 +6,7 @@
 namespace SAPHRON
 {
 	// Forward declare. 
-	class Particle;
+	class NewParticle;
 	class NewWorld;
 
 	// Class responsible for managing forcefields and evaluating 
@@ -27,6 +27,10 @@ namespace SAPHRON
 
 		// Removes a non-bonded forcefield from the FF manager.
 		void RemoveNonBondedForceField(uint s1, uint s2);
+
+		// Evaluates the intermolecular energy of a particle. 
+		// The world is needed for traversing neighbors.
+		EV EvaluateInterEnergy(const NewParticle& p, const NewWorld& w) const;
 
 		// Evaluates the intermolecular energy of a site. 
 		// The world is needed for traversing neighbors.

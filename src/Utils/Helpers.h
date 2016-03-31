@@ -90,4 +90,20 @@ namespace SAPHRON
 	//Compute power 6 of a number. 
 	template<typename  T>
 	inline T fpow6(const T x) { return x*x*x*x*x*x; }
+
+	inline int ffloor(double x)
+	{
+	    return (int) x - (x<0); 
+	}
+
+	inline int fceil(double x)
+	{
+	    return (int) x + (x>0);
+	}
+
+	// Round to nearest integer.
+	inline double anint(double x)
+	{
+		return ( x >= 0 ) ? ffloor( x + 0.5 ) : fceil( x - 0.5 );
+	}
 }

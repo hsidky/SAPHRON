@@ -148,11 +148,11 @@ set(SOURCE
 	#src/Observers/JSONObserver.cpp
 	#src/Observers/XYZObserver.cpp
 	#src/Particles/Particle.cpp
-	#src/Simulation/SimObservable.cpp
-	#src/Simulation/SimObserver.cpp
+	src/Simulation/SimObservable.cpp
+	src/Simulation/SimObserver.cpp
 	#src/Simulation/DOSSimulation.cpp
 	#src/Simulation/Simulation.cpp
-	#src/Simulation/StandardSimulation.cpp
+	src/Simulation/StandardSimulation.cpp
 	#src/Utils/Histogram.cpp
 	#src/Worlds/World.cpp
 	src/Validator/RequirementLoader.cpp
@@ -263,6 +263,12 @@ target_link_libraries(NewWorldTests ${TEST_DEPS})
 target_include_directories(NewWorldTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(NewWorldTests googletest) 
 add_test(NewWorldTests NewWorldTests)
+
+add_executable(TranslateMoveTests test/TranslateMoveTests.cpp)
+target_link_libraries(TranslateMoveTests ${TEST_DEPS})
+target_include_directories(TranslateMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(TranslateMoveTests googletest) 
+add_test(TranslateMoveTests TranslateMoveTests)
 
 add_executable(WorldManagerTests test/WorldManagerTests.cpp)
 target_link_libraries(WorldManagerTests ${TEST_DEPS})
@@ -503,12 +509,6 @@ add_test(WorldManagerTests WorldManagerTests)
 # target_include_directories(ThreeInteractions PRIVATE "${GTEST_INCLUDE_DIR}")
 # add_dependencies(ThreeInteractions googletest) 
 # add_test(ThreeInteractions ThreeInteractions)
-
-# add_executable(TranslateMoveTests test/TranslateMoveTests.cpp)
-# target_link_libraries(TranslateMoveTests ${TEST_DEPS})
-# target_include_directories(TranslateMoveTests PRIVATE "${GTEST_INCLUDE_DIR}")
-# add_dependencies(TranslateMoveTests googletest) 
-# add_test(TranslateMoveTests TranslateMoveTests)
 
 # add_executable(VolumeSwapMoveTests test/VolumeSwapMoveTests.cpp)
 # target_link_libraries(VolumeSwapMoveTests ${TEST_DEPS})

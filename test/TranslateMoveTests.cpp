@@ -1,12 +1,13 @@
-#include "../src/Moves/TranslateMove.h"
-#include "../src/Particles/Particle.h"
-#include "../src/Worlds/World.h"
+#include "../src/NewMoves/TranslateMove.h"
+#include "../src/Particles/NewParticle.h"
+#include "../src/Worlds/NewWorld.h"
 #include "../src/Worlds/WorldManager.h"
-#include "../src/ForceFields/ForceFieldManager.h"
+#include "../src/NewForceFields/ForceFieldManager.h"
 #include "gtest/gtest.h"
 #include <cmath>
 #include <numeric>
 
+/*
 namespace SAPHRON
 {
 	class TranslateParticleCounter : public ParticleObserver
@@ -32,27 +33,47 @@ namespace SAPHRON
 			}
 	};
 }
+*/
 
 using namespace SAPHRON;
 
 // Test TranslateMove default behavior
 TEST(TranslateMove, DefaultBehavior)
 {
-	Particle s({0, 0, 0},{0,0,0}, "T1");
-	TranslateMove m(1.0);
+	std::vector<Site> sites;
+	sites.push_back(Site());
+	NewParticle particle(1, {0}, &sites);
 
-	// Do a bunch of these for good measure
+	auto dx = 0.75;
+	TranslateMove m(dx);
+
+	// Add one particle to the world and add the world to the world manager.
+	NewWorld world(10.0, 10.0, 10.0, 5.0, 3243);
+	world.BuildCellList();
+	world.AddParticle(particle);
+	
+	WorldManager wm;
+	wm.AddWorld(&world);
+
+	// Empty forcefield manager.
+	ForceFieldManager ffm;
+
+	// Do a bunch of these for good measure.
+	auto p = world.SelectParticle(0);
 	for(int i = 0; i < 100000; ++i)
 	{
-		auto prev = s.GetPosition();
-		m.Perform(&s);
-		auto curr = s.GetPosition();
-		ASSERT_LE(arma::norm(curr-prev), 1.0);
+		auto prev = p->GetPosition();
+		m.Perform(&wm, &ffm, Accept);
+		auto curr = p->GetPosition();
+		Vector3 diff = curr - prev;
+		world.ApplyMinimumImage(diff);
+		ASSERT_LE(diff.norm(), dx);
 	}
 
 	ASSERT_EQ(1.0, m.GetAcceptanceRatio());
 }
 
+/*
 TEST(TranslateMove, Selector)
 {
 	World world(10.0, 10.0, 10.0, 5.0, 0.0);
@@ -140,3 +161,4 @@ TEST(TranslateMove, ExplicitDraw)
 	ASSERT_NEAR(counter.movecounts["S2"]/10000., 0.3, 1e-2);
 	ASSERT_NEAR(counter.movecounts["S3"]/10000., 0.6, 1e-2);
 }
+*/
