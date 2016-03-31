@@ -61,7 +61,7 @@ namespace SAPHRON
 		double cellratio_;
 
 		// Cell list mask pointer.
-		std::vector<uint> pmask_;
+		std::vector<uint> pmask_, sortby_;
 
 		// Cell and cell pointer.
 		std::vector<uint> cell_, cellptr_;
@@ -124,7 +124,7 @@ namespace SAPHRON
 		Hinv_(Eigen::Matrix3d::Zero()), periodx_(true),
 		periody_(true), periodz_(true), temperature_(0.), particles_(),
 		sites_(0), Nx_(0), Ny_(0), Nz_(0), ccount_(0), scount_(0), cellratio_(0.2), 
-		pmask_(0), cell_(0), cellptr_(0), rand_(seed), sitecomp_(0), particlecomp_(0), 
+		pmask_(0), sortby_(0), cell_(0), cellptr_(0), rand_(seed), sitecomp_(0), particlecomp_(0), 
 		seed_(seed), id_(nextID_++)
 		{
 			H_(0,0) = x;

@@ -133,14 +133,14 @@ TEST(LennardJonesFF, NISTValidation1)
 	flags.world_pressure = 1;
 
 	// Initialize accumulator. 
-	TestAccumulator accumulator(flags, 1, 1000);
+	TestAccumulator accumulator(flags, 1, 10000);
 
 	// Initialize ensemble. 
 	StandardSimulation ensemble(&wm, &ffm, &mm);
 	ensemble.AddObserver(&accumulator);
 
 	// Run 
-	ensemble.Run(500);
+	ensemble.Run(5000);
 
 	// Conversation of energy and pressure.
 	world.BuildCellList();

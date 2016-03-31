@@ -200,8 +200,8 @@ namespace SAPHRON
 		// Generate cell and cell pointer vectors. 
 		cellptr_.resize(2*(ccount_ + 1));
 		cell_.resize(apc*ccount_);
+		//sortby_.resize(N, 0);
 
-		#pragma omp simd
 		for(int i = 0; i < ccount_ + 1; ++i)
 			cellptr_[i] = i*apc;
 		
@@ -216,6 +216,7 @@ namespace SAPHRON
 			cell_[cellptr_[m]] = i;
 			assert(cellptr_[m] < m*apc + 1);
 			++cellptr_[m];
+			//sortby_[i] = 0;
 		}
 
 		// Compact cell vector and update cell pointer accordingly. 
@@ -232,7 +233,7 @@ namespace SAPHRON
 			for(int i = apc * m; i < k; ++i)
 			{
 				cell_[j] = cell_[i];
-				//sortby[cell_[j]] =  j;
+				//sortby_[cell_[j]] =  j;
 				++j;
 			}
 		}
@@ -241,13 +242,14 @@ namespace SAPHRON
 		// Sort.
 		/*std::sort(sites_.begin(), sites_.begin() + N, [&](const Site& s1, const Site& s2)
 		{
-			return sortby[s1.idx] < sortby[s2.idx];
-		});*/
+			return sortby_[s1.idx] < sortby_[s2.idx];
+		}); */
 
 		#pragma omp simd
 		for(int i = 1; i <= ccount_ + 1; ++i)
 			cellptr_[i + ccount_] = cellptr_[i] + N;
 		
+		#pragma omp simd
 		for(int i = 0; i < N; ++i)
 		{
 			//auto& s = sites_[i];

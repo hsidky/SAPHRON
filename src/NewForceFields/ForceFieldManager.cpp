@@ -87,13 +87,12 @@ namespace SAPHRON
 		}
 
 		#pragma omp declare reduction (+ : EV : omp_out += omp_in ) initializer (omp_priv=EV())
-		#pragma omp parallel for reduction(+:ep)
+		#pragma omp parallel for reduction(+:ep) schedule(static)
 		for(int i = 0; i < S; ++i)
 		{
 			// First and last cells of stripe. 
 			auto m1 = mi + Pm[2*i];
 			auto m2 = mi + Pm[2*i+1];
-
 			for(auto l = Pc[m1]; l < Pc[m2 + 1]; ++l)
 			{
 				auto& sj = sites[C[l]];
