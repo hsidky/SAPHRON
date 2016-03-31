@@ -92,6 +92,16 @@ TEST(World, MaskPointer)
 	world.BuildCellList();
 
 	// TODO: check this more thoroughly.
+	auto& C = world.GetCellVector();
+	for(auto& c : C) 
+		std::cout << c << " ";
+
+	std::cout << std::endl;
+
+	for(auto& s : world.GetSites())
+		std::cout << s.idx << " ";
+
+	std::cout << std::endl;
 }
 
 TEST(World, PeriodicBoundaries)

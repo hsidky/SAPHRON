@@ -45,8 +45,8 @@ namespace SAPHRON
 			if(rsq > rcsq_[wid])
 				return {u, {0, 0, 0}};
 
-			auto sr6 = sig6_/fcb(rsq);
-			auto sr12 = fsq(sr6);
+			auto sr6 = sig6_/(rsq*rsq*rsq);
+			auto sr12 = sr6*sr6;
 			Vector3 F = -24.*eps_*(2.*sr12 - sr6)/rsq*rij;
 			return {4.*eps_*(sr12 - sr6), F};
 		}

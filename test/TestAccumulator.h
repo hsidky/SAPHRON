@@ -55,6 +55,8 @@ namespace SAPHRON
 							_energy[world] = world->GetEnergy();
 						else
 							_energy[world] += world->GetEnergy();
+
+						std::cout << world->GetEnergy() << " ";
 					}
 					if(this->Flags.world_pressure)
 					{
@@ -62,6 +64,8 @@ namespace SAPHRON
 							_pressure[world] = world->GetTotalPressure();
 						else
 							_pressure[world] += world->GetTotalPressure();
+						std::cout << world->GetTotalPressure() << " ";
+
 					}/*
 					if(this->Flags.world_chem_pot)
 					{
@@ -77,7 +81,7 @@ namespace SAPHRON
 						_density[world] += world->GetNumberDensity();
 					*/
 				}
-
+				std::cout << std::endl;
 				
 			}
 

@@ -82,3 +82,19 @@ TEST(Particle, DefaultBehavior)
 	ASSERT_EQ(sites[1].charge, csites[1].charge);
 	ASSERT_EQ(sites[1].mass, csites[1].mass);
 }
+
+// Test index updating for sites in vector.
+TEST(NewParticle, UpdateIndex)
+{
+	std::vector<Site> sites;
+	sites.push_back(Site());
+	sites[0].species = 1;
+	NewParticle p(2, {0}, &sites);
+
+	// Insert new particle.
+	ASSERT_EQ(1, p.GetSpecies(0));
+	sites.insert(sites.begin(), Site());
+	ASSERT_NE(1, p.GetSpecies(0));
+	p.UpdateIndex(0, 1);
+	ASSERT_EQ(1, p.GetSpecies(0));
+}

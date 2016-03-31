@@ -17,6 +17,8 @@ namespace SAPHRON
 		double mass = 1.0;
 		// To be used by cell list manager, not forcefield manager.
 		uint cellid = 0;
+		uint lid = 0;
+		uint idx = 0;
 	};
 
 	class NewParticle
@@ -198,6 +200,14 @@ namespace SAPHRON
 			return bonds_(i, j) == 1;
 		}
 
+		// Update the absolute index of site i, in vector.
+		// Assumes nothing has changed other than position. 
+		// If something else has, call UpdateConfiguration().
+		void UpdateIndex(uint i, uint j)
+		{
+			indices_[i] = j;
+		}
+
 		// Get number of sites in particle.
 		uint SiteCount() const { return indices_.size(); }
 
@@ -207,13 +217,13 @@ namespace SAPHRON
 			mass_ = 0;
 			charge_ = 0;
 			position_ = {0, 0, 0};
-			for(auto& i : indices_)
+			for(uint i = 0; i < indices_.size(); ++i)
 			{
-				position_ += (*sites_)[i].position;
-				mass_ += (*sites_)[i].mass;
-				charge_ += (*sites_)[i].charge;
+				position_ += (*sites_)[indices_[i]].position;
+				mass_ += (*sites_)[indices_[i]].mass;
+				charge_ += (*sites_)[indices_[i]].charge;
+				(*sites_)[indices_[i]].lid = i;
 			}
-
 			position_ /= mass_;
 		}
 	};

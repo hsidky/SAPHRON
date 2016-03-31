@@ -16,7 +16,7 @@ namespace SAPHRON
 	{
 		double vdw = 0., electro = 0.;
 		Matrix3 virial = Eigen::Matrix3d::Zero();
-
+		EV() {}
 		inline EV& operator+=(const EV& rhs)
 		{
 			vdw += rhs.vdw;

@@ -106,7 +106,7 @@ TEST(LennardJonesFF, NISTValidation1)
 
 	NewWorld world(1, 1, 1, rcut, 1.0);
 	world.PackWorld({&particle}, {1.0}, N, rdensity);
-	world.BuildCellList();
+	world.SetCellRatio(0.20);
 	world.SetTemperature(T);
 
 	ASSERT_EQ(N, world.GetParticleCount());
@@ -133,7 +133,7 @@ TEST(LennardJonesFF, NISTValidation1)
 	flags.world_pressure = 1;
 
 	// Initialize accumulator. 
-	TestAccumulator accumulator(flags, 10, 20000);
+	TestAccumulator accumulator(flags, 1, 1000);
 
 	// Initialize ensemble. 
 	StandardSimulation ensemble(&wm, &ffm, &mm);
@@ -146,4 +146,8 @@ TEST(LennardJonesFF, NISTValidation1)
 	world.BuildCellList();
 	auto u = ffm.EvaluateInterEnergy(world);
 	ASSERT_NEAR(u.energy(), world.GetInterEV().energy(), 1e-8);
+	ASSERT_NEAR(u.virial.trace(), world.GetInterEV().virial.trace(), 1e-8);
+
+	//ASSERT_NEAR(-5.5121, accumulator.GetAverageEnergies()[&world]/(double)N, 1e-3);
+	//ASSERT_NEAR(6.7714E-03, accumulator.GetAveragePressures()[&world], 1e-3);	
 }

@@ -195,11 +195,13 @@ namespace SAPHRON
 
 		// Atoms per cell, heuristic from paper.
 		int N = sites_.size();
-		auto apc = max(2, static_cast<int>(2.0 * N / ccount_));
+		auto apc = max(10, static_cast<int>(2.0 * N / ccount_));
 
 		// Generate cell and cell pointer vectors. 
 		cellptr_.resize(2*(ccount_ + 1));
 		cell_.resize(apc*ccount_);
+
+		#pragma omp simd
 		for(int i = 0; i < ccount_ + 1; ++i)
 			cellptr_[i] = i*apc;
 		
@@ -210,13 +212,14 @@ namespace SAPHRON
 			// Get cell index of site.
 			auto m = GetCellIndex(sites_[i].position);
 			sites_[i].cellid = m;
-
+			sites_[i].idx = i;
 			cell_[cellptr_[m]] = i;
 			assert(cellptr_[m] < m*apc + 1);
 			++cellptr_[m];
 		}
 
 		// Compact cell vector and update cell pointer accordingly. 
+		//std::vector<uint> sortby(N, 0);
 		int j = cellptr_[0]; // Contains final filled entry in a cell.
 		cellptr_[0] = 0; // This will inherently start at 0.
 		for(int m = 1; m < ccount_; ++m)
@@ -229,16 +232,30 @@ namespace SAPHRON
 			for(int i = apc * m; i < k; ++i)
 			{
 				cell_[j] = cell_[i];
+				//sortby[cell_[j]] =  j;
 				++j;
 			}
 		}
 		cell_.resize(2*N);
+		
+		// Sort.
+		/*std::sort(sites_.begin(), sites_.begin() + N, [&](const Site& s1, const Site& s2)
+		{
+			return sortby[s1.idx] < sortby[s2.idx];
+		});*/
 
+		#pragma omp simd
 		for(int i = 1; i <= ccount_ + 1; ++i)
 			cellptr_[i + ccount_] = cellptr_[i] + N;
-
+		
 		for(int i = 0; i < N; ++i)
+		{
+			//auto& s = sites_[i];
+			//s.idx = i;
+			//particles_[s.pid].UpdateIndex(s.lid, i);
+			//cell_[i] = i;
 			cell_[i + N] = cell_[i];
+		}
 	}
 
 	std::shared_ptr<NewWorld> NewWorld::Build(const Json::Value& json)

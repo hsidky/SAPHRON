@@ -57,7 +57,7 @@ namespace SAPHRON
 		auto wid = w.GetID();
 		// Get current cell and loop through all interacting stripes.
 		auto S = w.GetStripeCount();
-		auto mi = w.GetCellIndex(s.position);
+		int mi = w.GetCellIndex(s.position);
 
 		// Evaluate current cell. 
 		for(auto i = Pc[mi]; i < Pc[mi + 1]; ++i)
@@ -82,10 +82,12 @@ namespace SAPHRON
 			{
 				auto ef = ff->Evaluate(s, sj, rij, rsq, wid);
 				ep.vdw += ef.energy;
-				ep.virial.noalias() -= ef.force*rab.transpose();
+				ep.virial.noalias() += ef.force*rab.transpose();
 			}
 		}
 
+		#pragma omp declare reduction (+ : EV : omp_out += omp_in ) initializer (omp_priv=EV())
+		#pragma omp parallel for reduction(+:ep)
 		for(int i = 0; i < S; ++i)
 		{
 			// First and last cells of stripe. 
@@ -116,10 +118,12 @@ namespace SAPHRON
 				{
 					auto ef = ff->Evaluate(s, sj, rij, rsq, wid);
 					ep.vdw += ef.energy;
-					ep.virial.noalias() -= ef.force*rab.transpose();
+					ep.virial.noalias() += ef.force*rab.transpose();
 				}
 			}
 		}
+
+		ep.virial *= -1;
 
 		return ep;
 	}

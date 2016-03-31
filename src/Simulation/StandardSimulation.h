@@ -41,7 +41,7 @@ namespace SAPHRON
 		// Visit children.
 		virtual void VisitChildren(Visitor& v) const override
 		{
-			//_wmanager->AcceptVisitor(v);
+			_wmanager->AcceptVisitor(v);
 			//_mmanager->AcceptVisitor(v);
 			//_ffmanager->AcceptVisitor(v);
 		}
