@@ -30,17 +30,29 @@ namespace SAPHRON
 
 		// Evaluates the intermolecular energy of a particle. 
 		// The world is needed for traversing neighbors.
-		EV EvaluateInterEnergy(const NewParticle& p, const NewWorld& w) const;
+		double EvaluateInterEnergy(const NewParticle& p, const NewWorld& w) const;
 
 		// Evaluates the intermolecular energy of a site. 
 		// The world is needed for traversing neighbors.
-		EV EvaluateInterEnergy(const Site& s, const NewWorld& w) const;
+		double EvaluateInterEnergy(const Site& s, const NewWorld& w) const;
 
 		// Evaluates the intermolecular energy of a world.
-		EV EvaluateInterEnergy(const NewWorld& w) const;
+		double EvaluateInterEnergy(const NewWorld& w) const;
 
 		// Evaluates the tail contribution (long range corrections) for a world.
-		EPTail EvaluateTailEnergy(const NewWorld& w) const;
+		double EvaluateTailEnergy(const NewWorld& w) const;
+
+		// Evaluate the virial of a site.
+		Matrix3 EvaluateVirial(const Site& s, const NewWorld& w) const;
+
+		// Evaluate the virial of a particle.
+		Matrix3 EvaluateVirial(const NewParticle& p, const NewWorld& w) const;
+
+		// Evaluate the virial tensor of a world.
+		Matrix3 EvaluateVirial(const NewWorld& w) const;
+
+		// Evaluate the tail contribution (long range correction) for a world.
+		double EvaluateTailPressure(const NewWorld& w) const;
 
 		// Maps a species pair to an index. 
 		inline uint GetIndex(uint i, uint j) const

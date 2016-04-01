@@ -35,17 +35,121 @@ namespace SAPHRON
 		}
 	}
 
-	EV ForceFieldManager::EvaluateInterEnergy(const NewParticle& p, const NewWorld& w) const
+	double ForceFieldManager::EvaluateInterEnergy(const NewParticle& p, const NewWorld& w) const
 	{
-		EV ev;
+		double u = 0.;
 		for(size_t i = 0; i < p.SiteCount(); ++i)
-			ev += EvaluateInterEnergy(p.GetSite(i), w);
-		return ev;
+			u += EvaluateInterEnergy(p.GetSite(i), w);
+		return u;
 	}
 
-	EV ForceFieldManager::EvaluateInterEnergy(const Site& s, const NewWorld& w) const
+	double ForceFieldManager::EvaluateInterEnergy(const Site& s, const NewWorld& w) const
 	{
-		EV ep;
+		double u = 0.;
+
+		// Get appropriate references.
+		auto& sites = w.GetSites();
+		auto& C = w.GetCellVector();
+		auto& Pc = w.GetCellPointer();
+		auto& Pm = w.GetMaskPointer();
+		
+		auto wid = w.GetID();
+		// Get current cell and loop through all interacting stripes.
+		auto S = w.GetStripeCount();
+		int mi = w.GetCellIndex(s.position);
+
+		// Evaluate current cell. 
+		for(auto i = Pc[mi]; i < Pc[mi + 1]; ++i)
+		{
+			auto& sj = sites[C[i]];
+			if(s.pid == sj.pid)
+				continue;
+
+			// Get site-site distance.
+			Vector3 rij = s.position - sj.position;
+			w.ApplyMinimumImage(rij);
+			auto rsq = rij.squaredNorm();
+
+			// Get forcefield index and evaluate nonbonded. 
+			auto idx = GetIndex(s.species, sj.species);
+			auto& ff = nonbondedffs_[idx];
+			if(ff != nullptr)
+				u += ff->EvaluateEnergy(s, sj, rij, rsq, wid);
+		}
+
+		#pragma omp parallel for reduction(+:u)
+		for(int i = 0; i < S; ++i)
+		{
+			// First and last cells of stripe. 
+			auto m1 = mi + Pm[2*i];
+			auto m2 = mi + Pm[2*i+1];
+			for(auto l = Pc[m1]; l < Pc[m2 + 1]; ++l)
+			{
+				auto& sj = sites[C[l]];
+
+				// Skip species with same parent (intramolecular).
+				if(s.pid == sj.pid)
+					continue;
+
+				// Get site-site distance.
+				Vector3 rij = s.position - sj.position;
+				w.ApplyMinimumImage(rij);
+				auto rsq = rij.squaredNorm();
+
+				// Get forcefield index and evaluate nonbonded. 
+				auto idx = GetIndex(s.species, sj.species);
+				auto& ff = nonbondedffs_[idx];
+				if(ff != nullptr)
+					u += ff->EvaluateEnergy(s, sj, rij, rsq, wid);					
+			}
+		}
+
+		return u;
+	}
+
+	double ForceFieldManager::EvaluateInterEnergy(const NewWorld& w) const
+	{
+		double u = 0.;
+		for(auto& s : w.GetSites())
+			u += EvaluateInterEnergy(s, w);
+
+		return u/2.;
+	}
+
+	double ForceFieldManager::EvaluateTailEnergy(const NewWorld& w) const
+	{
+		auto& comp = w.GetSiteCompositions();
+		auto wid = w.GetID();
+		auto v = w.GetVolume();
+
+		double u = 0.;
+		// Go through unique pairs of species.
+		for(uint i = 0; i < nbcount_; ++i)
+			for(uint j = i; j < nbcount_; ++j)
+			{
+				auto na = comp[i];
+				auto nb = comp[j];
+				auto idx = GetIndex(i, j);
+
+				u += na*nb*nonbondedffs_[idx]->EnergyTailCorrection(wid);
+			}
+
+		//u.pressure *= 2.*M_PI/(3.*v*v);
+
+		return u*2.*M_PI/v;
+	}
+
+	Matrix3 ForceFieldManager::EvaluateVirial(const NewParticle& p, const NewWorld& w) const
+	{
+		Matrix3 v = Matrix3::Zero();
+		for(size_t i = 0; i < p.SiteCount(); ++i)
+			v += EvaluateVirial(p.GetSite(i), w);
+		return v;
+	}
+
+	Matrix3 ForceFieldManager::EvaluateVirial(const Site& s, const NewWorld& w) const
+	{
+		Matrix3 v = Matrix3::Zero();
 
 		// Get appropriate references.
 		auto& particles = w.GetParticles();
@@ -79,15 +183,11 @@ namespace SAPHRON
 			auto idx = GetIndex(s.species, sj.species);
 			auto& ff = nonbondedffs_[idx];
 			if(ff != nullptr)
-			{
-				auto ef = ff->Evaluate(s, sj, rij, rsq, wid);
-				ep.vdw += ef.energy;
-				ep.virial.noalias() += ef.force*rab.transpose();
-			}
+				v.noalias() += ff->EvaluateForce(s, sj, rij, rsq, wid)*rab.transpose();
 		}
 
-		#pragma omp declare reduction (+ : EV : omp_out += omp_in ) initializer (omp_priv=EV())
-		#pragma omp parallel for reduction(+:ep) schedule(static)
+		//#pragma omp declare reduction (+ : Matrix3 : omp_out += omp_in ) initializer (omp_priv=Matrix3::Zero())
+		//#pragma omp parallel for reduction(+:v) schedule(static)
 		for(int i = 0; i < S; ++i)
 		{
 			// First and last cells of stripe. 
@@ -114,38 +214,29 @@ namespace SAPHRON
 				auto idx = GetIndex(s.species, sj.species);
 				auto& ff = nonbondedffs_[idx];
 				if(ff != nullptr)
-				{
-					auto ef = ff->Evaluate(s, sj, rij, rsq, wid);
-					ep.vdw += ef.energy;
-					ep.virial.noalias() += ef.force*rab.transpose();
-				}
+					v.noalias() += ff->EvaluateForce(s, sj, rij, rsq, wid)*rab.transpose();					
 			}
 		}
 
-		ep.virial *= -1;
-
-		return ep;
+		return -1.*v;
 	}
 
-	EV ForceFieldManager::EvaluateInterEnergy(const NewWorld& w) const
+	Matrix3 ForceFieldManager::EvaluateVirial(const NewWorld& w) const
 	{
-		EV u;
+		Matrix3 u = Matrix3::Zero();
 		for(auto& s : w.GetSites())
-			u += EvaluateInterEnergy(s, w);
+			u += EvaluateVirial(s, w);
 
-		u.vdw *= 0.5;
-		u.virial *= 0.5;
-
-		return u;
+		return u/2.;
 	}
 
-	EPTail ForceFieldManager::EvaluateTailEnergy(const NewWorld& w) const
+	double ForceFieldManager::EvaluateTailPressure(const NewWorld& w) const
 	{
 		auto& comp = w.GetSiteCompositions();
 		auto wid = w.GetID();
 		auto v = w.GetVolume();
 
-		EPTail u;
+		double p = 0.;
 		// Go through unique pairs of species.
 		for(uint i = 0; i < nbcount_; ++i)
 			for(uint j = i; j < nbcount_; ++j)
@@ -154,13 +245,10 @@ namespace SAPHRON
 				auto nb = comp[j];
 				auto idx = GetIndex(i, j);
 
-				u.energy += na*nb*nonbondedffs_[idx]->EnergyTailCorrection(wid);
-				u.pressure += na*nb*nonbondedffs_[idx]->PressureTailCorrection(wid);
+				p += na*nb*nonbondedffs_[idx]->PressureTailCorrection(wid);
 			}
 
-		u.energy *= 2.*M_PI/v;
-		u.pressure *= 2.*M_PI/(3.*v*v);
-
-		return u;
+		return p*2.*M_PI/(3.*v*v);
 	}
+
 }

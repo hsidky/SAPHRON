@@ -195,7 +195,7 @@ namespace SAPHRON
 
 		// Atoms per cell, heuristic from paper.
 		int N = sites_.size();
-		auto apc = max(10, static_cast<int>(2.0 * N / ccount_));
+		auto apc = max(2, static_cast<int>(2.0 * N / ccount_));
 
 		// Generate cell and cell pointer vectors. 
 		cellptr_.resize(2*(ccount_ + 1));

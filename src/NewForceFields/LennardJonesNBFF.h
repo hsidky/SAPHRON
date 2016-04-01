@@ -39,16 +39,24 @@ namespace SAPHRON
 			}
 		}
 
-		EF Evaluate(const Site&, const Site&, const Vector3& rij, double rsq, uint wid) const override
+		double EvaluateEnergy(const Site&, const Site&, const Vector3&, double rsq, uint wid) const override
 		{
-			auto u = 0.;
 			if(rsq > rcsq_[wid])
-				return {u, {0, 0, 0}};
+				return 0.;
+			
+			auto sr6 = sig6_/(rsq*rsq*rsq);
+			auto sr12 = sr6*sr6;
+			return 4.*eps_*(sr12 - sr6);
+		}
+
+		Vector3 EvaluateForce(const Site&, const Site&, const Vector3& rij, double rsq, uint wid) const override
+		{
+			if(rsq > rcsq_[wid])
+				return {0., 0., 0.};
 
 			auto sr6 = sig6_/(rsq*rsq*rsq);
 			auto sr12 = sr6*sr6;
-			Vector3 F = -24.*eps_*(2.*sr12 - sr6)/rsq*rij;
-			return {4.*eps_*(sr12 - sr6), F};
+			return -24.*eps_*(2.*sr12 - sr6)/rsq*rij;
 		}
 
 		double EnergyTailCorrection(uint wid) const override

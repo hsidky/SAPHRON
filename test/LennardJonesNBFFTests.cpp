@@ -7,7 +7,7 @@
 #include "../src/Simulation/StandardSimulation.h"
 #include "../src/Worlds/NewWorld.h"
 #include "../src/Worlds/WorldManager.h"
-#include "TestAccumulator.h"
+//#include "TestAccumulator.h"
 #include "gtest/gtest.h"
 #include "json/json.h"
 
@@ -25,13 +25,14 @@ TEST(LennardJonesNBFF, InteractionPotential)
 	s2.position = {1.5, 0., 0.};
 
 	auto r = s1.position - s2.position;
-	auto u = ff.Evaluate(s1, s2, r, r.squaredNorm(), 0);
-	ASSERT_NEAR(-0.320336594278575, u.energy, 1e-10);
+	auto u = ff.EvaluateEnergy(s1, s2, r, r.squaredNorm(), 0);
+	ASSERT_NEAR(-0.320336594278575, u, 1e-10);
 	ASSERT_NEAR(-4.859086276627293e-04, ff.EnergyTailCorrection(0), 1e-10);
 	ASSERT_NEAR(-0.002915451636909, ff.PressureTailCorrection(0), 1e-10);
 
 	// Compute pressure from force.
-	double P = -1./3.*u.force.dot(r);
+	auto f = ff.EvaluateForce(s1, s2, r, r.squaredNorm(), 0);
+	double P = -1./3.*f.dot(r);
 	ASSERT_NEAR(-0.579014415, P, 1e-7);
 }
 
@@ -68,10 +69,11 @@ TEST(LennardJonesNBFF, ConfigurationValues)
 	ffm.AddNonBondedForceField(ljs, ljs, ff);
 
 	auto u = ffm.EvaluateInterEnergy(*world);
-	ASSERT_NEAR(-4.3515E+03, u.vdw, 1e-1);
-	ASSERT_NEAR(-5.6867E+02, u.virial.trace(), 1e-2);
+	auto v = ffm.EvaluateVirial(*world);
+	ASSERT_NEAR(-4.3515E+03, u, 1e-1);
+	ASSERT_NEAR(-5.6867E+02, v.trace(), 1e-2);
 	auto ut = ffm.EvaluateTailEnergy(*world);
-	ASSERT_NEAR(-1.9849E+02, ut.energy, 1e-2);
+	ASSERT_NEAR(-1.9849E+02, ut, 1e-2);
 
 	// Test rcut = 4*sigma.
 	LennardJonesNBFF ff2(1.0, 1.0, {4.0, 4.0});
@@ -80,10 +82,11 @@ TEST(LennardJonesNBFF, ConfigurationValues)
 	ffm.AddNonBondedForceField(ljs, ljs, ff2);
 	
 	u = ffm.EvaluateInterEnergy(*world);
-	ASSERT_NEAR(-4.4675E+03, u.vdw, 1e-1);
-	ASSERT_NEAR(-1.2639E+03, u.virial.trace(), 1e-1);
+	ASSERT_NEAR(-4.4675E+03, u, 1e-1);
+	v = ffm.EvaluateVirial(*world);
+	ASSERT_NEAR(-1.2639E+03, v.trace(), 1e-1);
 	ut = ffm.EvaluateTailEnergy(*world);
-	ASSERT_NEAR(-8.3769E+01, ut.energy, 1e-2);
+	ASSERT_NEAR(-8.3769E+01, ut, 1e-2);
 }
 
 // Validate results from NIST MC LJ standards page.
@@ -106,7 +109,7 @@ TEST(LennardJonesFF, NISTValidation1)
 
 	NewWorld world(1, 1, 1, rcut, 1.0);
 	world.PackWorld({&particle}, {1.0}, N, rdensity);
-	world.SetCellRatio(0.20);
+	world.SetCellRatio(0.2);
 	world.SetTemperature(T);
 
 	ASSERT_EQ(N, world.GetParticleCount());
@@ -133,20 +136,19 @@ TEST(LennardJonesFF, NISTValidation1)
 	flags.world_pressure = 1;
 
 	// Initialize accumulator. 
-	TestAccumulator accumulator(flags, 1, 10000);
+	//TestAccumulator accumulator(flags, 1, 10000);
 
 	// Initialize ensemble. 
 	StandardSimulation ensemble(&wm, &ffm, &mm);
-	ensemble.AddObserver(&accumulator);
+	//ensemble.AddObserver(&accumulator);
 
 	// Run 
-	ensemble.Run(5000);
+	ensemble.Run(500);
 
 	// Conversation of energy and pressure.
-	world.BuildCellList();
+	//world.BuildCellList();
 	auto u = ffm.EvaluateInterEnergy(world);
-	ASSERT_NEAR(u.energy(), world.GetInterEV().energy(), 1e-8);
-	ASSERT_NEAR(u.virial.trace(), world.GetInterEV().virial.trace(), 1e-8);
+	ASSERT_NEAR(u, world.GetInterEnergy(), 1e-8);
 
 	//ASSERT_NEAR(-5.5121, accumulator.GetAverageEnergies()[&world]/(double)N, 1e-3);
 	//ASSERT_NEAR(6.7714E-03, accumulator.GetAveragePressures()[&world], 1e-3);	

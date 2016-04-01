@@ -45,16 +45,16 @@ namespace SAPHRON
 			// Acceptance probability. 
 			auto& sim = SimInfo::Instance();
 			auto de = ef - ei;
-			auto P = exp(-de.energy()/(w->GetTemperature()*sim.GetkB()));
+			auto P = exp(-de/(w->GetTemperature()*sim.GetkB()));
 			P = P > 1.0 ? 1.0 : P;
 
 			// Accept or reject move.
-			w->IncrementInterEV(de);
+			w->IncrementInterEnergy(de);
 			if(force != Accept && (P < rand_.doub() || force == Reject))
 			{
 				p->SetPosition(posi);
 				this->IncrementRejections();
-				w->IncrementInterEV(-1*de);
+				w->IncrementInterEnergy(-1*de);
 			}
 			else
 				w->CheckCellListUpdate(*p);

@@ -43,8 +43,8 @@ namespace SAPHRON
 		//////////////////////////////
 		//  Energy/pressure structs //
 		//////////////////////////////
-		EV inter_, intra_;
-		EPTail tail_;
+		double einter_, eintra_;
+		double etail_;
 
 		/////////////////////////////
 		//  Cell list properties   //
@@ -304,36 +304,37 @@ namespace SAPHRON
 			return sitecomp_;
 		}
 
-		// Get intermolecular energy/virial.
-		const EV& GetInterEV() const { return inter_; }
+		// Get intermolecular energy.
+		double GetInterEnergy() const { return einter_; }
 
 		// Set intermolecular energy.
-		void SetInterEV(const EV& ev) { inter_ = ev; }
+		void SetInterEnergy(double e) { einter_ = e; }
 
 		// Increment intermolecular energy.
-		void IncrementInterEV(const EV& de) { inter_ += de; }
+		void IncrementInterEnergy(double de) { einter_ += de; }
 
-		// Get intramolecular energy/virial.
-		const EV& GetIntraEV() const { return intra_; }
+		// Get intramolecular energy.
+		double GetIntraEnergy() const { return eintra_; }
 
-		// Set intramolecular energy/virial.
-		void SetIntraEV(const EV& ev) { intra_ = ev; }
+		// Set intramolecular energy.
+		void SetIntraEnergy(double e) { eintra_ = e; }
 
-		// Increment intramolecular energy/virial.
-		void IncrementIntraEV(const EV& de) { intra_ += de; }
+		// Increment intramolecular energy.
+		void IncrementIntraEnergy(double de) { eintra_ += de; }
 
-		// Get tail/long range correction energy/pressure.
-		const EPTail GetTailEP() const { return tail_; }
+		// Get tail/long range correction energy.
+		double GetTailEnergy() const { return etail_; }
 
-		// Set tail long range correction energy/pressure.
-		void SetTailEP(const EPTail& ep) { tail_ = ep; }
+		// Set tail long range correction energy.
+		void SetTailEnergy(double e) { etail_ = e; }
 
 		// Get total world energy.
 		double GetEnergy() const 
 		{
-			return inter_.energy() + intra_.energy() + tail_.energy;
+			return einter_ + eintra_ + etail_;
 		}
 
+/*
 		// Get isotropic pressure.
 		double GetTotalPressure() const
 		{
@@ -355,7 +356,7 @@ namespace SAPHRON
 
 			return p*sim.GetPressureConv();
 		}
-
+*/
 		// Get ideal pressure (P = NRT/V).
 		double GetIdealPressure() const
 		{

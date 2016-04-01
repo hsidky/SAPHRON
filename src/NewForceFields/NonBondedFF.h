@@ -1,7 +1,6 @@
 #pragma once 
 
 #include "../Particles/NewParticle.h"
-#include "EF.h"
 
 namespace SAPHRON
 {
@@ -17,16 +16,30 @@ namespace SAPHRON
 	class NonBondedFF 
 	{
 	public:
-		// Returns the potential energy and force between two sites. The distance vector and 
+		// Returns the potential energy between two sites. The distance vector and 
 		// norm squared between the two particles is provided by the FFManager with minimum 
 		// image applied, in addition to the integer world ID if applicable, zero if there 
 		// is none. 
-		virtual EF Evaluate(
+		virtual double EvaluateEnergy(
 			const Site& s1, 
 			const Site& s2, 
 			const Vector3& rij, 
 			double rsq, 
 			uint wid) const = 0;
+
+		// Returns the force between two sites. The distance vector and norm squared 
+		// between the two particles is provided by the FFManager with minimum image 
+		// applied, in addition to the integer world ID if applicable. Zero if there is 
+		// none.
+		virtual Vector3 EvaluateForce(
+			const Site&, 
+			const Site&, 
+			const Vector3&, 
+			double, 
+			uint) const 
+		{ 
+			return {0., 0., 0.}; 
+		};
 
 		// Evaluates the energy tail correction term. 
 		// This is precisely integral(u(r)*r^2,rc,Inf).

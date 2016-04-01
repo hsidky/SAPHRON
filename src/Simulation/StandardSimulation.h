@@ -65,8 +65,8 @@ namespace SAPHRON
 			// Evaluate energies of systems. 
 			for(auto& world : *_wmanager)
 			{
-				world->SetInterEV(_ffmanager->EvaluateInterEnergy(*world));
-				world->SetTailEP(_ffmanager->EvaluateTailEnergy(*world));
+				world->SetInterEnergy(_ffmanager->EvaluateInterEnergy(*world));
+				world->SetTailEnergy(_ffmanager->EvaluateTailEnergy(*world));
 
 				mpi += world->GetParticleCount();
 			}
