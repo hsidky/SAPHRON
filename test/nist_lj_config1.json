@@ -15,6 +15,7 @@
 			"dimensions" : [10, 10, 10],
 			"seed" : 300, 
 			"ncut" : 3.5,
+			"skin" : 1.0,
 			"components" : [
 				["LJ1", 800]
 			], 

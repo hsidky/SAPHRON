@@ -17,6 +17,10 @@
 			"minimum" : 0,
 			"exclusiveMinimum": true
 		},
+		"skin" : {
+			"type" : "number",
+			"minimum" : 0
+		},
 		"particles" : {
 			"type": "array"
 		},
@@ -93,6 +97,7 @@
 	"required" : [
 		"dimensions", 
 		"ncut", 
+		"skin",
 		"components"
 	],
 	"additionalProperties" : false

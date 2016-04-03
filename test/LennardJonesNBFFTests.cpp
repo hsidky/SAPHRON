@@ -58,6 +58,7 @@ TEST(LennardJonesNBFF, ConfigurationValues)
 	ASSERT_EQ(3.5, world->GetNeighborRadius());
 
 	world->UpdateCellList();
+	world->BuildNeighborList();
 
 	// Define LJ potential. First we do rcut = 3*sigma.
 	LennardJonesNBFF ff(1.0, 1.0, {3.0, 3.0});
@@ -107,7 +108,7 @@ TEST(LennardJonesFF, NISTValidation1)
 
 	NewParticle particle(1, {0}, &sites);
 
-	NewWorld world(1, 1, 1, rcut, 1.0);
+	NewWorld world(1, 1, 1, rcut + 1.0, 1.0, 1.0);
 	world.PackWorld({&particle}, {1.0}, N, rdensity);
 	world.SetCellRatio(0.2);
 	world.SetTemperature(T);
@@ -146,7 +147,7 @@ TEST(LennardJonesFF, NISTValidation1)
 	ensemble.Run(500);
 
 	// Conversation of energy and pressure.
-	//world.BuildCellList();
+	world.BuildCellList();
 	auto u = ffm.EvaluateInterEnergy(world);
 	ASSERT_NEAR(u, world.GetInterEnergy(), 1e-8);
 

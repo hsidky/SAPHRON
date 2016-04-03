@@ -5,6 +5,7 @@
 #include "../Validator/ObjectRequirement.h"
 #include "schema.h"
 #include <random>
+#include <algorithm>
 
 using namespace Json;
 
@@ -61,6 +62,7 @@ namespace SAPHRON
 		// New volume.
 		double vn = (double)n/density;
 		H_ *= std::cbrt(vn/GetVolume());
+		H2_ = H_/2;
 		Hinv_ = H_.inverse();
 
 		// Get corresponding box size.
@@ -187,6 +189,7 @@ namespace SAPHRON
 
 		scount_ = pmask_.size()/2;
 		UpdateCellList();
+		BuildNeighborList();
 	}
 
 	void NewWorld::UpdateCellList()
@@ -195,35 +198,35 @@ namespace SAPHRON
 
 		// Atoms per cell, heuristic from paper.
 		int N = sites_.size();
-		auto apc = max(2, static_cast<int>(2.0 * N / ccount_));
+		//auto apc = max(2, static_cast<int>(2.0 * N / ccount_));
+		auto apc = static_cast<int>(2.0 * N / ccount_) + 1;
 
 		// Generate cell and cell pointer vectors. 
 		cellptr_.resize(2*(ccount_ + 1));
 		cell_.resize(apc*ccount_);
-		//sortby_.resize(N, 0);
 
-		for(int i = 0; i < ccount_ + 1; ++i)
+		for(uint i = 0; i < ccount_ + 1; ++i)
 			cellptr_[i] = i*apc;
 		
 		cellptr_[ccount_] = N;
 
 		for(int i = 0; i < N; ++i)
-		{			
+		{
+			// Clear the neighbor list.
+			sites_[i].neighbors.clear();
+
 			// Get cell index of site.
 			auto m = GetCellIndex(sites_[i].position);
-			sites_[i].cellid = m;
 			sites_[i].idx = i;
 			cell_[cellptr_[m]] = i;
 			assert(cellptr_[m] < m*apc + 1);
 			++cellptr_[m];
-			//sortby_[i] = 0;
 		}
 
 		// Compact cell vector and update cell pointer accordingly. 
-		//std::vector<uint> sortby(N, 0);
 		int j = cellptr_[0]; // Contains final filled entry in a cell.
 		cellptr_[0] = 0; // This will inherently start at 0.
-		for(int m = 1; m < ccount_; ++m)
+		for(uint m = 1; m < ccount_; ++m)
 		{
 			int k = cellptr_[m];
 			cellptr_[m] = j; // Update cellptr with compact index.
@@ -233,30 +236,62 @@ namespace SAPHRON
 			for(int i = apc * m; i < k; ++i)
 			{
 				cell_[j] = cell_[i];
-				//sortby_[cell_[j]] =  j;
 				++j;
 			}
 		}
-		cell_.resize(2*N);
-		
-		// Sort.
-		/*std::sort(sites_.begin(), sites_.begin() + N, [&](const Site& s1, const Site& s2)
-		{
-			return sortby_[s1.idx] < sortby_[s2.idx];
-		}); */
+		cell_.resize(N);
+	}
 
-		#pragma omp simd
-		for(int i = 1; i <= ccount_ + 1; ++i)
-			cellptr_[i + ccount_] = cellptr_[i] + N;
-		
-		#pragma omp simd
-		for(int i = 0; i < N; ++i)
+	void NewWorld::BuildNeighborList()
+	{
+		// Loop over all cells.
+		for(uint m = 0; m < ccount_; ++m)
 		{
-			//auto& s = sites_[i];
-			//s.idx = i;
-			//particles_[s.pid].UpdateIndex(s.lid, i);
-			//cell_[i] = i;
-			cell_[i + N] = cell_[i];
+			// Loop over all primary atoms in cell.
+			for(auto n1 = cellptr_[m]; n1 < cellptr_[m + 1]; ++n1)
+			{
+				auto i = cell_[n1];
+				auto& s1 = sites_[i];
+				s1.checkpoint = s1.position;
+
+				// Loop over secondary atoms in cell.
+				for(auto n2 = n1 + 1; n2 < cellptr_[m + 1]; ++n2)
+				{
+					auto j = cell_[n2];
+					auto& s2 = sites_[j];
+					s2.checkpoint = s2.position;
+					if(s1.pid != s2.pid)
+					{
+						s1.neighbors.push_back(j);
+						s2.neighbors.push_back(i);
+					}
+				}
+				
+				// Loop over all stripes.
+				for(uint s = 0; s < scount_; ++s)
+				{
+					auto m1 = m + pmask_[2*s];
+					if(m1 < ccount_)
+					{
+						auto m2 = std::min(m + pmask_[2*s + 1], ccount_ - 1);
+						for(auto n2 = cellptr_[m1]; n2 < cellptr_[m2 + 1]; ++n2)
+						{
+							auto j = cell_[n2];
+							auto& s2 = sites_[j];
+							Vector3 r12 = s1.position - s2.position;
+							ApplyMinimumImage(r12);
+							if(r12.squaredNorm() < ncutsq_)
+							{
+								if(s1.pid != s2.pid)
+								{
+									s1.neighbors.push_back(j);
+									s2.neighbors.push_back(i);
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -287,13 +322,14 @@ namespace SAPHRON
 		// Neighbor cutoff and cell ratio.
 		auto ncut = json["ncut"].asDouble();
 		auto cellratio = json.get("cell_ratio", 0.2).asDouble();
+		auto skin = json["skin"].asDouble();
 
 		// Get seed.
 		std::random_device rd;
 		auto maxi = std::numeric_limits<int>::max();
 		auto seed = json.get("seed", rd() % maxi).asUInt();
 
-		std::shared_ptr<NewWorld> world = std::make_shared<NewWorld>(dim[0], dim[1], dim[2], ncut, seed);
+		std::shared_ptr<NewWorld> world = std::make_shared<NewWorld>(dim[0], dim[1], dim[2], ncut, skin, seed);
 
 		// Cell ratio
 		world->SetCellRatio(cellratio);

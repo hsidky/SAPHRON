@@ -25,8 +25,11 @@ namespace SAPHRON
 		// Neighbor cutoff radius.
 		double ncut_, ncutsq_;
 
+		// Skin thickness.
+		double skin_, skinsq_;
+
 		// Box matrix. 
-		Matrix3 H_, Hinv_;
+		Matrix3 H_, Hinv_, H2_;
 
 		// Periodic boundaries. 
 		bool periodx_, periody_, periodz_;
@@ -54,14 +57,14 @@ namespace SAPHRON
 		int Nx_, Ny_, Nz_;
 
 		// Cell, stripe count.
-		int ccount_, scount_;
+		uint ccount_, scount_;
 
 		// Ratio of ncut to define cell size.
 		// cellsize = cellratio*ncut. 
 		double cellratio_;
 
 		// Cell list mask pointer.
-		std::vector<uint> pmask_, sortby_;
+		std::vector<uint> pmask_;
 
 		// Cell and cell pointer.
 		std::vector<uint> cell_, cellptr_;
@@ -119,18 +122,19 @@ namespace SAPHRON
 		NewWorld(const NewWorld&);
 
 	public: 
-		NewWorld(double x, double y, double z, double ncut, uint seed) : 
-		ncut_(ncut), ncutsq_(ncut*ncut), H_(Eigen::Matrix3d::Zero()), 
-		Hinv_(Eigen::Matrix3d::Zero()), periodx_(true),
+		NewWorld(double x, double y, double z, double ncut, double skin, uint seed) : 
+		ncut_(ncut), ncutsq_(fsq(ncut)), skin_(skin), skinsq_(fsq(skin)), 
+		H_(Eigen::Matrix3d::Zero()), Hinv_(Eigen::Matrix3d::Zero()), H2_(H_/2), periodx_(true),
 		periody_(true), periodz_(true), temperature_(0.), particles_(),
 		sites_(0), Nx_(0), Ny_(0), Nz_(0), ccount_(0), scount_(0), cellratio_(0.2), 
-		pmask_(0), sortby_(0), cell_(0), cellptr_(0), rand_(seed), sitecomp_(0), particlecomp_(0), 
+		pmask_(0), cell_(0), cellptr_(0), rand_(seed), sitecomp_(0), particlecomp_(0), 
 		seed_(seed), id_(nextID_++)
 		{
 			H_(0,0) = x;
 			H_(1,1) = y;
 			H_(2,2) = z;
 			Hinv_ = H_.inverse();
+			H2_ = H_/2;
 
 			// TODO: benchmark reserve capacity, include particles and sites.
 		}
@@ -292,6 +296,16 @@ namespace SAPHRON
 			BuildCellList();
 		}
 
+		// Get the effective skin thickness of the world.
+		double GetSkinThickness() const { return skin_;	}
+
+		// Set the effective skin thickness of the world.
+		void SetSkinThickness(double skin)
+		{
+			skin_ = skin;
+			skinsq_ = fsq(skin);
+		}
+
 		// Get particle compositions.
 		const CompositionList& GetParticleCompositions() const
 		{
@@ -402,24 +416,28 @@ namespace SAPHRON
 			static_cast<int>(Nx_*r[0]*Hinv_(0,0));
 		}
 
-		// Update the cell list if necessary.
-		void CheckCellListUpdate(const NewParticle& p)
+		// Update the neighbor list if necessary.
+		void CheckNeighborListUpdate(const NewParticle& p)
 		{
 			for(size_t i = 0; i < p.SiteCount(); ++i)
 			{
-				if(CheckCellListUpdate(p.GetSite(i)))
+				if(CheckNeighborListUpdate(p.GetSite(i)))
 					return;
 			}
 		}
 
-		// Update the cell list if necessary.
-		bool CheckCellListUpdate(const Site& s)
+		// Update the neighbor list if necessary.
+		bool CheckNeighborListUpdate(const Site& s)
 		{
-			if(GetCellIndex(s.position) != s.cellid)
+			Vector3 dist = s.position - s.checkpoint;
+			ApplyMinimumImage(dist);
+			if(dist.squaredNorm() > skinsq_/4.)
 			{
 				UpdateCellList();
+				BuildNeighborList();
 				return true;
 			}
+
 			return false;
 		}
 
@@ -428,30 +446,39 @@ namespace SAPHRON
 		{
 			if(periodx_)
 			{
-				auto Hx = 0.5*H_(0,0);
-				if(p[0] > Hx)
+				if(p[0] > H2_(0,0))
 					p[0] -= H_(0,0);
-				else if(p[0] < -Hx)
+				else if(p[0] < -H2_(0,0))
 					p[0] += H_(0,0);
 			}
 
 			if(periody_)
 			{
-				auto Hy = 0.5*H_(1,1);
-				if(p[1] > Hy)
+				if(p[1] > H2_(1,1))
 					p[1] -= H_(1,1);
-				else if(p[1] < -Hy)
+				else if(p[1] < -H2_(1,1))
 					p[1] += H_(1,1);
 			}
 
 			if(periodz_)
 			{
-				auto Hz = 0.5*H_(2,2);
-				if(p[2] > Hz)
+				if(p[2] > H2_(2,2))
 					p[2] -= H_(2,2);
-				else if(p[2] < -Hz)
+				else if(p[2] < -H2_(2,2))
 					p[2] += H_(2,2);
 			}
+		}
+
+		// Applies minimum image with no regard to vector 
+		// direction. Use if you don't care about the direction
+		// of the vector.
+		inline void FastMinimumImage(Vector3& p) const
+		{
+			p = p.cwiseAbs();
+
+			if(periodx_ && p[0] > H2_(0,0)) p[0] -= H_(0,0);
+			if(periody_ && p[1] > H2_(1,1)) p[1] -= H_(1,1);
+			if(periodz_ && p[2] > H2_(2,2)) p[2] -= H_(2,2);
 		}
 
 		// Applies periodic boundaries to positions.
@@ -474,6 +501,9 @@ namespace SAPHRON
 
 		// Updates the particle locations within the cells.
 		void UpdateCellList();
+
+		// Builds the site-site neighbor list.
+		void BuildNeighborList();
 
 		// Get cell list pointer mask of stripes.
 		const std::vector<uint>& GetMaskPointer() const { return pmask_; }

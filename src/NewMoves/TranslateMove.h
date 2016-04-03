@@ -57,7 +57,7 @@ namespace SAPHRON
 				w->IncrementInterEnergy(-1*de);
 			}
 			else
-				w->CheckCellListUpdate(*p);
+				w->CheckNeighborListUpdate(*p);
 		}
 	
 	};

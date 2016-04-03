@@ -48,7 +48,7 @@ TEST(TranslateMove, DefaultBehavior)
 	TranslateMove m(dx);
 
 	// Add one particle to the world and add the world to the world manager.
-	NewWorld world(10.0, 10.0, 10.0, 5.0, 3243);
+	NewWorld world(10.0, 10.0, 10.0, 5.0, 1.0, 3243);
 	world.BuildCellList();
 	world.AddParticle(particle);
 	

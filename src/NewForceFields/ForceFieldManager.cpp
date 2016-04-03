@@ -49,59 +49,22 @@ namespace SAPHRON
 
 		// Get appropriate references.
 		auto& sites = w.GetSites();
-		auto& C = w.GetCellVector();
-		auto& Pc = w.GetCellPointer();
-		auto& Pm = w.GetMaskPointer();
-		
+		auto& neighbors = s.neighbors;		
 		auto wid = w.GetID();
-		// Get current cell and loop through all interacting stripes.
-		auto S = w.GetStripeCount();
-		int mi = w.GetCellIndex(s.position);
 
-		// Evaluate current cell. 
-		for(auto i = Pc[mi]; i < Pc[mi + 1]; ++i)
+		//#pragma omp parallel for reduction(+ : u)
+		for(uint i = 0; i < neighbors.size(); ++i)
 		{
-			auto& sj = sites[C[i]];
-			if(s.pid == sj.pid)
-				continue;
-
-			// Get site-site distance.
+			auto& sj = sites[neighbors[i]];
 			Vector3 rij = s.position - sj.position;
-			w.ApplyMinimumImage(rij);
+			w.FastMinimumImage(rij);
 			auto rsq = rij.squaredNorm();
 
 			// Get forcefield index and evaluate nonbonded. 
 			auto idx = GetIndex(s.species, sj.species);
 			auto& ff = nonbondedffs_[idx];
-			if(ff != nullptr)
+			//if(ff != nullptr)
 				u += ff->EvaluateEnergy(s, sj, rij, rsq, wid);
-		}
-
-		#pragma omp parallel for reduction(+:u)
-		for(int i = 0; i < S; ++i)
-		{
-			// First and last cells of stripe. 
-			auto m1 = mi + Pm[2*i];
-			auto m2 = mi + Pm[2*i+1];
-			for(auto l = Pc[m1]; l < Pc[m2 + 1]; ++l)
-			{
-				auto& sj = sites[C[l]];
-
-				// Skip species with same parent (intramolecular).
-				if(s.pid == sj.pid)
-					continue;
-
-				// Get site-site distance.
-				Vector3 rij = s.position - sj.position;
-				w.ApplyMinimumImage(rij);
-				auto rsq = rij.squaredNorm();
-
-				// Get forcefield index and evaluate nonbonded. 
-				auto idx = GetIndex(s.species, sj.species);
-				auto& ff = nonbondedffs_[idx];
-				if(ff != nullptr)
-					u += ff->EvaluateEnergy(s, sj, rij, rsq, wid);					
-			}
 		}
 
 		return u;
@@ -134,8 +97,6 @@ namespace SAPHRON
 				u += na*nb*nonbondedffs_[idx]->EnergyTailCorrection(wid);
 			}
 
-		//u.pressure *= 2.*M_PI/(3.*v*v);
-
 		return u*2.*M_PI/v;
 	}
 
@@ -154,23 +115,17 @@ namespace SAPHRON
 		// Get appropriate references.
 		auto& particles = w.GetParticles();
 		auto& sites = w.GetSites();
-		auto& C = w.GetCellVector();
-		auto& Pc = w.GetCellPointer();
-		auto& Pm = w.GetMaskPointer();
-		
+		auto& neighbors = s.neighbors;
+
 		auto wid = w.GetID();
-		// Get current cell and loop through all interacting stripes.
-		auto S = w.GetStripeCount();
-		int mi = w.GetCellIndex(s.position);
 
-		// Evaluate current cell. 
-		for(auto i = Pc[mi]; i < Pc[mi + 1]; ++i)
+		//#pragma omp declare reduction (+ : Matrix3 : omp_out += omp_in ) initializer (omp_priv=Matrix3::Zero())
+		//#pragma omp parallel for reduction(+:v) schedule(static)
+		for(uint i = 0; i < neighbors.size(); ++i)
 		{
-			auto& sj = sites[C[i]];
-			if(s.pid == sj.pid)
-				continue;
-
+			auto& sj = sites[neighbors[i]];
 			// Get site-site distance.
+			
 			Vector3 rij = s.position - sj.position;
 			w.ApplyMinimumImage(rij);
 			auto rsq = rij.squaredNorm();
@@ -182,40 +137,8 @@ namespace SAPHRON
 			// Get forcefield index and evaluate nonbonded. 
 			auto idx = GetIndex(s.species, sj.species);
 			auto& ff = nonbondedffs_[idx];
-			if(ff != nullptr)
+			//if(ff != nullptr)
 				v.noalias() += ff->EvaluateForce(s, sj, rij, rsq, wid)*rab.transpose();
-		}
-
-		//#pragma omp declare reduction (+ : Matrix3 : omp_out += omp_in ) initializer (omp_priv=Matrix3::Zero())
-		//#pragma omp parallel for reduction(+:v) schedule(static)
-		for(int i = 0; i < S; ++i)
-		{
-			// First and last cells of stripe. 
-			auto m1 = mi + Pm[2*i];
-			auto m2 = mi + Pm[2*i+1];
-			for(auto l = Pc[m1]; l < Pc[m2 + 1]; ++l)
-			{
-				auto& sj = sites[C[l]];
-
-				// Skip species with same parent (intramolecular).
-				if(s.pid == sj.pid)
-					continue;
-
-				// Get site-site distance.
-				Vector3 rij = s.position - sj.position;
-				w.ApplyMinimumImage(rij);
-				auto rsq = rij.squaredNorm();
-
-				// Get molecule-molecule distance.
-				Vector3 rab = particles[s.pid].GetPosition() - particles[sj.pid].GetPosition();
-				w.ApplyMinimumImage(rab);
-
-				// Get forcefield index and evaluate nonbonded. 
-				auto idx = GetIndex(s.species, sj.species);
-				auto& ff = nonbondedffs_[idx];
-				if(ff != nullptr)
-					v.noalias() += ff->EvaluateForce(s, sj, rij, rsq, wid)*rab.transpose();					
-			}
 		}
 
 		return -1.*v;

@@ -93,17 +93,36 @@ namespace SAPHRON
 
 	inline int ffloor(double x)
 	{
-	    return (int) x - (x<0); 
+		return (int) x - (x<0); 
 	}
 
 	inline int fceil(double x)
 	{
-	    return (int) x + (x>0);
+		return (int) x + (x>0);
 	}
 
 	// Round to nearest integer.
 	inline double anint(double x)
 	{
 		return ( x >= 0 ) ? ffloor( x + 0.5 ) : fceil( x - 0.5 );
+	}
+
+	template <typename T>
+	inline void move_range(size_t start, size_t length, size_t dst, std::vector<T> & v)
+	{
+		typename std::vector<T>::iterator first, middle, last;
+		if (start < dst)
+		{
+			first  = v.begin() + start;
+			middle = first + length;
+			last   = v.begin() + dst;
+		}
+		else
+		{
+			first  = v.begin() + dst;
+			middle = v.begin() + start;
+			last   = middle + length;
+		}
+		std::rotate(first, middle, last);
 	}
 }

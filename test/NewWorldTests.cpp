@@ -15,7 +15,7 @@ TEST(World, AddRemoveParticle)
 	NewParticle p1(2, {0, 1}, &sites);
 
 	// Create world and add twice.
-	NewWorld world(10., 10., 10., 5., 0);
+	NewWorld world(10., 10., 10., 5., 6.0, 0);
 	ASSERT_EQ(0, world.GetParticleCount());
 	ASSERT_EQ(0, world.GetSiteCount());
 	world.AddParticle(p1);
@@ -41,7 +41,7 @@ TEST(World, AddRemoveParticle)
 
 TEST(World, PackBox)
 {
-	NewWorld world(1.0, 1.0, 1.0, 1.0, 1.0);
+	NewWorld world(1.0, 1.0, 1.0, 1.0, 1.0, 1);
 
 	// Create three particles each with 1 site.
 	std::vector<Site> sites;
@@ -65,7 +65,7 @@ TEST(World, PackBox)
 TEST(World, MaskPointer)
 {
 	// Create world.
-	NewWorld world(10.0, 10.0, 10.0, 5./3., 1);
+	NewWorld world(10.0, 10.0, 10.0, 5./3., 1.0, 1);
 
 	world.SetCellRatio(1.0);
 
@@ -90,23 +90,11 @@ TEST(World, MaskPointer)
 	world.PackWorld({&p}, {1.0}, 100, 0.1);
 	ASSERT_EQ(1000, world.GetVolume());
 	world.BuildCellList();
-
-	// TODO: check this more thoroughly.
-	auto& C = world.GetCellVector();
-	for(auto& c : C) 
-		std::cout << c << " ";
-
-	std::cout << std::endl;
-
-	for(auto& s : world.GetSites())
-		std::cout << s.idx << " ";
-
-	std::cout << std::endl;
 }
 
 TEST(World, PeriodicBoundaries)
 {
-	NewWorld world(10.0, 10.0, 10.0, 5., 1);
+	NewWorld world(10.0, 10.0, 10.0, 5., 1.0, 1);
 
 	// Vector should not change. 
 	Vector3 posi = {5., 5., 5.};
@@ -118,4 +106,16 @@ TEST(World, PeriodicBoundaries)
 	pos = {15.0, 15.0, 15.0};
 	world.ApplyPeriodicBoundaries(pos);
 	ASSERT_EQ(pos, posi);
+}
+
+TEST(World, IncrementalCellUpdate)
+{
+	std::vector<uint> v {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+	move_range(2, 1, 6, v);
+
+	for(auto& c : v)
+		std::cout << c << " ";
+
+	std::cout << std::endl;
 }
