@@ -19,18 +19,4 @@ namespace SAPHRON
 
 		return close;
 	}
-
-	// Fast norm.
-	template<typename T>
-	inline double fnorm(const T& v)
-	{
-		return sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
-	}
-
-	// Fast dot.
-	template<typename T1, typename T2>
-	inline double fdot(const T1& v1, const T2& v2)
-	{
-		return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
-	}
 }

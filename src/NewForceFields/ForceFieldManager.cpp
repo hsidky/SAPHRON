@@ -56,7 +56,10 @@ namespace SAPHRON
 		for(uint i = 0; i < neighbors.size(); ++i)
 		{
 			auto& sj = sites[neighbors[i]];
-			Vector3 rij = s.position - sj.position;
+			Vector3 rij = {
+				s.position[0] - sj.position[0], 
+				s.position[1] - sj.position[1],
+				s.position[2] - sj.position[2]};
 			w.FastMinimumImage(rij);
 			auto rsq = rij.squaredNorm();
 
@@ -126,7 +129,10 @@ namespace SAPHRON
 			auto& sj = sites[neighbors[i]];
 			// Get site-site distance.
 			
-			Vector3 rij = s.position - sj.position;
+			Vector3 rij = {
+				s.position[0] - sj.position[0], 
+				s.position[1] - sj.position[1],
+				s.position[2] - sj.position[2]};
 			w.ApplyMinimumImage(rij);
 			auto rsq = rij.squaredNorm();
 

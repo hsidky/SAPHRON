@@ -278,8 +278,12 @@ namespace SAPHRON
 						{
 							auto j = cell_[n2];
 							auto& s2 = sites_[j];
-							Vector3 r12 = s1.position - s2.position;
-							ApplyMinimumImage(r12);
+							Vector3 r12 = {
+								s1.position[0] - s2.position[0], 
+								s1.position[1] - s2.position[1],
+								s1.position[2] - s2.position[2]
+							};
+							FastMinimumImage(r12);
 							if(r12.squaredNorm() < ncutsq_)
 							{
 								if(s1.pid != s2.pid)

@@ -110,7 +110,7 @@ TEST(LennardJonesFF, NISTValidation1)
 
 	NewWorld world(1, 1, 1, rcut + 1.0, 1.0, 1.0);
 	world.PackWorld({&particle}, {1.0}, N, rdensity);
-	world.SetCellRatio(0.2);
+	world.SetCellRatio(0.20);
 	world.SetTemperature(T);
 
 	ASSERT_EQ(N, world.GetParticleCount());

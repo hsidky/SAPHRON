@@ -1,15 +1,9 @@
-#include "../src/ForceFields/GayBerneFF.h"
-#include "../src/ForceFields/ForceFieldManager.h"
+#include "../src/NewForceFields/GayBerneFF.h"
+#include "../src/NewForceFields/ForceFieldManager.h"
 #include "../src/Simulation/StandardSimulation.h"
-#include "../src/Moves/MoveManager.h"
-#include "../src/Moves/TranslateMove.h"
-#include "../src/Particles/Particle.h"
-
-#include "../src/Worlds/World.h"
-#include "../src/Worlds/WorldManager.h"
-#include "../src/Constraints/Constraint.h"
-#include "TestAccumulator.h"
-#include "json/json.h"
+#include "../src/NewMoves/MoveManager.h"
+#include "../src/NewMoves/TranslateMove.h"
+#include "../src/Particles/NewParticle.h"
 #include "gtest/gtest.h"
 #include <fstream>
 
@@ -26,20 +20,35 @@ TEST(GayBerneFF, DefaultBehavior)
 	double rcut = 55.0;
 	GayBerneFF ff(16.27, 16.27, 3.254, 3.254, 418.0, 10.0, 1.0, 0.20, {rcut}, 1.0, 2.0);
 
-	Particle s1({0.0, 0.0, 0.0}, {0.0, 0.0, 1.0}, "L1");
-	Particle s2({0.0, 0.0, 0.0}, {0.0, 0.0, 1.0}, "L1");
-	s1.AddNeighbor(&s2);
-	s2.AddNeighbor(&s1);
+	Site s1;
+	Site s2;
 
-	s2.SetPosition({16.6855, 0, 0});
-	auto NB = ff.Evaluate(s1, s2, s1.GetPosition() - s2.GetPosition(), 0);
-	ASSERT_NEAR(NB.energy, -2823.5, 1e-1);
+	s2.position = {16.6855, 0, 0};
+	auto u = ff.EvaluateEnergy(s1, s2, s1.position - s2.position, (s1.position - s2.position).squaredNorm(), 0);
+	ASSERT_NEAR(u, -2823.5, 1e-1);
 	
-	s2.SetPosition({0, 0, 32.5468});
-	NB = ff.Evaluate(s1, s2, s1.GetPosition() - s2.GetPosition(), 0);
-	ASSERT_NEAR(NB.energy, -0.1129, 1e-4);
+	s2.position = {0, 0, 32.5468};
+	u = ff.EvaluateEnergy(s1, s2, s1.position - s2.position, (s1.position - s2.position).squaredNorm(), 0);
+	ASSERT_NEAR(u, -0.1129, 1e-4);
 }
 
+TEST(GayBerneFF, OblateEllipsoid)
+{
+	double rcut = 1.6;
+	GayBerneFF ff(1.0, 1.0, 0.345, 0.345, 1.0, 1.0, 0.20, 0.345, {rcut}, 1.0, 2.0);
+
+	Site s1;
+	Site s2;
+	s2.position = {0., 0., 0.340};
+	for(int i = 0; i < 100; ++i)
+	{
+		s2.position[2] += i*0.0002;
+		auto u = ff.EvaluateEnergy(s1, s2, s1.position - s2.position, (s1.position - s2.position).squaredNorm(), 0);
+		std::cout << s2.position[2] << " " << u << std::endl;
+	}
+}
+
+/*
 // Tests conservation of energy in a system with GB 
 // particles and no skin thickness. (rcut = nlist).
 TEST(GayBerneFF, NoSkinConservation)
@@ -99,4 +108,4 @@ TEST(GayBerneFF, NoSkinConservation)
 
 	for(auto& c : constraints)
 		delete c;
-}
+}*/
