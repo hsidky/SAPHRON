@@ -17,13 +17,6 @@
 			"type" : "integer",
 			"minimum" : 0
 		},
-		"minr" : {
-			"type" : "number",
-			"minimum" : 0
-		},
-		"maxr" : {
-			"type" : "number"
-		},
 		"starting bead" : {
 			"oneOf" : [
 				{
@@ -55,6 +48,6 @@
 			"minimum" : 1
 		}
 	},
-	"required" : ["type", "species", "starting bead", "minr", "maxr"],
+	"required" : ["type", "species", "starting bead"],
 	"additionalProperties": false
 }

@@ -129,9 +129,8 @@ namespace SAPHRON
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			auto minr = json["minr"].asDouble();
-			auto maxr = json["maxr"].asDouble();
 			auto trials = json.get("trials", 8).asInt();
+			auto expl = json.get("explicit_draw", false).asBool();
 
 			if(json["starting bead"].isObject())
 			{
@@ -139,16 +138,12 @@ namespace SAPHRON
 				for(auto& s : json["starting bead"].getMemberNames())
 					StartingBead[s] = json["starting bead"][s].asInt();
 
-				auto expl = json.get("explicit_draw", false).asBool();
-
-				move = new CBMCMove(minr, maxr, StartingBead, trials, expl, seed);
+				move = new CBMCMove(StartingBead, trials, expl, seed);
 			}
 			else
 			{
-				auto StartingBead = json["starting bead"].asInt();
-
-				auto expl = json.get("explicit_draw", false).asBool();
-				move = new CBMCMove(minr, maxr, StartingBead, trials, expl, seed);
+				auto StartingBead = json.get("starting bead", 0).asInt();
+				move = new CBMCMove(StartingBead, trials, expl, seed);
 			}
 		}
 		else if(type == "DeleteParticle")
