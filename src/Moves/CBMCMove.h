@@ -9,17 +9,19 @@
 
 namespace SAPHRON
 {
-	// Class for CBMC on a random particle with lower and upper bond limits between particles.
+	// Class for CBMC on a random particle
+	// Bond length between beads is determined by the current bond length in the system.
 	// http://towhee.sourceforge.net/algorithm/cbmc.html
 	// http://www.pa.msu.edu/~duxbury/courses/phy480/BaschnagelReview2004.pdf
+	// M. G. Martin; A. P. Thompson; "Industrial property prediction using Towhee and LAMMPS"
+	// 		Fluid Phase Equilib. 217 105-110 (2004).
 
 	class CBMCMove : public Move
 	{
 	private: 
 
 		int _numexploration;
-		double _minr;
-		double _maxr;
+		double _bond_distance;
 		int _startingbead;
 		Rand _rand;
 		int _rejected;
@@ -39,13 +41,14 @@ namespace SAPHRON
 		std::vector<int> _sstartingbead;
 
 	public: 
-		// Initialize CBMC move with species based minr and maxr for bond lengths.
+		// Initialize CBMC move with species based starting bead.
 		// User supplies a starting bead as well as number of CBMC trials.
 		// Anything not specified will initialize to zero.
-		CBMCMove(double minr, double maxr, const std::map<int, int>& StartBead, int trials,  
+		CBMCMove(const std::map<int, int>& StartBead, int trials,  
 		bool expl, unsigned seed = 2496) : 
-		_numexploration(trials), _minr(minr), _maxr(maxr), _startingbead(-1), _rand(seed), _rejected(0), 
-		_performed(0), _seed(seed), _explicit(expl), _species(0), _sstartingbead(-1)
+		_numexploration(trials), _bond_distance(0), _startingbead(-1), _rand(seed), _rejected(0), 
+		_performed(0), _seed(seed), _wenergy(), _positions(), _rosenbluths(),
+		_explicit(expl), _species(0)
 		{
 			// Get species and initialize all dx's with zeros.
 			auto& list = Particle::GetSpeciesList();
@@ -65,15 +68,16 @@ namespace SAPHRON
 			}
 		}
 
-		// Initialize CBMC move with species based minr and maxr for bond lengths.
+		// Initialize CBMC move with species based starting bead.
 		// User supplies a starting bead as well as number of CBMC trials.
 		// Anything not specified will initialize to zero.
-		CBMCMove(double minr, double maxr, const std::map<std::string, int>& StartBead, int trials, 
+		CBMCMove(const std::map<std::string, int>& StartBead, int trials, 
 		bool expl, unsigned seed = 2496) : 
-		_numexploration(trials), _minr(minr), _maxr(maxr), _startingbead(-1), _rand(seed), _rejected(0), 
-		_performed(0), _seed(seed), _explicit(expl), _species(0), _sstartingbead(-1)
+		_numexploration(trials), _bond_distance(0), _startingbead(-1), _rand(seed), _rejected(0), 
+		_performed(0), _seed(seed), _wenergy(), _positions(), _rosenbluths(),
+		_explicit(expl), _species(0)
 		{
-			// Get species and initialize all dx's with zeros.
+
 			auto& list = Particle::GetSpeciesList();
 			_sstartingbead.resize(list.size(), 0);
 			_species.resize(StartBead.size());
@@ -93,16 +97,17 @@ namespace SAPHRON
 			}
 		}
 
-		CBMCMove(double minr, double maxr, int StartBead, int trials, 
+		CBMCMove(int StartBead, int trials, 
 		bool expl, unsigned seed = 2496) : 
-		_numexploration(trials), _minr(minr), _maxr(maxr), _startingbead(StartBead), _rand(seed), _rejected(0), 
-		_performed(0), _seed(seed), _explicit(expl), _species(0), _sstartingbead(-1)
+		_numexploration(trials), _bond_distance(0), _startingbead(StartBead), _rand(seed), _rejected(0), 
+		_performed(0), _seed(seed), _wenergy(), _positions(), _rosenbluths(),
+		_explicit(expl), _species(0)
 		{
 		}
 
 		void PlaceBeads(Particle* particle, double& rosenbluth,
 		double& beta, World* w, ForceFieldManager* ffm,
-		EPTuple& EP, bool retrace)
+		EPTuple& EP, bool& retrace)
 		{
 			auto& bondedneighbor = particle->GetBondedNeighbors();
 
@@ -115,17 +120,31 @@ namespace SAPHRON
 				{
 					bondedneighbor[i]->SetVisit(true);
 					w->AddParticle(bondedneighbor[i]);
+					Position temppos = particle->GetPosition - bondedneighbor[i]->GetPosition();
+					w->ApplyPeriodicBoundaries(&temppos);
+					_bond_distance = fnorm(&temppos);
 				}
 				
 				double sumrosenbluth = 0;
-				for (size_t j = 0; i < _numexploration; i++)
+				for (size_t j = 0; j < _numexploration; j++)
 				{
-					if(!retrace && j!=0)
+					Position newPos = bondedneighbor[i]->GetPosition();
+					if(!retrace || j!=0) // Skip if retracing and first atom
 					{
-						double r = _rand.doub()*(_maxr - _minr) + _minr;
-
-						// Random Placement on sphere, dont forget boundary conditions
-						Position newPos({0.0, 0.0, 0.0});
+						double r = _bond_distance;
+						// Random Placement on sphere.
+						double v3 = 0;
+						do
+						{
+							double v1 = _rand.doub();
+							double v2 = _rand.doub();
+							v1 = 1 - 2 * v1;
+							v2 = 1 - 2 * v2;
+							v3 = v1*v1 + v2*v2;
+							if(v3 < 1)
+								newPos += {2.0*v1*sqrt(1 - v3)*r, 2.0*v2*sqrt(1 - v3)*r, (1.0-2.0*v3)*r};
+						} while(v3 > 1);
+						
 						w->ApplyPeriodicBoundaries(&newPos);
 						_positions[j] = newPos;
 
@@ -254,7 +273,10 @@ namespace SAPHRON
 
 			auto StartBead = _startingbead;
 			if(_startingbead < 0)
-				StartBead = _sstartingbead[particle->GetSpeciesID()];	
+				StartBead = _sstartingbead[particle->GetSpeciesID()];
+
+			if(StartBead < 0)
+				return;	
 
 			auto& children = particle->GetChildren();
 			
@@ -340,8 +362,6 @@ namespace SAPHRON
 		{
 			json["type"] = "CBMC";
 			json["seed"] = _seed;
-			json["minr"] = _minr;
-			json["maxr"] = _maxr;
 			json["trials"] = _numexploration;
 
 			if(_sstartingbead.size() != 0)
