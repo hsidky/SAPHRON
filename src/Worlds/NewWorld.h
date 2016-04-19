@@ -279,6 +279,9 @@ namespace SAPHRON
 		{
 			return sites_.size();
 		}
+		
+		// Sorts sites along a 3D Hilbert space filling curve.
+		void SortSites();
 
 		// Get neighbor cutoff radius.
 		double GetNeighborRadius() const

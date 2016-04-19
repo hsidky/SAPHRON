@@ -15,6 +15,16 @@ namespace SAPHRON
 		
 		UpdateAcceptances();
 		this->IncrementIterations();
+		
+		/*if(GetIteration() % 10 == 0)
+		{
+			for(auto& w : *_wmanager)
+			{
+				w->SortSites();
+				w->UpdateCellList();
+				w->BuildNeighborList();
+			}
+		}*/
 
 		#ifdef MULTI_WALKER
 		if(_comm.rank() == 0)

@@ -6,6 +6,7 @@
 #include "schema.h"
 #include <random>
 #include <algorithm>
+#include <array>
 
 using namespace Json;
 
@@ -25,6 +26,84 @@ namespace SAPHRON
 	T sq(T x)
 	{
 		return x*x;
+	}
+	
+	// Converts a Hilbert lattice coordinate to a position along
+	// the Hilvert curve. Based on routine by John Skilling. 
+	uint AxestoTranspose(std::array<uint,3> X, int b, int n)  // position, #bits, dimension
+	{    
+		uint  M = 1 << (b-1), P, Q, t;
+		int  i;
+		// Inverse undo
+		for( Q = M; Q > 1; Q >>= 1 ) 
+		{
+			P=Q-1;
+			for( i = 0; i < n; i++ )
+				if( X[i] & Q ) X[0] ^= P;
+				else
+				{ 
+					t = (X[0]^X[i]) & P; 
+					X[0] ^= t; 
+					X[i] ^= t; 
+				}  
+		}  // exchange
+		// Gray encode
+		
+		for( i = 1; i < n; i++ ) 
+			X[i] ^= X[i-1];
+		t=0;
+		
+		for( Q = M; Q > 1; Q >>= 1 )
+			if( X[n-1] & Q ) 
+				t ^= Q-1;
+		
+		for( i = 0; i < n; i++ ) 
+			X[i] ^= t;
+		
+		uint v = 0;
+		int j = 0;
+		for(int i = 0; i < 6; ++i)
+		{
+			v |= ((X[2]>>i & 1) << j);
+			v |= ((X[1]>>i & 1) << (j + 1));
+			v |= ((X[0]>>i & 1) << (j + 2));
+			j += 3;
+		}
+		
+		return v;
+	}
+	
+	void NewWorld::SortSites()
+	{
+		auto l = 64;
+		auto n = sites_.size();
+		std::vector<uint> pos;
+		pos.resize(n, 0);
+		
+		for(uint i = 0; i < n; ++i)
+		{
+			auto& p = sites_[i].position;
+			// Map position of particle to nearest lattice point.
+			pos[i] = AxestoTranspose({
+				static_cast<uint>(p[0]*l/H_(0,0)),
+				static_cast<uint>(p[1]*l/H_(1,1)),
+				static_cast<uint>(p[2]*l/H_(2,2))
+			}, 6, 3);
+		}
+		
+		
+		// Sort sites.
+		std::sort(sites_.begin(), sites_.end(), [&](const Site& s1, const Site& s2){
+			return pos[s1.idx] > pos[s2.idx];
+		});
+		
+		// Update parents and indices.
+		for(uint i = 0; i < n; ++i)
+		{
+			auto& p = sites_[i];
+			p.idx = i;
+			particles_[p.pid].UpdateIndex(p.lid, i);
+		}
 	}
 
 	void NewWorld::PackWorld(const std::vector<NewParticle*>& particles,
@@ -202,7 +281,7 @@ namespace SAPHRON
 		auto apc = static_cast<int>(2.0 * N / ccount_) + 1;
 
 		// Generate cell and cell pointer vectors. 
-		cellptr_.resize(2*(ccount_ + 1));
+		cellptr_.resize(ccount_ + 1);
 		cell_.resize(apc*ccount_);
 
 		for(uint i = 0; i < ccount_ + 1; ++i)

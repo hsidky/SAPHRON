@@ -49,7 +49,7 @@ namespace SAPHRON
 
 		// Get appropriate references.
 		auto& sites = w.GetSites();
-		auto& neighbors = s.neighbors;		
+		auto& neighbors = s.neighbors;
 		auto wid = w.GetID();
 
 		//#pragma omp parallel for reduction(+ : u)

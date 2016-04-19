@@ -10,13 +10,13 @@ namespace SAPHRON
 	struct Site
 	{
 		Vector3 position = {0, 0, 0};
-		Vector3 director = {0, 0, 1};
 		uint species = 0;
-		uint pid = 0;
+		Vector3 director = {0, 0, 1};
 		double charge = 0.0;
-		double mass = 1.0;
+		uint pid = 0;
 		uint lid = 0;
 		uint idx = 0;
+		double mass = 1.0;
 		std::vector<uint> neighbors;
 		Vector3 checkpoint = {0, 0, 0};
 	};

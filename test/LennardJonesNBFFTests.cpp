@@ -59,7 +59,7 @@ TEST(LennardJonesNBFF, ConfigurationValues)
 
 	world->UpdateCellList();
 	world->BuildNeighborList();
-
+	
 	// Define LJ potential. First we do rcut = 3*sigma.
 	LennardJonesNBFF ff(1.0, 1.0, {3.0, 3.0});
 
@@ -144,7 +144,7 @@ TEST(LennardJonesFF, NISTValidation1)
 	//ensemble.AddObserver(&accumulator);
 
 	// Run 
-	ensemble.Run(500);
+	ensemble.Run(5000);
 
 	// Conversation of energy and pressure.
 	world.BuildCellList();
