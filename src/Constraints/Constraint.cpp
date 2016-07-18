@@ -3,6 +3,7 @@
 #include "../Validator/ArrayRequirement.h"
 #include "../Simulation/SimException.h"
 #include "DirectorRestrictionC.h"
+#include "PasquaMembraneC.h"
 #include "schema.h"
 
 using namespace Json;
@@ -56,6 +57,28 @@ namespace SAPHRON
 
 			auto w = wm->GetWorld(json["world"].asInt());
 			c = new DirectorRestrictionC(w, coeff, dir, index, lim);
+		}
+		else if(type == "PasquaMembrane")
+		{
+			reader.parse(JsonSchema::PasquaMembraneC, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Parse(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			auto epsilon = json["epsilon"].asDouble();
+			auto d = json["d"].asDouble();
+			auto ra = json["ra"].asDouble();
+			auto rb = json["rb"].asDouble();
+			auto za = json["za"].asDouble();
+			auto zb = json["zb"].asDouble();
+			auto neq = json["neq"].asDouble();
+			auto npol = json["npol"].asDouble();
+
+			auto w = wm->GetWorld(json["world"].asInt());
+			c = new PasquaMembraneC(w, epsilon, d, ra, rb, za, zb, neq, npol);
 		}
 		else
 		{

@@ -129,7 +129,7 @@ namespace SAPHRON
 			
 			// Evaluate initial particle energy. 
 			auto ei = ffm->EvaluateInterEnergy(*particle);
-			ei.energy.constraint = ffm->EvaluateConstraintEnergy(*w);
+			ei.energy.constraint = w->GetEnergy().constraint;
 
 			// Generate new position then apply periodic boundaries.
 			Position newPos({posi[0] + dx*(_rand.doub()-0.5), 

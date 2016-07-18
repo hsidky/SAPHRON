@@ -159,6 +159,9 @@ namespace SAPHRON
 
 	EPTuple ForceFieldManager::EvaluateInterEnergy(const Particle& particle) const
 	{
+		if(_nonbondedforcefields.empty())
+			return EPTuple();
+
 		double intere = 0, electroe = 0, pxx = 0, pxy = 0, pxz = 0, pyy = 0, pyz = 0, pzz = 0;
 
 		// Begin timer.

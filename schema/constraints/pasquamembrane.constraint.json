@@ -1,0 +1,47 @@
+{
+	"type" : "object",
+	"varname" : "PasquaMembraneC",
+	"properties" : {
+		"type" : {
+			"type" : "string",
+			"enum" : ["PasquaMembrane"]
+		},
+		"epsilon" : {
+			"type" : "number"
+		},
+		"d" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"ra" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"rb" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"za" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"zb" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"neq" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"npol" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"world" : {
+			"type" : "integer",
+			"minimum" : 0
+		}
+	},
+	"additionalProperties" : false,
+	"required" : ["type", "epsilon", "d", "ra", "rb", "za", "zb", "neq", "npol", "world"]
+}

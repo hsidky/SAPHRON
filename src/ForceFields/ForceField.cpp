@@ -13,6 +13,7 @@
 #include "LennardJonesTSFF.h"
 #include "LebwohlLasherFF.h"
 #include "ModLennardJonesTSFF.h"
+#include "PasquaMembraneFF.h"
 
 using namespace Json;
 
@@ -223,6 +224,27 @@ namespace SAPHRON
 				rc.push_back(r.asDouble());
 
 			ff = new GayBerneFF(di, dj, li, lj, eps0, epsE, epsS, dw, rc, mu, nu);
+		}
+		else if(type == "PasquaMembrane")
+		{
+			reader.parse(JsonSchema::PasquaMembraneFF, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Parse(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			auto epsilon = json["epsilon"].asDouble();
+			auto d = json["d"].asDouble();
+			auto ra = json["ra"].asDouble();
+			auto rb = json["rb"].asDouble();
+			auto za = json["za"].asDouble();
+			auto zb = json["zb"].asDouble();
+			auto neq = json["neq"].asDouble();
+			auto npol = json["npol"].asDouble();
+
+			ff = new PasquaMembraneFF(epsilon, d, ra, rb, za, zb, neq, npol);
 		}
 		else
 		{

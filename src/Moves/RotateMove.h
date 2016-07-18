@@ -65,7 +65,7 @@ namespace SAPHRON
 
 			// Evaluate initial particle energy. 
 			auto ei = ffm->EvaluateInterEnergy(*particle);
-			ei.energy.constraint = ffm->EvaluateConstraintEnergy(*w);
+			ei.energy.constraint = w->GetEnergy().constraint;
 
 			// Choose random axis, and generate random angle.
 			int axis = _rand.int32() % 3 + 1;

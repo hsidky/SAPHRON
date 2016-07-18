@@ -178,13 +178,6 @@ namespace SAPHRON
 			return false;
 		}
 
-		// Make sure we've created forcefields.
-		if(_forcefields.size() == 0)
-		{
-			DumpErrorsToConsole({"No forcefields have been specified."}, _notw);
-			return false;
-		}
-
 		notices.push_back("Initialized " +  to_string(_forcefields.size()) + " forcefield(s).");
 
 		DumpNoticesToConsole(notices, "",_notw);
@@ -206,6 +199,13 @@ namespace SAPHRON
 		notices.push_back("Initialized " +  to_string(_constraints.size()) + " constraint(s).");
 		DumpNoticesToConsole(notices, "",_notw);
 		notices.clear();
+
+		// Make sure we've created forcefields or constraints..
+		if(_forcefields.size() == 0 && _constraints.size() == 0)
+		{
+			DumpErrorsToConsole({"No forcefields or constraints have been specified."}, _notw);
+			return false;
+		}
 
 		// Build move(s).
 		PrintBoldNotice(" > Building move(s)...", _msgw); 

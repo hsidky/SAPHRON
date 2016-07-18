@@ -8,6 +8,7 @@ namespace SAPHRON
 	{
 	public:
 		//INSERT_DEC_HERE
+		static std::string PasquaMembraneC;
 		static std::string DirectorRestrictionC;
 		static std::string Constraints;
 		static std::string P2SAConnectivity;
@@ -28,6 +29,7 @@ namespace SAPHRON
 		static std::string ModLennardJonesTSFF;
 		static std::string ForceFields;
 		static std::string HardSphereFF;
+		static std::string PasquaMembraneFF;
 		static std::string FENEFF;
 		static std::string GayBerneFF;
 		static std::string HarmonicFF;
