@@ -143,9 +143,9 @@ namespace SAPHRON
 		{
 			json["type"] = "VolumeScale";
 			json["dv"] = _dvmax;
-			json["p_extern"] = _pextern;
+			json["Pextern"] = _pextern;
 			json["seed"] = _seed;
-			json["op_prefactor"] = _prefac;
+			//json["op_prefactor"] = _prefac;
 		}
 
 		virtual std::string GetName() const override { return "VolumeScale"; }
