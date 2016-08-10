@@ -9,11 +9,11 @@
 #include "GayBerneFF.h"
 #include "HardSphereFF.h"
 #include "HarmonicFF.h"
+#include "KernFrenkelFF.h"
 #include "LennardJonesFF.h"
 #include "LennardJonesTSFF.h"
 #include "LebwohlLasherFF.h"
 #include "ModLennardJonesTSFF.h"
-#include "PasquaMembraneFF.h"
 
 using namespace Json;
 
@@ -225,26 +225,33 @@ namespace SAPHRON
 
 			ff = new GayBerneFF(di, dj, li, lj, eps0, epsE, epsS, dw, rc, mu, nu);
 		}
-		else if(type == "PasquaMembrane")
+		else if(type == "KernFrenkel")
 		{
-			reader.parse(JsonSchema::PasquaMembraneFF, schema);
+			reader.parse(JsonSchema::KernFrenkelFF, schema);
 			validator.Parse(schema, path);
 
-			// Validate inputs.
-			validator.Parse(json, path);
+			// Validate inputs. 
+			validator.Validate(json, path);
 			if(validator.HasErrors())
 				throw BuildException(validator.GetErrors());
 
-			auto epsilon = json["epsilon"].asDouble();
-			auto d = json["d"].asDouble();
-			auto ra = json["ra"].asDouble();
-			auto rb = json["rb"].asDouble();
-			auto za = json["za"].asDouble();
-			auto zb = json["zb"].asDouble();
-			auto neq = json["neq"].asDouble();
-			auto npol = json["npol"].asDouble();
+			auto eps = json["epsilon"].asDouble();
+			auto sig = json["sigma"].asDouble();
+			auto del = json["delta"].asDouble();
+			auto inv = json.get("invert", false).asBool();
 
-			ff = new PasquaMembraneFF(epsilon, d, ra, rb, za, zb, neq, npol);
+			if(json["thetas"].size() != json["pjs"].size())
+				throw BuildException({"There must be an equal number of thetas and patch vectors."});
+
+			std::vector<double> thetas;
+			for(auto& t : json["thetas"])
+				thetas.push_back(t.asDouble());
+
+			std::vector<Vector3D> pjs;
+			for(auto& p : json["pjs"])
+				pjs.push_back(Vector3D{p[0].asDouble(), p[1].asDouble(), p[2].asDouble()});
+
+			ff = new KernFrenkelFF(eps, sig, del, thetas, pjs, inv);
 		}
 		else
 		{

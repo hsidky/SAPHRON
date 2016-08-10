@@ -7,6 +7,41 @@
 // This a collection of random helper functions.
 namespace SAPHRON
 {
+	template <typename T> int sgn(T val) 
+	{
+	    return (T(0) < val) - (val < T(0));
+	}
+
+	// Generates a rotation matrix that corresponds to a rotation of 
+	// a vector a to the final vector b.
+	inline Matrix3D RotationMatrixFromVecs(const Vector3D& a, const Vector3D& b)
+	{
+		auto dot = fdot(a, b);
+
+		// The two vectors are essentially identical.
+		if(std::abs(std::abs(dot) - 1.) < 1e-8)
+			return sgn(dot)*arma::eye(3,3);
+
+		Vector3D cross = arma::cross(a, b);
+		auto ncross = fnorm(cross);
+		Matrix3D G{
+			{   dot, -ncross, 0},
+			{ncross,     dot, 0},
+			{     0,       0, 1}
+		};
+
+		Vector3D ab = b - dot*a;
+		ab = ab/fnorm(ab);
+
+		Matrix3D F{
+			{a[0], ab[0], -cross[0]},
+			{a[1], ab[1], -cross[1]},
+			{a[2], ab[2], -cross[2]}
+		};
+
+		return F*G*arma::inv(F);
+	}
+
 	// Create a rotation matrix which will rotate a vector 
 	// abount an axis (x = 1, y = 2, z = 3) "deg" degrees.
 	inline Matrix3D GenRotationMatrix(int axis, double deg)

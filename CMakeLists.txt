@@ -343,6 +343,12 @@ target_include_directories(JSONLoaderTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(JSONLoaderTests googletest) 
 add_test(JSONLoaderTests JSONLoaderTests)
 
+add_executable(KernFrenkelFFTests test/KernFrenkelFFTests.cpp)
+target_link_libraries(KernFrenkelFFTests ${TEST_DEPS})
+target_include_directories(KernFrenkelFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(KernFrenkelFFTests googletest) 
+add_test(KernFrenkelFFTests KernFrenkelFFTests)
+
 add_executable(LebwohlLasherFFTests test/LebwohlLasherFFTests.cpp)
 target_link_libraries(LebwohlLasherFFTests ${TEST_DEPS})
 target_include_directories(LebwohlLasherFFTests PRIVATE "${GTEST_INCLUDE_DIR}")

@@ -1,0 +1,40 @@
+{
+	"type" : "object",
+	"varname" : "KernFrenkelFF",
+	"properties" : {
+		"type" : {
+			"type" : "string",
+			"enum" : ["KernFrenkel"]
+		},
+		"epsilon" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"sigma" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"delta" : {
+			"type" : "number",
+			"minimum" : 0
+		},
+		"thetas" : {
+			"type" : "array",
+			"items" : {
+				"type" : "number",
+				"minimum" : 0,
+				"exclusiveMinimum" : true
+			}
+		}, 
+		"pjs" : {
+			"type" : "array", 
+			"items" : "@file(../particles/director.particle.json)"
+		},
+		"invert" : {
+			"type" : "boolean"
+		},
+		"species" : "@file(nonbonded.forcefield.json)"
+	},
+	"required" : ["type", "epsilon", "sigma", "delta", "thetas", "pjs", "species", "invert"],
+	"additionalProperties" : false
+}

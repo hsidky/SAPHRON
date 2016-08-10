@@ -27,9 +27,9 @@ namespace SAPHRON
 		static std::string LennardJonesTSFF;
 		static std::string DebyeHuckelFF;
 		static std::string ModLennardJonesTSFF;
+		static std::string KernFrenkelFF;
 		static std::string ForceFields;
 		static std::string HardSphereFF;
-		static std::string PasquaMembraneFF;
 		static std::string FENEFF;
 		static std::string GayBerneFF;
 		static std::string HarmonicFF;
