@@ -94,7 +94,7 @@ set_directory_properties(PROPERTIES EP_PREFIX ${CMAKE_BINARY_DIR}/extern)
 # http://stackoverflow.com/questions/9689183/cmake-googletest
 ExternalProject_Add(
 	googletest
-	URL http://googletest.googlecode.com/files/gtest-1.6.0.zip
+	URL /afs/crc.nd.edu/user/b/bsikora/Documents/Codes/SAPHRON/build/release-1.6.0.zip
 	# TIMEOUT 10
 	# # Force separate output paths for debug and release builds to allow easy
 	# # identification of correct lib in subsequent TARGET_LINK_LIBRARIES commands
@@ -223,6 +223,11 @@ set(TEST_DEPS
 	${GTEST_LIBRARY_MAIN_PATH}
 	libsaphron)
 
+add_executable(ben ben/main.cpp)
+target_link_libraries(ben ${SAPH_LIBS} libsaphron /afs/crc.nd.edu/user/b/bsikora/Documents/Codes/temp_lammps/src/liblammps.a)
+target_include_directories(ben PRIVATE /afs/crc.nd.edu/user/b/bsikora/Documents/Codes/temp_lammps/src)
+add_dependencies(ben libsaphron)
+
 add_executable(ConstraintTests test/ConstraintTests.cpp)
 target_link_libraries(ConstraintTests ${TEST_DEPS})
 target_include_directories(ConstraintTests PRIVATE "${GTEST_INCLUDE_DIR}")
@@ -342,12 +347,6 @@ target_link_libraries(JSONLoaderTests ${TEST_DEPS})
 target_include_directories(JSONLoaderTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(JSONLoaderTests googletest) 
 add_test(JSONLoaderTests JSONLoaderTests)
-
-add_executable(KernFrenkelFFTests test/KernFrenkelFFTests.cpp)
-target_link_libraries(KernFrenkelFFTests ${TEST_DEPS})
-target_include_directories(KernFrenkelFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(KernFrenkelFFTests googletest) 
-add_test(KernFrenkelFFTests KernFrenkelFFTests)
 
 add_executable(LebwohlLasherFFTests test/LebwohlLasherFFTests.cpp)
 target_link_libraries(LebwohlLasherFFTests ${TEST_DEPS})
