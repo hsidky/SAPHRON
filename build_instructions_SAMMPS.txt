@@ -1,0 +1,13 @@
+Build lammps with the following:
+module purge
+1) cmake/3.2.2            2) gcc/4.9.2              3) python/2.7.8           4) boost/1.58             5) ompi/1.8.7-gcc-4.4.7
+make mpi -j12 mode=lib
+
+Build SAPHRON with the following:
+module purge
+1) cmake/3.2.2            2) gcc/4.9.2              3) python/2.7.8           4) boost/1.58             5) ompi/1.8.7-gcc-4.4.7   6) intel/15.0
+mkdir build (if it exists 'rm -rf *' insided the build directory)
+cp release-1.6.0.zip into the build directory
+modify CMakeLists.txt so that lammps src and library point to right locations
+inside build directory: cmake -DARMA_INCLUDE=~/Documents/Codes/armadillo-5.200.2/include/ -DCMAKE_CXX_COMPILER=/opt/crc/gcc/4.9.2/gcc-4.4.7/bin/g++ ../
+make -j12

@@ -225,7 +225,7 @@ set(TEST_DEPS
 
 add_executable(ben ben/main.cpp)
 target_link_libraries(ben ${SAPH_LIBS} libsaphron /afs/crc.nd.edu/user/b/bsikora/Documents/Codes/temp_lammps/src/liblammps.a)
-target_include_directories(ben PRIVATE /afs/crc.nd.edu/user/b/bsikora/Documents/Codes/temp_lammps/src)
+target_include_directories(ben PRIVATE /afs/crc.nd.edu/user/b/bsikora/Documents/Codes/temp_lammps/src ${MPI_CXX_INCLUDE_PATH})
 add_dependencies(ben libsaphron)
 
 add_executable(ConstraintTests test/ConstraintTests.cpp)
