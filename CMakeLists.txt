@@ -94,7 +94,9 @@ set_directory_properties(PROPERTIES EP_PREFIX ${CMAKE_BINARY_DIR}/extern)
 # http://stackoverflow.com/questions/9689183/cmake-googletest
 ExternalProject_Add(
 	googletest
-	URL http://googletest.googlecode.com/files/gtest-1.6.0.zip
+	DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
+	GIT_REPOSITORY https://github.com/google/googletest.git
+	GIT_TAG 800f542
 	# TIMEOUT 10
 	# # Force separate output paths for debug and release builds to allow easy
 	# # identification of correct lib in subsequent TARGET_LINK_LIBRARIES commands
@@ -131,7 +133,7 @@ message(STATUS "")
 
 include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${PROJECT_SOURCE_DIR}/include")
-include_directories("${ARMA_INCLUDE}")
+include_directories("${ARMA_INCLUDES}")
 
 set(SOURCE
 	src/Constraints/Constraint.cpp

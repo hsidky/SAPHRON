@@ -377,6 +377,9 @@ namespace SAPHRON
 						pcontainer.pop();
 					}
 
+					// Set parent director equal to first child (convention).
+					parent->SetDirector(parent->GetChildren()[0]->GetDirector());
+
 					// Add bonded neighbor(s).
 					auto& children = parent->GetChildren();
 					for(auto& bond : spec["bonds"])
