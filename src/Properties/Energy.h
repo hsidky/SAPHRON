@@ -14,20 +14,21 @@ namespace SAPHRON
 		double connectivity;
 		double constraint;
 		double tail;
+		double electrotail;
 		
 		Energy() : intervdw(0.0), intravdw(0.0), interelectrostatic(0.0), intraelectrostatic(0.0), 
-		bonded(0.0), connectivity(0.0), constraint(0.0), tail(0.0) {}
+		bonded(0.0), connectivity(0.0), constraint(0.0), tail(0.0), electrotail(0.0) {}
 
 		Energy(double intervdwE, double intravdwE, double interelectroE, double intraelectroE,
-		 double bondedE, double connectivityE, double constraintE, double tailE) : 
+		 double bondedE, double connectivityE, double constraintE, double tailE, double etailE) : 
 			intervdw(intervdwE), intravdw(intravdwE), interelectrostatic(interelectroE), 
 			intraelectrostatic(intraelectroE), bonded(bondedE), connectivity(connectivityE), 
-			constraint(constraintE), tail(tailE){}
+			constraint(constraintE), tail(tailE), electrotail(etailE){}
 		
 		double total() const
 		{
 			return intervdw + intravdw + interelectrostatic + 
-			intraelectrostatic + connectivity + constraint + bonded + tail;
+			intraelectrostatic + connectivity + constraint + bonded + tail + electrotail;
 		}
 
 		inline bool operator==(const Energy& rhs) const
@@ -36,7 +37,7 @@ namespace SAPHRON
 			interelectrostatic == rhs.interelectrostatic && 
 			intraelectrostatic == rhs.intraelectrostatic && 
 			connectivity == rhs.connectivity && constraint == rhs.constraint && 
-			bonded == rhs.bonded && tail == rhs.tail;
+			bonded == rhs.bonded && tail == rhs.tail && electrotail == rhs.tail;
 		}
 
 		inline bool operator!=(const Energy& rhs) const
@@ -44,7 +45,7 @@ namespace SAPHRON
 			return intervdw != rhs.intervdw || intravdw != rhs.intravdw || 
 			interelectrostatic != rhs.interelectrostatic || intraelectrostatic != rhs.intraelectrostatic || 
 			connectivity != rhs.connectivity || constraint != rhs.constraint || bonded != rhs.bonded || 
-			tail != rhs.tail;
+			tail != rhs.tail || electrotail != rhs.electrotail;
 		}
 
 		inline Energy& operator+=(const Energy& rhs)
@@ -57,6 +58,7 @@ namespace SAPHRON
 			intraelectrostatic += rhs.intraelectrostatic;
 			tail += rhs.tail;
 			constraint += rhs.constraint;
+			electrotail += rhs.electrotail;
 			return *this;
 		}
 
@@ -70,6 +72,7 @@ namespace SAPHRON
 			intraelectrostatic -= rhs.intraelectrostatic;
 			tail -= rhs.tail;
 			constraint -= rhs.constraint;
+			electrotail -= rhs.electrotail;
 			return *this;
 		}
 
@@ -83,6 +86,7 @@ namespace SAPHRON
 			connectivity /= rhs;
 			constraint /= rhs;
 			tail /= rhs;
+			electrotail /= rhs;
 			return *this;
 		}
 
@@ -97,6 +101,7 @@ namespace SAPHRON
 			connectivity *= rhs;
 			constraint *= rhs;
 			tail *= rhs;
+			electrotail *= rhs;
 			return *this;
 		}
 
@@ -111,6 +116,7 @@ namespace SAPHRON
 			lhs.connectivity *= rhs;
 			lhs.tail *= rhs;
 			lhs.constraint *= rhs;
+			lhs.electrotail *= rhs;
 			return lhs;
 		}
 	};
@@ -125,6 +131,7 @@ namespace SAPHRON
 		lhs.connectivity += rhs.connectivity;
 		lhs.constraint += rhs.constraint;
 		lhs.tail += rhs.tail;
+		lhs.electrotail += rhs.electrotail;
 		return lhs;
 	}
 
@@ -138,6 +145,7 @@ namespace SAPHRON
 		lhs.connectivity -= rhs.connectivity;
 		lhs.constraint -= rhs.constraint;
 		lhs.tail -= rhs.tail;
+		lhs.electrotail -= rhs.electrotail;
 		return lhs;
 	}
 
@@ -151,6 +159,7 @@ namespace SAPHRON
 		lhs.connectivity /= rhs;
 		lhs.constraint /= rhs;
 		lhs.tail /= rhs;
+		lhs.electrotail /= rhs;
 		return lhs;
 	}	
 
