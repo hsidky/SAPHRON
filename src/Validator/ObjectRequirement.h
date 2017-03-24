@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <numeric>
 #include <list>
 #include <map>
 #include "Requirement.h"
