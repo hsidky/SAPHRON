@@ -14,6 +14,7 @@
 #include "LennardJonesTSFF.h"
 #include "LebwohlLasherFF.h"
 #include "ModLennardJonesTSFF.h"
+#include "EwaldFF.h"
 
 using namespace Json;
 
@@ -54,6 +55,24 @@ namespace SAPHRON
 				rc.push_back(r.asDouble());
 			
 			ff = new DSFFF(alpha, rc);
+		}
+		else if(type == "Ewald")
+		{
+			reader.parse(JsonSchema::EwaldFF, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs. 
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			double alpha = json["alpha"].asDouble();
+
+			CutoffList rc;
+			for(auto r : json["rcut"])
+				rc.push_back(r.asDouble());
+			
+			ff = new EwaldFF(alpha, rc);
 		}
 		else if(type == "DebyeHuckel")
 		{

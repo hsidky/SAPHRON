@@ -162,7 +162,9 @@ namespace SAPHRON
 		if(_nonbondedforcefields.empty())
 			return EPTuple();
 
-		double intere = 0, electroe = 0, pxx = 0, pxy = 0, pxz = 0, pyy = 0, pyz = 0, pzz = 0;
+		double intere = 0, electroe = 0, pxx = 0, 
+		       pxy = 0, pxz = 0, pyy = 0, pyz = 0, 
+			   pzz = 0, recipro = 0;
 
 		// Begin timer.
 		auto& sim = SimInfo::Instance();
@@ -221,7 +223,7 @@ namespace SAPHRON
 				}
 
 				//Electrostatics containing energy and virial
-				if(_electroff != nullptr)
+				if(_electroff != nullptr) 
 					electroij = _electroff->Evaluate(particle, *neighbor, rij, wid);
 				
 				intere += interij.energy; // Sum nonbonded van der Waal energy.
@@ -237,7 +239,7 @@ namespace SAPHRON
 				pyz += totalvirial * 0.5 * (rij[1] * rab[2] + rij[2] * rab[1]);				
 			}
 		}
-		EPTuple ep{intere, 0, electroe, 0, 0, 0, 0, 0, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
+		EPTuple ep{intere, 0, electroe, 0, 0, 0, 0, 0, recipro, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
 		
 		// End timer.
 		sim.AddTime("e_inter");
@@ -257,6 +259,9 @@ namespace SAPHRON
 		EPTuple ep; 
 		for(auto& particle : world)
 			ep += EvaluateInterEnergy(*particle);
+		
+		if(_electroff != nullptr)
+			ep.energy.electrotail = _electroff->ReciprocalSpace(world);
 
 		ep.energy.intervdw *= 0.5;
 		ep.energy.interelectrostatic *= 0.5;

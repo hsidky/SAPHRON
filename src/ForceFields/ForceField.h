@@ -43,6 +43,10 @@ namespace SAPHRON
 		// The world ID (or 0) is passed in.
 		virtual double PressureTailCorrection(unsigned int) const { return 0.0; }
 
+		// Evaluates a reciprocal space contribution to a potential 
+		// if it exists.
+		virtual double ReciprocalSpace(const World&) const { return 0.0; }
+
 		// Serialize 
 		virtual void Serialize(Json::Value& json) const override = 0;
 
