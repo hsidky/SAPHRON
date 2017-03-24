@@ -501,6 +501,12 @@ target_include_directories(WorldManagerTests PRIVATE "${GTEST_INCLUDE_DIR}")
 add_dependencies(WorldManagerTests googletest) 
 add_test(WorldManagerTests WorldManagerTests)
 
+add_executable(EwaldFFTests test/EwaldFFTests.cpp)
+target_link_libraries(EwaldFFTests ${TEST_DEPS})
+target_include_directories(EwaldFFTests PRIVATE "${GTEST_INCLUDE_DIR}")
+add_dependencies(EwaldFFTests googletest) 
+add_test(EwaldFFTests EwaldFFTests)
+
 
 # end add testing 
 
