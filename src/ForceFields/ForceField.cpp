@@ -67,12 +67,13 @@ namespace SAPHRON
 				throw BuildException(validator.GetErrors());
 
 			double alpha = json["alpha"].asDouble();
+			double kmax = json["kmax"].asInt();
 
 			CutoffList rc;
 			for(auto r : json["rcut"])
 				rc.push_back(r.asDouble());
 			
-			ff = new EwaldFF(alpha, rc);
+			ff = new EwaldFF(alpha, kmax, rc);
 		}
 		else if(type == "DebyeHuckel")
 		{

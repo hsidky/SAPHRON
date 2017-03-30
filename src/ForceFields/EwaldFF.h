@@ -12,13 +12,13 @@ namespace SAPHRON
 	{
 	private: 
 		double _alpha; 
+		double _kmax;
 		CutoffList _rc; 
 		double _qdim;
-		double _kmax = 5;
 
 	public:
-		EwaldFF(double alpha, const CutoffList& rc) : 
-		_alpha(alpha), _rc(rc)
+		EwaldFF(double alpha, double kmax, const CutoffList& rc) : 
+		_alpha(alpha), _kmax(kmax), _rc(rc)
 		{
 			auto& sim = SimInfo::Instance(); 
 			_qdim = sim.GetChargeConv();         

@@ -10,6 +10,10 @@
             "type" : "number", 
             "minimum" : 0
         },
+        "kmax" : {
+            "type" : "integer", 
+            "minimum" : 0
+        },
         "rcut" : {
 			"type" : "array",
 			"items" : {
@@ -21,5 +25,5 @@
 		}
     },
     "additionalProperties" : false,
-	"required" : ["type", "alpha", "rcut"]
+	"required" : ["type", "alpha", "rcut", "kmax"]
 }
