@@ -12,13 +12,13 @@ namespace SAPHRON
 	{
 	private: 
 		double _alpha; 
-		double _kmax;
+		double _kmaxx, _kmaxy, _kmaxz;
 		CutoffList _rc; 
 		double _qdim;
 
 	public:
-		EwaldFF(double alpha, double kmax, const CutoffList& rc) : 
-		_alpha(alpha), _kmax(kmax), _rc(rc)
+		EwaldFF(double alpha, double kmaxx, double kmaxy, double kmaxz, const CutoffList& rc) : 
+		_alpha(alpha), _kmaxx(kmaxx), _kmaxy(kmaxy), _kmaxz(kmaxz), _rc(rc)
 		{
 			auto& sim = SimInfo::Instance(); 
 			_qdim = sim.GetChargeConv();         
@@ -59,15 +59,16 @@ namespace SAPHRON
 			}
 
 			double coeff = 0.5/(M_PI*w.GetVolume());
-			for(int kx = -_kmax; kx < _kmax; ++kx)
-				for(int ky = -_kmax; ky < _kmax; ++ky)
-					for(int kz = -_kmax; kz < _kmax; ++kz)
+			double knormsq = _kmaxx*_kmaxx + _kmaxy*_kmaxy + _kmaxz*_kmaxz;
+			for(int kx = -_kmaxx; kx < _kmaxx; ++kx)
+				for(int ky = -_kmaxy; ky < _kmaxy; ++ky)
+					for(int kz = -_kmaxz; kz < _kmaxz; ++kz)
 					{
 						if(kx == 0 && ky == 0 && kz == 0)
 							continue; 
 			
 						double ksq = kx*kx + ky*ky + kz*kz;
-						if(ksq > _kmax*_kmax + 2)
+						if(ksq > knormsq + 2)
 							continue;
 
 						double hx = kx/H(0,0);

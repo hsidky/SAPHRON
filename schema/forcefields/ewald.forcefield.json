@@ -11,8 +11,13 @@
             "minimum" : 0
         },
         "kmax" : {
-            "type" : "integer", 
-            "minimum" : 0
+            "type" : "array",
+            "items" : {
+                "type" : "integer", 
+                "minimum" : 0
+            },
+            "minItems" : 3,
+            "maxItems" : 3
         },
         "rcut" : {
 			"type" : "array",

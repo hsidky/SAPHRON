@@ -12,7 +12,7 @@
 		"electrostatic" : {
 			"type" : "Ewald",
 			"alpha" : 0.28,
-			"kmax" : 5,
+			"kmax" : [5,5,5],
 			"rcut" : [10.0]
 		}
 	},
